@@ -6,8 +6,8 @@ import App from './App.vue'
 const app = createApp(App);
 app.use(
   createAuth0({
-    domain: process.env.AUTH0_DOMAIN,
-    clientId: process.env.AUTH0_CLIENT_ID,
+    domain: __AUTH0_DOMAIN__,
+    clientId: __AUTH0_CLIENT_ID__,
     authorizationParams: {
       redirect_uri: window.location.origin,
     },
