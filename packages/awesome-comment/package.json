@@ -1,7 +1,7 @@
 {
-  "name": "awesome-comment",
+  "name": "@awesome-comment/comment",
   "private": true,
-  "version": "0.0.0",
+  "version": "0.1.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -9,6 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@awesome-comment/core": "workspace:*",
     "@auth0/auth0-vue": "^2.2.0",
     "pinia": "^2.1.4",
     "vue": "^3.3.4",

@@ -29,6 +29,9 @@ importers:
 
   packages/admin:
     dependencies:
+      '@awesome-comment/core':
+        specifier: workspace:*
+        version: link:../core
       pinia:
         specifier: ^2.1.4
         version: 2.1.4(typescript@5.1.6)(vue@3.3.4)
@@ -66,6 +69,9 @@ importers:
       '@auth0/auth0-vue':
         specifier: ^2.2.0
         version: 2.2.0(vue-router@4.2.2)
+      '@awesome-comment/core':
+        specifier: workspace:*
+        version: link:../core
       pinia:
         specifier: ^2.1.4
         version: 2.1.4(typescript@5.1.6)(vue@3.3.4)
@@ -109,6 +115,8 @@ importers:
       vue-tsc:
         specifier: ^1.8.3
         version: 1.8.3(typescript@5.1.6)
+
+  packages/core: {}
 
 packages:
 

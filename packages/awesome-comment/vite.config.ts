@@ -2,10 +2,15 @@ import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 
 // https://vitejs.dev/config/
-export default defineConfig({
-  define: {
-    __AUTH0_DOMAIN__: process.env.AUTH0_DOMAIN,
-    __AUTH0_CLIENT_ID__: process.env.AUTH0_CLIENT_ID,
-  },
-  plugins: [vue()],
-})
+export default defineConfig(function ({ command }) {
+  const apiUrl = command === 'build'
+    ? 'https://api.awesome-comment.com'
+    : 'http://localhost:3000';
+
+  return {
+    define: {
+      __API_URL__: JSON.stringify(apiUrl),
+    },
+    plugins: [vue()],
+  };
+});

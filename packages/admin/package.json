@@ -1,5 +1,5 @@
 {
-  "name": "nuxt-app",
+  "name": "@awesome-comment/admin",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -22,6 +22,7 @@
   },
   "type": "module",
   "dependencies": {
+    "@awesome-comment/core": "workspace:*",
     "pinia": "^2.1.4"
   }
 }
