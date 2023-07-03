@@ -32,6 +32,9 @@ importers:
       '@awesome-comment/core':
         specifier: workspace:*
         version: link:../core
+      '@meathill/digest-fetch':
+        specifier: 0.1.0
+        version: 0.1.0
       pinia:
         specifier: ^2.1.4
         version: 2.1.4(typescript@5.1.6)(vue@3.3.4)
@@ -1026,6 +1029,11 @@ packages:
       - encoding
       - supports-color
     dev: true
+
+  /@meathill/digest-fetch@0.1.0:
+    resolution: {integrity: sha512-MfJ0yIiw156huLALCWHZ9ErcW8/ahHIQJbQn+EEEfcfbMZ5/2WUegxM0vPrR0BKOqhylFcHey4P0+9LjTKbTcA==}
+    engines: {chrome: '>=11.0.0', edge: '>=12.0.0', node: '>=16.0.0', safari: '>=5.1'}
+    dev: false
 
   /@netlify/functions@1.6.0:
     resolution: {integrity: sha512-6G92AlcpFrQG72XU8YH8pg94eDnq7+Q0YJhb8x4qNpdGsvuzvrfHWBmqFGp/Yshmv4wex9lpsTRZOocdrA2erQ==}

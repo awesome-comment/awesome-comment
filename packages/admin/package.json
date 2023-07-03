@@ -23,6 +23,7 @@
   "type": "module",
   "dependencies": {
     "@awesome-comment/core": "workspace:*",
+    "@meathill/digest-fetch": "0.1.0",
     "pinia": "^2.1.4"
   }
 }

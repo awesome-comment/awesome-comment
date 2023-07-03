@@ -4,8 +4,8 @@ import { Comment } from '@awesome-comment/core/types';
 
 const useStore = defineStore('store', () => {
   const params = new URL(location.href).searchParams;
-  const postId = params.get('postId');
-  const postTitle = params.get('postTitle') || document.title;
+  const postId = params.get('post_id') || '';
+  const postTitle = params.get('post_title') || document.title;
 
   const start = ref<number>(0);
   const message = ref<string>('');

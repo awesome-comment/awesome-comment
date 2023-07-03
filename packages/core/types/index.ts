@@ -1,3 +1,5 @@
+import {CommentStatus} from "../data";
+
 export type ResponseBody<T> = {
   code: number;
   data?: T;
@@ -12,6 +14,10 @@ export type Comment = {
   postId: string;
   content: string;
   createdAt: string;
+  userId: string;
+  parentId?: number;
+  ancestorId?: number;
+  status: CommentStatus;
   user: {
     email: string;
     name: string;
