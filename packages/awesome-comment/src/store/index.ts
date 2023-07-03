@@ -1,11 +1,11 @@
 import { defineStore } from 'pinia';
 import { ref } from 'vue';
 import { Comment } from '@awesome-comment/core/types';
+import { CommentStatus } from '@awesome-comment/core/data';
 
 const useStore = defineStore('store', () => {
   const params = new URL(location.href).searchParams;
-  const postId = params.get('post_id') || '';
-  const postTitle = params.get('post_title') || document.title;
+  const postId = params.get('post_id') || 'awesome-comment-self';
 
   const start = ref<number>(0);
   const message = ref<string>('');
@@ -31,15 +31,26 @@ const useStore = defineStore('store', () => {
     total.value = data.meta?.total || 0;
     return data;
   }
+  function addComment(comment: string): void {
+    comments.value.unshift({
+      id: 0,
+      postId,
+      content: comment,
+      createdAt: new Date().toString(),
+      userId: '',
+      status: CommentStatus.Approved,
+    });
+    total.value++;
+  }
 
   return {
     message,
     postId,
-    postTitle,
     comments,
     total,
 
     loadComments,
+    addComment,
   };
 });
 export default useStore;

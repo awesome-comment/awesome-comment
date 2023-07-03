@@ -3,7 +3,6 @@ import { useAuth0 } from '@auth0/auth0-vue';
 import CommentForm from './components/comment-form.vue';
 import CommentSection from './components/comment-section.vue';
 import useStore from './store';
-import { watch } from 'vue';
 
 const store = useStore();
 const {
@@ -13,8 +12,6 @@ const {
   loginWithPopup,
   logout,
 } = useAuth0();
-
-watch(user, value => console.log(value));
 
 function doLogin(): void {
   loginWithPopup();

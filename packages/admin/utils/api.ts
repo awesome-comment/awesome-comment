@@ -1,6 +1,8 @@
-export async function getUser(accessToken: string) {
+import { User } from '@awesome-comment/core/types';
+
+export async function getUser(accessToken: string): Promise<User> {
   const response = await fetch(
-    `https://${process.env.__AUTH0_DOMAIN__}/userinfo`,
+    `https://${process.env.AUTH0_DOMAIN}/userinfo`,
     {
       headers: {
         Authorization: accessToken,
@@ -8,5 +10,8 @@ export async function getUser(accessToken: string) {
       },
     },
   );
+  if (!response.ok) {
+    throw new Error(`${response.status} ${response.statusText}`);
+  }
   return await response.json();
 }

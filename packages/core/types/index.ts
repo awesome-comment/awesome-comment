@@ -1,4 +1,4 @@
-import {CommentStatus} from "../data";
+import { CommentStatus } from '../data';
 
 export type ResponseBody<T> = {
   code: number;
@@ -18,9 +18,18 @@ export type Comment = {
   parentId?: number;
   ancestorId?: number;
   status: CommentStatus;
-  user: {
+  user?: {
     email: string;
     name: string;
     avatar: string;
   };
+}
+
+export type User = {
+  id: string;
+  name: string;
+  nickname: string;
+  picture: string;
+  email: string;
+  sub: string;
 }

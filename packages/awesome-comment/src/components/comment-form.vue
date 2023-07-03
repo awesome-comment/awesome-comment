@@ -4,6 +4,7 @@ import { useAuth0 } from '@auth0/auth0-vue';
 import useStore from '../store';
 
 const auth0 = useAuth0();
+const store = useStore();
 
 const isSending = ref<boolean>(false);
 const comment = ref<string>('');
@@ -26,6 +27,7 @@ async function doSubmit(event: Event): Promise<void> {
       },
       body: JSON.stringify({
         comment: comment.value,
+        postId: store.postId,
       }),
     });
 
@@ -36,6 +38,8 @@ async function doSubmit(event: Event): Promise<void> {
     message.value = e.message;
   }
 
+  comment.value = '';
+  store.addComment(comment.value);
   isSending.value = false;
 }
 function doLogin(): void {
@@ -65,7 +69,11 @@ form.mb-6(
       v-model="comment"
     )
     .p-2.rounded-b-lg.bg-base-300.flex
-      button.btn.btn-primary.btn-sm.ml-auto Post comment
+      button.btn.btn-primary.btn-sm.ml-auto(
+        :disabled="isSending"
+      )
+        span.loading.loading-spinner(v-if="isSending")
+        | Post comment
 </template>
 
 <script lang="ts">
