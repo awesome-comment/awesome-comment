@@ -1,5 +1,4 @@
-<template>
-  <div>
-    <NuxtWelcome />
-  </div>
+<template lang="pug">
+nuxt-layout
+  nuxt-page
 </template>
