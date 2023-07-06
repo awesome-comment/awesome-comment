@@ -7,7 +7,6 @@ USE arealme;
 
 SELECT *
 FROM ac_comment
-WHERE post_id=${post_id}
-  AND status=${status}
+WHERE status=${status}
 ORDER BY id DESC
 LIMIT ${start}, 20;

@@ -9,12 +9,6 @@
     },
     "params": [
       {
-        "name": "post_id",
-        "type": "string",
-        "required": 1,
-        "default": ""
-      },
-      {
         "name": "status",
         "type": "number",
         "required": 0,
