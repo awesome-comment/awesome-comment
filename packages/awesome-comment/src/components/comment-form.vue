@@ -1,10 +1,12 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { inject, ref } from 'vue';
 import { useAuth0 } from '@auth0/auth0-vue';
 import useStore from '../store';
 
 const auth0 = useAuth0();
 const store = useStore();
+const baseUrl = inject('ApiBaseUrl');
+const version = __VERSION__;
 
 const isSending = ref<boolean>(false);
 const comment = ref<string>('');
@@ -19,7 +21,7 @@ async function doSubmit(event: Event): Promise<void> {
   isSending.value = true;
   try {
     const accessToken = await auth0.getAccessTokenSilently();
-    const response = await fetch(__API_URL__ + '/api/comment', {
+    const response = await fetch(baseUrl + '/api/comment', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -68,7 +70,10 @@ form.mb-6(
       @keydown.enter="onKeydown"
       v-model="comment"
     )
-    .p-2.rounded-b-lg.bg-base-300.flex
+    .p-2.rounded-b-lg.bg-base-300.flex.items-center
+      .text-xs(class="text-neutral-content/50") v{{version}}
+      .alert.alert-error.mx-4(v-if="message")
+        p {{message}}
       button.btn.btn-primary.btn-sm.ml-auto(
         :disabled="isSending"
       )

@@ -28,8 +28,9 @@ main
 
   header.flex.justify-between.items-center.py-2
     h2.text-lg.font-bold.text-neutral-content Discussion ({{store.total}})
-    .dropdown.dropdown-end(v-if="isAuthenticated")
-      template(v-if="user")
+    span.loading.loading-spinner(v-if="isLoading")
+    .dropdown.dropdown-end(v-else)
+      template(v-if="isAuthenticated && user")
         label.avatar.flex(v-if="user.picture" tabindex="0")
           .w-6.h-6.rounded-full
             img.w-full.h-full.block(
@@ -52,7 +53,6 @@ main
         :disabled="isLoading"
         @click="doLogin"
       ) Login
-    span.loading.loading-spinner(v-else)
 
   comment-form
   comment-section

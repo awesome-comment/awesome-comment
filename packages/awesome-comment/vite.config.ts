@@ -13,7 +13,7 @@ export default defineConfig(function ({ command }) {
     define: {
       __IS_PROD__: isProd,
       __API_URL__: JSON.stringify(apiUrl),
-      __VERSION__: pkg.version,
+      __VERSION__: JSON.stringify(pkg.version),
     },
     plugins: [vue()],
   };

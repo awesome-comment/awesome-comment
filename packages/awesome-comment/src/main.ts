@@ -4,12 +4,12 @@ import { createAuth0 } from '@auth0/auth0-vue';
 import './style.css';
 import App from './App.vue';
 
-function init() {
+function init(domain: string, clientId: string) {
   const app = createApp(App);
   const pinia = createPinia();
   const auth0 = createAuth0({
-    domain: import.meta.env.VITE_AUTH0_DOMAIN,
-    clientId: import.meta.env.VITE_AUTH0_CLIENT_ID,
+    domain,
+    clientId,
     authorizationParams: {
       redirect_uri: window.location.origin,
     },
@@ -20,13 +20,14 @@ function init() {
 }
 
 if (!__IS_PROD__) {
-  const app = init();
+  const app = init(import.meta.env.VITE_AUTH0_DOMAIN, import.meta.env.VITE_AUTH0_CLIENT_ID);
+  app.provide('ApiBaseUrl', __API_URL__);
   app.mount('#app');
 }
 
 const AwesomeComment = {
-  init(dom: string | HTMLElement, apiUrl: string) {
-    const app = init();
+  init(dom: string | HTMLElement, apiUrl: string, domain: string, clientId: string) {
+    const app = init(domain, clientId);
     app.provide('ApiBaseUrl', apiUrl);
     app.mount(dom);
   }

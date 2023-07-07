@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import { ref } from 'vue';
+import { inject, ref } from 'vue';
 import { Comment } from '@awesome-comment/core/types';
 import { CommentStatus } from '@awesome-comment/core/data';
 
@@ -14,7 +14,8 @@ const useStore = defineStore('store', () => {
 
   async function loadComments() {
     message.value = '';
-    const res = await fetch(__API_URL__ + `/api/comments?postId=${postId}&start=${start.value}`);
+    const baseUrl = inject('ApiBaseUrl');
+    const res = await fetch(`${baseUrl}/api/comments?postId=${postId}&start=${start.value}`);
 
     if (!res.ok) {
       message.value = 'Load comments failed. ' + res.statusText;
