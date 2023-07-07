@@ -16,5 +16,12 @@ export default defineConfig(function ({ command }) {
       __VERSION__: JSON.stringify(pkg.version),
     },
     plugins: [vue()],
+    build: {
+      lib: {
+        entry: 'src/main.ts',
+        name: 'AwesomeComment',
+        formats: ['es', 'umd'],
+      },
+    },
   };
 });
