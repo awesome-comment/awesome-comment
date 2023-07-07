@@ -1,6 +1,5 @@
 {
-  "name": "@awesome-comment/comment",
-  "private": true,
+  "name": "@roudan.io/awesome-comment",
   "version": "0.1.0",
   "type": "module",
   "scripts": {
@@ -9,23 +8,28 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@awesome-comment/core": "workspace:*",
     "@auth0/auth0-vue": "^2.2.0",
+    "@awesome-comment/core": "workspace:*",
     "pinia": "^2.1.4",
     "vue": "^3.3.4",
-    "vue-router": "^4.2.2"
+    "vue-router": "^4.2.4"
   },
   "devDependencies": {
     "@tailwindcss/typography": "^0.5.9",
-    "@types/node": "^20.3.3",
+    "@types/node": "^20.4.0",
     "@vitejs/plugin-vue": "^4.2.3",
     "autoprefixer": "^10.4.14",
-    "daisyui": "^3.1.7",
-    "postcss": "^8.4.24",
+    "daisyui": "^3.1.10",
+    "postcss": "^8.4.25",
     "pug": "^3.0.2",
     "tailwindcss": "^3.3.2",
     "typescript": "^5.1.6",
-    "vite": "^4.3.9",
-    "vue-tsc": "^1.8.3"
+    "vite": "^4.4.1",
+    "vue-tsc": "^1.8.4"
+  },
+  "author": {
+    "email": "meathill@gmail.com",
+    "name": "Meathill",
+    "url": "https://blog.meathill.com"
   }
 }

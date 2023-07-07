@@ -24,8 +24,8 @@ module.exports = {
     defineEmits: true,
     defineExpose: true,
 
-    __IS_DEV__: true,
-    __LANGUAGE__: true,
+    __IS_PROD__: true,
+    __API_URL__: true,
     __VERSION__: true,
   },
   rules: {

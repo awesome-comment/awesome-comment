@@ -35,7 +35,7 @@ async function doSubmit(event: Event): Promise<void> {
       throw new Error('Failed to post comment');
     }
   } catch (e) {
-    message.value = e.message;
+    message.value = (e as Error).message || String(e);
   }
 
   comment.value = '';
