@@ -20,6 +20,8 @@ export default defineConfig(function ({ command }) {
       lib: {
         entry: 'src/main.ts',
         name: 'AwesomeComment',
+        fileName: (format) =>
+          format === 'es' ? 'awesome-comment.js' : `awesome-comment.${format}.js`,
         formats: ['es', 'umd'],
       },
     },

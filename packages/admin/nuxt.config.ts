@@ -18,6 +18,12 @@ export default defineNuxtConfig({
           content: 'width=device-width, initial-scale=1.0, user-scalable=no',
         },
       ],
+      script: [
+        {
+          src: 'https://unpkg.com/@roudanio/awesome-comment@latest/dist/awesome-comment.umd.js',
+          crossorigin: 'anonymous',
+        },
+      ],
     },
   },
   css: [
@@ -36,6 +42,8 @@ export default defineNuxtConfig({
   runtimeConfig: {
     public: {
       version: pkg.version,
+      auth0Domain: process.env.AUTH0_DOMAIN,
+      auth0ClientId: process.env.AUTH0_CLIENT_ID,
     },
   },
   postcss,
