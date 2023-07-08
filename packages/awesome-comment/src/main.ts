@@ -22,13 +22,15 @@ function init(domain: string, clientId: string) {
 if (!__IS_PROD__) {
   const app = init(import.meta.env.VITE_AUTH0_DOMAIN, import.meta.env.VITE_AUTH0_CLIENT_ID);
   app.provide('ApiBaseUrl', __API_URL__);
+  app.provide('postId', 'awesome-comment-self');
   app.mount('#app');
 }
 
 const AwesomeComment = {
-  init(dom: string | HTMLElement, apiUrl: string, domain: string, clientId: string) {
+  init(dom: string | HTMLElement, postId: string, apiUrl: string, domain: string, clientId: string) {
     const app = init(domain, clientId);
     app.provide('ApiBaseUrl', apiUrl);
+    app.provide('postId', postId);
     app.mount(dom);
   }
 }

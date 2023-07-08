@@ -4,7 +4,8 @@ onMounted(() => {
   if (!window.AwesomeComment) return;
   AwesomeComment.init(
     '#comment',
-    '/',
+    'awesome-comment-self',
+    '',
     runtime.public.auth0Domain,
     runtime.public.auth0ClientId,
   );
@@ -27,15 +28,20 @@ main.container.mx-auto.py-8.flex.gap-4
       | News
 
   .flex-1.h-full
-    p.mb-4 First, embed the script in your page. It will load the latest version of the editor.
-    .mockup-code.mb-4
-      pre.whitespace-pre-wrap
-        code &lt;script src="https://unpkg.com/@roudanio/awesome-comment@0.1.0/dist/awesome-comment.umd.cjs"&gt;&lt;/script&gt;
-    p.mb-4 Then, add the Comment component to your page. It will be rendered in the container element.
-    .mockup-code.mb-4
-      pre
-        code AwesomeComment.init(dom, baseUrl, domain, clientId);
-    p.mb-4 Finally, you can use the editor in your page.
+    article.prose
+      p.mb-4 First, embed the script in your page. It will load the latest version of the editor.
+      pre.mb-4.whitespace-pre-wrap
+        code &lt;script src="https://unpkg.com/@roudanio/awesome-comment@latest/dist/awesome-comment.umd.js"&gt;&lt;/script&gt;
+      p.mb-4 Then, add the Comment component to your page. It will be rendered in the container element.
+      pre.mb-4
+        | AwesomeComment.init(
+        |   dom, // container element, or DOM selector
+        |   postId, // unique identifier for the page
+        |   baseUrl, // base URL for the API
+        |   domain, // auth0 domain
+        |   clientId, // auth0 client id
+        | );
+      p.mb-4 Finally, you can use the editor in your page.
     #comment
 </template>
 

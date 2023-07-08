@@ -9,20 +9,26 @@ export type ResponseBody<T> = {
   };
 }
 
-export type Comment = {
+type BaseComment = {
   id: number;
   postId: string;
   content: string;
-  createdAt: string;
   userId: string;
   parentId?: number;
   ancestorId?: number;
   status: CommentStatus;
+}
+export type Comment = BaseComment & {
+  createdAt: string;
   user?: {
     email: string;
     name: string;
     avatar: string;
   };
+}
+export type ResponseComment = BaseComment & {
+  created_at: string;
+  user?: string;
 }
 
 export type User = {

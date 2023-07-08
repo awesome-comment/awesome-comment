@@ -1,5 +1,11 @@
 import postcss from './postcss.config';
 import pkg from './package.json' assert { type: 'json' };
+import acPkg from '../awesome-comment/package.json' assert { type: 'json' };
+
+const isProd = process.env.NODE_ENV === 'production';
+const repoUrl = isProd
+  ? 'https://unpkg.com/@roudanio/awesome-comment@latest/dist'
+  : 'http://localhost:9000';
 
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
@@ -11,6 +17,10 @@ export default defineNuxtConfig({
           rel: 'stylesheet',
           href: 'https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css',
         },
+        {
+          rel: 'stylesheet',
+          href: repoUrl + '/style.css',
+        },
       ],
       meta: [
         {
@@ -20,8 +30,9 @@ export default defineNuxtConfig({
       ],
       script: [
         {
-          src: 'https://unpkg.com/@roudanio/awesome-comment@latest/dist/awesome-comment.umd.js',
+          src: repoUrl + '/awesome-comment.umd.js',
           crossorigin: 'anonymous',
+          async: true,
         },
       ],
     },
@@ -42,6 +53,7 @@ export default defineNuxtConfig({
   runtimeConfig: {
     public: {
       version: pkg.version,
+      acVersion: acPkg.version,
       auth0Domain: process.env.AUTH0_DOMAIN,
       auth0ClientId: process.env.AUTH0_CLIENT_ID,
     },

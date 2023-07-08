@@ -59,7 +59,7 @@ function onKeydown(event: KeyboardEvent): void {
 form.mb-6(
   @submit.prevent="doSubmit"
 )
-  .form-control.border.border-neutral.bg-base-300.text-neutral-content.rounded-lg
+  .form-control.border.border-neutral.bg-base-200.rounded-lg
     label.sr-only(
       for="ac-comment"
     ) Your comment
