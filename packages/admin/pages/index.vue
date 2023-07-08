@@ -1,7 +1,7 @@
 <script setup lang="ts">
 const runtime = useRuntimeConfig();
-onMounted(() => {
-  if (!window.AwesomeComment) return;
+function initAwesomeComment(): void {
+  if (!window.AwesomeComment) setTimeout(initAwesomeComment, 100);
   AwesomeComment.init(
     '#comment',
     'awesome-comment-self',
@@ -9,7 +9,8 @@ onMounted(() => {
     runtime.public.auth0Domain,
     runtime.public.auth0ClientId,
   );
-});
+}
+onMounted(initAwesomeComment);
 </script>
 
 <template lang="pug">
