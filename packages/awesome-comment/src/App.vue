@@ -22,7 +22,7 @@ function doLogout(): void {
 </script>
 
 <template lang="pug">
-main
+.awesome-comment
   .alert.alert-error.mb-4(v-if="store.message")
     p {{ store.message }}
 

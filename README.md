@@ -10,9 +10,13 @@ Usage
     ``` 
 2. Attach awesome comment to your page
     ```javascript
-    new AwesomeComment('#comment', {
-      // your options
-    });
+    AwesomeComment.init(
+      dom, // container element, or DOM selector
+      postId, // unique identifier for the page
+      baseUrl, // base URL for the API
+      domain, // auth0 domain
+      clientId, // auth0 client id
+    );
     ```
 
 
