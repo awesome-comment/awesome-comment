@@ -2,6 +2,7 @@ import { defineStore } from 'pinia';
 import { inject, ref } from 'vue';
 import { Comment, ResponseComment } from '@awesome-comment/core/types';
 import { CommentStatus } from '@awesome-comment/core/data';
+import { useAuth0, User } from '@auth0/auth0-vue';
 
 const useStore = defineStore('store', () => {
   const postId = inject('postId') as string;
@@ -41,14 +42,29 @@ const useStore = defineStore('store', () => {
     isLoaded.value = true;
     return data;
   }
-  function addComment(comment: string): void {
+  function addComment(id: number, comment: string, user: User): void {
+    const {
+      sub = '',
+      name = '',
+      picture = '',
+      email = '',
+      nickname = '' ,
+    } = user;
     comments.value.unshift({
-      id: 0,
+      id,
       postId,
       content: comment,
-      createdAt: new Date().toString(),
-      userId: '',
+      ancestorId: -1,
+      parentId: -1,
+      createdAt: new Date(),
+      user: {
+        avatar: picture,
+        email: email,
+        name: nickname || name,
+      },
+      userId: sub,
       status: CommentStatus.Approved,
+      isNew: true,
     });
     total.value++;
   }

@@ -19,12 +19,13 @@ type BaseComment = {
   status: CommentStatus;
 }
 export type Comment = BaseComment & {
-  createdAt: string;
+  createdAt: Date;
   user?: {
     email: string;
     name: string;
     avatar: string;
   };
+  isNew?: boolean;
 }
 export type ResponseComment = BaseComment & {
   created_at: string;

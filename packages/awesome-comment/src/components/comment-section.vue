@@ -8,10 +8,12 @@ store.loadComments();
 
 <template lang="pug">
 .comments-wrapper(v-if="store.isLoaded")
-  article.p-6.mb-6.text-base.bg-white.rounded-lg(
+  article.p-6.text-base.bg-white.rounded-lg(
     v-for="comment in store.comments"
     :key="comment.id"
     class="dark:bg-gray-900"
+    :class="{'animated flash': comment.isNew}"
+    @animationend="comment.isNew = false"
   )
     footer.flex.justify-between.items-center.mb-2
       .flex.items-center.text-sm.text-gray-900(

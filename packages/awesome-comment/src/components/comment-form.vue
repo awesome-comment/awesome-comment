@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { inject, ref } from 'vue';
 import { useAuth0 } from '@auth0/auth0-vue';
+import type { ResponseBody } from '@awesome-comment/core/types';
 import useStore from '../store';
 
 const auth0 = useAuth0();
@@ -21,7 +22,7 @@ async function doSubmit(event: Event): Promise<void> {
   isSending.value = true;
   try {
     const accessToken = await auth0.getAccessTokenSilently();
-    const response = await fetch(baseUrl + '/api/comment', {
+    const response = await fetch<ResponseBody<number>>(baseUrl + '/api/comment', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -36,12 +37,14 @@ async function doSubmit(event: Event): Promise<void> {
     if (!response.ok) {
       throw new Error('Failed to post comment');
     }
+
+    const json = await response.json();
+    store.addComment(json.data, comment.value, auth0.user.value);
+    comment.value = '';
   } catch (e) {
     message.value = (e as Error).message || String(e);
   }
 
-  comment.value = '';
-  store.addComment(comment.value);
   isSending.value = false;
 }
 function doLogin(): void {

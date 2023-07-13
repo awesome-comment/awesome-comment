@@ -3,6 +3,7 @@ import { createPinia } from 'pinia';
 import { createAuth0 } from '@auth0/auth0-vue';
 import './tw-daisy.css';
 import './style.css';
+import './animate.css';
 import App from './App.vue';
 
 function init(domain: string, clientId: string) {
