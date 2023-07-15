@@ -1,8 +1,9 @@
 import { User } from '@awesome-comment/core/types';
 
-export async function getUser(accessToken: string): Promise<User> {
+export async function getUser(accessToken: string, domain: string): Promise<User> {
+  domain ??= process.env.AUTH0_DOMAIN || '';
   const response = await fetch(
-    `https://${process.env.AUTH0_DOMAIN}/userinfo`,
+    `https://${domain}/userinfo`,
     {
       headers: {
         Authorization: accessToken,

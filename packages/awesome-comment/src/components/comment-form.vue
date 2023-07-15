@@ -7,6 +7,7 @@ import useStore from '../store';
 const auth0 = useAuth0();
 const store = useStore();
 const baseUrl = inject('ApiBaseUrl');
+const auth0domain = inject('Auth0Domain');
 const version = __VERSION__;
 
 const isSending = ref<boolean>(false);
@@ -31,6 +32,7 @@ async function doSubmit(event: Event): Promise<void> {
       body: JSON.stringify({
         comment: comment.value,
         postId: store.postId,
+        domain: auth0domain,
       }),
     });
 

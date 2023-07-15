@@ -22,7 +22,7 @@ export default defineEventHandler(async function (event): Promise<ResponseBody<n
 
   let user: User | null = null;
   try {
-    user = await getUser(authorization);
+    user = await getUser(authorization, body.domain);
   } catch (e) {
     const message =  (e as Error).message || e;
 

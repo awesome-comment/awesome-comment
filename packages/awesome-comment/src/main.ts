@@ -33,6 +33,7 @@ const AwesomeComment = {
     const app = init(domain, clientId);
     app.provide('ApiBaseUrl', apiUrl);
     app.provide('postId', postId);
+    app.provide('Auth0Domain', domain);
     app.mount(dom);
   }
 }
