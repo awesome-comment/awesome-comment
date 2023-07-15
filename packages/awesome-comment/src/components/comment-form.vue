@@ -23,7 +23,7 @@ async function doSubmit(event: Event): Promise<void> {
   isSending.value = true;
   try {
     const accessToken = await auth0.getAccessTokenSilently();
-    const response = await fetch<ResponseBody<number>>(baseUrl + '/api/comment', {
+    const response = await fetch(baseUrl + '/api/comment', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -40,8 +40,8 @@ async function doSubmit(event: Event): Promise<void> {
       throw new Error('Failed to post comment');
     }
 
-    const json = await response.json();
-    store.addComment(json.data, comment.value, auth0.user.value);
+    const json = (await response.json()) as ResponseBody<number>;
+    store.addComment(json.data as number, comment.value, auth0.user.value);
     comment.value = '';
   } catch (e) {
     message.value = (e as Error).message || String(e);
