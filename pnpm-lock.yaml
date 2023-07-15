@@ -33,8 +33,8 @@ importers:
         specifier: workspace:*
         version: link:../core
       '@meathill/digest-fetch':
-        specifier: 0.1.1
-        version: 0.1.1
+        specifier: 0.1.2
+        version: 0.1.2
       '@vercel/edge-config':
         specifier: ^0.2.1
         version: 0.2.1
@@ -1041,8 +1041,8 @@ packages:
       - supports-color
     dev: true
 
-  /@meathill/digest-fetch@0.1.1:
-    resolution: {integrity: sha512-reCa9hjh6/wghppxu1vSfOJ70YoLp9/YKhdYGQiqkI+wRMLJF/F0Uf5USX8PqNvjUakYNBeA6t5SDKLkywLUJg==}
+  /@meathill/digest-fetch@0.1.2:
+    resolution: {integrity: sha512-ucNOg6dfrHpZPgnjfqqXaszEACORryYfwPIyH1HjlYwif+FEEp3iSrgmGElaSpYlRaZIkG8DuSs76VRb/2KBlA==}
     engines: {chrome: '>=11.0.0', edge: '>=12.0.0', node: '>=16.0.0', safari: '>=5.1'}
     dev: false
 
