@@ -33,7 +33,7 @@ importers:
         specifier: workspace:*
         version: link:../core
       '@meathill/digest-fetch':
-        specifier: 0.1.2
+        specifier: ^0.1.2
         version: 0.1.2
       '@vercel/edge-config':
         specifier: ^0.2.1
