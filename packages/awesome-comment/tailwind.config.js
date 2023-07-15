@@ -16,6 +16,6 @@ export default {
   ],
   daisyui: {
     themes: ['light', 'dark'],
-    prefix: 'd-',
+    prefix: 'ac-',
   },
 }

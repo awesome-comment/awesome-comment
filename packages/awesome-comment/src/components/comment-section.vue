@@ -8,7 +8,7 @@ store.loadComments();
 
 <template lang="pug">
 .comments-wrapper(v-if="store.isLoaded")
-  article.p-6.text-base.bg-white.rounded-lg(
+  article.p-6.text-base.bg-base-100.rounded-lg(
     v-for="comment in store.comments"
     :key="comment.id"
     class="dark:bg-gray-900"
@@ -35,7 +35,7 @@ store.loadComments();
       class="dark:text-gray-400"
     ) {{comment.content}}
 .pt-8.text-center(v-else)
-  span.loading.loading-spinner
+  span.ac-loading.ac-loading-spinner
 </template>
 
 <script lang="ts">

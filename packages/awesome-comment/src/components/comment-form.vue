@@ -64,11 +64,11 @@ function onKeydown(event: KeyboardEvent): void {
 form.mb-6(
   @submit.prevent="doSubmit"
 )
-  .form-control.border.border-neutral.bg-base-200.rounded-lg
+  .ac-form-control.border.border-neutral.bg-base-200.rounded-lg
     label.sr-only(
       for="ac-comment"
     ) Your comment
-    textarea#ac-comment.textarea.textarea-bordered.bg-base-200.rounded-b-none(
+    textarea#ac-comment.ac-textarea.ac-textarea-bordered.bg-base-200.rounded-b-none(
       rows="3"
       placeholder="Write a comment..."
       required
@@ -76,13 +76,13 @@ form.mb-6(
       v-model="comment"
     )
     .p-2.rounded-b-lg.bg-base-300.flex.items-center
-      .text-xs(class="text-neutral-content/50") v{{version}}
-      .alert.alert-error.mx-4(v-if="message")
+      .text-xs(class="text-neutral/50") v{{version}}
+      .ac-alert.ac-alert-error.mx-4(v-if="message")
         p {{message}}
-      button.btn.btn-primary.btn-sm.ml-auto(
+      button.ac-btn.ac-btn-primary.ac-btn-sm.ml-auto(
         :disabled="isSending"
       )
-        span.loading.loading-spinner(v-if="isSending")
+        span.ac-loading.ac-loading-spinner(v-if="isSending")
         | Post comment
 </template>
 
