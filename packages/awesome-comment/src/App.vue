@@ -17,7 +17,9 @@ function doLogin(): void {
   loginWithPopup();
 }
 function doLogout(): void {
-  logout();
+  logout({
+    openUrl: false,
+  });
 }
 </script>
 

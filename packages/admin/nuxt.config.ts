@@ -67,5 +67,7 @@ export default defineNuxtConfig({
     // pages generated on-demand, revalidates in background
     // Admin dashboard renders only on client-side
     '/**': { ssr: false },
+    // Add cors headers on API routes
+    '/api/**': { cors: true },
   },
 })
