@@ -1,5 +1,17 @@
 <script setup lang="ts">
+const message = ref<string>('');
 
+const { data, pending } = await useFetch('/api/admin/comments', {
+  query: {
+    status: 0,
+    start: 0,
+  },
+  default() {
+    return [];
+  }
+})
+
+console.log(data);
 </script>
 
 <template lang="pug">

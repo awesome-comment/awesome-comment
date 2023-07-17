@@ -25,6 +25,7 @@ if (!__IS_PROD__) {
   const app = init(import.meta.env.VITE_AUTH0_DOMAIN, import.meta.env.VITE_AUTH0_CLIENT_ID);
   app.provide('ApiBaseUrl', __API_URL__);
   app.provide('postId', 'awesome-comment-self');
+  app.provide('Auth0Domain', import.meta.env.VITE_AUTH0_DOMAIN);
   app.mount('#app');
 }
 
