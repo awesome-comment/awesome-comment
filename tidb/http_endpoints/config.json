@@ -60,6 +60,36 @@
     "return_type": "json"
   },
   {
+    "name": "moderator get comments",
+    "description": "",
+    "method": "GET",
+    "endpoint": "/v1/moderator/get",
+    "data_source": {
+      "cluster_id": 1379661944646254419
+    },
+    "params": [
+      {
+        "name": "status",
+        "type": "number",
+        "required": 1,
+        "default": "0"
+      },
+      {
+        "name": "start",
+        "type": "number",
+        "required": 0,
+        "default": "0"
+      }
+    ],
+    "settings": {
+      "timeout": 5000,
+      "row_limit": 50
+    },
+    "sql_file": "sql/GET-v1-moderator-get.sql",
+    "type": "sql_endpoint",
+    "return_type": "json"
+  },
+  {
     "name": "post comment",
     "description": "",
     "method": "POST",
@@ -102,10 +132,10 @@
     "return_type": "json"
   },
   {
-    "name": "moderator get comments",
+    "name": "moderator review commment",
     "description": "",
-    "method": "GET",
-    "endpoint": "/v1/moderator/get",
+    "method": "POST",
+    "endpoint": "/v1/moderator/review",
     "data_source": {
       "cluster_id": 1379661944646254419
     },
@@ -114,20 +144,20 @@
         "name": "status",
         "type": "number",
         "required": 1,
-        "default": "0"
+        "default": ""
       },
       {
-        "name": "start",
+        "name": "id",
         "type": "number",
-        "required": 0,
-        "default": "0"
+        "required": 1,
+        "default": ""
       }
     ],
     "settings": {
       "timeout": 5000,
       "row_limit": 50
     },
-    "sql_file": "sql/GET-v1-moderator-get.sql",
+    "sql_file": "sql/POST-v1-moderator-review.sql",
     "type": "sql_endpoint",
     "return_type": "json"
   }
