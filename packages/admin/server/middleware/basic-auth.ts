@@ -4,6 +4,11 @@ import { appendHeader, createError, getHeader } from 'h3';
 import { get } from '@vercel/edge-config';
 
 export default defineEventHandler(async (event) => {
+  const url = getRequestURL(event);
+  if (!url.pathname.startsWith('/admin')) {
+    return;
+  }
+
   const adminUser = await get('admin');
   const adminPassword = await get('password');
   const basicAuth = btoa(`${adminUser}:${adminPassword}`);

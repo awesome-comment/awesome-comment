@@ -60,11 +60,11 @@ export default defineNuxtConfig({
   routeRules: {
     // pre-rendered at build time
     '/': { prerender: true },
-    '/about': { prerender: true },
-    '/contact': { prerender: true },
+    // '/about': { prerender: true },
+    // '/contact': { prerender: true },
     // pages generated on-demand, revalidates in background
     // Admin dashboard renders only on client-side
-    '/**': { ssr: false },
+    '/admin/**': { ssr: false },
     // Add cors headers on API routes
     '/api/**': { cors: true },
   },
