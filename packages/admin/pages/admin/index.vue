@@ -1,39 +1,38 @@
 <script setup lang="ts">
+import { Comment } from '@awesome-comment/core/types';
 import { CommentStatus } from '@awesome-comment/core/data';
 const message = ref<string>('');
 
-const { data, pending } = await useFetch('/api/admin/comments', {
-  query: {
-    status: 0,
-    start: 0,
-  },
-  default() {
-    return { data: [] };
-  }
-});
+const { data, pending } = await useAsyncData('comments',
+  () => $fetch('/api/admin/comments', {
+    query: {
+      status: 0,
+      start: 0,
+    },
+  }),
+);
 
 const comments = computed(() => {
-  return data.value.data?.map(c => {
+  return (data.value?.data || []).map(c => {
     c.user = JSON.parse((c.user || '{}') as string);
     c.status = Number(c.status);
     c.id = Number(c.id);
+    c.reviewing = false;
     return c;
   });
 });
 
-const reviewing = ref(false);
-async function review(id: number, status: CommentStatus) {
-  reviewing.value = true;
+async function review(comment: Comment, status: CommentStatus) {
+  comment.reviewing = true;
   await $fetch('/api/admin/review', {
     method: 'POST',
     body: {
-      id,
+      id: comment.id,
       status,
     }
   });
-  const item = data.value.data?.find(c => c.id === id);
-  if (item) item.status = status;
-  reviewing.value = false;
+  comment.status = status;
+  comment.reviewing = false;
 }
 </script>
 
@@ -70,21 +69,21 @@ main.container.mx-auto.py-8
               button.btn.btn-outline.btn-success.btn-xs(
                 type="button",
                 :disabled="reviewing",
-                @click="review(comment.id, CommentStatus.Approved)"
+                @click="review(comment, CommentStatus.Approved)"
               )
                 span.loading.loading-xs.loading-spinner(v-if="reviewing")
                 | Approve
               button.btn.btn-outline.btn-warning.btn-xs(
                 type="button",
                 :disabled="reviewing",
-                @click="review(comment.id, CommentStatus.Rejected)"
+                @click="review(comment, CommentStatus.Rejected)"
               )
                 span.loading.loading-xs.loading-spinner(v-if="reviewing")
                 | Reject
               button.btn.btn-outline.btn-error.btn-xs(
                 type="button",
                 :disabled="reviewing",
-                @click="review(comment.id, CommentStatus.Deleted)"
+                @click="review(comment, CommentStatus.Deleted)"
               )
                 span.loading.loading-xs.loading-spinner(v-if="reviewing")
                 | Delete

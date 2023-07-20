@@ -49,7 +49,6 @@ export default defineNuxtConfig({
     ],
   ],
   runtimeConfig: {
-    basicAuth: '',
     public: {
       version: pkg.version,
       acVersion: acPkg.version,

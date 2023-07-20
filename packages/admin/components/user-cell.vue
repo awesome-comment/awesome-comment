@@ -1,11 +1,11 @@
 <script setup lang="ts">
-const props = defineProps({
-  user: Object as PropType<{
-    avatar: string,
-    name: string,
-    email: string,
-  }>
-})
+const props = defineProps<{
+  user: {
+    avatar?: string,
+    name?: string,
+    email?: string,
+  }
+}>();
 </script>
 
 <template lang="pug">

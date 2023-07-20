@@ -1,26 +1,20 @@
 // https://titouan.dev/notes/2023/03/10/basic-auth-middleware-nuxt-3
 
 import { appendHeader, createError, getHeader } from 'h3';
+import { get } from '@vercel/edge-config';
 
-function mapCredentialsToBasicAuthHeaders(multipleCredentials: string): string[] {
-  return multipleCredentials.split('\n').map((credentials) => `Basic ${btoa(credentials)}`);
-}
-
-export default defineEventHandler((event) => {
-  const { basicAuth } = useRuntimeConfig();
-
-  // If `basicAuth` is empty, do not prompt for authentication
-  if (!basicAuth) {
-    return;
-  }
+export default defineEventHandler(async (event) => {
+  const adminUser = await get('admin');
+  const adminPassword = await get('password');
+  const basicAuth = btoa(`${adminUser}:${adminPassword}`);
 
   // Format our credentials to their corresponding header:
   // `user:pass` becomes `Basic dXNlcjpwYXNz`
-  const validAuthHeaders = mapCredentialsToBasicAuthHeaders(basicAuth as string);
+  const validAuthHeader = 'Basic ' + basicAuth;
   const authHeader = getHeader(event, 'authorization');
 
   // If the given authentication header is valid, do not prompt for authentication
-  if (authHeader && validAuthHeaders.some((validAuthHeader) => validAuthHeader === authHeader)) {
+  if (authHeader && validAuthHeader === authHeader) {
     return;
   }
 

@@ -2,7 +2,7 @@ import { get } from '@vercel/edge-config';
 import digestFetch, { FetchError } from '@meathill/digest-fetch';
 import { Comment, ResponseBody, User } from '@awesome-comment/core/types';
 
-export default defineEventHandler(async function (event): Promise<ResponseBody<{}>> {
+export default defineEventHandler(async function (event): Promise<ResponseBody<Record<string, never>>> {
   const headers = getHeaders(event);
   const authorization = headers[ 'authorization' ];
   if (!authorization) {
@@ -26,9 +26,10 @@ export default defineEventHandler(async function (event): Promise<ResponseBody<{
     });
   }
 
-  const admins = await get('admins') as string[];
-  const email = btoa(authorization).split(':')[ 0 ];
-  if (!admins.includes(email)) {
+  const adminUser = await get('admin') as string;
+  const adminPassword = await get('password') as string;
+  const [email, password] = btoa(authorization).split(':');
+  if (adminUser !== email || adminPassword !== password) {
     throw createError({
       statusCode: 401,
       message: 'Unauthorized',
@@ -45,8 +46,8 @@ export default defineEventHandler(async function (event): Promise<ResponseBody<{
       {
         method: 'POST',
         realm: 'tidb.cloud',
-        username: process.env.TIDB_PUBLIC_KEY,
-        password: process.env.TIDB_PRIVATE_KEY,
+        username: process.env.TIDB_PUBLIC_KEY as string,
+        password: process.env.TIDB_PRIVATE_KEY as string,
       },
     );
   } catch (e) {
