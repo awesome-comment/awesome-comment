@@ -1,5 +1,6 @@
+import { get } from '@vercel/edge-config';
 import digestFetch, { FetchError } from '@meathill/digest-fetch';
-import { Comment, ResponseBody } from '@awesome-comment/core/types';
+import { Comment, ResponseBody, User } from '@awesome-comment/core/types';
 
 export default defineEventHandler(async function (event): Promise<ResponseBody<{}>> {
   const headers = getHeaders(event);
@@ -22,6 +23,15 @@ export default defineEventHandler(async function (event): Promise<ResponseBody<{
     throw createError({
       statusCode: 400,
       message: 'comment id is required',
+    });
+  }
+
+  const admins = await get('admins') as string[];
+  const email = btoa(authorization).split(':')[ 0 ];
+  if (!admins.includes(email)) {
+    throw createError({
+      statusCode: 401,
+      message: 'Unauthorized',
     });
   }
 

@@ -23,15 +23,18 @@ const comments = computed(() => {
 
 const reviewing = ref(false);
 async function review(id: number, status: CommentStatus) {
-  await useFetch('/api/admin/review', {
+  reviewing.value = true;
+  await $fetch('/api/admin/review', {
     method: 'POST',
     body: {
       id,
       status,
     }
   });
+  const item = data.value.data?.find(c => c.id === id);
+  if (item) item.status = status;
+  reviewing.value = false;
 }
-
 </script>
 
 <template lang="pug">
@@ -69,21 +72,21 @@ main.container.mx-auto.py-8
                 :disabled="reviewing",
                 @click="review(comment.id, CommentStatus.Approved)"
               )
-                span.loading.loading-spinner(v-if="reviewing")
+                span.loading.loading-xs.loading-spinner(v-if="reviewing")
                 | Approve
               button.btn.btn-outline.btn-warning.btn-xs(
                 type="button",
                 :disabled="reviewing",
                 @click="review(comment.id, CommentStatus.Rejected)"
               )
-                span.loading.loading-spinner(v-if="reviewing")
+                span.loading.loading-xs.loading-spinner(v-if="reviewing")
                 | Reject
               button.btn.btn-outline.btn-error.btn-xs(
                 type="button",
                 :disabled="reviewing",
                 @click="review(comment.id, CommentStatus.Deleted)"
               )
-                span.loading.loading-spinner(v-if="reviewing")
+                span.loading.loading-xs.loading-spinner(v-if="reviewing")
                 | Delete
 </template>
 
