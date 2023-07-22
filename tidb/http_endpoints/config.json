@@ -1,6 +1,6 @@
 [
   {
-    "name": "delete review",
+    "name": "delete comment",
     "description": "",
     "method": "POST",
     "endpoint": "/v1/moderator/delete",
