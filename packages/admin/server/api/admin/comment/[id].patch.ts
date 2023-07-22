@@ -1,17 +1,7 @@
-import { get } from '@vercel/edge-config';
 import digestFetch, { FetchError } from '@meathill/digest-fetch';
 import { ResponseBody } from '@awesome-comment/core/types';
 
 export default defineEventHandler(async function (event): Promise<ResponseBody<string>> {
-  const headers = getHeaders(event);
-  const authorization = headers[ 'authorization' ];
-  if (!authorization) {
-    throw createError({
-      statusCode: 401,
-      message: 'Unauthorized',
-    });
-  }
-
   const body = await readBody(event);
   if (!body.status) {
     throw createError({
@@ -19,30 +9,14 @@ export default defineEventHandler(async function (event): Promise<ResponseBody<s
       message: 'Status is required',
     });
   }
-  if (!body.id) {
-    throw createError({
-      statusCode: 400,
-      message: 'comment id is required',
-    });
-  }
-
-  const adminUser = await get('admin') as string;
-  const adminPassword = await get('password') as string;
-  const basicAuth = authorization.split(' ')[1];
-  const [email, password] = atob(basicAuth).split(':');
-  if (adminUser !== email || adminPassword !== password) {
-    throw createError({
-      statusCode: 401,
-      message: 'Unauthorized',
-    });
-  }
+  const id = event.context.params?.id;
 
   try {
     const url = 'https://ap-northeast-1.data.tidbcloud.com/api/v1beta/app/dataapp-NFYbhmOK/endpoint/v1/moderator/review';
     await digestFetch(url,
       {
         status: body.status,
-        id: body.id,
+        id,
       },
       {
         method: 'POST',

@@ -2,11 +2,15 @@
 import type { Comment } from '@awesome-comment/core/types';
 import { CommentStatus } from '@awesome-comment/core/data';
 
+type RowItem = Comment & {
+  reviewing: boolean;
+}
+
 const message = ref<string>('');
 const filterStatus = ref<string>('all');
 const CSKeys = Object.values(CommentStatus).filter((v) => !isNaN(Number(v)));
 
-const { data: comments, pending } = await useAsyncData(
+const { data: comments, pending } = await useAsyncData<RowItem[]>(
   'comments',
   async function () {
     const { data } = await $fetch('/api/admin/comments', {
@@ -28,10 +32,10 @@ const { data: comments, pending } = await useAsyncData(
   }
 );
 
-async function review(comment: Comment, status: CommentStatus) {
+async function doReview(comment: RowItem, status: CommentStatus) {
   comment.reviewing = true;
-  await $fetch('/api/admin/review', {
-    method: 'POST',
+  await $fetch('/api/admin/comment/' + comment.id, {
+    method: 'PATCH',
     body: {
       id: comment.id,
       status,
@@ -40,12 +44,21 @@ async function review(comment: Comment, status: CommentStatus) {
   comment.status = status;
   comment.reviewing = false;
 }
+async function doDelete(comment: RowItem, index: number): Promise<void> {
+  if (!confirm('Are you sure to delete this comment?')) { return }
+  comment.reviewing = true;
+  await $fetch('/api/admin/comment/' + comment.id, {
+    method: 'DELETE',
+  });
+  comments.value.splice(index, 1);
+  comment.reviewing = false;
+}
 </script>
 
 <template lang="pug">
 main.container.mx-auto.py-8
   header.flex.items-center.mb-4
-    h1.text-2xl.font-bold Pending Comments
+    h1.text-2xl.font-bold Comments Management
 
   .overflow-x-auto
     table.table.table-pin-rows.table-pin-cols
@@ -59,12 +72,12 @@ main.container.mx-auto.py-8
           td.form-control.w-full.max-w-xs
             label.label
               span.text-xs Status
-            select.select.select-bordered(v-model="filterStatus", style="min-height: 2rem; height: 2rem;")
+            select.select.select-bordered.select-sm(v-model="filterStatus")
               option(value="all") All
               option(v-for="key in CSKeys", :value="key", :key="key") {{ CommentStatus[key] }}
           td
       tbody(v-if="comments.length && !pending")
-        tr(v-for="comment in comments" :key="comment.id")
+        tr(v-for="(comment, index) in comments" :key="comment.id")
           td {{ comment.id }}
           td {{ comment.content }}
           td
@@ -77,25 +90,25 @@ main.container.mx-auto.py-8
               button.btn.btn-outline.btn-success.btn-xs(
                 v-if="comment.status === CommentStatus.Pending || comment.status === CommentStatus.Rejected"
                 type="button",
-                :disabled="reviewing",
-                @click="review(comment, CommentStatus.Approved)"
+                :disabled="comment.reviewing",
+                @click="doReview(comment, CommentStatus.Approved)"
               )
-                span.loading.loading-xs.loading-spinner(v-if="reviewing")
+                span.loading.loading-xs.loading-spinner(v-if="comment.reviewing")
                 | Approve
               button.btn.btn-outline.btn-warning.btn-xs(
-                v-if="comment.status === CommentStatus.Pending || comment.status === CommentStatus.Rejected"
+                v-if="comment.status === CommentStatus.Pending || comment.status === CommentStatus.Approved"
                 type="button",
-                :disabled="reviewing",
-                @click="review(comment, CommentStatus.Rejected)"
+                :disabled="comment.reviewing",
+                @click="doReview(comment, CommentStatus.Rejected)"
               )
-                span.loading.loading-xs.loading-spinner(v-if="reviewing")
+                span.loading.loading-xs.loading-spinner(v-if="comment.reviewing")
                 | Reject
               button.btn.btn-outline.btn-error.btn-xs(
                 type="button",
-                :disabled="reviewing",
-                @click="review(comment, CommentStatus.Deleted)"
+                :disabled="comment.reviewing",
+                @click="doDelete(comment, index)"
               )
-                span.loading.loading-xs.loading-spinner(v-if="reviewing")
+                span.loading.loading-xs.loading-spinner(v-if="comment.reviewing")
                 | Delete
 
     .w-full.h-32.flex.items-center.justify-center(v-if="pending")
