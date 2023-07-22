@@ -7,5 +7,5 @@ Declare a parameter like "Where id = ${arg}".
 USE arealme;
 
 UPDATE ac_comment
-SET status=${status}
+SET status=${status}, updated_at=now()
 WHERE id=${id};
