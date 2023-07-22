@@ -1,5 +1,29 @@
 [
   {
+    "name": "delete review",
+    "description": "",
+    "method": "POST",
+    "endpoint": "/v1/moderator/delete",
+    "data_source": {
+      "cluster_id": 1379661944646254419
+    },
+    "params": [
+      {
+        "name": "id",
+        "type": "number",
+        "required": 1,
+        "default": ""
+      }
+    ],
+    "settings": {
+      "timeout": 5000,
+      "row_limit": 50
+    },
+    "sql_file": "sql/POST-v1-moderator-delete.sql",
+    "type": "sql_endpoint",
+    "return_type": "json"
+  },
+  {
     "name": "moderator review commment",
     "description": "",
     "method": "POST",
