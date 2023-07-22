@@ -8,5 +8,6 @@ USE arealme;
 SELECT *
 FROM ac_comment
 WHERE status in (${status})
+  AND deleted_at is NULL
 ORDER BY id DESC
 LIMIT ${start}, 20;
