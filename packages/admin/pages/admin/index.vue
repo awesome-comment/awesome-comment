@@ -3,13 +3,15 @@ import type { Comment } from '@awesome-comment/core/types';
 import { CommentStatus } from '@awesome-comment/core/data';
 
 const message = ref<string>('');
+const filterStatus = ref<string>('all');
+const CSKeys = Object.values(CommentStatus).filter((v) => !isNaN(Number(v)));
 
 const { data: comments, pending } = await useAsyncData(
   'comments',
   async function () {
-    const { data } = $fetch('/api/admin/comments', {
+    const { data } = await $fetch('/api/admin/comments', {
       query: {
-        status: '0, 1',
+        status: filterStatus.value === 'all' ? ['0' ,'1'] : filterStatus.value,
         start: 0,
       },
     });
@@ -21,6 +23,9 @@ const { data: comments, pending } = await useAsyncData(
       return c;
     });
   },
+  {
+    watch: [filterStatus],
+  }
 );
 
 async function review(comment: Comment, status: CommentStatus) {
@@ -42,22 +47,24 @@ main.container.mx-auto.py-8
   header.flex.items-center.mb-4
     h1.text-2xl.font-bold Pending Comments
 
-  .loading.loading-ring.loading-lg(v-if="pending")
-  .overflow-x-auto(v-else-if="comments.length")
+  .overflow-x-auto
     table.table.table-pin-rows.table-pin-cols
       thead
         tr
-          th
           td ID
           td Content
           td User
           td Time
           td Post
-          td Status
-          th
-      tbody
+          td.form-control.w-full.max-w-xs
+            label.label
+              span.text-xs Status
+            select.select.select-bordered(v-model="filterStatus", style="min-height: 2rem; height: 2rem;")
+              option(value="all") All
+              option(v-for="key in CSKeys", :value="key", :key="key") {{ CommentStatus[key] }}
+          td
+      tbody(v-if="comments.length && !pending")
         tr(v-for="comment in comments" :key="comment.id")
-          th
           td {{ comment.id }}
           td {{ comment.content }}
           td
@@ -90,6 +97,11 @@ main.container.mx-auto.py-8
               )
                 span.loading.loading-xs.loading-spinner(v-if="reviewing")
                 | Delete
+
+    .w-full.h-32.flex.items-center.justify-center(v-if="pending")
+      .loading.loading-ring.loading-lg
+    .w-full.h-32.flex.items-center.justify-center(v-else-if="comments.length === 0")
+      .text-lg.text-center.text-neutral-content No Data to display
 </template>
 
 <script lang="ts">
