@@ -1,26 +1,27 @@
 <script setup lang="ts">
-import { Comment } from '@awesome-comment/core/types';
+import type { Comment } from '@awesome-comment/core/types';
 import { CommentStatus } from '@awesome-comment/core/data';
+
 const message = ref<string>('');
 
-const { data, pending } = await useAsyncData('comments',
-  () => $fetch('/api/admin/comments', {
-    query: {
-      status: 0,
-      start: 0,
-    },
-  }),
+const { data: comments, pending } = await useAsyncData(
+  'comments',
+  async function () {
+    const { data } = $fetch('/api/admin/comments', {
+      query: {
+        status: '0, 1',
+        start: 0,
+      },
+    });
+    return (data || []).map(c => {
+      c.user = JSON.parse((c.user || '{}') as string);
+      c.status = Number(c.status);
+      c.id = Number(c.id);
+      c.reviewing = false;
+      return c;
+    });
+  },
 );
-
-const comments = computed(() => {
-  return (data.value?.data || []).map(c => {
-    c.user = JSON.parse((c.user || '{}') as string);
-    c.status = Number(c.status);
-    c.id = Number(c.id);
-    c.reviewing = false;
-    return c;
-  });
-});
 
 async function review(comment: Comment, status: CommentStatus) {
   comment.reviewing = true;
@@ -42,7 +43,7 @@ main.container.mx-auto.py-8
     h1.text-2xl.font-bold Pending Comments
 
   .loading.loading-ring.loading-lg(v-if="pending")
-  .overflow-x-auto(v-else-if="data.data?.length")
+  .overflow-x-auto(v-else-if="comments.length")
     table.table.table-pin-rows.table-pin-cols
       thead
         tr
@@ -65,8 +66,9 @@ main.container.mx-auto.py-8
           td {{ comment.post_id }}
           td {{ CommentStatus[comment.status] }}
           th
-            .flex.flex-wrap.gap-2(v-if="comment.status === CommentStatus.Pending")
+            .flex.flex-wrap.gap-2
               button.btn.btn-outline.btn-success.btn-xs(
+                v-if="comment.status === CommentStatus.Pending || comment.status === CommentStatus.Rejected"
                 type="button",
                 :disabled="reviewing",
                 @click="review(comment, CommentStatus.Approved)"
@@ -74,6 +76,7 @@ main.container.mx-auto.py-8
                 span.loading.loading-xs.loading-spinner(v-if="reviewing")
                 | Approve
               button.btn.btn-outline.btn-warning.btn-xs(
+                v-if="comment.status === CommentStatus.Pending || comment.status === CommentStatus.Rejected"
                 type="button",
                 :disabled="reviewing",
                 @click="review(comment, CommentStatus.Rejected)"
