@@ -3,9 +3,7 @@ import pkg from './package.json' assert { type: 'json' };
 import acPkg from '../awesome-comment/package.json' assert { type: 'json' };
 
 const isProd = process.env.NODE_ENV === 'production';
-const repoUrl = isProd
-  ? 'https://unpkg.com/@roudanio/awesome-comment@latest/dist'
-  : 'http://localhost:9000';
+const repoUrl = 'https://unpkg.com/@roudanio/awesome-comment@latest/dist'; // use online ver for now
 
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
@@ -62,11 +60,11 @@ export default defineNuxtConfig({
   routeRules: {
     // pre-rendered at build time
     '/': { prerender: true },
-    '/about': { prerender: true },
-    '/contact': { prerender: true },
+    // '/about': { prerender: true },
+    // '/contact': { prerender: true },
     // pages generated on-demand, revalidates in background
     // Admin dashboard renders only on client-side
-    '/**': { ssr: false },
+    '/admin/**': { ssr: false },
     // Add cors headers on API routes
     '/api/**': { cors: true },
   },

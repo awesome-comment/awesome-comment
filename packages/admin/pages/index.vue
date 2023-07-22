@@ -1,7 +1,10 @@
 <script setup lang="ts">
 const runtime = useRuntimeConfig();
 function initAwesomeComment(): void {
-  if (!window.AwesomeComment) setTimeout(initAwesomeComment, 100);
+  if (!window.AwesomeComment) {
+    setTimeout(initAwesomeComment, 100);
+    return;
+  }
   AwesomeComment.init(
     '#comment',
     'awesome-comment-self',
