@@ -8,7 +8,7 @@ store.loadComments();
 
 <template lang="pug">
 .comments-wrapper(v-if="store.isLoaded")
-  article.p-6.text-base.bg-base-100.rounded-lg.mb-4(
+  article.p-6.text-base.bg-base-200.rounded-lg.mb-4(
     v-for="comment in store.comments"
     :key="comment.id"
     class="dark:bg-gray-900"

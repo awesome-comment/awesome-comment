@@ -1,16 +1,28 @@
 import { defineStore } from 'pinia';
 import { inject, ref } from 'vue';
-import { Comment, ResponseComment } from '@awesome-comment/core/types';
+import { Comment, ResponseBody, ResponseComment } from '@awesome-comment/core/types';
 import { CommentStatus } from '@awesome-comment/core/data';
-import { useAuth0, User } from '@auth0/auth0-vue';
+import { User } from '@auth0/auth0-vue';
 
 const useStore = defineStore('store', () => {
   const postId = inject('postId') as string;
-  const isLoaded = ref<boolean>(false);
+  const preloaded = inject('comments') as ResponseComment[];
+  const isLoaded = ref<boolean>(!!preloaded?.length);
   const start = ref<number>(0);
   const message = ref<string>('');
-  const comments = ref<Comment[]>([]);
+  const comments = ref<Comment[]>(formatComment(preloaded || []));
   const total = ref<number>(0);
+
+  function formatComment(from: ResponseComment[]): Comment[] {
+    return from.map((item: ResponseComment) => {
+      const { user, created_at: createdAt, ...rest } = item;
+      return {
+        ...rest,
+        createdAt: new Date(createdAt),
+        user: JSON.parse(item.user as string),
+      };
+    });
+  }
 
   async function loadComments() {
     message.value = '';
@@ -23,21 +35,14 @@ const useStore = defineStore('store', () => {
       return;
     }
 
-    const data = await res.json();
+    const data = (await res.json()) as ResponseBody<ResponseComment[]>;
     if (data.code !== 0) {
       message.value = 'Load comments failed. ' + data.message;
       isLoaded.value = true;
       return;
     }
 
-    comments.value = data.data.map((item: ResponseComment) => {
-      const { user, created_at: createdAt, ...rest } = item;
-      return {
-        ...rest,
-        createdAt: new Date(createdAt),
-        user: JSON.parse(item.user as string),
-      };
-    });
+    comments.value = formatComment(data.data || []);
     total.value = data.meta?.total || 0;
     isLoaded.value = true;
     return data;

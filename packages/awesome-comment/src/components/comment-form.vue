@@ -69,6 +69,7 @@ form.mb-6(
       for="ac-comment"
     ) Your comment
     textarea#ac-comment.ac-textarea.ac-textarea-bordered.bg-base-200.rounded-b-none(
+      class="focus:outline-none"
       rows="3"
       placeholder="Write a comment..."
       required

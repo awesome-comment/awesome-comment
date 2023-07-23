@@ -2,7 +2,6 @@ import postcss from './postcss.config';
 import pkg from './package.json' assert { type: 'json' };
 import acPkg from '../awesome-comment/package.json' assert { type: 'json' };
 
-const isProd = process.env.NODE_ENV === 'production';
 const repoUrl = 'https://unpkg.com/@roudanio/awesome-comment@latest/dist'; // use online ver for now
 
 // https://nuxt.com/docs/api/configuration/nuxt-config
@@ -26,13 +25,6 @@ export default defineNuxtConfig({
           content: 'width=device-width, initial-scale=1.0, user-scalable=no',
         },
       ],
-      script: [
-        {
-          src: repoUrl + '/awesome-comment.umd.js',
-          crossorigin: 'anonymous',
-          async: true,
-        },
-      ],
     },
   },
   css: [
@@ -54,6 +46,7 @@ export default defineNuxtConfig({
       acVersion: acPkg.version,
       auth0Domain: process.env.AUTH0_DOMAIN,
       auth0ClientId: process.env.AUTH0_CLIENT_ID,
+      repoUrl,
     },
   },
   postcss,

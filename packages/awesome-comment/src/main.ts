@@ -1,15 +1,19 @@
 import { createApp } from 'vue'
 import { createPinia } from 'pinia';
-import { createAuth0 } from '@auth0/auth0-vue';
+import { Auth0Plugin, createAuth0 } from '@auth0/auth0-vue';
 import './tw-daisy.css';
 import './style.css';
 import './animate.css';
 import App from './App.vue';
+import { ResponseBody, ResponseComment } from '@awesome-comment/core/types';
+
+const comments: ResponseComment[] = [];
+let preAuth0: Auth0Plugin | null = null;
 
 function init(domain: string, clientId: string) {
   const app = createApp(App);
   const pinia = createPinia();
-  const auth0 = createAuth0({
+  const auth0 = preAuth0 || createAuth0({
     domain,
     clientId,
     authorizationParams: {
@@ -35,7 +39,25 @@ const AwesomeComment = {
     app.provide('ApiBaseUrl', apiUrl);
     app.provide('postId', postId);
     app.provide('Auth0Domain', domain);
+    app.provide('comments', comments);
     app.mount(dom);
-  }
-}
+  },
+  async preload(postId: string, apiUrl: string, domain: string, clientId: string): Promise<void> {
+    preAuth0 = createAuth0({
+      domain,
+      clientId,
+      authorizationParams: {
+        redirect_uri: window.location.origin,
+      },
+    });
+    const response = await fetch(`${apiUrl}/api/comments?postId=${postId}`);
+    if (!response.ok) {
+      console.log('[Awesome comment] Failed to preload comments.');
+    }
+    const json = (await response.json()) as ResponseBody<ResponseComment[]>;
+    if (json.data) {
+      comments.push(...json.data);
+    }
+  },
+};
 export default AwesomeComment;

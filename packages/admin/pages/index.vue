@@ -1,5 +1,16 @@
 <script setup lang="ts">
 const runtime = useRuntimeConfig();
+
+useHead({
+  script: [
+    {
+      src: runtime.public.repoUrl + '/awesome-comment.umd.js',
+      crossorigin: 'anonymous',
+      async: true,
+    },
+  ],
+});
+
 function initAwesomeComment(): void {
   if (!window.AwesomeComment) {
     setTimeout(initAwesomeComment, 100);
