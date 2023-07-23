@@ -29,7 +29,7 @@ function doLogout(): void {
     p {{ store.message }}
 
   header.flex.justify-between.items-center.py-2
-    h2.text-lg.font-bold.text-neutral.my-0 Discussion ({{store.total}})
+    h2.text-lg.font-bold.text-base-content.my-0 Discussion ({{store.total}})
     span.ac-loading.ac-loading-spinner(v-if="isLoading")
     .ac-dropdown.ac-dropdown-end(v-else)
       template(v-if="isAuthenticated && user")
@@ -42,9 +42,9 @@ function doLogout(): void {
         label.ac-btn.ac-btn-ghost(v-else tabindex="0") {{user.email}}
         ul.ac-dropdown-content.z-10.ac-menu.p-2.shadow.bg-base-100.rounded-box.w-52(tabindex="0")
           li.border-b.border-neutral.pb-2.mb-2.pointer-events-none(v-if="user.picture")
-            span {{user.email}}
+            span.text-base-content {{user.email}}
           li
-            button(
+            button.border-0.bg-base-100(
               type="button"
               :disabled="isLoading"
               @click="doLogout"

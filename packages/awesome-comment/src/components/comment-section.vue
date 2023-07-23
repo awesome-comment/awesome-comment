@@ -8,7 +8,7 @@ store.loadComments();
 
 <template lang="pug">
 .comments-wrapper(v-if="store.isLoaded")
-  article.p-6.text-base.bg-base-100.rounded-lg(
+  article.p-6.text-base.bg-base-100.rounded-lg.mb-4(
     v-for="comment in store.comments"
     :key="comment.id"
     class="dark:bg-gray-900"
@@ -16,7 +16,7 @@ store.loadComments();
     @animationend="comment.isNew = false"
   )
     footer.flex.justify-between.items-center.mb-2
-      .flex.items-center.text-sm.text-gray-900(
+      .flex.items-center.text-sm.text-base-content(
         class="dark:text-white"
       )
         img.mr-2.w-6.h-6.rounded-full(

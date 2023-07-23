@@ -76,7 +76,7 @@ form.mb-6(
       v-model="comment"
     )
     .p-2.rounded-b-lg.bg-base-300.flex.items-center
-      .text-xs(class="text-neutral/50") v{{version}}
+      .text-xs(class="text-neutral-400/40") v{{version}}
       .ac-alert.ac-alert-error.mx-4(v-if="message")
         p {{message}}
       button.ac-btn.ac-btn-primary.ac-btn-sm.ml-auto(
