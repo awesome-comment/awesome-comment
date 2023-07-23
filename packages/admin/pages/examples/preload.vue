@@ -4,7 +4,7 @@ const runtime = useRuntimeConfig();
 useHead({
   script: [
     {
-      src: 'http://localhost:9000/awesome-comment.umd.js',
+      src: runtime.public.repoUrl + '/awesome-comment.umd.js',
       crossorigin: 'anonymous',
       async: true,
     },
