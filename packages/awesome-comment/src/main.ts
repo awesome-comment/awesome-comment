@@ -34,7 +34,15 @@ if (!__IS_PROD__) {
 }
 
 const AwesomeComment = {
-  init(dom: string | HTMLElement, postId: string, apiUrl: string, domain: string, clientId: string) {
+  postId: '',
+  apiUrl: '',
+  domain: '',
+  clientId: '',
+  init(dom: string | HTMLElement, postId?: string, apiUrl?: string, domain?: string, clientId?: string) {
+    postId ??= this.postId;
+    apiUrl ??= this.apiUrl;
+    domain ??= this.domain;
+    clientId ??= this.clientId;
     const app = init(domain, clientId);
     app.provide('ApiBaseUrl', apiUrl);
     app.provide('postId', postId);
@@ -43,6 +51,10 @@ const AwesomeComment = {
     app.mount(dom);
   },
   async preload(postId: string, apiUrl: string, domain: string, clientId: string): Promise<void> {
+    this.postId = postId;
+    this.apiUrl = apiUrl;
+    this.domain = domain;
+    this.clientId = clientId;
     preAuth0 = createAuth0({
       domain,
       clientId,
