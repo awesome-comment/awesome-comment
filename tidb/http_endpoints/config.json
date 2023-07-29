@@ -181,6 +181,12 @@
         "default": ""
       },
       {
+        "name": "user_id",
+        "type": "string",
+        "required": 0,
+        "default": ""
+      },
+      {
         "name": "start",
         "type": "number",
         "required": 0,
