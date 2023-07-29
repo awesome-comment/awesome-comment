@@ -7,7 +7,7 @@ USE arealme;
 
 INSERT INTO ac_comment
 (post_id, user_id, content, user, status)
-VALUES (${post_id}, ${user_id}, ${content}, ${user}, 1);
+VALUES (${post_id}, ${user_id}, ${content}, ${user}, 0);
 
 SELECT
   LAST_INSERT_ID() AS last_insert_id;

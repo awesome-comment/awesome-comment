@@ -19,6 +19,8 @@
       "timeout": 5000,
       "row_limit": 50
     },
+    "tag": "",
+    "batch_operation": 0,
     "sql_file": "sql/POST-v1-moderator-delete.sql",
     "type": "sql_endpoint",
     "return_type": "json"
@@ -49,6 +51,8 @@
       "timeout": 5000,
       "row_limit": 50
     },
+    "tag": "",
+    "batch_operation": 0,
     "sql_file": "sql/POST-v1-moderator-review.sql",
     "type": "sql_endpoint",
     "return_type": "json"
@@ -79,6 +83,8 @@
       "timeout": 5000,
       "row_limit": 50
     },
+    "tag": "",
+    "batch_operation": 0,
     "sql_file": "sql/GET-v1-moderator-get.sql",
     "type": "sql_endpoint",
     "return_type": "json"
@@ -109,6 +115,8 @@
       "timeout": 5000,
       "row_limit": 50
     },
+    "tag": "",
+    "batch_operation": 0,
     "sql_file": "sql/GET-v1-admin-get.sql",
     "type": "sql_endpoint",
     "return_type": "json"
@@ -151,6 +159,8 @@
       "timeout": 5000,
       "row_limit": 50
     },
+    "tag": "",
+    "batch_operation": 0,
     "sql_file": "sql/POST-v1-post.sql",
     "type": "sql_endpoint",
     "return_type": "json"
@@ -181,6 +191,8 @@
       "timeout": 5000,
       "row_limit": 50
     },
+    "tag": "",
+    "batch_operation": 0,
     "sql_file": "sql/GET-v1-get.sql",
     "type": "sql_endpoint",
     "return_type": "json"
