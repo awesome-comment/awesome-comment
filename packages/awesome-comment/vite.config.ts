@@ -5,12 +5,10 @@ import pkg from './package.json' assert { type: 'json' };
 // https://vitejs.dev/config/
 export default defineConfig(function ({ command }) {
   const isProd = command === 'build';
-  const apiUrl = 'https://comment.roudan.io';
 
   return {
     define: {
       __IS_PROD__: isProd,
-      __API_URL__: JSON.stringify(apiUrl),
       __VERSION__: JSON.stringify(pkg.version),
       'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV),
     },
@@ -23,6 +21,19 @@ export default defineConfig(function ({ command }) {
         fileName: (format) =>
           format === 'es' ? 'awesome-comment.js' : `awesome-comment.${format}.js`,
         formats: ['es', 'umd', 'iife'],
+      },
+      rollupOptions: {
+        output: {
+          banner: '// @AwesomeComment v' + pkg.version + '\n// https://github.com/meathill/awesome-comment',
+        },
+      }
+    },
+    server: {
+      proxy: {
+        '/api': {
+          target: 'http://localhost:3000',
+          changeOrigin: true,
+        },
       },
     },
   };

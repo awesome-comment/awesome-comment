@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import useStore from '../store';
 import { formatTime } from '../utils/time.ts';
+import { CommentStatus } from '@awesome-comment/core/data';
 
 const store = useStore();
 store.loadComments();
@@ -34,6 +35,10 @@ store.loadComments();
     p.text-gray-500(
       class="dark:text-gray-400"
     ) {{comment.content}}
+    p.italic.mt-4.text-gray-500.mb-0.text-sm(
+      v-if="comment.status === CommentStatus.Pending"
+      class="dark:text-gray-400"
+    ) comments normally got approved within 24 hours
 .pt-8.text-center(v-else)
   span.ac-loading.ac-loading-spinner
 </template>

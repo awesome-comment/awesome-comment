@@ -1,9 +1,10 @@
 <script setup lang="ts">
 const props = defineProps<{
   user: {
-    avatar?: string,
-    name?: string,
-    email?: string,
+    avatar?: string;
+    name?: string;
+    email?: string;
+    ip?: string;
   }
 }>();
 </script>
@@ -17,6 +18,7 @@ const props = defineProps<{
     .bg-neutral-focus.text-neutral-content.rounded-full.w-8
       span.text-xs.uppercase {{ user.name[0] }}
   .flex.flex-col.gap-1.w-40
-    .text-neutral.text-ellipsis.overflow-hidden {{ user.name }}
-    .text-sm.text-neutral-content.text-ellipsis.overflow-hidden {{ user.email }}
+    .text-neutral-content.truncate {{ user.name }}
+    .text-xs.text-neutral-content.truncate {{ user.email }}
+    .text-xs.text-neutral-content(v-if="user.ip") {{ user.ip }}
 </template>

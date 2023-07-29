@@ -10,14 +10,16 @@ export default defineEventHandler(async function (event): Promise<ResponseBody<C
 
   const data: Comment[] = [];
   try {
-    let url = `https://ap-northeast-1.data.tidbcloud.com/api/v1beta/app/dataapp-NFYbhmOK/endpoint/v1/moderator/get?start=${start}&`;
+    const url = 'https://ap-northeast-1.data.tidbcloud.com/api/v1beta/app/dataapp-NFYbhmOK/endpoint/v1/moderator/get';
+    const params = new URLSearchParams();
+    params.set('start', start as string);
     if (Array.isArray(status)) {
-      const st = status.map(s => `status=${s}`).join('&');
-      url += st;
+      status.forEach((item) => params.append('status', item));
     } else {
-      url += `status=${status}`;
+      params.append('status', status as string);
     }
-    const response = await digestFetch(url, null, {
+    console.log('xxx', `${url}?${params}`);
+    const response = await digestFetch(`${url}?${params}`, null, {
       method: 'GET',
       realm: 'tidb.cloud',
       username: process.env.TIDB_PUBLIC_KEY as string,

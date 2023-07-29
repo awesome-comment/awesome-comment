@@ -2,7 +2,7 @@ import { defineStore } from 'pinia';
 import { inject, ref } from 'vue';
 import { Comment, ResponseBody, ResponseComment } from '@awesome-comment/core/types';
 import { CommentStatus } from '@awesome-comment/core/data';
-import { User } from '@auth0/auth0-vue';
+import { useAuth0, User } from '@auth0/auth0-vue';
 
 const useStore = defineStore('store', () => {
   const postId = inject('postId') as string;
@@ -18,6 +18,7 @@ const useStore = defineStore('store', () => {
       const { user, created_at: createdAt, ...rest } = item;
       return {
         ...rest,
+        status: Number(item.status),
         createdAt: new Date(createdAt),
         user: JSON.parse(item.user as string),
       };
@@ -27,7 +28,21 @@ const useStore = defineStore('store', () => {
   async function loadComments() {
     message.value = '';
     const baseUrl = inject('ApiBaseUrl');
-    const res = await fetch(`${baseUrl}/api/comments?postId=${postId}&start=${start.value}`);
+    const domain = inject('Auth0Domain') as string;
+    const auth0 = useAuth0();
+    const accessToken = await auth0.getAccessTokenSilently();
+    const params = new URLSearchParams();
+    params.append('postId', postId);
+    params.append('start', start.value.toString());
+    if (accessToken) {
+      params.append('domain', domain || '');
+    }
+    const res = await fetch(`${baseUrl}/api/comments?${params}`, {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
 
     if (!res.ok) {
       message.value = 'Load comments failed. ' + res.statusText;
@@ -68,7 +83,7 @@ const useStore = defineStore('store', () => {
         name: nickname || name,
       },
       userId: sub,
-      status: CommentStatus.Approved,
+      status: CommentStatus.Pending,
       isNew: true,
     });
     total.value++;

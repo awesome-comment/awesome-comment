@@ -1,6 +1,6 @@
 {
   "name": "@awesome-comment/admin",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "private": true,
   "scripts": {
     "build": "nuxt build",
@@ -10,12 +10,12 @@
     "postinstall": "nuxt prepare"
   },
   "devDependencies": {
-    "@nuxt/content": "^2.7.1",
+    "@nuxt/content": "^2.7.2",
     "@nuxt/devtools": "latest",
     "@pinia/nuxt": "^0.4.11",
-    "@types/node": "^20.4.4",
+    "@types/node": "^20.4.5",
     "autoprefixer": "^10.4.14",
-    "daisyui": "^3.3.1",
+    "daisyui": "^3.5.0",
     "nuxt": "^3.6.5",
     "postcss": "^8.4.27",
     "pug": "^3.0.2",
@@ -26,6 +26,6 @@
     "@awesome-comment/core": "workspace:*",
     "@meathill/digest-fetch": "^0.1.3",
     "@vercel/edge-config": "^0.2.1",
-    "pinia": "^2.1.4"
+    "pinia": "^2.1.6"
   }
 }

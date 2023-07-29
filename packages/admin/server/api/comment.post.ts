@@ -45,6 +45,10 @@ export default defineEventHandler(async function (event): Promise<ResponseBody<n
     email,
     sub,
   } = user;
+  const ip = headers[ 'x-real-ip' ]
+    || headers[ 'x-forwarded-for' ]
+    || headers[ 'x-client-ip' ]
+    || '';
   let id: number | null = null;
   try {
     const url = 'https://ap-northeast-1.data.tidbcloud.com/api/v1beta/app/dataapp-NFYbhmOK/endpoint/v1/post';
@@ -58,13 +62,14 @@ export default defineEventHandler(async function (event): Promise<ResponseBody<n
           email,
           name: nickname || name,
           avatar: picture,
+          ip,
         }),
       },
       {
         method: 'POST',
         realm: 'tidb.cloud',
-        username: process.env.TIDB_PUBLIC_KEY,
-        password: process.env.TIDB_PRIVATE_KEY,
+        username: process.env.TIDB_PUBLIC_KEY as string,
+        password: process.env.TIDB_PRIVATE_KEY as string,
       },
     );
     console.log('[admin]:', body.comment, body.postId, sub);
