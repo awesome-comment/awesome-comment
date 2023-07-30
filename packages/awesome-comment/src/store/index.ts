@@ -28,21 +28,10 @@ const useStore = defineStore('store', () => {
   async function loadComments() {
     message.value = '';
     const baseUrl = inject('ApiBaseUrl');
-    const domain = inject('Auth0Domain') as string;
-    const auth0 = useAuth0();
-    const accessToken = await auth0.getAccessTokenSilently();
     const params = new URLSearchParams();
     params.append('postId', postId);
     params.append('start', start.value.toString());
-    if (accessToken) {
-      params.append('domain', domain || '');
-    }
-    const res = await fetch(`${baseUrl}/api/comments?${params}`, {
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${accessToken}`,
-      },
-    });
+    const res = await fetch(`${baseUrl}/api/comments?${params}`);
 
     if (!res.ok) {
       message.value = 'Load comments failed. ' + res.statusText;
