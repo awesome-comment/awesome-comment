@@ -1,5 +1,37 @@
 [
   {
+    "name": "/v1/mod",
+    "description": "",
+    "method": "GET",
+    "endpoint": "/v1/mod/get",
+    "data_source": {
+      "cluster_id": 1379661944646254419
+    },
+    "params": [
+      {
+        "name": "status",
+        "type": "string",
+        "required": 1,
+        "default": ""
+      },
+      {
+        "name": "start",
+        "type": "number",
+        "required": 0,
+        "default": "0"
+      }
+    ],
+    "settings": {
+      "timeout": 5000,
+      "row_limit": 50
+    },
+    "tag": "Default",
+    "batch_operation": 0,
+    "sql_file": "sql/GET-v1-mod-get.sql",
+    "type": "sql_endpoint",
+    "return_type": "json"
+  },
+  {
     "name": "delete comment",
     "description": "",
     "method": "POST",
