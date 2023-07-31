@@ -1,5 +1,6 @@
 <script setup lang="ts">
 const props = defineProps<{
+  from: string;
   user: {
     avatar?: string;
     name?: string;
@@ -7,6 +8,11 @@ const props = defineProps<{
     ip?: string;
   }
 }>();
+
+const from = computed(() => {
+  if (props.from.includes('google')) return 'google';
+  return props.from;
+});
 </script>
 
 <template lang="pug">
@@ -21,4 +27,10 @@ const props = defineProps<{
     .truncate {{ user.name }}
     .text-xs.truncate {{ user.email }}
     .text-xs(v-if="user.ip") {{ user.ip }}
+    .text-xs.capitalize
+      i.bi.mr-1(
+        v-if="from !== 'auth0'"
+        :class="'bi-' + from"
+      )
+      | {{ from }}
 </template>

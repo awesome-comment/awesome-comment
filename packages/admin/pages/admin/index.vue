@@ -4,6 +4,7 @@ import { CommentStatus } from '@awesome-comment/core/data';
 
 type RowItem = Comment & {
   reviewing: boolean;
+  from: string;
 }
 
 const message = ref<string>('');
@@ -24,6 +25,7 @@ const { data: comments, pending } = await useAsyncData<RowItem[]>(
       c.status = Number(c.status);
       c.id = Number(c.id);
       c.reviewing = false;
+      c.from = c.user_id.split('|')[0];
       return c;
     });
   },
@@ -81,7 +83,10 @@ main.container.mx-auto.py-8
           td {{ comment.id }}
           td {{ comment.content }}
           td
-            user-cell(:user="comment.user")
+            user-cell(
+              :user="comment.user"
+              :from="comment.from"
+            )
           td {{ comment.created_at }}
           td {{ comment.post_id }}
           td {{ CommentStatus[comment.status] }}
