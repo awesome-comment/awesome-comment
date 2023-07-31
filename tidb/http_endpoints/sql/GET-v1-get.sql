@@ -8,9 +8,6 @@ USE arealme;
 SELECT *
 FROM ac_comment
 WHERE post_id=${post_id}
-  AND (
-    status=1
-    OR (user_id=${user_id} AND status=0)
-  )
+  AND status=1
 ORDER BY id DESC
 LIMIT ${start}, 20;
