@@ -1,11 +1,13 @@
 import digestFetch, { FetchError } from '@meathill/digest-fetch';
 import { ResponseBody } from '@awesome-comment/core/types';
+import { getTidbKey } from '~/utils/tidb';
 
 export default defineEventHandler(async function (event): Promise<ResponseBody<string>> {
   const id = event.context.params?.id;
 
   try {
     const url = 'https://ap-northeast-1.data.tidbcloud.com/api/v1beta/app/dataapp-NFYbhmOK/endpoint/v1/moderator/delete';
+    const kv = await getTidbKey();
     const response = await digestFetch(url,
       {
         id,
@@ -13,8 +15,7 @@ export default defineEventHandler(async function (event): Promise<ResponseBody<s
       {
         method: 'POST',
         realm: 'tidb.cloud',
-        username: process.env.TIDB_PUBLIC_KEY as string,
-        password: process.env.TIDB_PRIVATE_KEY as string,
+        ...kv,
       },
     );
     const json = await response.json();

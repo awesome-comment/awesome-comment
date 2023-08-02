@@ -1,5 +1,6 @@
 import digestFetch, { FetchError } from '@meathill/digest-fetch';
 import { Comment, ResponseBody } from '@awesome-comment/core/types';
+import { getTidbKey } from '~/utils/tidb';
 
 export default defineEventHandler(async function (event): Promise<ResponseBody<Comment[]>> {
   const query = getQuery(event);
@@ -19,11 +20,11 @@ export default defineEventHandler(async function (event): Promise<ResponseBody<C
       params.append('status', status as string);
     }
     console.log('xxx', `${url}?${params}`);
+    const kv = await getTidbKey();
     const response = await digestFetch(`${url}?${params}`, null, {
       method: 'GET',
       realm: 'tidb.cloud',
-      username: process.env.TIDB_PUBLIC_KEY as string,
-      password: process.env.TIDB_PRIVATE_KEY as string,
+      ...kv,
     });
     const result = await response.json();
     data.push(...result.data.rows);
