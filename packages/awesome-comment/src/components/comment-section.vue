@@ -5,6 +5,11 @@ import { CommentStatus } from '@awesome-comment/core/data';
 
 const store = useStore();
 store.loadComments();
+
+function loadMore() {
+  store.start += 20;
+  store.loadComments();
+}
 </script>
 
 <template lang="pug">
@@ -39,6 +44,15 @@ store.loadComments();
       v-if="comment.status === CommentStatus.Pending"
       class="dark:text-gray-400"
     ) comments normally got approved within 24 hours
+
+  button.ac-btn.ac-btn-neutral.ac-btn-sm.ac-btn-block(
+    v-if="store.hasMore"
+    type="button"
+    @click="loadMore"
+    :disabled="store.loadingMore"
+  )
+    span.ac-loading.ac-loading-xs.ac-loading-spinner(v-if="store.loadingMore")
+    | Load More
 .pt-8.text-center(v-else)
   span.ac-loading.ac-loading-spinner
 </template>
