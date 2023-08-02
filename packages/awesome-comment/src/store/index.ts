@@ -53,7 +53,7 @@ const useStore = defineStore('store', () => {
 
     comments.value.push(...formatComment(data.data || []));
     const count = data.data?.length || 0;
-    if (count > 20) {
+    if (count >= 20) {
       hasMore.value = true;
     } else if (count === 0) {
       hasMore.value = false;

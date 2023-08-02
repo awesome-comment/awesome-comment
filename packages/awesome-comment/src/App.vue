@@ -29,7 +29,7 @@ function doLogout(): void {
     p {{ store.message }}
 
   header.flex.justify-between.items-center.py-2
-    h2.text-lg.font-bold.text-base-content.my-0 Discussion ({{ store.total > 20 ? '20+' : store.total }})
+    h2.text-lg.font-bold.text-base-content.my-0 Discussion ({{ (store.total > 20 || (store.total === 20 && store.hasMore)) ? '20+' : store.total }})
     span.ac-loading.ac-loading-spinner(v-if="isLoading")
     .ac-dropdown.ac-dropdown-end(v-else)
       template(v-if="isAuthenticated && user")
