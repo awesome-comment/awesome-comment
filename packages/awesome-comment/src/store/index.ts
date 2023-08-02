@@ -2,7 +2,7 @@ import { defineStore } from 'pinia';
 import { inject, ref } from 'vue';
 import { Comment, ResponseBody, ResponseComment } from '@awesome-comment/core/types';
 import { CommentStatus } from '@awesome-comment/core/data';
-import { useAuth0, User } from '@auth0/auth0-vue';
+import { User } from '@auth0/auth0-vue';
 
 const useStore = defineStore('store', () => {
   const postId = inject('postId') as string;

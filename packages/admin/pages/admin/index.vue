@@ -58,26 +58,27 @@ async function doDelete(comment: RowItem, index: number): Promise<void> {
 </script>
 
 <template lang="pug">
-main.container.mx-auto.py-8
-  header.flex.items-center.mb-4
+main.container.mx-auto.p-4(class="sm:px-0 sm:py-8")
+  header.flex.flex-col.mb-4.gap-4(class="sm:flex-row sm:items-center")
     h1.text-2xl.font-bold Comments Management
+    .form-control.flex-row.gap-2(class="sm:ml-auto")
+      label.label
+        span.text-xs Status
+      select.select.select-bordered.select-sm(v-model="filterStatus")
+        option(value="all") All
+        option(v-for="key in CSKeys", :value="key", :key="key") {{ CommentStatus[key] }}
 
   .overflow-x-auto
     table.table.table-pin-rows.table-pin-cols
       thead
         tr
-          td ID
-          td Content
-          td User
-          td Time
-          td Post
-          td.form-control.w-full.max-w-xs
-            label.label
-              span.text-xs Status
-            select.select.select-bordered.select-sm(v-model="filterStatus")
-              option(value="all") All
-              option(v-for="key in CSKeys", :value="key", :key="key") {{ CommentStatus[key] }}
-          td
+          th ID
+          th Content
+          th User
+          th Time
+          th Post
+          th Status
+          th
       tbody(v-if="comments.length && !pending")
         tr(v-for="(comment, index) in comments" :key="comment.id")
           td {{ comment.id }}
@@ -92,24 +93,27 @@ main.container.mx-auto.py-8
           td {{ CommentStatus[comment.status] }}
           th
             .flex.flex-wrap.gap-2
-              button.btn.btn-outline.btn-success.btn-xs(
+              button.btn.btn-outline.btn-success.btn-sm(
                 v-if="comment.status === CommentStatus.Pending || comment.status === CommentStatus.Rejected"
-                type="button",
+                type="button"
+                class="sm:btn-xs"
                 :disabled="comment.reviewing",
                 @click="doReview(comment, CommentStatus.Approved)"
               )
                 span.loading.loading-xs.loading-spinner(v-if="comment.reviewing")
                 | Approve
-              button.btn.btn-outline.btn-warning.btn-xs(
+              button.btn.btn-outline.btn-warning.btn-sm(
                 v-if="comment.status === CommentStatus.Pending || comment.status === CommentStatus.Approved"
                 type="button",
+                class="sm:btn-xs"
                 :disabled="comment.reviewing",
                 @click="doReview(comment, CommentStatus.Rejected)"
               )
                 span.loading.loading-xs.loading-spinner(v-if="comment.reviewing")
                 | Reject
-              button.btn.btn-outline.btn-error.btn-xs(
+              button.btn.btn-outline.btn-error.btn-sm(
                 type="button",
+                class="sm:btn-xs"
                 :disabled="comment.reviewing",
                 @click="doDelete(comment, index)"
               )
