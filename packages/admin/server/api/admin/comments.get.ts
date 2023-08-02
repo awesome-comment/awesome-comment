@@ -19,7 +19,6 @@ export default defineEventHandler(async function (event): Promise<ResponseBody<C
     } else {
       params.append('status', status as string);
     }
-    console.log('xxx', `${url}?${params}`);
     const kv = await getTidbKey();
     const response = await digestFetch(`${url}?${params}`, null, {
       method: 'GET',

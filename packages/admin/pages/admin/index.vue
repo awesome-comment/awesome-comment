@@ -6,33 +6,43 @@ type RowItem = Comment & {
   reviewing: boolean;
   from: string;
 }
-
+const start = ref<number>(0);
+const hasMore = ref<boolean>(false);
+const loadingMore = ref<boolean>(false);
 const message = ref<string>('');
 const filterStatus = ref<string>('all');
 const CSKeys = Object.values(CommentStatus).filter((v) => !isNaN(Number(v)));
+const comments = ref<RowItem[]>([]);
 
-const { data: comments, pending } = await useAsyncData<RowItem[]>(
+const { data, pending } = await useAsyncData<RowItem[]>(
   'comments',
   async function () {
     const { data } = await $fetch('/api/admin/comments', {
       query: {
         status: filterStatus.value === 'all' ? ['0' ,'1'] : filterStatus.value,
-        start: 0,
+        start: start.value,
       },
     });
-    return (data || []).map(c => {
+    hasMore.value = data?.length === 20;
+    const cms = (data || []).map(c => {
       c.user = JSON.parse((c.user || '{}') as string);
       c.status = Number(c.status);
       c.id = Number(c.id);
       c.reviewing = false;
-      c.from = c.user_id.split('|')[0];
+      c.from = c.user_id.split('|')[ 0 ];
       return c;
     });
+    comments.value.push(...cms);
+    return cms;
   },
   {
-    watch: [filterStatus],
+    watch: [filterStatus, start],
   }
 );
+
+function loadMore() {
+  start.value += 20;
+}
 
 async function doReview(comment: RowItem, status: CommentStatus) {
   comment.reviewing = true;
@@ -97,7 +107,7 @@ main.container.mx-auto.p-4(class="sm:px-0 sm:py-8")
                 v-if="comment.status === CommentStatus.Pending || comment.status === CommentStatus.Rejected"
                 type="button"
                 class="sm:btn-xs"
-                :disabled="comment.reviewing",
+                :disabled="comment.reviewing || loadingMore",
                 @click="doReview(comment, CommentStatus.Approved)"
               )
                 span.loading.loading-xs.loading-spinner(v-if="comment.reviewing")
@@ -106,7 +116,7 @@ main.container.mx-auto.p-4(class="sm:px-0 sm:py-8")
                 v-if="comment.status === CommentStatus.Pending || comment.status === CommentStatus.Approved"
                 type="button",
                 class="sm:btn-xs"
-                :disabled="comment.reviewing",
+                :disabled="comment.reviewing || loadingMore",
                 @click="doReview(comment, CommentStatus.Rejected)"
               )
                 span.loading.loading-xs.loading-spinner(v-if="comment.reviewing")
@@ -114,11 +124,20 @@ main.container.mx-auto.p-4(class="sm:px-0 sm:py-8")
               button.btn.btn-outline.btn-error.btn-sm(
                 type="button",
                 class="sm:btn-xs"
-                :disabled="comment.reviewing",
+                :disabled="comment.reviewing || loadingMore",
                 @click="doDelete(comment, index)"
               )
                 span.loading.loading-xs.loading-spinner(v-if="comment.reviewing")
                 | Delete
+
+    button.mt-2.btn.btn-neutral.btn-sm.btn-block(
+      v-if="hasMore",
+      type="button",
+      :disabled="loadingMore",
+      @click="loadMore",
+    )
+      span.loading.loading-xs.loading-spinner(v-if="loadingMore")
+      | Load More
 
     .w-full.h-32.flex.items-center.justify-center(v-if="pending")
       .loading.loading-ring.loading-lg
