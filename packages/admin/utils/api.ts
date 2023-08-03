@@ -16,3 +16,7 @@ export async function getUser(accessToken: string, domain: string): Promise<User
   }
   return await response.json();
 }
+
+export function getCacheKey(postId: string): string {
+  return `comments-${postId}`;
+}

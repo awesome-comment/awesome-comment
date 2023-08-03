@@ -40,6 +40,11 @@ export default defineNuxtConfig({
       },
     ],
   ],
+  nitro: {
+    storage: {
+      data: { driver: 'vercelKV' },
+    },
+  },
   runtimeConfig: {
     public: {
       version: pkg.version,
