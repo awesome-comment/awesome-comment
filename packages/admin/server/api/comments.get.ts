@@ -1,7 +1,6 @@
 import digestFetch, { FetchError } from '@meathill/digest-fetch';
 import { Comment, ResponseBody } from '@awesome-comment/core/types';
 import { getTidbKey } from '~/utils/tidb';
-import { getCacheKey } from '~/utils/api';
 
 export default defineEventHandler(async function (event): Promise<ResponseBody<Comment[]>> {
   const query = getQuery(event);
@@ -14,16 +13,6 @@ export default defineEventHandler(async function (event): Promise<ResponseBody<C
       statusCode: 404,
       message: 'Missing post id',
     });
-  }
-
-  const storage = useStorage('data');
-  const key = getCacheKey(postId as string);
-  const stored = await storage.getItem(key) as Comment[];
-  if (stored) {
-    return {
-      code: 0,
-      data: stored,
-    };
   }
 
   const data: Comment[] = [];
@@ -47,10 +36,6 @@ export default defineEventHandler(async function (event): Promise<ResponseBody<C
       message,
     });
   }
-
-  await storage.setItem(key, data, {
-    ttl: 60 * 60,
-  });
 
   return {
     code: 0,

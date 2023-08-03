@@ -1,7 +1,6 @@
 import digestFetch, { FetchError } from '@meathill/digest-fetch';
 import { ResponseBody } from '@awesome-comment/core/types';
 import { getTidbKey } from '~/utils/tidb';
-import { getCacheKey } from '~/utils/api';
 
 export default defineEventHandler(async function (event): Promise<ResponseBody<string>> {
   const id = event.context.params?.id;
@@ -40,11 +39,6 @@ export default defineEventHandler(async function (event): Promise<ResponseBody<s
       message,
     });
   }
-
-  // clear cache
-  const storage = useStorage('data');
-  const key = getCacheKey(id as string);
-  await storage.removeItem(key);
 
   return {
     code: 0,
