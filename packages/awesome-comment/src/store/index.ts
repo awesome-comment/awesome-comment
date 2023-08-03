@@ -55,7 +55,7 @@ const useStore = defineStore('store', () => {
     const count = data.data?.length || 0;
     if (count >= 20) {
       hasMore.value = true;
-    } else if (count === 0) {
+    } else {
       hasMore.value = false;
     }
     total.value += count;

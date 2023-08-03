@@ -33,7 +33,7 @@ const { data, pending } = await useAsyncData<RowItem[]>(
       return c;
     });
     comments.value.push(...cms);
-    return cms;
+    return comments;
   },
   {
     watch: [filterStatus, start],
