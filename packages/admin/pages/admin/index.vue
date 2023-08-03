@@ -25,7 +25,7 @@ const { data: comments, pending } = await useAsyncData<RowItem[]>(
       c.status = Number(c.status);
       c.id = Number(c.id);
       c.reviewing = false;
-      c.from = c.user_id.split('|')[0];
+      c.from = c.user_id.split('|')[ 0 ];
       return c;
     });
   },
