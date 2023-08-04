@@ -8,6 +8,5 @@ USE arealme;
 SELECT *
 FROM ac_comment
 WHERE user_id=${user_id}
-  AND status=${status}
 ORDER BY created_at DESC
 LIMIT ${start}, 20;

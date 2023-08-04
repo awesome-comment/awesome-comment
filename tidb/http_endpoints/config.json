@@ -16,13 +16,6 @@
         "description": ""
       },
       {
-        "name": "status",
-        "type": "string",
-        "required": 1,
-        "default": "",
-        "description": ""
-      },
-      {
         "name": "start",
         "type": "number",
         "required": 0,
