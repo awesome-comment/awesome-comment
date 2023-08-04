@@ -8,5 +8,5 @@ USE arealme;
 SELECT *
 FROM ac_comment
 WHERE user_id=${user_id}
-ORDER BY created_at DESC
+ORDER BY id DESC
 LIMIT ${start}, 20;
