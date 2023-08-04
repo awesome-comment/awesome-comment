@@ -198,6 +198,13 @@
         "required": 0,
         "default": "",
         "description": ""
+      },
+      {
+        "name": "status",
+        "type": "number",
+        "required": 0,
+        "default": "0",
+        "description": ""
       }
     ],
     "settings": {
