@@ -14,7 +14,7 @@ const filterStatus = ref<string>('all');
 const CSKeys = Object.values(CommentStatus).filter((v) => !isNaN(Number(v)));
 const comments = ref<RowItem[]>([]);
 
-const { data, pending } = await useAsyncData<RowItem[]>(
+const { data, pending } = await useAsyncData(
   'comments',
   async function () {
     const { data } = await $fetch('/api/admin/comments', {
@@ -65,6 +65,9 @@ async function doDelete(comment: RowItem, index: number): Promise<void> {
   comments.value.splice(index, 1);
   comment.reviewing = false;
 }
+function onFilterChange(): void {
+  comments.value.length = 0;
+}
 </script>
 
 <template lang="pug">
@@ -74,7 +77,10 @@ main.container.mx-auto.p-4(class="sm:px-0 sm:py-8")
     .form-control.flex-row.gap-2(class="sm:ml-auto")
       label.label
         span.text-xs Status
-      select.select.select-bordered.select-sm(v-model="filterStatus")
+      select.select.select-bordered.select-sm(
+        v-model="filterStatus"
+        @change="onFilterChange"
+      )
         option(value="all") All
         option(v-for="key in CSKeys", :value="key", :key="key") {{ CommentStatus[key] }}
 
