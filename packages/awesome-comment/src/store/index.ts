@@ -12,6 +12,9 @@ const useStore = defineStore('store', () => {
   const message = ref<string>('');
   const comments = ref<Comment[]>(formatComment(preloaded || []));
   const total = ref<number>(0);
+  const baseUrl = inject('ApiBaseUrl');
+  const loadingMore = ref<boolean>(false);
+  const hasMore = ref<boolean>(false);
 
   function formatComment(from: ResponseComment[]): Comment[] {
     return from.map((item: ResponseComment) => {
@@ -27,7 +30,7 @@ const useStore = defineStore('store', () => {
 
   async function loadComments() {
     message.value = '';
-    const baseUrl = inject('ApiBaseUrl');
+    loadingMore.value = true;
     const params = new URLSearchParams();
     params.append('postId', postId);
     params.append('start', start.value.toString());
@@ -36,6 +39,7 @@ const useStore = defineStore('store', () => {
     if (!res.ok) {
       message.value = 'Load comments failed. ' + res.statusText;
       isLoaded.value = true;
+      loadingMore.value = false;
       return;
     }
 
@@ -43,12 +47,20 @@ const useStore = defineStore('store', () => {
     if (data.code !== 0) {
       message.value = 'Load comments failed. ' + data.message;
       isLoaded.value = true;
+      loadingMore.value = false;
       return;
     }
 
-    comments.value = formatComment(data.data || []);
-    total.value = data.meta?.total || 0;
+    comments.value.push(...formatComment(data.data || []));
+    const count = data.data?.length || 0;
+    if (count >= 20) {
+      hasMore.value = true;
+    } else {
+      hasMore.value = false;
+    }
+    total.value += count;
     isLoaded.value = true;
+    loadingMore.value = false;
     return data;
   }
   function addComment(id: number, comment: string, user: User): void {
@@ -84,6 +96,9 @@ const useStore = defineStore('store', () => {
     postId,
     comments,
     total,
+    start,
+    hasMore,
+    loadingMore,
 
     loadComments,
     addComment,
