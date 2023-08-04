@@ -1,5 +1,7 @@
 {
   "app_id": "dataapp-NFYbhmOK",
   "app_name": "arealme",
-  "app_type": "dataapi"
+  "app_type": "dataapp",
+  "description": "",
+  "app_version": "1.0.0"
 }

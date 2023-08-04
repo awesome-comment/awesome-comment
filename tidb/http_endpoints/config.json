@@ -1,5 +1,46 @@
 [
   {
+    "name": "get comment by user",
+    "description": "",
+    "method": "GET",
+    "endpoint": "/v1/user",
+    "data_source": {
+      "cluster_id": 1379661944646254419
+    },
+    "params": [
+      {
+        "name": "user_id",
+        "type": "string",
+        "required": 1,
+        "default": "",
+        "description": ""
+      },
+      {
+        "name": "status",
+        "type": "string",
+        "required": 1,
+        "default": "",
+        "description": ""
+      },
+      {
+        "name": "start",
+        "type": "number",
+        "required": 0,
+        "default": "",
+        "description": ""
+      }
+    ],
+    "settings": {
+      "timeout": 5000,
+      "row_limit": 50
+    },
+    "tag": "Default",
+    "batch_operation": 0,
+    "sql_file": "sql/GET-v1-user.sql",
+    "type": "sql_endpoint",
+    "return_type": "json"
+  },
+  {
     "name": "delete comment",
     "description": "",
     "method": "POST",
@@ -12,7 +53,8 @@
         "name": "id",
         "type": "number",
         "required": 1,
-        "default": ""
+        "default": "",
+        "description": ""
       }
     ],
     "settings": {
@@ -38,13 +80,15 @@
         "name": "status",
         "type": "number",
         "required": 1,
-        "default": ""
+        "default": "",
+        "description": ""
       },
       {
         "name": "id",
         "type": "number",
         "required": 1,
-        "default": ""
+        "default": "",
+        "description": ""
       }
     ],
     "settings": {
@@ -70,13 +114,15 @@
         "name": "status",
         "type": "string",
         "required": 1,
-        "default": "0"
+        "default": "",
+        "description": ""
       },
       {
         "name": "start",
         "type": "number",
         "required": 0,
-        "default": "0"
+        "default": "0",
+        "description": ""
       }
     ],
     "settings": {
@@ -102,13 +148,15 @@
         "name": "status",
         "type": "number",
         "required": 1,
-        "default": "0"
+        "default": "0",
+        "description": ""
       },
       {
         "name": "start",
         "type": "number",
         "required": 0,
-        "default": "0"
+        "default": "0",
+        "description": ""
       }
     ],
     "settings": {
@@ -134,25 +182,29 @@
         "name": "post_id",
         "type": "string",
         "required": 1,
-        "default": ""
+        "default": "",
+        "description": ""
       },
       {
         "name": "user_id",
         "type": "string",
         "required": 1,
-        "default": ""
+        "default": "",
+        "description": ""
       },
       {
         "name": "content",
         "type": "string",
         "required": 1,
-        "default": ""
+        "default": "",
+        "description": ""
       },
       {
         "name": "user",
         "type": "string",
         "required": 0,
-        "default": ""
+        "default": "",
+        "description": ""
       }
     ],
     "settings": {
@@ -178,13 +230,15 @@
         "name": "post_id",
         "type": "string",
         "required": 1,
-        "default": ""
+        "default": "",
+        "description": ""
       },
       {
         "name": "start",
         "type": "number",
         "required": 0,
-        "default": "0"
+        "default": "0",
+        "description": ""
       }
     ],
     "settings": {
