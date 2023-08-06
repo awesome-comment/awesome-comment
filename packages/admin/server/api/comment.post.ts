@@ -1,6 +1,7 @@
 import { ResponseBody, User } from '@awesome-comment/core/types';
+import { CommentStatus } from '@awesome-comment/core/data';
 import digestFetch, { FetchError } from '@meathill/digest-fetch';
-import { getUser } from '~/utils/api';
+import { getUser, getUserComments } from '~/utils/api';
 import { getTidbKey } from '~/utils/tidb';
 
 export default defineEventHandler(async function (event): Promise<ResponseBody<number>> {
@@ -46,6 +47,41 @@ export default defineEventHandler(async function (event): Promise<ResponseBody<n
     email,
     sub,
   } = user;
+  let status = 0;
+  try {
+    const history = await getUserComments(sub);
+    const lastCommentTime = new Date(history[ 0 ].created_at);
+    // users can only post once every 30 seconds
+    if (Date.now() - lastCommentTime.getTime() < 3e4) {
+      throw Error('You can post comment once in 30 seconds.');
+    }
+    // if user has 2 or more pending comments, they cannot post new comment
+    if (history.filter(c => Number(c.status) === CommentStatus.Pending).length >= 2) {
+      console.log(`user_id: ${sub} have 2 or more pending comments, cannot post new comment.`);
+      throw createError({
+        statusCode: 405,
+        message: 'You have 2 or more pending comments. Please wait for approval first.',
+      });
+    } else if (history.filter(c => Number(c.status) === CommentStatus.Approved).length >= 2) {
+      // if user has 2 or more approved comments, they can post comment freely
+      console.log(`user_id: ${sub} can post comment freely.`);
+      status = 1;
+    } else if (history.filter(c => Number(c.status) === CommentStatus.Rejected).length >= 5) {
+      // if user has 5 or more rejected comments, they will be keep out until we give them a pass
+      console.log(`user_id: ${sub} have 5 or more rejected comments, is banned currently.`);
+      throw createError({
+        statusCode: 405,
+        message: 'You have too many rejected comments. You are not allowed to post comment.',
+      });
+    }
+
+  } catch (e) {
+    throw createError({
+      statusCode: 405,
+      message: (e as Error).message || String(e) || 'Cannot get comment history for this user. ',
+    });
+  }
+
   const ip = headers[ 'x-real-ip' ]
     || headers[ 'x-forwarded-for' ]
     || headers[ 'x-client-ip' ]
@@ -66,6 +102,7 @@ export default defineEventHandler(async function (event): Promise<ResponseBody<n
           avatar: picture,
           ip,
         }),
+        status,
       },
       {
         method: 'POST',
