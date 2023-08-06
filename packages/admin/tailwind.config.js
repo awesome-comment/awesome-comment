@@ -12,13 +12,17 @@ export default {
     './app.vue',
   ],
   theme: {
-    extend: {},
+    extend: {
+      lineHeight: {
+        16: '4rem',
+      },
+    },
   },
   plugins: [
     typography,
     DaisyUI,
   ],
   daisyui: {
-    themes: ['light', 'dark'],
+    themes: ['cupcake', 'dark'],
   },
 }

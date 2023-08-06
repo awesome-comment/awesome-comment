@@ -11,8 +11,15 @@ header.navbar.bg-base-200
       ul.menu.menu-horizontal
         li
           nuxt-link(
+            external
+            to="https://github.com/meathill/awesome-comment"
+          )
+            i.bi.bi-github
+            | GitHub
+        li
+          nuxt-link(
             to="/admin"
           )
-            i.bi.bi-list-check.mr-2
+            i.bi.bi-list-check
             | Admin
 </template>
