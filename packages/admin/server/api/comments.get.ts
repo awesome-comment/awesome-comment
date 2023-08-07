@@ -20,6 +20,7 @@ export default defineEventHandler(async function (event): Promise<ResponseBody<C
   const key = getCacheKey(postId as string);
   const stored = await storage.getItem(key) as Comment[];
   if (stored) {
+    console.log('[cache] get comments from cache: ', key);
     return {
       code: 0,
       data: stored,

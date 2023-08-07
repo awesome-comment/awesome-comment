@@ -26,23 +26,18 @@ export function getCacheKey(postId: string): string {
 
 export async function getUserComments(userId: string): Promise<ResponseComment[]> {
   const data: ResponseComment[] = [];
-  try {
-    const url = 'https://ap-northeast-1.data.tidbcloud.com/api/v1beta/app/dataapp-NFYbhmOK/endpoint/v1/user';
-    const params = new URLSearchParams();
-    params.set('user_id', userId as string);
-    params.set('start', '0');
-    // params.set('status', status.toString());
-    const kv = await getTidbKey();
-    const response = await digestFetch(`${url}?${params}`, null, {
-      method: 'GET',
-      realm: 'tidb.cloud',
-      ...kv,
-    });
-    const result = await response.json();
-    data.push(...result.data.rows);
-  } catch (e) {
-    const message = (e as Error).message || String(e);
-    console.error(message);
-  }
+  const url = 'https://ap-northeast-1.data.tidbcloud.com/api/v1beta/app/dataapp-NFYbhmOK/endpoint/v1/user';
+  const params = new URLSearchParams();
+  params.set('user_id', userId as string);
+  params.set('start', '0');
+  // params.set('status', status.toString());
+  const kv = await getTidbKey();
+  const response = await digestFetch(`${url}?${params}`, null, {
+    method: 'GET',
+    realm: 'tidb.cloud',
+    ...kv,
+  });
+  const result = await response.json();
+  data.push(...result.data.rows);
   return data;
 }

@@ -42,10 +42,10 @@ export default defineEventHandler(async function (event): Promise<ResponseBody<s
     });
   }
 
-  if (body.status === CommentStatus.Approved) {
+  if (body.status === CommentStatus.Approved && body.postId) {
     // clear cache
     const storage = useStorage('data');
-    const key = getCacheKey(id as string);
+    const key = getCacheKey(body.postId);
     await storage.removeItem(key);
   }
 
