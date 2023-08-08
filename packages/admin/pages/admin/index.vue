@@ -10,7 +10,7 @@ const start = ref<number>(0);
 const hasMore = ref<boolean>(false);
 const loadingMore = ref<boolean>(false);
 const message = ref<string>('');
-const filterStatus = ref<string>('all');
+const filterStatus = ref<CommentStatus | 'all'>(CommentStatus.Pending);
 const CSKeys = Object.values(CommentStatus).filter((v) => !isNaN(Number(v)));
 const comments = ref<RowItem[]>([]);
 
