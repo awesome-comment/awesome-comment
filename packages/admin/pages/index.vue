@@ -28,8 +28,8 @@ onMounted(initAwesomeComment);
 </script>
 
 <template lang="pug">
-main.container.mx-auto.py-8.flex.gap-4
-  .flex-none(class="w-1/2")
+main.container.mx-auto.py-8.flex.flex-col.gap-4.px-4(class="sm:flex-row sm:px-0")
+  .flex-none(class="sm:w-1/2")
     .hero.bg-base-200.rounded.mb-4
       .hero-content.py-6
         div
@@ -43,8 +43,8 @@ main.container.mx-auto.py-8.flex.gap-4
             | Thanks for Open Source Community.
 
           h2.text-2xl.font-bold.mb-4.text-center Contributors
-          .flex.gap-4.justify-center
-            .bg-base-100.rounded-box.flex.gap-2.p-2.items-center.border.w-56
+          .flex.flex-col.gap-4.justify-center(class="sm:flex-row")
+            .bg-base-100.rounded-box.flex.gap-2.p-2.items-center.border(class="sm:w-56")
               .avatar
                 .w-16.rounded-full
                   img(
@@ -67,7 +67,7 @@ main.container.mx-auto.py-8.flex.gap-4
                     to="https://blog.meathill.com/"
                   )
                     i.bi.bi-rss
-            .bg-base-100.rounded-box.flex.gap-2.p-2.items-center.border.w-56
+            .bg-base-100.rounded-box.flex.gap-2.p-2.items-center.border(class="sm:w-56")
               .avatar
                 .w-16.rounded-full
                   img(
@@ -80,36 +80,37 @@ main.container.mx-auto.py-8.flex.gap-4
                   external
                   to="https://github.com/bambooom"
                 ) Bamboo
-            .bg-base-100.rounded-box.flex.gap-2.p-2.items-center.border.w-56
+            .bg-base-100.rounded-box.flex.gap-2.p-2.items-center.border(class="sm:w-56")
               .avatar
                   i.bi.bi-patch-question.text-5xl.w-16.h-16.text-center.leading-16
               .flex-1
                 .font-bold.block Mystery boss
 
-    .mb-4.grid.grid-cols-3
-      nuxt-link.p-4.border.rounded-l-box.text-center(
-        class="hover:border-primary hover:bg-primary/10"
+    .mb-4.grid(class="sm:grid-cols-3")
+      nuxt-link.p-4.border.rounded-t-box.text-center(
+        class="hover:border-primary hover:bg-primary/10 sm:rounded-tr-none sm:rounded-l-box"
         to="/examples"
       )
         i.bi.bi-code.mr-2
         | Examples
-      nuxt-link.p-4.border-y.text-center(
-        class="hover:border-primary hover:bg-primary/10"
+      nuxt-link.p-4.border-x.text-center(
+        class="hover:border-primary hover:bg-primary/10 sm:border-y sm:border-x-0"
         to="https://github.com/meathill/awesome-comment/issues"
       )
         i.bi.bi-record-circle.mr-2
         | Issues
-      nuxt-link.p-4.border.rounded-r-box.text-center(
-        class="hover:border-primary hover:bg-primary/10"
+      nuxt-link.p-4.border.rounded-b-box.text-center(
+        class="hover:border-primary hover:bg-primary/10 sm:rounded-bl-none sm:rounded-r-box"
         to="https://paypal.me/meathill?country.x=C2&locale.x=zh_XC"
       )
         i.bi.bi-heart-fill.mr-2
         | Support us
 
 
-    h2.text-2xl.font-bold
+    h2.text-2xl.font-bold.mb-4
       i.bi.bi-newspaper.mr-2
       | News
+    .bg-base-200.py-4.mb-4.text-center.text-sm(class="text-neutral/20") (WIP)
 
   .flex-1.h-full
     article.prose
