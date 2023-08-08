@@ -1,6 +1,8 @@
 import digestFetch, { FetchError } from '@meathill/digest-fetch';
+import { CommentStatus } from '@awesome-comment/core/data';
 import { ResponseBody } from '@awesome-comment/core/types';
 import { getTidbKey } from '~/utils/tidb';
+import { getCacheKey } from '~/utils/api';
 
 export default defineEventHandler(async function (event): Promise<ResponseBody<string>> {
   const body = await readBody(event);
@@ -38,6 +40,13 @@ export default defineEventHandler(async function (event): Promise<ResponseBody<s
       statusCode: (e as FetchError).status,
       message,
     });
+  }
+
+  if (body.status === CommentStatus.Approved && body.postId) {
+    // clear cache
+    const storage = useStorage('data');
+    const key = getCacheKey(body.postId);
+    await storage.removeItem(key);
   }
 
   return {

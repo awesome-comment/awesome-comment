@@ -49,7 +49,7 @@ async function doReview(comment: RowItem, status: CommentStatus) {
   await $fetch('/api/admin/comment/' + comment.id, {
     method: 'PATCH',
     body: {
-      id: comment.id,
+      postId: comment.postId,
       status,
     }
   });
@@ -61,6 +61,10 @@ async function doDelete(comment: RowItem, index: number): Promise<void> {
   comment.reviewing = true;
   await $fetch('/api/admin/comment/' + comment.id, {
     method: 'DELETE',
+    body: {
+      postId: comment.postId,
+      statue: comment.status,
+    },
   });
   comments.value.splice(index, 1);
   comment.reviewing = false;
