@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import useStore from '../store';
 import { formatTime } from '../utils/time.ts';
+import { stringToColor } from '../utils';
 import { CommentStatus } from '@awesome-comment/core/data';
 
 const store = useStore();
@@ -21,14 +22,21 @@ function loadMore() {
     :class="{'animated flash': comment.isNew}"
     @animationend="comment.isNew = false"
   )
-    footer.flex.justify-between.items-center.mb-2
+    header.flex.justify-between.items-center.mb-2
       .flex.items-center.text-sm.text-base-content(
         class="dark:text-white"
       )
-        img.mr-2.w-6.h-6.rounded-full(
-          :src="comment.user.avatar"
-          :alt="comment.user.name"
-        )
+        .avatar.mr-2
+          img.w-6.h-6.rounded-full(
+            v-if="comment.user.avatar"
+            :src="comment.user.avatar"
+            :alt="comment.user.name"
+          )
+          .avatar-char.rounded-full.w-6.h-6.mr-2.leading-6.text-center(
+            v-else
+            :style="{'background-color': stringToColor(comment.user.name || 'Anonymous')}"
+          )
+            span.text-neutral-content.mix-blend-color-dodge.uppercase.font-bold {{(comment.user.name || 'Anonymous').substring(0, 1)}}
         | {{comment.user.name}}
         time.text-xs.text-gray-600.ml-4(
           class="dark:text-gray-400"
