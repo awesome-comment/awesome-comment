@@ -1,2 +1,9 @@
 @tailwind components;
 @tailwind utilities;
+
+.comments-wrapper {
+  p img {
+    max-height: 12.5rem;
+    max-width: 100%;
+  }
+}

@@ -1,6 +1,6 @@
 {
   "name": "@roudanio/awesome-comment",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -12,6 +12,7 @@
     "@awesome-comment/core": "workspace:*",
     "animate.css": "^4.1.1",
     "pinia": "^2.1.6",
+    "snarkdown": "^2.0.0",
     "vue": "^3.3.4",
     "vue-router": "^4.2.4"
   },

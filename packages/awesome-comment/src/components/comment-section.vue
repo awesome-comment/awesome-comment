@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import snarkdown from 'snarkdown';
 import useStore from '../store';
 import { formatTime } from '../utils/time.ts';
 import { stringToColor } from '../utils';
@@ -47,7 +48,8 @@ function loadMore() {
 
     p.text-gray-500(
       class="dark:text-gray-400"
-    ) {{comment.content}}
+      v-html="snarkdown(comment.content)"
+    )
     p.italic.mt-4.text-gray-500.mb-0.text-sm(
       v-if="comment.status === CommentStatus.Pending"
       class="dark:text-gray-400"
