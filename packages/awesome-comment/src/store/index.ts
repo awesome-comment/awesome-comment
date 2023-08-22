@@ -53,11 +53,7 @@ const useStore = defineStore('store', () => {
 
     comments.value.push(...formatComment(data.data || []));
     const count = data.data?.length || 0;
-    if (count >= 20) {
-      hasMore.value = true;
-    } else {
-      hasMore.value = false;
-    }
+    hasMore.value = count >= 20;
     total.value += count;
     isLoaded.value = true;
     loadingMore.value = false;

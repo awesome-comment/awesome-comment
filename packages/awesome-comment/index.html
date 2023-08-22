@@ -9,6 +9,11 @@
     <div class="max-w-2xl mx-auto">
       <div id="app"></div>
     </div>
+    <script>
+      document.body.addEventListener('AwesomeComment:total', (event) => {
+        console.log('AwesomeComment:total', event.detail);
+      });
+    </script>
     <script type="module" src="/src/main.ts"></script>
   </body>
 </html>

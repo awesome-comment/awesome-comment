@@ -1,6 +1,6 @@
 {
   "name": "@roudanio/awesome-comment",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -8,7 +8,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@auth0/auth0-vue": "^2.3.0",
+    "@auth0/auth0-vue": "^2.3.1",
     "@awesome-comment/core": "workspace:*",
     "animate.css": "^4.1.1",
     "pinia": "^2.1.6",
@@ -18,8 +18,8 @@
   },
   "devDependencies": {
     "@tailwindcss/typography": "^0.5.9",
-    "@types/node": "^20.5.1",
-    "@vitejs/plugin-vue": "^4.3.1",
+    "@types/node": "^20.5.2",
+    "@vitejs/plugin-vue": "^4.3.3",
     "autoprefixer": "^10.4.15",
     "daisyui": "^3.5.1",
     "postcss": "^8.4.28",
