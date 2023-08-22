@@ -17,6 +17,7 @@ type BaseComment = {
   parentId?: number;
   ancestorId?: number;
   status: CommentStatus;
+  children?: Comment[];
 }
 export type Comment = BaseComment & {
   createdAt: Date;
@@ -30,6 +31,8 @@ export type Comment = BaseComment & {
 export type ResponseComment = BaseComment & {
   created_at: string;
   user?: string;
+  parent_id?: number;
+  ancestor_id?: number;
 }
 
 export type User = {

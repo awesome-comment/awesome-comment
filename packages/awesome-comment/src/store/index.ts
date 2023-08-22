@@ -4,6 +4,16 @@ import { Comment, ResponseBody, ResponseComment } from '@awesome-comment/core/ty
 import { CommentStatus } from '@awesome-comment/core/data';
 import { User } from '@auth0/auth0-vue';
 
+function formatHelper(item: ResponseComment) {
+  const { user, created_at: createdAt, ...rest } = item;
+  return {
+    ...rest,
+    status: Number(item.status),
+    createdAt: new Date(createdAt),
+    user: JSON.parse(item.user as string),
+  };
+}
+
 const useStore = defineStore('store', () => {
   const postId = inject('postId') as string;
   const preloaded = inject('comments') as ResponseComment[];
@@ -17,15 +27,17 @@ const useStore = defineStore('store', () => {
   const hasMore = ref<boolean>(false);
 
   function formatComment(from: ResponseComment[]): Comment[] {
-    return from.map((item: ResponseComment) => {
-      const { user, created_at: createdAt, ...rest } = item;
-      return {
-        ...rest,
-        status: Number(item.status),
-        createdAt: new Date(createdAt),
-        user: JSON.parse(item.user as string),
-      };
+    const res = from.filter(item => !item.parent_id).map(formatHelper);
+    const deeper = from.filter(item => item.parent_id);
+
+    deeper.forEach((item: ResponseComment) => {
+      const parent = res.find(i => item.parent_id === i.id);
+      if (parent) {
+        parent.children = [...(parent.children || []), formatHelper(item)];
+      }
     });
+
+    return res;
   }
 
   async function loadComments() {
@@ -59,7 +71,7 @@ const useStore = defineStore('store', () => {
     loadingMore.value = false;
     return data;
   }
-  function addComment(id: number, comment: string, user: User): void {
+  function addComment(id: number, comment: string, user: User, ancestorId?: number, parentId?: number): void {
     const {
       sub = '',
       name = '',
@@ -67,12 +79,10 @@ const useStore = defineStore('store', () => {
       email = '',
       nickname = '' ,
     } = user;
-    comments.value.unshift({
+    const newComment: Comment = {
       id,
       postId,
       content: comment,
-      ancestorId: -1,
-      parentId: -1,
       createdAt: new Date(),
       user: {
         avatar: picture,
@@ -82,7 +92,25 @@ const useStore = defineStore('store', () => {
       userId: sub,
       status: CommentStatus.Pending,
       isNew: true,
-    });
+    }
+    if (ancestorId || parentId) {
+      newComment.ancestorId = ancestorId;
+      newComment.parentId = parentId;
+      const idx = comments.value.findIndex(i => i.id === ancestorId);
+      if (ancestorId === parentId) { // if same value, means the comment is just reply to the ancestor item
+        if (!comments.value[ idx ].children) {
+          comments.value[ idx ].children = []
+        }
+        comments.value[ idx ].children!.unshift(newComment);
+      } else { // means the comment is the reply to the previous parent item
+        const idx2 = comments.value[ idx ].children!.findIndex(i => i.id === parentId);
+        comments.value[ idx ].children!.splice(idx2, 0, newComment); // insert after parent
+      }
+    } else {
+      newComment.ancestorId = undefined;
+      newComment.parentId = undefined;
+      comments.value.unshift(newComment);
+    }
     total.value++;
   }
 

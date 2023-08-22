@@ -14,6 +14,11 @@ const isSending = ref<boolean>(false);
 const comment = ref<string>('');
 const message = ref<string>('');
 
+const props = defineProps<{
+  parentId?: number | string;
+  ancestorId?: number | string;
+}>();
+
 async function doSubmit(event: Event): Promise<void> {
   if (!auth0.user.value) {
     return doLogin();
@@ -34,6 +39,8 @@ async function doSubmit(event: Event): Promise<void> {
         comment: comment.value,
         postId: store.postId,
         domain: auth0domain,
+        ancestorId: props.ancestorId ? Number(props.ancestorId) : undefined,
+        parentId: props.parentId ? Number(props.parentId) : undefined,
       }),
     });
 
@@ -42,7 +49,11 @@ async function doSubmit(event: Event): Promise<void> {
     }
 
     const json = (await response.json()) as ResponseBody<number>;
-    store.addComment(json.data as number, comment.value, auth0.user.value);
+    if (props.ancestorId || props.parentId) {
+      store.addComment(json.data as number, comment.value, auth0.user.value, Number(props.ancestorId), Number(props.parentId));
+    } else {
+      store.addComment(json.data as number, comment.value, auth0.user.value);
+    }
     comment.value = '';
   } catch (e) {
     message.value = (e as Error).message || String(e);

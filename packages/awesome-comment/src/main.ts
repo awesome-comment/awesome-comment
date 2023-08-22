@@ -28,7 +28,7 @@ function init(domain: string, clientId: string) {
 if (!__IS_PROD__) {
   const app = init(import.meta.env.VITE_AUTH0_DOMAIN, import.meta.env.VITE_AUTH0_CLIENT_ID);
   app.provide('ApiBaseUrl', '');
-  app.provide('postId', 'awesome-comment-self');
+  app.provide('postId', 'https://www.arealme.com/eq/en/');
   app.provide('Auth0Domain', import.meta.env.VITE_AUTH0_DOMAIN);
   app.mount('#app');
 }

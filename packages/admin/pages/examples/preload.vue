@@ -25,7 +25,7 @@ function initAwesomeComment(): void {
 async function doPreload(): Promise<void> {
   isPreloading.value = true;
   await AwesomeComment.preload(
-    'awesome-comment-self',
+    'https://www.arealme.com/eq/en/',
     '',
     runtime.public.auth0Domain,
     runtime.public.auth0ClientId,
@@ -36,7 +36,7 @@ async function doPreload(): Promise<void> {
 function doStart(): void {
   return AwesomeComment.init(
     '#awesome-comment',
-    'awesome-comment-self',
+    'https://www.arealme.com/eq/en/',
     '',
     runtime.public.auth0Domain,
     runtime.public.auth0ClientId,
