@@ -223,14 +223,14 @@
       },
       {
         "name": "parent_id",
-        "type": "string",
+        "type": "number",
         "required": 0,
         "default": "",
         "description": ""
       },
       {
         "name": "ancestor_id",
-        "type": "string",
+        "type": "number",
         "required": 0,
         "default": "",
         "description": ""
