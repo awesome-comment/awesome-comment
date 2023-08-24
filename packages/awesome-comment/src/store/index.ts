@@ -27,8 +27,8 @@ const useStore = defineStore('store', () => {
   const hasMore = ref<boolean>(false);
 
   function formatComment(from: ResponseComment[]): Comment[] {
-    const res = from.filter(item => !item.parent_id).map(formatHelper);
-    const deeper = from.filter(item => item.parent_id);
+    const res = from.filter(item => !item.parent_id || item.parent_id === -1).map(formatHelper);
+    const deeper = from.filter(item => item.parent_id && item.parent_id > 0);
 
     deeper.forEach((item: ResponseComment) => {
       const parent = res.find(i => item.parent_id === i.id);
@@ -93,22 +93,22 @@ const useStore = defineStore('store', () => {
       status: CommentStatus.Pending,
       isNew: true,
     }
-    if (ancestorId || parentId) {
+    if ((ancestorId && ancestorId > 0) || (parentId && parentId > 0)) {
       newComment.ancestorId = ancestorId;
       newComment.parentId = parentId;
-      const idx = comments.value.findIndex(i => i.id === ancestorId);
+      const idx = comments.value.findIndex(i => Number(i.id) === ancestorId);
       if (ancestorId === parentId) { // if same value, means the comment is just reply to the ancestor item
         if (!comments.value[ idx ].children) {
           comments.value[ idx ].children = []
         }
         comments.value[ idx ].children!.unshift(newComment);
       } else { // means the comment is the reply to the previous parent item
-        const idx2 = comments.value[ idx ].children!.findIndex(i => i.id === parentId);
-        comments.value[ idx ].children!.splice(idx2, 0, newComment); // insert after parent
+        const idx2 = comments.value[ idx ].children!.findIndex(i => Number(i.id) === parentId);
+        comments.value[ idx ].children!.splice(idx2 + 1, 0, newComment); // insert after parent
       }
     } else {
-      newComment.ancestorId = undefined;
-      newComment.parentId = undefined;
+      newComment.ancestorId = -1;
+      newComment.parentId = -1;
       comments.value.unshift(newComment);
     }
     total.value++;

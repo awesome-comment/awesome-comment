@@ -67,6 +67,7 @@ defineProps<{
       v-for="child in comment.children"
       :key="child.id"
       :comment="child"
+      :ancestor-id="Number(ancestorId)"
       :is-first-level="false"
     )
   comment-form.mt-3.ml-12(
