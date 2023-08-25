@@ -21,6 +21,7 @@ async function doSubmit(event: Event): Promise<void> {
   if ((event.target as HTMLFormElement).matches(':invalid')) return;
 
   isSending.value = true;
+  message.value = '';
   try {
     const accessToken = await auth0.getAccessTokenSilently();
     const response = await fetch(baseUrl + '/api/comment', {
