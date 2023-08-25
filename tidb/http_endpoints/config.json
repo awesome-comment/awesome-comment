@@ -225,14 +225,14 @@
         "name": "parent_id",
         "type": "number",
         "required": 0,
-        "default": "",
+        "default": "0",
         "description": ""
       },
       {
         "name": "ancestor_id",
         "type": "number",
         "required": 0,
-        "default": "",
+        "default": "0",
         "description": ""
       }
     ],
