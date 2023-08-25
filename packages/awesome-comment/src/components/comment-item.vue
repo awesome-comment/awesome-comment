@@ -47,7 +47,7 @@ defineProps<{
         type="button",
         @click="comment.isReplying = !comment.isReplying"
       )
-        i.bi.bi-reply-fill.h-4.w-4
+        img.h-4.w-4(src="https://unpkg.com/bootstrap-icons@1.10.5/icons/reply-fill.svg")
     p.text-gray-500(
       class="dark:text-gray-400"
       v-html="snarkdown(comment.content)"
