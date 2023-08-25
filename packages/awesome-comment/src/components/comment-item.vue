@@ -39,7 +39,7 @@ defineProps<{
           class="dark:text-gray-400"
           pubdate
           :datetime="comment.createdAt"
-          :title="comment.createdAt"
+          :title="formatTime(comment.createdAt)"
         ) {{formatTime(comment.createdAt)}}
 
       //- reply button
@@ -47,8 +47,7 @@ defineProps<{
         type="button",
         @click="comment.isReplying = !comment.isReplying"
       )
-        svg(xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 bi bi-reply-fill" fill="none" stroke="currentColor" viewBox="0 0 16 16")
-          path(d="M5.921 11.9 1.353 8.62a.719.719 0 0 1 0-1.238L5.921 4.1A.716.716 0 0 1 7 4.719V6c1.5 0 6 0 7 8-2.5-4.5-7-4-7-4v1.281c0 .56-.606.898-1.079.62z")
+        i.bi.bi-reply-fill.h-4.w-4
     p.text-gray-500(
       class="dark:text-gray-400"
       v-html="snarkdown(comment.content)"

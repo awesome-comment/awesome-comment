@@ -93,7 +93,7 @@ const useStore = defineStore('store', () => {
       status: CommentStatus.Pending,
       isNew: true,
     }
-    if ((ancestorId && ancestorId > 0) || (parentId && parentId > 0)) {
+    if (ancestorId || parentId) {
       newComment.ancestorId = ancestorId;
       newComment.parentId = parentId;
       const idx = comments.value.findIndex(i => Number(i.id) === ancestorId);

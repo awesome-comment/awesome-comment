@@ -89,8 +89,8 @@ export default defineEventHandler(async function (event): Promise<ResponseBody<n
       {
         content: body.comment,
         post_id: body.postId,
-        ancestor_id: body.ancestorId || -1,
-        parent_id: body.parentId || -1,
+        ancestor_id: body.ancestorId || 0,
+        parent_id: body.parentId || 0,
         user_id: sub,
         user: JSON.stringify({
           email,
