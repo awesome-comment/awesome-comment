@@ -1,23 +1,30 @@
 <script setup lang="ts">
-import { inject, ref } from 'vue';
+import { inject, onMounted, ref } from 'vue';
 import { useAuth0 } from '@auth0/auth0-vue';
 import type { ResponseBody } from '@awesome-comment/core/types';
 import useStore from '../store';
+
+type Props = {
+  noVersion?: boolean;
+  parentId?: number | string;
+  ancestorId?: number | string;
+}
+const props = defineProps<Props>();
+type Emits = {
+  (event: 'close'): (event: Event) => boolean | void;
+}
+const emit = defineEmits<Emits>();
 
 const auth0 = useAuth0();
 const store = useStore();
 const baseUrl = inject('ApiBaseUrl');
 const auth0domain = inject('Auth0Domain');
 const version = __VERSION__;
+const textarea = ref<HTMLTextAreaElement>();
 
 const isSending = ref<boolean>(false);
 const comment = ref<string>('');
 const message = ref<string>('');
-
-const props = defineProps<{
-  parentId?: number | string;
-  ancestorId?: number | string;
-}>();
 
 async function doSubmit(event: Event): Promise<void> {
   if (!auth0.user.value) {
@@ -60,6 +67,7 @@ async function doSubmit(event: Event): Promise<void> {
   }
 
   isSending.value = false;
+  emit('close');
 }
 function doLogin(): void {
   auth0.loginWithPopup();
@@ -70,6 +78,13 @@ function onKeydown(event: KeyboardEvent): void {
     doSubmit(event);
   }
 }
+function onCancel(): void {
+  emit('close');
+}
+
+onMounted(() => {
+  textarea.value?.focus();
+});
 </script>
 
 <template lang="pug">
@@ -81,15 +96,20 @@ form.mb-6(
       for="ac-comment"
     ) Your comment
     textarea#ac-comment.ac-textarea.ac-textarea-bordered.bg-base-200.rounded-b-none(
+      ref="textarea"
       class="focus:outline-none"
       rows="3"
       placeholder="Write a comment..."
       required
       @keydown.enter="onKeydown"
+      @keydown.esc="onCancel"
       v-model="comment"
     )
     .p-2.rounded-b-lg.bg-base-300.flex.items-center
-      .text-xs(class="text-neutral-400/40") v{{version}}
+      .text-xs(
+        v-if="!noVersion"
+        class="text-neutral-400/40"
+      ) v{{version}}
       .ac-alert.ac-alert-error.mx-4(v-if="message")
         p {{message}}
       button.ac-btn.ac-btn-primary.ac-btn-sm.ml-auto(

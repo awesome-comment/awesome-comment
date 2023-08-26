@@ -47,7 +47,7 @@ defineProps<{
         type="button",
         @click="comment.isReplying = !comment.isReplying"
       )
-        img.h-4.w-4(src="https://unpkg.com/bootstrap-icons@1.10.5/icons/reply-fill.svg")
+        i.bi.bi-reply-fill.h-4.w-4
     p.text-gray-500(
       class="dark:text-gray-400"
       v-html="snarkdown(comment.content)"
@@ -58,8 +58,10 @@ defineProps<{
     ) comments normally got approved within 24 hours
   comment-form.mt-3.ml-12(
     v-if="comment.isReplying && isFirstLevel"
+    no-version
     :ancestor-id="Number(ancestorId)"
     :parent-id="Number(comment.id)"
+    @close="comment.isReplying = false"
   )
   template(v-if="comment.children?.length")
     comment-item.ml-12(
