@@ -27,16 +27,15 @@ const useStore = defineStore('store', () => {
   const hasMore = ref<boolean>(false);
 
   function formatComment(from: ResponseComment[]): Comment[] {
-    const res = from.filter(item => !item.parent_id || item.parent_id === -1).map(formatHelper);
-    const deeper = from.filter(item => item.parent_id && item.parent_id > 0);
+    const res = from.filter(item => !item.ancestor_id || Number(item.ancestor_id) === 0).map(formatHelper);
+    const deeper = from.filter(item => item.ancestor_id && Number(item.ancestor_id) > 0);
 
     deeper.forEach((item: ResponseComment) => {
-      const parent = res.find(i => item.parent_id === i.id);
+      const parent = res.find(i => item.ancestor_id === i.id);
       if (parent) {
         parent.children = [...(parent.children || []), formatHelper(item)];
       }
     });
-
     return res;
   }
 
@@ -107,8 +106,8 @@ const useStore = defineStore('store', () => {
         comments.value[ idx ].children!.splice(idx2 + 1, 0, newComment); // insert after parent
       }
     } else {
-      newComment.ancestorId = -1;
-      newComment.parentId = -1;
+      newComment.ancestorId = 0;
+      newComment.parentId = 0;
       comments.value.unshift(newComment);
     }
     total.value++;
