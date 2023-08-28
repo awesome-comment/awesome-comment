@@ -13,6 +13,10 @@ WHERE status=1
 	FROM ac_comment
 	WHERE post_id=${post_id}
 	  AND status=1
+      AND (
+		ancestor_id IS NULL
+		OR ancestor_id=0
+	  )
 	ORDER BY id DESC
 	LIMIT ${start}, 20
 )
@@ -21,6 +25,10 @@ WHERE status=1
 	FROM ac_comment
 	WHERE post_id=${post_id}
 	  AND status=1
+      AND (
+		ancestor_id IS NULL
+		OR ancestor_id=0
+	  )
 	ORDER BY id DESC
 	LIMIT ${start}, 20
   )
