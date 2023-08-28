@@ -23,4 +23,5 @@ WHERE status=1
 	  AND status=1
 	ORDER BY id DESC
 	LIMIT ${start}, 20
-  );
+  )
+ORDER BY id DESC;
