@@ -15,6 +15,7 @@ defineProps<{
 
 <template lang="pug">
 .comment-item.rounded-lg.my-4(
+  :id="'awcm-' + comment.id"
   :class="{'animated flash': comment.isNew}"
   @animationend="comment.isNew = false"
 )

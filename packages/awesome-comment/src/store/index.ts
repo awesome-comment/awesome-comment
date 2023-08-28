@@ -27,8 +27,15 @@ const useStore = defineStore('store', () => {
   const hasMore = ref<boolean>(false);
 
   function formatComment(from: ResponseComment[]): Comment[] {
-    const res = from.filter(item => !item.ancestor_id || Number(item.ancestor_id) === 0).map(formatHelper);
-    const deeper = from.filter(item => item.ancestor_id && Number(item.ancestor_id) > 0);
+    const res: Comment[] = [];
+    const deeper: ResponseComment[] = [];
+    from.forEach((item: ResponseComment) => {
+      if (!item.ancestor_id || Number(item.ancestor_id) === 0) {
+        res.push(formatHelper(item));
+      } else {
+        deeper.push(item);
+      }
+    });
 
     deeper.forEach((item: ResponseComment) => {
       const parent = res.find(i => item.ancestor_id === i.id);
