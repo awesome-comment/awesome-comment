@@ -20,26 +20,26 @@ const useStore = defineStore('store', () => {
   const isLoaded = ref<boolean>(!!preloaded?.length);
   const start = ref<number>(0);
   const message = ref<string>('');
-  const comments = ref<Comment[]>(formatComment(preloaded || []));
+  const comments = ref<Record<number, Comment>>(formatComment(preloaded || []));
   const total = ref<number>(0);
   const baseUrl = inject('ApiBaseUrl');
   const loadingMore = ref<boolean>(false);
   const hasMore = ref<boolean>(false);
 
-  function formatComment(from: ResponseComment[]): Comment[] {
-    const res: Comment[] = [];
+  function formatComment(from: ResponseComment[]): Record<number, Comment> {
+    const res: Record<number, Comment> = {};
     const deeper: ResponseComment[] = [];
     from.forEach((item: ResponseComment) => {
       if (!item.ancestor_id || Number(item.ancestor_id) === 0) {
-        res.push(formatHelper(item));
+        res[ item.id ] = formatHelper(item);
       } else {
         deeper.push(item);
       }
     });
 
     deeper.forEach((item: ResponseComment) => {
-      const parent = res.find(i => item.ancestor_id === i.id);
-      if (parent) {
+      if (item.ancestor_id as number in res) {
+        const parent = res[ item.ancestor_id as number ];
         parent.children = [...(parent.children || []), formatHelper(item)];
       }
     });
@@ -69,7 +69,7 @@ const useStore = defineStore('store', () => {
       return;
     }
 
-    comments.value.push(...formatComment(data.data || []));
+    comments.value = formatComment(data.data || []);
     const count = data.data?.length || 0;
     hasMore.value = count >= 20;
     total.value += count;
@@ -102,20 +102,20 @@ const useStore = defineStore('store', () => {
     if (ancestorId || parentId) {
       newComment.ancestorId = ancestorId;
       newComment.parentId = parentId;
-      const idx = comments.value.findIndex(i => Number(i.id) === ancestorId);
+      const ancestor = comments.value[ ancestorId as number ];
       if (ancestorId === parentId) { // if same value, means the comment is just reply to the ancestor item
-        if (!comments.value[ idx ].children) {
-          comments.value[ idx ].children = []
+        if (!ancestor.children) {
+          ancestor.children = []
         }
-        comments.value[ idx ].children!.unshift(newComment);
+        ancestor.children!.unshift(newComment);
       } else { // means the comment is the reply to the previous parent item
-        const idx2 = comments.value[ idx ].children!.findIndex(i => Number(i.id) === parentId);
-        comments.value[ idx ].children!.splice(idx2 + 1, 0, newComment); // insert after parent
+        const idx = ancestor.children!.findIndex(i => Number(i.id) === parentId);
+        ancestor.children!.splice(idx + 1, 0, newComment); // insert after parent
       }
     } else {
       newComment.ancestorId = 0;
       newComment.parentId = 0;
-      comments.value.unshift(newComment);
+      comments.value = { [ id ]: newComment, ...comments.value }; // new comment should be positioned at the beginning
     }
     total.value++;
   }

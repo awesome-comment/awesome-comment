@@ -14,7 +14,7 @@ function loadMore() {
 <template lang="pug">
 .comments-wrapper(v-if="store.isLoaded")
   comment-item(
-    v-for="comment in store.comments"
+    v-for="comment in Object.values(store.comments)"
     :key="comment.id"
     :comment="comment"
     :ancestor-id="Number(comment.id)"
