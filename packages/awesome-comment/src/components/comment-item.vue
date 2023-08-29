@@ -5,12 +5,24 @@ import { CommentStatus } from '@awesome-comment/core/data';
 import { stringToColor } from '../utils';
 import { formatTime } from '../utils/time.ts';
 import CommentForm from './comment-form.vue';
+import useStore from '../store';
 
-defineProps<{
+const store = useStore();
+
+const props = defineProps<{
   comment: Comment;
   isFirstLevel: boolean;
   ancestorId?: number;
 }>();
+
+function getParentUserName(id: number): string {
+  if (props.ancestorId) {
+    const ancestor = store.comments[ props.ancestorId ];
+    const parent = ancestor?.children?.find((c) => Number(c.id) === Number(id));
+    return parent?.user?.name || '';
+  }
+  return '';
+}
 </script>
 
 <template lang="pug">
@@ -42,6 +54,10 @@ defineProps<{
           :datetime="comment.createdAt"
           :title="formatTime(comment.createdAt)"
         ) {{formatTime(comment.createdAt)}}
+        a.text-xs.link.link-hover.ml-4(
+          v-if="!isFirstLevel && comment.parent_id !== comment.ancestor_id"
+          :href="'#awcm-' + comment.parent_id"
+        ) reply to {{getParentUserName(comment.parent_id)}}(\#{{ comment.parent_id }})
 
       //- reply button
       button.ac-btn.ac-btn-sm.ac-btn-circle.border-0(
