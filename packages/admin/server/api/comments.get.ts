@@ -17,7 +17,7 @@ export default defineEventHandler(async function (event): Promise<ResponseBody<C
   }
 
   const storage = useStorage('data');
-  const key = getCacheKey(postId as string);
+  const key = getCacheKey(postId + '-' + start as string);
   const stored = await storage.getItem(key) as Comment[];
   if (stored) {
     console.log('[cache] get comments from cache: ', key);
@@ -29,7 +29,9 @@ export default defineEventHandler(async function (event): Promise<ResponseBody<C
 
   const data: Comment[] = [];
   try {
-    const url = `https://ap-northeast-1.data.tidbcloud.com/api/v1beta/app/dataapp-NFYbhmOK/endpoint/v1/get?post_id=${postId}&start=${start}`;
+    // const url = `https://ap-northeast-1.data.tidbcloud.com/api/v1beta/app/dataapp-NFYbhmOK/endpoint/v1/get?post_id=${postId}&start=${start}`;
+    // use the new one for testing
+    const url = `https://ap-northeast-1.data.tidbcloud.com/api/v1beta/app/dataapp-NFYbhmOK/endpoint/v1/fetch?post_id=${postId}&start=${start}`;
     const params = new URLSearchParams();
     params.set('post_id', postId as string);
     params.set('start', start as string);

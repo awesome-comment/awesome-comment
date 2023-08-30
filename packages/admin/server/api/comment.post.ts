@@ -56,16 +56,16 @@ export default defineEventHandler(async function (event): Promise<ResponseBody<n
       throw Error('You can post comment once in 30 seconds.');
     }
     // if user has 2 or more pending comments, they cannot post new comment
-    if (history.filter(c => Number(c.status) === CommentStatus.Pending).length >= 2) {
+    if (history.filter(c => Number(c.status) === CommentStatus.Approved).length >= 2) {
+      // if user has 2 or more approved comments, they can post comment freely
+      console.log(`user_id: ${sub} can post comment freely.`);
+      status = CommentStatus.Approved;
+    } else if (history.filter(c => Number(c.status) === CommentStatus.Pending).length >= 2) {
       console.log(`user_id: ${sub} have 2 or more pending comments, cannot post new comment.`);
       throw createError({
         statusCode: 405,
         message: 'You have 2 or more pending comments. Please wait for approval first.',
       });
-    } else if (history.filter(c => Number(c.status) === CommentStatus.Approved).length >= 2) {
-      // if user has 2 or more approved comments, they can post comment freely
-      console.log(`user_id: ${sub} can post comment freely.`);
-      status = CommentStatus.Approved;
     } else if (history.filter(c => Number(c.status) === CommentStatus.Rejected).length >= 5) {
       // if user has 5 or more rejected comments, they will be keep out until we give them a pass
       console.log(`user_id: ${sub} have 5 or more rejected comments, is banned currently.`);
@@ -89,6 +89,8 @@ export default defineEventHandler(async function (event): Promise<ResponseBody<n
       {
         content: body.comment,
         post_id: body.postId,
+        ancestor_id: body.ancestorId || 0,
+        parent_id: body.parentId || 0,
         user_id: sub,
         user: JSON.stringify({
           email,

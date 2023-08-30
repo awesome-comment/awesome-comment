@@ -1,9 +1,10 @@
 import { createApp } from 'vue'
 import { createPinia } from 'pinia';
 import { Auth0Plugin, createAuth0 } from '@auth0/auth0-vue';
-import './tw-daisy.css';
-import './style.css';
-import './animate.css';
+import './styles/tw-daisy.css';
+import './styles/main.css';
+import './styles/icon.css'
+import './styles/animate.css';
 import App from './App.vue';
 import { ResponseBody, ResponseComment } from '@awesome-comment/core/types';
 
