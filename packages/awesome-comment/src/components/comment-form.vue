@@ -51,11 +51,12 @@ async function doSubmit(event: Event): Promise<void> {
       }),
     });
 
-    if (!response.ok) {
-      throw new Error('Failed to post comment');
+    const json = (await response.json()) as ResponseBody<number>;
+
+    if (!response.ok || json.message) {
+      throw new Error('Failed to post comment: ' + (json.message || 'Unknown'));
     }
 
-    const json = (await response.json()) as ResponseBody<number>;
     if (props.ancestorId || props.parentId) {
       store.addComment(json.data as number, comment.value, auth0.user.value, Number(props.ancestorId), Number(props.parentId));
     } else {
@@ -110,8 +111,7 @@ form.mb-6(
         v-if="!noVersion"
         class="text-neutral-400/40"
       ) v{{version}}
-      .ac-alert.ac-alert-error.mx-4(v-if="message")
-        p {{message}}
+      .ac-alert.ac-alert-error.mx-4.py-1(v-if="message") {{message}}
       button.ac-btn.ac-btn-primary.ac-btn-sm.ml-auto(
         :disabled="isSending"
       )

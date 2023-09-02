@@ -53,7 +53,10 @@ export default defineEventHandler(async function (event): Promise<ResponseBody<n
     const lastCommentTime = new Date(history[ 0 ].created_at);
     // users can only post once every 30 seconds
     if (Date.now() - lastCommentTime.getTime() < 3e4) {
-      throw Error('You can post comment once in 30 seconds.');
+      throw createError({
+        statusCode: 500,
+        message: 'You can post comment once in 30 seconds.',
+      });
     }
     // if user has 2 or more pending comments, they cannot post new comment
     if (history.filter(c => Number(c.status) === CommentStatus.Approved).length >= 2) {
