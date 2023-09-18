@@ -37,11 +37,11 @@ function getParentUserName(id: number): string {
         class="dark:text-white"
       )
         .avatar.mr-2
-          img.w-6.h-6.rounded-full(
-            v-if="comment.user.avatar"
-            :src="comment.user.avatar"
-            :alt="comment.user.name"
-          )
+          .w-6.h-6(v-if="comment.user.avatar")
+            img.rounded-full(
+              :src="comment.user.avatar"
+              :alt="comment.user.name"
+            )
           .avatar-char.rounded-full.w-6.h-6.mr-2.text-center(
             v-else
             :style="{'background-color': stringToColor(comment.user.name || 'Anonymous')}"
