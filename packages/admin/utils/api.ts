@@ -1,9 +1,50 @@
 import { ResponseComment, User } from '@awesome-comment/core/types';
-// import { CommentStatus } from '@awesome-comment/core/data';
-import digestFetch, { FetchError } from '@meathill/digest-fetch';
+import digestFetch from '@meathill/digest-fetch';
 import { getTidbKey } from './tidb';
+import { H3Event } from 'h3';
+import { AcConfig } from '~/types';
 
-export async function getUser(accessToken: string, domain: string): Promise<User> {
+export async function checkUserPermission(event: H3Event): Promise<User> {
+  const authorization = getHeader(event, 'authorization');
+  if (!authorization) {
+    throw createError({
+      statusCode: 401,
+      message: 'Unauthorized',
+    });
+  }
+
+  let user: User | null = await getUser(authorization);
+  try {
+    user = await getUser(authorization);
+  } catch (e) {
+    const message =  (e as Error).message || e;
+    throw createError({
+      statusCode: 401,
+      message: 'Failed to authorized user. ' + message,
+    });
+  }
+
+  if (!user) {
+    throw createError({
+      statusCode: 401,
+      message: 'User not found.',
+    });
+  }
+
+  const storage = useStorage('config');
+  const key = getConfigKey();
+  const config = (await storage.getItem(key)) as AcConfig;
+  if (!config || !config.adminEmails.includes(user.email)) {
+    throw createError({
+      statusCode: 403,
+      message: 'Forbidden',
+    });
+  }
+
+  return user;
+}
+
+export async function getUser(accessToken: string, domain?: string): Promise<User> {
   domain ??= process.env.AUTH0_DOMAIN || '';
   const response = await fetch(
     `https://${domain}/userinfo`,
@@ -22,6 +63,10 @@ export async function getUser(accessToken: string, domain: string): Promise<User
 
 export function getCacheKey(postId: string): string {
   return `comments-${postId}`;
+}
+
+export function getConfigKey(): string {
+  return `${process.env.VERCEL_URL}_ac_config`;
 }
 
 export async function getUserComments(userId: string): Promise<ResponseComment[]> {

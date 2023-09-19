@@ -3,6 +3,7 @@ import { CommentStatus } from '@awesome-comment/core/data';
 import digestFetch, { FetchError } from '@meathill/digest-fetch';
 import { getUser, getUserComments, getCacheKey } from '~/utils/api';
 import { getTidbKey } from '~/utils/tidb';
+import { getHeaders } from '#imports';
 
 export default defineEventHandler(async function (event): Promise<ResponseBody<number>> {
   const headers = getHeaders(event);
@@ -27,12 +28,12 @@ export default defineEventHandler(async function (event): Promise<ResponseBody<n
     user = await getUser(authorization, body.domain);
   } catch (e) {
     const message =  (e as Error).message || e;
-
     throw createError({
       statusCode: 401,
       message: 'Failed to authorized user. ' + message,
     });
   }
+
   if (!user) {
     throw createError({
       statusCode: 401,

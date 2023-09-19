@@ -1,4 +1,3 @@
-import postcss from './postcss.config';
 import pkg from './package.json' assert { type: 'json' };
 import acPkg from '../awesome-comment/package.json' assert { type: 'json' };
 
@@ -12,7 +11,7 @@ export default defineNuxtConfig({
       link: [
         {
           rel: 'stylesheet',
-          href: 'https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css',
+          href: 'https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css',
         },
         {
           rel: 'stylesheet',
@@ -54,7 +53,15 @@ export default defineNuxtConfig({
       repoUrl,
     },
   },
-  postcss,
+  postcss: {
+    plugins: {
+      'postcss-import': {},
+      'tailwindcss/nesting': {},
+      tailwindcss: {},
+      autoprefixer: {},
+      ...(process.env.NODE_ENV === 'production' ? { cssnano: {} } : {})
+    },
+  },
   routeRules: {
     // pre-rendered at build time
     '/': { prerender: true },
@@ -62,6 +69,7 @@ export default defineNuxtConfig({
     // '/contact': { prerender: true },
     // pages generated on-demand, revalidates in background
     // Admin dashboard renders only on client-side
+    '/admin/': { redirect: '/admin/login' },
     '/admin/**': { ssr: false },
     // Add cors headers on API routes
     '/api/**': { cors: true },
