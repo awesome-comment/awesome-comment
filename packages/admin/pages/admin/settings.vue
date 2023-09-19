@@ -43,7 +43,7 @@ async function doSave(event: Event): Promise<void> {
       body: store.config,
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
+        Authorization: `Bearer ${token}`,
       }
     });
     isSaved.value = true;
@@ -54,6 +54,10 @@ async function doSave(event: Event): Promise<void> {
   }
   isSaving.value = false;
 }
+
+onMounted(() => {
+  store.initStore();
+});
 </script>
 
 <template lang="pug">

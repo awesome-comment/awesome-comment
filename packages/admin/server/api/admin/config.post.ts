@@ -1,11 +1,11 @@
 import { H3Event } from 'h3';
 import { ApiResponse } from '~/types';
-import { checkUserPermission, getConfigKey, } from '~/utils/api';
+import { getConfigKey } from '~/utils/api';
 
 export default defineEventHandler(async function (event: H3Event): Promise<ApiResponse<string>> {
   const body = await readBody(event);
 
-  const storage = useStorage('config');
+  const storage = useStorage('data');
   const key = getConfigKey();
   const {
     adminEmails,

@@ -4,8 +4,11 @@ import { getTidbKey } from './tidb';
 import { H3Event } from 'h3';
 import { AcConfig } from '~/types';
 
-export async function checkUserPermission(event: H3Event, returnUser: boolean = true): Promise<User | AcConfig | void> {
-  const storage = useStorage('config');
+export async function checkUserPermission(
+  event: H3Event,
+  returnUser: boolean = true
+): Promise<User | AcConfig | void> {
+  const storage = useStorage('data');
   const key = getConfigKey();
   const config = (await storage.getItem(key)) as AcConfig;
   // not configured, it's a new site

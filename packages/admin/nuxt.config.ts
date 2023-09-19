@@ -69,9 +69,9 @@ export default defineNuxtConfig({
     // '/contact': { prerender: true },
     // pages generated on-demand, revalidates in background
     // Admin dashboard renders only on client-side
-    '/admin/': { redirect: '/admin/login' },
     '/admin/**': { ssr: false },
     // Add cors headers on API routes
     '/api/**': { cors: true },
+    '/admin': { redirect: '/admin/login' },
   },
 })
