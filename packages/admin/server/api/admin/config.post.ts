@@ -5,8 +5,6 @@ import { checkUserPermission, getConfigKey, } from '~/utils/api';
 export default defineEventHandler(async function (event: H3Event): Promise<ApiResponse<string>> {
   const body = await readBody(event);
 
-  await checkUserPermission(event);
-
   const storage = useStorage('config');
   const key = getConfigKey();
   const {

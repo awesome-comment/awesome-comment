@@ -1,25 +1,57 @@
 <script setup lang="ts">
+import { useAuth0 } from '@auth0/auth0-vue';
+import { sleep } from '@awesome-comment/core/utils';
 import { useConfigStore } from '~/store';
 
+const auth0 = process.client ? useAuth0() : undefined;
 const store = useConfigStore();
 
 const isSaving = ref<boolean>(false);
+const isSaved = ref<boolean>(false);
+const message = ref<string>('');
 const adminEmails = computed<string>({
   get(): string {
     return store.config.adminEmails.join('\n');
   },
   set(value: string) {
-    store.setConfig({ adminEmails: value.split('\n') });
+    const emails = value.split('\n')
+      .map(item => item.trim())
+      .filter(Boolean);
+    store.setConfig({ adminEmails: Array.from(new Set(emails)) });
   },
 });
 
+definePageMeta({
+  middleware: ['auth'],
+});
+
 async function doSave(event: Event): Promise<void> {
-  if (isSaving.value || (event.target as HTMLFormElement).matches(':invalid')) {
+  if (
+    !auth0
+    || isSaving.value
+    || (event.target as HTMLFormElement).matches(':invalid'))
+  {
     return;
   }
 
   isSaving.value = true;
-
+  message.value = '';
+  try {
+    const token = await auth0.getAccessTokenSilently();
+    await $fetch('/api/admin/config', {
+      method: 'POST',
+      body: store.config,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      }
+    });
+    isSaved.value = true;
+    await sleep(1500);
+    isSaved.value = false;
+  } catch (e) {
+    message.value = e.message;
+  }
   isSaving.value = false;
 }
 </script>
@@ -27,8 +59,9 @@ async function doSave(event: Event): Promise<void> {
 <template lang="pug">
 header.flex.items-center.justify-between.pb-4.mb-4.border-b
   h1.text-xl.font-bold Settings
-  button.btn.btn-primary(
+  button.btn(
     form="config-form"
+    :class="isSaved ? 'btn-success' : 'btn-primary'"
     :disabled="isSaving"
   )
     span.loading.loading-spinner(v-if="isSaving")

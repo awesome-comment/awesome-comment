@@ -1,3 +1,5 @@
+import { checkUserPermission } from '~/utils/api';
+
 export default defineEventHandler(async function (event) {
   // not visit admin
   const url = getRequestURL(event);
@@ -5,5 +7,5 @@ export default defineEventHandler(async function (event) {
     return;
   }
 
-  event.context.auth = await checkUserPermission(event);
+  event.context.config = await checkUserPermission(event, false);
 });

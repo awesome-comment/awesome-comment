@@ -36,6 +36,9 @@ importers:
 
   packages/admin:
     dependencies:
+      '@auth0/auth0-vue':
+        specifier: ^2.3.1
+        version: 2.3.1(vue-router@4.2.4)
       '@awesome-comment/core':
         specifier: workspace:*
         version: link:../core

@@ -14,6 +14,10 @@ const filterStatus = ref<CommentStatus | 'all'>(CommentStatus.Pending);
 const CSKeys = Object.values(CommentStatus).filter((v) => !isNaN(Number(v)));
 const comments = ref<RowItem[]>([]);
 
+definePageMeta({
+  middleware: ['auth'],
+});
+
 const { data, pending } = await useAsyncData(
   'comments',
   async function () {
