@@ -15,7 +15,8 @@ const start = ref<number>(0);
 const hasMore = ref<boolean>(false);
 const loadingMore = ref<boolean>(false);
 const message = ref<string>('');
-const filterStatus = ref<CommentStatus | 'all'>(CommentStatus.Pending);
+const route = useRoute();
+const filterStatus = ref<CommentStatus | 'all'>(route.query.status || CommentStatus.Pending);
 const CSKeys = Object.values(CommentStatus).filter((v) => !isNaN(Number(v)));
 const comments = ref<RowItem[]>([]);
 
@@ -97,6 +98,12 @@ function doLoadMore() {
 }
 function onFilterChange(): void {
   comments.value.length = 0;
+  const router = useRouter();
+  router.push({
+    query: {
+      status: filterStatus.value,
+    },
+  });
 }
 </script>
 

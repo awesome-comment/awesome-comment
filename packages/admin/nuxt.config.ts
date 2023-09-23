@@ -72,6 +72,5 @@ export default defineNuxtConfig({
     '/admin/**': { ssr: false },
     // Add cors headers on API routes
     '/api/**': { cors: true },
-    '/admin': { redirect: '/admin/login' },
   },
 })

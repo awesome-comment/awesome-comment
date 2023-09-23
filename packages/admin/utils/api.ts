@@ -4,13 +4,14 @@ import { getTidbKey } from './tidb';
 import { H3Event } from 'h3';
 import { AcConfig } from '~/types';
 
-export async function checkUserPermission(
-  event: H3Event,
-  returnUser: boolean = true
-): Promise<User | AcConfig | void> {
+export async function getConfig(): Promise<AcConfig> {
   const storage = useStorage('data');
   const key = getConfigKey();
-  const config = (await storage.getItem(key)) as AcConfig;
+  return (await storage.getItem(key)) as AcConfig;
+}
+
+export async function checkUserPermission(event: H3Event): Promise<[User, AcConfig] | void> {
+  const config = await getConfig();
   // not configured, it's a new site
   if (!config) {
     return;
@@ -49,7 +50,7 @@ export async function checkUserPermission(
     });
   }
 
-  return returnUser ? user : config;
+  return [user, config];
 }
 
 export async function getUser(accessToken: string, domain?: string): Promise<User> {

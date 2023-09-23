@@ -7,5 +7,10 @@ export default defineEventHandler(async function (event) {
     return;
   }
 
-  event.context.config = await checkUserPermission(event, false);
+  const check = await checkUserPermission(event);
+  if (check) {
+    const [user, config] = check;
+    event.context.user = user;
+    event.context.config = config;
+  }
 });

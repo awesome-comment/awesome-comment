@@ -1,4 +1,10 @@
 <script setup lang="ts">
+definePageMeta({
+  title: 'Admin | Awesome comment',
+  description: 'Admin',
+  redirect: '/admin/login',
+});
+
 const links = [
   {
     label: 'Comments Management',
