@@ -1,3 +1,5 @@
+USE arealme;
+
 SELECT *
 FROM ac_comment
 WHERE

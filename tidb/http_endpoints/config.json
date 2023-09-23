@@ -10,14 +10,14 @@
     "params": [
       {
         "name": "status",
-        "type": "string",
+        "type": "number",
         "required": 1,
         "default": "",
         "description": "0"
       },
       {
         "name": "start",
-        "type": "string",
+        "type": "number",
         "required": 0,
         "default": "0",
         "description": ""
