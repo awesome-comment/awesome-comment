@@ -16,17 +16,17 @@
         "description": "0"
       },
       {
-        "name": "start",
-        "type": "number",
-        "required": 0,
-        "default": "0",
-        "description": ""
-      },
-      {
         "name": "user_id",
         "type": "string",
         "required": 1,
         "default": "",
+        "description": ""
+      },
+      {
+        "name": "start",
+        "type": "number",
+        "required": 0,
+        "default": "0",
         "description": ""
       }
     ],
