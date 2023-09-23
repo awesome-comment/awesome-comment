@@ -4,7 +4,7 @@ import { Comment, ResponseBody, ResponseComment } from '@awesome-comment/core/ty
 import { CommentStatus } from '@awesome-comment/core/data';
 import { User } from '@auth0/auth0-vue';
 
-function formatHelper(item: ResponseComment) {
+function formatHelper(item: ResponseComment): Comment {
   const { created_at: createdAt, ...rest } = item;
   return {
     ...rest,
