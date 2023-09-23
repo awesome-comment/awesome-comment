@@ -11,7 +11,7 @@ export default defineEventHandler(async function (event): Promise<ResponseBody<C
 
   const data: Comment[] = [];
   try {
-    const url = 'https://ap-northeast-1.data.tidbcloud.com/api/v1beta/app/dataapp-NFYbhmOK/endpoint/v1/moderator/get';
+    const url = 'https://ap-northeast-1.data.tidbcloud.com/api/v1beta/app/dataapp-NFYbhmOK/endpoint/v2/moderator/get';
     const params = new URLSearchParams();
     params.set('start', start as string);
     if (Array.isArray(status)) {
@@ -19,6 +19,7 @@ export default defineEventHandler(async function (event): Promise<ResponseBody<C
     } else {
       params.append('status', status as string);
     }
+    params.set('user_id', event.context.user.id);
     const kv = await getTidbKey();
     const response = await digestFetch(`${url}?${params}`, null, {
       method: 'GET',
@@ -38,5 +39,8 @@ export default defineEventHandler(async function (event): Promise<ResponseBody<C
   return {
     code: 0,
     data,
+    meta: {
+      config: event.context.config,
+    },
   };
 });

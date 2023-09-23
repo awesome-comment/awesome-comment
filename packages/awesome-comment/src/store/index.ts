@@ -5,12 +5,11 @@ import { CommentStatus } from '@awesome-comment/core/data';
 import { User } from '@auth0/auth0-vue';
 
 function formatHelper(item: ResponseComment) {
-  const { user, created_at: createdAt, ...rest } = item;
+  const { created_at: createdAt, ...rest } = item;
   return {
     ...rest,
     status: Number(item.status),
     createdAt: new Date(createdAt),
-    user: JSON.parse(item.user as string),
   };
 }
 

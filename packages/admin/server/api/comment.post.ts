@@ -1,8 +1,9 @@
 import { ResponseBody, User } from '@awesome-comment/core/types';
 import { CommentStatus } from '@awesome-comment/core/data';
 import digestFetch, { FetchError } from '@meathill/digest-fetch';
-import { getUser, getUserComments, getCacheKey } from '~/utils/api';
+import { getUser, getUserComments, getCacheKey, getConfig } from '~/utils/api';
 import { getTidbKey } from '~/utils/tidb';
+import { getHeaders } from '#imports';
 
 export default defineEventHandler(async function (event): Promise<ResponseBody<number>> {
   const headers = getHeaders(event);
@@ -27,12 +28,12 @@ export default defineEventHandler(async function (event): Promise<ResponseBody<n
     user = await getUser(authorization, body.domain);
   } catch (e) {
     const message =  (e as Error).message || e;
-
     throw createError({
       statusCode: 401,
       message: 'Failed to authorized user. ' + message,
     });
   }
+
   if (!user) {
     throw createError({
       statusCode: 401,
@@ -48,34 +49,41 @@ export default defineEventHandler(async function (event): Promise<ResponseBody<n
     sub,
   } = user;
   let status = 0;
-  const history = await getUserComments(sub);
-  if (history.length) {
-    const lastCommentTime = new Date(history[ 0 ].created_at);
-    // users can only post once every 30 seconds
-    if (Date.now() - lastCommentTime.getTime() < 3e4) {
-      throw createError({
-        statusCode: 500,
-        message: 'You can post comment once in 30 seconds.',
-      });
-    }
-    // if user has 2 or more pending comments, they cannot post new comment
-    if (history.filter(c => Number(c.status) === CommentStatus.Approved).length >= 2) {
-      // if user has 2 or more approved comments, they can post comment freely
-      console.log(`user_id: ${sub} can post comment freely.`);
-      status = CommentStatus.Approved;
-    } else if (history.filter(c => Number(c.status) === CommentStatus.Pending).length >= 2) {
-      console.log(`user_id: ${sub} have 2 or more pending comments, cannot post new comment.`);
-      throw createError({
-        statusCode: 405,
-        message: 'You have 2 or more pending comments. Please wait for approval first.',
-      });
-    } else if (history.filter(c => Number(c.status) === CommentStatus.Rejected).length >= 5) {
-      // if user has 5 or more rejected comments, they will be keep out until we give them a pass
-      console.log(`user_id: ${sub} have 5 or more rejected comments, is banned currently.`);
-      throw createError({
-        statusCode: 405,
-        message: 'You have too many rejected comments. You are not allowed to post comment.',
-      });
+
+  // check if user is admin
+  const config = await getConfig();
+  if (config.adminEmails.includes(email)) {
+    status = CommentStatus.Approved;
+  } else {
+    const history = await getUserComments(sub);
+    if (history.length) {
+      const lastCommentTime = new Date(history[ 0 ].created_at);
+      // users can only post once every 30 seconds
+      if (Date.now() - lastCommentTime.getTime() < 3e4) {
+        throw createError({
+          statusCode: 500,
+          message: 'You can post comment once in 30 seconds.',
+        });
+      }
+      // if user has 2 or more pending comments, they cannot post new comment
+      if (history.filter(c => Number(c.status) === CommentStatus.Approved).length >= 2) {
+        // if user has 2 or more approved comments, they can post comment freely
+        console.log(`user_id: ${sub} can post comment freely.`);
+        status = CommentStatus.Approved;
+      } else if (history.filter(c => Number(c.status) === CommentStatus.Pending).length >= 2) {
+        console.log(`user_id: ${sub} have 2 or more pending comments, cannot post new comment.`);
+        throw createError({
+          statusCode: 405,
+          message: 'You have 2 or more pending comments. Please wait for approval first.',
+        });
+      } else if (history.filter(c => Number(c.status) === CommentStatus.Rejected).length >= 5) {
+        // if user has 5 or more rejected comments, they will be keep out until we give them a pass
+        console.log(`user_id: ${sub} have 5 or more rejected comments, is banned currently.`);
+        throw createError({
+          statusCode: 405,
+          message: 'You have too many rejected comments. You are not allowed to post comment.',
+        });
+      }
     }
   }
 

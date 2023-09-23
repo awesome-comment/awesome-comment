@@ -38,16 +38,17 @@ function getParentUserName(id: number): string {
       )
         .avatar.mr-2
           .w-6.h-6(v-if="comment.user.avatar")
-            img.rounded-full(
+            img.rounded-full.max-w-full.max-h-full(
               :src="comment.user.avatar"
               :alt="comment.user.name"
             )
-          .avatar-char.rounded-full.w-6.h-6.mr-2.text-center(
+          .avatar-char.rounded-full.w-6.h-6.text-center(
             v-else
             :style="{'background-color': stringToColor(comment.user.name || 'Anonymous')}"
           )
             span.text-neutral-content.mix-blend-color-dodge.uppercase.font-bold.leading-6 {{(comment.user.name || 'Anonymous').substring(0, 1)}}
         | {{comment.user.name}}
+        i.bi.bi-patch-check-fill.text-success.ml-2(v-if="comment.isAdmin")
         time.text-xs.text-gray-600.ml-4(
           class="dark:text-gray-400"
           pubdate

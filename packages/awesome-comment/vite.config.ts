@@ -31,7 +31,8 @@ export default defineConfig(function ({ command }) {
     server: {
       proxy: {
         '/api': {
-          target: 'https://comment.roudan.io',
+          // target: 'https://comment.roudan.io',
+          target: 'http://localhost:3000',
           changeOrigin: true,
         },
       },

@@ -1,7 +1,7 @@
 import digestFetch, { FetchError } from '@meathill/digest-fetch';
 import { Comment, ResponseBody } from '@awesome-comment/core/types';
 import { getTidbKey } from '~/utils/tidb';
-import { getCacheKey } from '~/utils/api';
+import { getCacheKey, getConfig } from '~/utils/api';
 
 export default defineEventHandler(async function (event): Promise<ResponseBody<Comment[]>> {
   const query = getQuery(event);
@@ -41,6 +41,13 @@ export default defineEventHandler(async function (event): Promise<ResponseBody<C
     });
     const result = await response.json();
     data.push(...result.data.rows);
+
+    const config = await getConfig();
+    for (const item of data) {
+      if (!item.user) continue;
+      item.user = JSON.parse(String(item.user));
+      item.isAdmin = config.adminEmails.includes(item.user?.email || '');
+    }
   } catch (e) {
     const message = (e as Error).message || String(e);
     throw createError({
