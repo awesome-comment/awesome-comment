@@ -20,7 +20,9 @@
   visibility: hidden;
 }
 
-
+.bi-patch-check-fill {
+  --icon: url('https://unpkg.com/bootstrap-icons@1.11.1/icons/patch-check-fill.svg')
+}
 .bi-reply-fill {
-  --icon: url('https://unpkg.com/bootstrap-icons@1.10.5/icons/reply-fill.svg')
+  --icon: url('https://unpkg.com/bootstrap-icons@1.11.1/icons/reply-fill.svg')
 }

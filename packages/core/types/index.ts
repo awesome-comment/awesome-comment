@@ -32,6 +32,7 @@ export type Comment = BaseComment & {
     avatar: string;
   };
   isNew?: boolean;
+  isAdmin?: boolean;
 }
 export type ResponseComment = BaseComment & {
   created_at: string;
