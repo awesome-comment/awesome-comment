@@ -39,5 +39,8 @@ export default defineEventHandler(async function (event): Promise<ResponseBody<C
   return {
     code: 0,
     data,
+    meta: {
+      config: event.context.config,
+    },
   };
 });

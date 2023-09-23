@@ -1,11 +1,16 @@
 import { CommentStatus } from '../data';
 
+export type AcConfig = {
+  adminEmails: string[];
+}
+
 export type ResponseBody<T> = {
   code: number;
   data?: T;
   message?: string;
   meta?: {
     total?: number;
+    config?: AcConfig;
   };
 }
 

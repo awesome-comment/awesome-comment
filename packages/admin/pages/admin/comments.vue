@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Comment } from '@awesome-comment/core/types';
+import type { Comment, ResponseBody } from '@awesome-comment/core/types';
 import { CommentStatus } from '@awesome-comment/core/data';
 import { useAuth0 } from '@auth0/auth0-vue';
 
@@ -30,7 +30,7 @@ const { data, pending } = await useAsyncData(
     if (!auth0) return;
 
     const token = await auth0.getAccessTokenSilently();
-    const { data } = await $fetch('/api/admin/comments', {
+    const { data, meta } = await $fetch('/api/admin/comments', {
       query: {
         status: filterStatus.value === 'all' ? ['0' ,'1'] : filterStatus.value,
         start: start.value,
@@ -39,16 +39,29 @@ const { data, pending } = await useAsyncData(
         Authorization: `Bearer ${token}`,
       },
     });
-    hasMore.value = data?.length === 20;
-    const cms = (data || []).map(c => {
+
+    const { adminEmails = [] } = meta.config;
+    const [cms, replies]: [Record<number, Comment>, Comment[]] = (data || []).reduce(([map, replies], c) => {
       c.user = JSON.parse((c.user || '{}') as string);
       c.status = Number(c.status);
       c.id = Number(c.id);
       c.isReviewing = false;
       c.from = c.user_id.split('|')[ 0 ];
-      return c;
-    });
-    comments.value.push(...cms);
+      if (adminEmails.includes(c.user.email)) {
+        replies.push(c);
+      } else {
+        map[ c.id ] = c;
+      }
+      return [map, replies];
+    }, [{}, []]);
+    hasMore.value = Object.values(cms).length === 20;
+    for (const reply of replies) {
+      const parent = cms[ reply.parent_id ];
+      if (!parent) continue;
+      parent.children = parent.children ?? [];
+      parent.children.push(reply);
+    }
+    comments.value.push(...Object.values(cms));
     return comments;
   },
   {
@@ -97,7 +110,7 @@ function doLoadMore() {
   start.value += 20;
 }
 function onFilterChange(): void {
-  comments.value.length = 0;
+  comments.value && (comments.value.length = 0);
   const router = useRouter();
   router.push({
     query: {
@@ -131,10 +144,18 @@ header.flex.flex-col.mb-4.gap-4(class="sm:flex-row sm:items-center")
         th Post
         th Status
         th
-    tbody(v-if="comments.length && !pending")
+    tbody(v-if="comments?.length && !pending")
       tr(v-for="(comment, index) in comments" :key="comment.id")
         td {{ comment.id }}
-        td {{ comment.content }}
+        td
+          p {{ comment.content }}
+          .mt-4.chat.chat-end(
+            v-if="comment.children?.length"
+          )
+            .chat-bubble {{comment.children[0].content}}
+            .chat-footer.mt-1
+              i.bi.bi-patch-check-fill.mr-1
+              | {{comment.children[0].user.email}}
         td
           user-cell(
             :user="comment.user"
@@ -186,7 +207,7 @@ header.flex.flex-col.mb-4.gap-4(class="sm:flex-row sm:items-center")
 
   .w-full.h-32.flex.items-center.justify-center(v-if="pending")
     span.loading.loading-spinner
-  .w-full.h-32.flex.items-center.justify-center(v-else-if="comments.length === 0")
+  .w-full.h-32.flex.items-center.justify-center(v-else-if="!comments?.length")
     .text-lg.text-center.text-neutral-content No Data to display
 </template>
 

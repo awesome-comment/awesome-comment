@@ -1,8 +1,8 @@
+import { ResponseBody } from '@awesome-comment/core/types';
 import { H3Event } from 'h3';
-import { ApiResponse } from '~/types';
 import { getConfigKey } from '~/utils/api';
 
-export default defineEventHandler(async function (event: H3Event): Promise<ApiResponse<string>> {
+export default defineEventHandler(async function (event: H3Event): Promise<ResponseBody<string>> {
   const body = await readBody(event);
 
   const storage = useStorage('data');

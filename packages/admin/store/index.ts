@@ -1,5 +1,5 @@
-import { AcConfig, ApiResponse } from '~/types';
 import { useAuth0 } from '@auth0/auth0-vue';
+import { ResponseBody, AcConfig } from '@awesome-comment/core/types';
 
 const useConfigStore = defineStore('config', () => {
   const config = ref<AcConfig>({
@@ -14,7 +14,7 @@ const useConfigStore = defineStore('config', () => {
     const token = await auth0.getAccessTokenSilently();
     if (!token) return;
 
-    const { data } = await $fetch<ApiResponse<AcConfig>>('/api/admin/config', {
+    const { data } = await $fetch<ResponseBody<AcConfig>>('/api/admin/config', {
       headers: {
         Authorization: `Bearer ${token}`,
       },

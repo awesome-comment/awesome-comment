@@ -14,10 +14,7 @@ const adminEmails = computed<string>({
     return store.config.adminEmails.join('\n');
   },
   set(value: string) {
-    const emails = value.split('\n')
-      .map(item => item.trim())
-      .filter(Boolean);
-    store.setConfig({ adminEmails: Array.from(new Set(emails)) });
+    store.setConfig({ adminEmails: value.split('\n') });
   },
 });
 
@@ -40,7 +37,16 @@ async function doSave(event: Event): Promise<void> {
     const token = await auth0.getAccessTokenSilently();
     await $fetch('/api/admin/config', {
       method: 'POST',
-      body: store.config,
+      body: {
+        ...store.config,
+        adminEmails: Array.from(
+          new Set(
+            store.config.adminEmails
+              .map(item => item.trim())
+              .filter(Boolean)
+          )
+        ),
+      },
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,

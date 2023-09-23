@@ -1,8 +1,7 @@
-import { ResponseComment, User } from '@awesome-comment/core/types';
+import { ResponseComment, User, AcConfig } from '@awesome-comment/core/types';
 import digestFetch from '@meathill/digest-fetch';
 import { getTidbKey } from './tidb';
 import { H3Event } from 'h3';
-import { AcConfig } from '~/types';
 
 export async function getConfig(): Promise<AcConfig> {
   const storage = useStorage('data');
