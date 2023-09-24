@@ -74,7 +74,7 @@ export function getCacheKey(postId: string): string {
 }
 
 export function getConfigKey(): string {
-  return `${process.env.VERCEL_URL}_ac_config`;
+  return `${process.env.ADMIN_SITE}_ac_config`;
 }
 
 export async function getUserComments(userId: string): Promise<ResponseComment[]> {
