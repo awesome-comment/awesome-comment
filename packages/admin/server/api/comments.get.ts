@@ -46,7 +46,7 @@ export default defineEventHandler(async function (event): Promise<ResponseBody<C
     for (const item of data) {
       if (!item.user) continue;
       item.user = JSON.parse(String(item.user));
-      item.isAdmin = config.adminEmails.includes(item.user?.email || '');
+      item.isAdmin = config?.adminEmails?.includes(item.user?.email || '');
     }
   } catch (e) {
     const message = (e as Error).message || String(e);
