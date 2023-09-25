@@ -50,6 +50,10 @@ async function doReply(event: Event): Promise<void> {
       ancestorId: props.comment.id,
       status: CommentStatus.Approved,
       createdAt: new Date(),
+      user: {
+        email: auth0.user.value?.email,
+        name: auth0.user.value?.name,
+      },
     } as Comment);
     modal.value.close();
   } catch (e) {
