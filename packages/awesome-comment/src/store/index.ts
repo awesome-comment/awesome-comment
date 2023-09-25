@@ -30,7 +30,7 @@ const useStore = defineStore('store', () => {
     const deeper: ResponseComment[] = [];
     from.forEach((item: ResponseComment) => {
       if (!item.ancestor_id || Number(item.ancestor_id) === 0) {
-        res[ item.id ] = formatHelper(item);
+        res[ item.id as number ] = formatHelper(item);
       } else {
         deeper.push(item);
       }
