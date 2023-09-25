@@ -27,7 +27,7 @@ export default defineEventHandler(async function (event): Promise<ResponseBody<n
   try {
     user = await getUser(authorization, body.domain);
   } catch (e) {
-    const message =  (e as Error).message || e;
+    const message = (e as Error).message || e;
     throw createError({
       statusCode: 401,
       message: 'Failed to authorized user. ' + message,

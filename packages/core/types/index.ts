@@ -15,7 +15,7 @@ export type ResponseBody<T> = {
 }
 
 type BaseComment = {
-  id: number;
+  id?: number;
   postId: string;
   content: string;
   userId: string;

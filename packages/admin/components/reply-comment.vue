@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { Comment } from '@awesome-comment/core/types';
+import { CommentStatus } from '@awesome-comment/core/data';
 import { useAuth0 } from '@auth0/auth0-vue';
 
 type Props = {
@@ -7,7 +8,7 @@ type Props = {
 }
 const props = defineProps<Props>();
 type Emits = {
-  (event: 'reply', reply: string): (event: Event) => boolean | void;
+  (event: 'reply', reply: Comment): (event: Event) => boolean | void;
 }
 const emit = defineEmits<Emits>();
 const auth0 = useAuth0();
@@ -41,7 +42,16 @@ async function doReply(event: Event): Promise<void> {
         parentId: props.comment.id,
       },
     });
-    emit('reply', reply.value);
+    emit('reply', {
+      id: data,
+      content: reply.value,
+      parentId: props.comment.id,
+      postId: props.comment.postId,
+      ancestorId: props.comment.id,
+      status: CommentStatus.Approved,
+      createdAt: new Date(),
+    } as Comment);
+    modal.value.close();
   } catch (e) {
     message.value = (e as Error).message || String(e);
   }

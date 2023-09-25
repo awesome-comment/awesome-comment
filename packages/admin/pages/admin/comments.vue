@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Comment, ResponseBody } from '@awesome-comment/core/types';
+import type { Comment } from '@awesome-comment/core/types';
 import { CommentStatus } from '@awesome-comment/core/data';
 import { useAuth0 } from '@auth0/auth0-vue';
 
@@ -54,14 +54,14 @@ const { data, pending } = await useAsyncData(
       }
       return [map, replies];
     }, [{}, []]);
-    hasMore.value = Object.values(cms).length === 20;
+    hasMore.value = data.length >= 20;
     for (const reply of replies) {
       const parent = cms[ reply.parent_id ];
       if (!parent) continue;
       parent.children = parent.children ?? [];
       parent.children.push(reply);
     }
-    comments.value.push(...Object.values(cms));
+    comments.value.push(...(Object.values(cms).reverse() as RowItem[]));
     return comments;
   },
   {
@@ -117,6 +117,10 @@ function onFilterChange(): void {
       status: filterStatus.value,
     },
   });
+}
+function onReply(reply: Comment, parent: Comment): void {
+  parent.children ??= [];
+  parent.children.push(reply);
 }
 </script>
 
@@ -195,6 +199,7 @@ header.flex.flex-col.mb-4.gap-4(class="sm:flex-row sm:items-center")
 
             reply-comment(
               :comment="comment"
+              @reply="onReply($event, comment)"
             )
   button.mt-2.btn.btn-neutral.btn-sm.btn-block(
     v-if="hasMore",
