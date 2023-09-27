@@ -9,6 +9,7 @@ WHERE
     WHERE status = ${status}
       AND deleted_at is NULL
       AND user_id != ${user_id}
+      AND IF(${post_id}, post_id = ${post_id}, 1)
     ORDER BY id DESC
     LIMIT ${start}, 20
   )
@@ -18,6 +19,7 @@ WHERE
 	  WHERE status = ${status}
       AND deleted_at is NULL
       AND user_id != ${user_id}
+      AND IF(${post_id}, post_id = ${post_id}, 1)
     ORDER BY id DESC
     LIMIT ${start}, 20
   ) AND user_id=${user_id})

@@ -23,6 +23,13 @@
         "description": ""
       },
       {
+        "name": "post_id",
+        "type": "string",
+        "required": 0,
+        "default": "",
+        "description": ""
+      },
+      {
         "name": "start",
         "type": "number",
         "required": 0,
