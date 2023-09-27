@@ -23,6 +23,7 @@ type BaseComment = {
   ancestorId?: number;
   status: CommentStatus;
   children?: Comment[];
+  created_at?: string;
 }
 export type Comment = BaseComment & {
   createdAt: Date;

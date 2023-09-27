@@ -11,11 +11,7 @@ export default defineNuxtConfig({
       link: [
         {
           rel: 'stylesheet',
-          href: 'https://unpkg.com/bootstrap-icons@1.11.1/font/bootstrap-icons.css',
-        },
-        {
-          rel: 'stylesheet',
-          href: repoUrl + '/style.css',
+          href: 'https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css',
         },
       ],
       meta: [

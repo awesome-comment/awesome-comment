@@ -1,28 +1,30 @@
-.bi {
-  --width: 1em;
-  --icon: '';
-  background-color: currentColor;
-  display: inline-block;
-  mask-size: var(--width) var(--width);
-  mask-repeat: no-repeat;
-  mask-position: center;
-  mask-image: var(--icon);
-}
-.bi::before {
-  display: inline-block;
-  content: '';
-  width: var(--width);
-}
-.bi-fw {
-  --width: 1.513333em;
-}
-.bi-blank {
-  visibility: hidden;
-}
+.awesome-comment {
+  .bi {
+    --width: 1em;
+    --icon: '';
+    background-color: currentColor;
+    display: inline-block;
+    mask-size: var(--width) var(--width);
+    mask-repeat: no-repeat;
+    mask-position: center;
+    mask-image: var(--icon);
+  }
+  .bi::before {
+    display: inline-block;
+    content: '';
+    width: var(--width);
+  }
+  .bi-fw {
+    --width: 1.513333em;
+  }
+  .bi-blank {
+    visibility: hidden;
+  }
 
-.bi-patch-check-fill {
-  --icon: url('https://unpkg.com/bootstrap-icons@1.11.1/icons/patch-check-fill.svg')
-}
-.bi-reply-fill {
-  --icon: url('https://unpkg.com/bootstrap-icons@1.11.1/icons/reply-fill.svg')
+  .bi-patch-check-fill {
+    --icon: url('https://unpkg.com/bootstrap-icons@1.11.1/icons/patch-check-fill.svg')
+  }
+  .bi-reply-fill {
+    --icon: url('https://unpkg.com/bootstrap-icons@1.11.1/icons/reply-fill.svg')
+  }
 }

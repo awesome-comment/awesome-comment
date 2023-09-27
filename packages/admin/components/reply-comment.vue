@@ -37,7 +37,7 @@ async function doReply(event: Event): Promise<void> {
       },
       body: {
         comment: reply.value,
-        postId: props.comment.id,
+        postId: props.comment.postId,
         ancestorId: props.comment.id,
         parentId: props.comment.id,
       },

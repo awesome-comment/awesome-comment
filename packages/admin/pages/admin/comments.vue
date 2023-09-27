@@ -9,15 +9,16 @@ type RowItem = Comment & {
   from: string;
 }
 
+const CSKeys = Object.values(CommentStatus).filter((v) => !isNaN(Number(v)));
 const auth0 = process.client ? useAuth0() : undefined;
+const route = useRoute();
 
 const start = ref<number>(0);
 const hasMore = ref<boolean>(false);
 const loadingMore = ref<boolean>(false);
 const message = ref<string>('');
-const route = useRoute();
 const filterStatus = ref<CommentStatus | 'all'>(route.query.status || CommentStatus.Pending);
-const CSKeys = Object.values(CommentStatus).filter((v) => !isNaN(Number(v)));
+const filterPostId = ref<string>('');
 const comments = ref<RowItem[]>([]);
 
 definePageMeta({
@@ -33,6 +34,7 @@ const { data, pending } = await useAsyncData(
     const { data, meta } = await $fetch('/api/admin/comments', {
       query: {
         status: filterStatus.value === 'all' ? ['0' ,'1'] : filterStatus.value,
+        postId: filterPostId.value,
         start: start.value,
       },
       headers: {
@@ -47,6 +49,7 @@ const { data, pending } = await useAsyncData(
       c.id = Number(c.id);
       c.isReviewing = false;
       c.from = c.user_id.split('|')[ 0 ];
+      c.postId = c.post_id;
       if (adminEmails.includes(c.user.email)) {
         replies.push(c);
       } else {
@@ -65,7 +68,7 @@ const { data, pending } = await useAsyncData(
     return comments;
   },
   {
-    watch: [filterStatus, start],
+    watch: [filterStatus, filterPostId, start],
   }
 );
 
@@ -109,6 +112,10 @@ async function doDelete(comment: RowItem, index: number): Promise<void> {
 function doLoadMore() {
   start.value += 20;
 }
+function doFilter(postId: string): void {
+  hasMore.value = false;
+  filterPostId.value = postId;
+}
 function onFilterChange(): void {
   comments.value && (comments.value.length = 0);
   const router = useRouter();
@@ -136,6 +143,15 @@ header.flex.flex-col.mb-4.gap-4(class="sm:flex-row sm:items-center")
     )
       option(value="all") All
       option(v-for="key in CSKeys", :value="key", :key="key") {{ CommentStatus[key] }}
+
+.flex.mb-4(v-if="filterPostId")
+  button.btn.btn-outline.btn-sm.normal-case(
+    type="button"
+    @click="filterPostId = ''"
+  )
+    i.bi.bi-funnel-fill
+    | {{filterPostId}}
+    i.bi.bi-x-lg
 
 .overflow-x-auto
   table.table.table-pin-rows.table-pin-cols
@@ -165,8 +181,20 @@ header.flex.flex-col.mb-4.gap-4(class="sm:flex-row sm:items-center")
             :user="comment.user"
             :from="comment.from"
           )
-        td {{ comment.created_at }}
-        td {{ comment.post_id }}
+        td
+          time.text-xs(:datetime="comment.created_at") {{ comment.created_at }}
+        td {{ comment.postId }}
+          .flex.gap-2.mt-2
+            button.btn.btn-xs.btn-ghost(
+              type="button"
+              @click="doFilter(comment.postId)"
+            )
+              i.bi.bi-funnel-fill
+            nuxt-link.btn.btn-xs.btn-ghost(
+              external
+              :to="comment.post_id"
+            )
+              i.bi.bi-box-arrow-up-right
         td {{ CommentStatus[comment.status] }}
         th
           .flex.flex-wrap.gap-2
