@@ -15,7 +15,9 @@ const {
 } = useAuth0();
 const total = computed<number | string>(() => {
   const total = (store.total > 20 || (store.total === 20 && store.hasMore))
-    ? '20+' : store.total;
+    ? store.total + '+' : store.total;
+  if (store.total === 0) return '0';
+
   const event = new CustomEvent('AwesomeComment:total', {
     bubbles: true,
     cancelable: true,

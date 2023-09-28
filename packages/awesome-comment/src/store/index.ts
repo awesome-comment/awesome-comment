@@ -68,9 +68,10 @@ const useStore = defineStore('store', () => {
       return;
     }
 
-    comments.value = formatComment(data.data || []);
+    const formatted = formatComment(data.data || []);
+    Object.assign(comments.value, formatted);
     const count = data.data?.length || 0;
-    hasMore.value = count >= 20;
+    hasMore.value = Object.values(formatted).length >= 20;
     total.value += count;
     isLoaded.value = true;
     loadingMore.value = false;
