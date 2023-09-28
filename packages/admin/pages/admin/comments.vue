@@ -19,13 +19,13 @@ const loadingMore = ref<boolean>(false);
 const message = ref<string>('');
 const filterStatus = ref<CommentStatus | 'all'>(route.query.status || CommentStatus.Pending);
 const filterPostId = ref<string>('');
-const comments = ref<RowItem[]>([]);
+const comments = ref<Record<number, RowItem>>({});
 
 definePageMeta({
   middleware: ['auth'],
 });
 
-const { data, pending } = await useAsyncData(
+const { data: commentsList, pending } = await useAsyncData(
   'comments',
   async function () {
     if (!auth0) return;
@@ -64,10 +64,14 @@ const { data, pending } = await useAsyncData(
       parent.children = parent.children ?? [];
       parent.children.push(reply);
     }
-    comments.value.push(...(Object.values(cms).reverse() as RowItem[]));
-    return comments;
+    Object.assign(comments.value, cms);
+    loadingMore.value = false;
+    return Object.values(comments.value).reverse();
   },
   {
+    default() {
+      return Object.values(comments.value).reverse();
+    },
     watch: [filterStatus, filterPostId, start],
   }
 );
@@ -90,7 +94,7 @@ async function doReview(comment: RowItem, status: CommentStatus) {
   comment.status = status;
   comment.isReviewing = false;
 }
-async function doDelete(comment: RowItem, index: number): Promise<void> {
+async function doDelete(comment: RowItem): Promise<void> {
   if (!auth0) return;
   if (!confirm('Are you sure to delete this comment?')) { return }
 
@@ -106,18 +110,23 @@ async function doDelete(comment: RowItem, index: number): Promise<void> {
       Authorization: `Bearer ${token}`,
     },
   });
-  comments.value.splice(index, 1);
+  delete comments.value[ comment.id ];
   comment.isReviewing = false;
 }
 function doLoadMore() {
+  loadingMore.value = true;
   start.value += 20;
 }
 function doFilter(postId: string): void {
+  comments.value = {};
+  commentsList.value = [];
+  start.value = 0;
   hasMore.value = false;
   filterPostId.value = postId;
 }
-function onFilterChange(): void {
-  comments.value && (comments.value.length = 0);
+function onStatusChange(): void {
+  comments.value = {};
+  commentsList.value = [];
   const router = useRouter();
   router.push({
     query: {
@@ -139,7 +148,7 @@ header.flex.flex-col.mb-4.gap-4(class="sm:flex-row sm:items-center")
       span.text-xs Status
     select.select.select-bordered.select-sm(
       v-model="filterStatus"
-      @change="onFilterChange"
+      @change="onStatusChange"
     )
       option(value="all") All
       option(v-for="key in CSKeys", :value="key", :key="key") {{ CommentStatus[key] }}
@@ -164,8 +173,8 @@ header.flex.flex-col.mb-4.gap-4(class="sm:flex-row sm:items-center")
         th Post
         th Status
         th
-    tbody(v-if="comments?.length && !pending")
-      tr(v-for="(comment, index) in comments" :key="comment.id")
+    tbody(v-if="commentsList?.length")
+      tr(v-for="(comment, index) in commentsList" :key="comment.id")
         td {{ comment.id }}
         td
           p {{ comment.content }}
@@ -220,7 +229,7 @@ header.flex.flex-col.mb-4.gap-4(class="sm:flex-row sm:items-center")
               type="button",
               class="sm:btn-xs"
               :disabled="comment.isReviewing || loadingMore",
-              @click="doDelete(comment, index)"
+              @click="doDelete(comment)"
             )
               span.loading.loading-xs.loading-spinner(v-if="comment.isReviewing")
               | Delete
@@ -238,9 +247,9 @@ header.flex.flex-col.mb-4.gap-4(class="sm:flex-row sm:items-center")
     span.loading.loading-xs.loading-spinner(v-if="loadingMore")
     | Load More
 
-  .w-full.h-32.flex.items-center.justify-center(v-if="pending")
+  .w-full.h-32.flex.items-center.justify-center(v-if="!commentsList?.length && pending")
     span.loading.loading-spinner
-  .w-full.h-32.flex.items-center.justify-center(v-else-if="!comments?.length")
+  .w-full.h-32.flex.items-center.justify-center(v-else-if="!commentsList?.length")
     .text-lg.text-center.text-neutral-content No Data to display
 </template>
 
