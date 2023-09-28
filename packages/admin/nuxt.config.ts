@@ -13,6 +13,10 @@ export default defineNuxtConfig({
           rel: 'stylesheet',
           href: 'https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css',
         },
+        {
+          rel: 'stylesheet',
+          href: repoUrl + '/style.css',
+        },
       ],
       meta: [
         {
