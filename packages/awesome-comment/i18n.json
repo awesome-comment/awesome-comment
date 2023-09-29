@@ -1,0 +1,16 @@
+{
+  "en": {
+    "discussion": "Discussion",
+    "login": "LOGIN",
+    "logout": "Logout",
+    "placeholder": "Write a comment...",
+    "post_comment": "POST COMMENT",
+    "post_reply": "POST REPLY"
+  },
+  "zh": {
+    "comment": "\u8a55\u8ad6",
+    "load": "\u52a0\u8f09\u8a55\u8ad6",
+    "log_to_comment": "\u767b\u9304\u5f8c\u624d\u53ef\u767c\u8868\u8a55\u8ad6",
+    "send": "\u767c\u9001"
+  }
+}

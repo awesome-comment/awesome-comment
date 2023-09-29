@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { inject, onMounted, ref } from 'vue';
 import { useAuth0 } from '@auth0/auth0-vue';
+import { useI18n } from 'vue-i18n';
 import type { ResponseBody } from '@awesome-comment/core/types';
 import useStore from '../store';
 
@@ -17,6 +18,7 @@ const emit = defineEmits<Emits>();
 
 const auth0 = useAuth0();
 const store = useStore();
+const { t } = useI18n();
 const baseUrl = inject('ApiBaseUrl');
 const auth0domain = inject('Auth0Domain');
 const version = __VERSION__;
@@ -95,12 +97,12 @@ form.mb-6(
   .ac-form-control.border.border-neutral.bg-base-200.rounded-lg
     label.sr-only(
       for="ac-comment"
-    ) Your comment
+    ) {{t('Your comment')}}
     textarea#ac-comment.ac-textarea.ac-textarea-bordered.bg-base-200.rounded-b-none(
       ref="textarea"
       class="focus:outline-none"
       rows="3"
-      placeholder="Write a comment..."
+      :placeholder="t('placeholder')"
       required
       @keydown.enter="onKeydown"
       @keydown.esc="onCancel"
@@ -116,7 +118,7 @@ form.mb-6(
         :disabled="isSending"
       )
         span.ac-loading.ac-loading-spinner(v-if="isSending")
-        | Post comment
+        | {{parentId ? t('post_reply') : t('post_comment')}}
 </template>
 
 <script lang="ts">

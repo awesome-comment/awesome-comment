@@ -73,7 +73,9 @@ function getParentUserName(id: number): string {
 
       //- reply button
       button.ac-btn.ac-btn-sm.ac-btn-circle.border-0(
-        type="button",
+        type="button"
+        title="Reply"
+        aria-label="Reply"
         @click="comment.isReplying = !comment.isReplying"
       )
         i.bi.bi-reply-fill.h-4.w-4
