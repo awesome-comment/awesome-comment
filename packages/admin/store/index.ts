@@ -4,6 +4,9 @@ import { ResponseBody, AcConfig } from '@awesome-comment/core/types';
 const useConfigStore = defineStore('config', () => {
   const config = ref<AcConfig>({
     adminEmails: [],
+    autoApprove: {
+      enabled: true,
+    },
   });
 
   function setConfig(value: Partial<AcConfig>): void {

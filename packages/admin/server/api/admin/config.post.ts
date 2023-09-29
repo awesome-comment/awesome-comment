@@ -9,9 +9,11 @@ export default defineEventHandler(async function (event: H3Event): Promise<Respo
   const key = getConfigKey();
   const {
     adminEmails,
+    autoApprove,
   } = body;
   await storage.setItem(key, {
     adminEmails,
+    autoApprove,
   });
 
   return {

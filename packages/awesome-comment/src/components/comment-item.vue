@@ -15,6 +15,9 @@ const props = defineProps<{
   ancestorId?: number;
 }>();
 
+function getCommentLink(id: number): string {
+  return `${location.origin}${location.pathname}#awcm-${id}`;
+}
 function getParentUserName(id: number): string {
   if (props.ancestorId) {
     const ancestor = store.comments[ props.ancestorId ];
@@ -32,11 +35,11 @@ function getParentUserName(id: number): string {
   @animationend="comment.isNew = false"
 )
   article.p-6.text-base.bg-base-200.rounded-lg(class="dark:bg-gray-900")
-    header.flex.justify-between.items-center.mb-2
+    header.flex.justify-between.items-center.font-sans.mb-2
       .flex.items-center.text-sm.text-base-content(
         class="dark:text-white"
       )
-        .avatar.mr-2
+        .ac-avatar.mr-2
           .w-6.h-6(v-if="comment.user.avatar")
             img.rounded-full.max-w-full.max-h-full(
               :src="comment.user.avatar"
@@ -48,13 +51,21 @@ function getParentUserName(id: number): string {
           )
             span.text-neutral-content.mix-blend-color-dodge.uppercase.font-bold.leading-6 {{(comment.user.name || 'Anonymous').substring(0, 1)}}
         | {{comment.user.name}}
-        i.bi.bi-patch-check-fill.text-success.ml-2(v-if="comment.isAdmin")
-        time.text-xs.text-gray-600.ml-4(
-          class="dark:text-gray-400"
-          pubdate
-          :datetime="comment.createdAt"
-          :title="formatTime(comment.createdAt)"
-        ) {{formatTime(comment.createdAt)}}
+        .ac-tooltip.ml-2(
+          v-if="comment.isAdmin"
+          data-tip="Admin"
+        )
+          i.bi.bi-patch-check-fill.text-success
+        a.ml-4.no-underline(
+          class="hover:underline"
+          :href="getCommentLink(comment.id)"
+        )
+          time.text-xs.text-gray-600(
+            class="dark:text-gray-400"
+            pubdate
+            :datetime="comment.createdAt"
+            :title="formatTime(comment.createdAt)"
+          ) {{formatTime(comment.createdAt)}}
         a.text-xs.link.link-hover.ml-4(
           v-if="!isFirstLevel && comment.parent_id !== comment.ancestor_id"
           :href="'#awcm-' + comment.parent_id"

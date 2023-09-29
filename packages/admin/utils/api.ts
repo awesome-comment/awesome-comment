@@ -1,7 +1,8 @@
-import { ResponseComment, User, AcConfig } from '@awesome-comment/core/types';
+import { Comment, ResponseComment, User, AcConfig } from '@awesome-comment/core/types';
 import digestFetch from '@meathill/digest-fetch';
 import { getTidbKey } from './tidb';
 import { H3Event } from 'h3';
+import { CommentStatus } from '@awesome-comment/core/data';
 
 export async function getConfig(): Promise<AcConfig> {
   const storage = useStorage('data');
@@ -93,4 +94,53 @@ export async function getUserComments(userId: string): Promise<ResponseComment[]
   const result = await response.json();
   data.push(...result.data.rows);
   return data;
+}
+
+export async function checkCommentStatus(userId: string, comment: Comment, config: AcConfig): Promise<CommentStatus> {
+  const history = await getUserComments(userId);
+  if (!history.length) return CommentStatus.Pending;
+
+  const lastCommentTime = new Date(history[ 0 ].created_at);
+  // users can only post once every 30 seconds
+  if (Date.now() - lastCommentTime.getTime() < 3e4) {
+    throw createError({
+      statusCode: 500,
+      message: 'You can post comment once in 30 seconds.',
+    });
+  }
+
+  // if user has 2 or more pending comments, they cannot post new comment
+  if (isAutoApprove(config, comment.postId, history)) {
+    console.log(`user_id: ${userId} can post comment freely.`);
+    return CommentStatus.Approved;
+  }
+
+  if (history.filter(c => Number(c.status) === CommentStatus.Pending).length >= 2) {
+    console.log(`user_id: ${userId} have 2 or more pending comments, cannot post new comment.`);
+    throw createError({
+      statusCode: 405,
+      message: 'You have 2 or more pending comments. Please wait for approval first.',
+    });
+  } else if (history.filter(c => Number(c.status) === CommentStatus.Rejected).length >= 5) {
+    // if user has 5 or more rejected comments, they will be keep out until we give them a pass
+    console.log(`user_id: ${userId} have 5 or more rejected comments, is banned currently.`);
+    throw createError({
+      statusCode: 405,
+      message: 'You have too many rejected comments. You are not allowed to post comment.',
+    });
+  }
+
+  return CommentStatus.Pending;
+}
+
+// if user has 2 or more approved comments, they can post comment freely
+export function isAutoApprove(config: AcConfig, postId: string, history: ResponseComment[]): boolean {
+  if (config.autoApprove && !config.autoApprove.enabled) return false;
+  if (config.autoApprove?.include
+    && !(new RegExp(config.autoApprove.include, 'i').test(postId))
+  ) return false;
+  if (config.autoApprove?.exclude
+    && new RegExp(config.autoApprove.exclude, 'i').test(postId)
+  ) return false;
+  return history.filter(c => Number(c.status) === CommentStatus.Approved).length >= 2;
 }

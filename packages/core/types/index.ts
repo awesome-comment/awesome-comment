@@ -1,7 +1,13 @@
 import { CommentStatus } from '../data';
 
+export type ToggleableRule = {
+  enabled: boolean;
+  exclude?: string;
+  include?: string;
+}
 export type AcConfig = {
   adminEmails: string[];
+  autoApprove: ToggleableRule;
 }
 
 export type ResponseBody<T> = {

@@ -14,14 +14,13 @@ const {
   logout,
 } = useAuth0();
 const total = computed<number | string>(() => {
-  const total = (store.total > 20 || (store.total === 20 && store.hasMore))
-    ? store.total + '+' : store.total;
+  const total = store.hasMore ? store.total + '+' : store.total;
   if (store.total === 0) return '0';
 
   const event = new CustomEvent('AwesomeComment:total', {
     bubbles: true,
     cancelable: true,
-    detail: total,
+    detail: store.total,
   });
   document.body.dispatchEvent(event);
   return total;

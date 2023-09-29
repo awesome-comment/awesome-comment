@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useAuth0 } from '@auth0/auth0-vue';
 import { sleep } from '@awesome-comment/core/utils';
+import type { AcConfig } from '@awesome-comment/core/types';
 import { useConfigStore } from '~/store';
 
 const auth0 = process.client ? useAuth0() : undefined;
@@ -9,6 +10,14 @@ const store = useConfigStore();
 const isSaving = ref<boolean>(false);
 const isSaved = ref<boolean>(false);
 const message = ref<string>('');
+const config = computed<AcConfig>({
+  get(): AcConfig {
+    return store.config;
+  },
+  set(value: Partial<AcConfig>) {
+    store.setConfig(value);
+  },
+});
 const adminEmails = computed<string>({
   get(): string {
     return store.config.adminEmails.join('\n');
@@ -82,15 +91,41 @@ form#config-form(
   @submit.prevent="doSave"
 )
   .form-control
-    label.label
+    label.label(for="admin-emails")
       span.label-text Admin Email
-    textarea.textarea.textarea-bordered(
+    textarea#admin-emails.textarea.textarea-bordered(
       required
       rows="4"
       v-model="adminEmails"
     )
-    label.label
+    label.label(for="admin-emails")
       span.label-text-alt Please use line breaks to split emails.
+  .form-control
+    label.label
+      span.label-text Users with 2 approved comments do not need to be moderated for new comments.
+    .flex.justify-start
+      label.label.cursor-pointer
+        span.label-text(
+          :class="!config.autoApprove.enabled ? '' : 'opacity-50'"
+        ) OFF
+        input.toggle.mx-2(
+          type="checkbox"
+          :class="config.autoApprove.enabled ? 'toggle-primary' : ''"
+          v-model="config.autoApprove.enabled"
+        )
+        span.label-text(
+          :class="config.autoApprove.enabled ? 'text-primary font-bold' : ''"
+        ) ON
+      input.input.input-bordered.font-mono.ml-4(
+        v-if="config.autoApprove.enabled"
+        placeholder="Include, default all"
+        v-model="config.autoApprove.include"
+      )
+      input.input.input-bordered.font-mono.ml-4(
+        v-if="config.autoApprove.enabled"
+        placeholder="Exclude"
+        v-model="config.autoApprove.exclude"
+      )
 </template>
 
 <script lang="ts">
