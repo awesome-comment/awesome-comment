@@ -70,6 +70,13 @@ const AwesomeComment = {
     const json = (await response.json()) as ResponseBody<ResponseComment[]>;
     if (json.data) {
       comments.push(...json.data);
+
+      const event = new CustomEvent('AwesomeComment:total', {
+        bubbles: true,
+        cancelable: true,
+        detail: comments.length,
+      });
+      document.body.dispatchEvent(event);
     }
   },
 };
