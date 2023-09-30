@@ -13,7 +13,7 @@ import { ResponseBody, ResponseComment } from '@awesome-comment/core/types';
 const comments: ResponseComment[] = [];
 let preAuth0: Auth0Plugin | null = null;
 
-function init(domain: string, clientId: string) {
+function init(domain: string, clientId: string, locale: string = navigator.language) {
   const app = createApp(App);
   const pinia = createPinia();
   const auth0 = preAuth0 || createAuth0({
@@ -25,7 +25,7 @@ function init(domain: string, clientId: string) {
   });
   const i18n = createI18n({
     legacy: false,
-    locale: navigator.language,
+    locale,
     fallbackLocale: 'en',
     messages,
   });
@@ -48,12 +48,20 @@ const AwesomeComment = {
   apiUrl: '',
   domain: '',
   clientId: '',
-  init(dom: string | HTMLElement, postId?: string, apiUrl?: string, domain?: string, clientId?: string) {
+  language: '',
+  init(
+    dom: string | HTMLElement,
+    postId?: string,
+    apiUrl?: string,
+    domain?: string,
+    clientId?: string,
+    locale: string = navigator.language,
+  ) {
     postId ??= this.postId;
     apiUrl ??= this.apiUrl;
     domain ??= this.domain;
     clientId ??= this.clientId;
-    const app = init(domain, clientId);
+    const app = init(domain, clientId, locale);
     app.provide('ApiBaseUrl', apiUrl);
     app.provide('postId', postId);
     app.provide('Auth0Domain', domain);
