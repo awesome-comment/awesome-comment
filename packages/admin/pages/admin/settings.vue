@@ -7,6 +7,7 @@ import { useConfigStore } from '~/store';
 const auth0 = process.client ? useAuth0() : undefined;
 const store = useConfigStore();
 
+const isLoading = ref<boolean>(false);
 const isSaving = ref<boolean>(false);
 const isSaved = ref<boolean>(false);
 const message = ref<string>('');
@@ -70,15 +71,18 @@ async function doSave(event: Event): Promise<void> {
   isSaving.value = false;
 }
 
-onMounted(() => {
-  store.initStore();
+onMounted(async () => {
+  isLoading.value = true;
+  await store.initStore();
+  isLoading.value = false;
 });
 </script>
 
 <template lang="pug">
-header.flex.items-center.justify-between.pb-4.mb-4.border-b
+header.flex.items-center.pb-4.mb-4.border-b
   h1.text-xl.font-bold Settings
-  button.btn(
+  span.loading.loading-spinner.ml-4(v-if="isLoading")
+  button.btn.ml-auto(
     form="config-form"
     :class="isSaved ? 'btn-success' : 'btn-primary'"
     :disabled="isSaving"
@@ -118,12 +122,12 @@ form#config-form(
         ) ON
       input.input.input-bordered.font-mono.ml-4(
         v-if="config.autoApprove.enabled"
-        placeholder="Include, default all"
+        placeholder="Include URLs, default all"
         v-model="config.autoApprove.include"
       )
       input.input.input-bordered.font-mono.ml-4(
         v-if="config.autoApprove.enabled"
-        placeholder="Exclude"
+        placeholder="Exclude URLs"
         v-model="config.autoApprove.exclude"
       )
 </template>

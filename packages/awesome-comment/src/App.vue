@@ -1,11 +1,13 @@
 <script setup lang="ts">
 import { computed } from 'vue';
+import { useI18n } from 'vue-i18n';
 import { useAuth0 } from '@auth0/auth0-vue';
 import CommentForm from './components/comment-form.vue';
 import CommentSection from './components/comment-section.vue';
 import useStore from './store';
 
 const store = useStore();
+const { t } = useI18n();
 const {
   isAuthenticated,
   isLoading,
@@ -42,7 +44,7 @@ function doLogout(): void {
     p {{ store.message }}
 
   header.flex.justify-between.items-center.py-2
-    h2.text-lg.font-bold.text-base-content.my-0 Discussion ({{ total }})
+    h2.text-lg.font-bold.text-base-content.my-0 {{t('discussion')}} ({{ total }})
     span.ac-loading.ac-loading-spinner(v-if="isLoading")
     .ac-dropdown.ac-dropdown-end(v-else)
       template(v-if="isAuthenticated && user")
@@ -61,13 +63,13 @@ function doLogout(): void {
               type="button"
               :disabled="isLoading"
               @click="doLogout"
-            ) Logout
+            ) {{t('logout')}}
       button.ac-btn.ac-btn-secondary.ac-btn-xs(
         v-else
         type="button"
         :disabled="isLoading"
         @click="doLogin"
-      ) Login
+      ) {{t('login')}}
 
   comment-form
   comment-section

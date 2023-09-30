@@ -1,6 +1,8 @@
 import { createApp } from 'vue'
 import { createPinia } from 'pinia';
 import { Auth0Plugin, createAuth0 } from '@auth0/auth0-vue';
+import { createI18n } from 'vue-i18n';
+import messages from '../i18n.json' assert { type: 'json' };
 import './styles/tw-daisy.css';
 import './styles/main.css';
 import './styles/icon.css'
@@ -21,8 +23,15 @@ function init(domain: string, clientId: string) {
       redirect_uri: location.origin,
     },
   });
+  const i18n = createI18n({
+    legacy: false,
+    locale: navigator.language,
+    fallbackLocale: 'en',
+    messages,
+  });
   app.use(auth0);
   app.use(pinia);
+  app.use(i18n);
   return app;
 }
 

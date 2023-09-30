@@ -15,7 +15,7 @@ const useConfigStore = defineStore('config', () => {
   async function initStore(): Promise<void> {
     const auth0 = useAuth0();
     const token = await auth0.getAccessTokenSilently();
-    if (!token) return;
+    if (!token) throw new Error('No access token');
 
     const { data } = await $fetch<ResponseBody<AcConfig>>('/api/admin/config', {
       headers: {
