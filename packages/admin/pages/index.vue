@@ -125,6 +125,7 @@ main.container.mx-auto.py-8.flex.flex-col.gap-4.px-4(class="sm:flex-row sm:px-0"
         |   baseUrl, // base URL for the API
         |   domain, // auth0 domain
         |   clientId, // auth0 client id
+        |   locale, // locale, like `cn`, `en`, default to navigator.language
         | );
       p.mb-4 Finally, you can use the editor in your page.
 
