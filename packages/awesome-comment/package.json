@@ -6,7 +6,7 @@
     "dev": "vite",
     "build": "vue-tsc && vite build",
     "preview": "vite preview",
-    "get-i18n": "wget https://qe-editor.arealme.com/-/output/comment.arealme.com -O i18n.json"
+    "get-i18n": "node build/i18n.js"
   },
   "dependencies": {
     "@auth0/auth0-vue": "^2.3.1",
