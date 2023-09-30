@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import snarkdown from 'snarkdown';
+import { useI18n } from 'vue-i18n';
 import type { Comment } from '@awesome-comment/core/types';
 import { CommentStatus } from '@awesome-comment/core/data';
 import { stringToColor } from '../utils';
@@ -7,6 +8,7 @@ import { formatTime } from '../utils/time.ts';
 import CommentForm from './comment-form.vue';
 import useStore from '../store';
 
+const { t } = useI18n();
 const store = useStore();
 
 const props = defineProps<{
@@ -47,13 +49,13 @@ function getParentUserName(id: number): string {
             )
           .avatar-char.rounded-full.w-6.h-6.text-center(
             v-else
-            :style="{'background-color': stringToColor(comment.user.name || 'Anonymous')}"
+            :style="{'background-color': stringToColor(comment.user.name || t('anonymous'))}"
           )
-            span.text-neutral-content.mix-blend-color-dodge.uppercase.font-bold.leading-6 {{(comment.user.name || 'Anonymous').substring(0, 1)}}
+            span.text-neutral-content.mix-blend-color-dodge.uppercase.font-bold.leading-6 {{(comment.user.name || t('anonymous')).substring(0, 1)}}
         | {{comment.user.name}}
         .ac-tooltip.ml-2(
           v-if="comment.isAdmin"
-          data-tip="Admin"
+          :data-tip="t('admin')"
         )
           i.bi.bi-patch-check-fill.text-success
         a.ml-4.no-underline(
@@ -69,7 +71,7 @@ function getParentUserName(id: number): string {
         a.text-xs.link.link-hover.ml-4(
           v-if="!isFirstLevel && comment.parent_id !== comment.ancestor_id"
           :href="'#awcm-' + comment.parent_id"
-        ) reply to {{getParentUserName(comment.parent_id)}}(\#{{ comment.parent_id }})
+        ) {{t('reply_to')}} {{getParentUserName(comment.parent_id)}}(\#{{ comment.parent_id }})
 
       //- reply button
       button.ac-btn.ac-btn-sm.ac-btn-circle.border-0(
@@ -86,7 +88,7 @@ function getParentUserName(id: number): string {
     p.italic.mt-4.text-gray-500.mb-0.text-sm(
       v-if="comment.status === CommentStatus.Pending"
       class="dark:text-gray-400"
-    ) comments normally got approved within 24 hours
+    ) {{t('approve_hint')}}
   comment-form.mt-3.ml-12(
     v-if="comment.isReplying && isFirstLevel"
     no-version

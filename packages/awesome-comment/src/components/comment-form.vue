@@ -97,7 +97,7 @@ form.mb-6(
   .ac-form-control.border.border-neutral.bg-base-200.rounded-lg
     label.sr-only(
       for="ac-comment"
-    ) {{t('Your comment')}}
+    ) {{t('your_comment')}}
     textarea#ac-comment.ac-textarea.ac-textarea-bordered.bg-base-200.rounded-b-none(
       ref="textarea"
       class="focus:outline-none"

@@ -1,7 +1,9 @@
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n';
 import CommentItem from './comment-item.vue';
 import useStore from '../store';
 
+const { t } = useI18n();
 const store = useStore();
 store.loadComments();
 
@@ -28,7 +30,7 @@ function loadMore() {
     :disabled="store.loadingMore"
   )
     span.ac-loading.ac-loading-xs.ac-loading-spinner(v-if="store.loadingMore")
-    | Load More
+    | {{t('load_more')}}
 .pt-8.text-center(v-else)
   span.ac-loading.ac-loading-spinner
 </template>
