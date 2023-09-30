@@ -29,7 +29,7 @@
     "reply_to": "回複給",
     "your_comment": "您的評論"
   },
-  "zh-CN": {
+  "cn": {
     "admin": "管理员",
     "anonymous": "匿名",
     "approve_hint": "评论通常在24小时内获得批准",
