@@ -18,10 +18,11 @@ function initAwesomeComment(): void {
   }
   AwesomeComment.init(
     '#comment',
-    'awesome-comment-self',
-    '',
-    runtime.public.auth0Domain,
-    runtime.public.auth0ClientId,
+    {
+      postId: 'awesome-comment-self',
+      domain: runtime.public.auth0Domain,
+      clientId: runtime.public.auth0ClientId,
+    },
   );
 }
 onMounted(initAwesomeComment);
@@ -121,11 +122,13 @@ main.container.mx-auto.py-8.flex.flex-col.gap-4.px-4(class="sm:flex-row sm:px-0"
       pre.mb-4
         | AwesomeComment.init(
         |   dom, // container element, or DOM selector
-        |   postId, // unique identifier for the page
-        |   baseUrl, // base URL for the API
-        |   domain, // auth0 domain
-        |   clientId, // auth0 client id
-        |   locale, // locale, like `cn`, `en`, default to navigator.language
+        |   {
+        |     postId, // unique identifier for the page
+        |     baseUrl, // base URL for the API
+        |     domain, // auth0 domain
+        |     clientId, // auth0 client id
+        |     locale, // locale, like `cn`, `en`, default to navigator.language
+        |   },
         | );
       p.mb-4 Finally, you can use the editor in your page.
 

@@ -10,6 +10,14 @@ import './styles/animate.css';
 import App from './App.vue';
 import { ResponseBody, ResponseComment } from '@awesome-comment/core/types';
 
+export type InitOptions = {
+  postId?: string;
+  apiUrl?: string;
+  domain?: string;
+  clientId?: string;
+  locale?: string;
+};
+
 const comments: ResponseComment[] = [];
 let preAuth0: Auth0Plugin | null = null;
 
@@ -51,11 +59,13 @@ const AwesomeComment = {
   language: '',
   init(
     dom: string | HTMLElement,
-    postId?: string,
-    apiUrl?: string,
-    domain?: string,
-    clientId?: string,
-    locale: string = navigator.language,
+    {
+      postId,
+      apiUrl,
+      domain,
+      clientId,
+      locale = navigator.language,
+    }: InitOptions = {}
   ) {
     postId ??= this.postId;
     apiUrl ??= this.apiUrl;
