@@ -25,7 +25,7 @@ export async function checkUserPermission(event: H3Event): Promise<[User, AcConf
     });
   }
 
-  let user: User | null = await getUser(authorization);
+  let user: User | null = null;
   try {
     user = await getUser(authorization);
   } catch (e) {

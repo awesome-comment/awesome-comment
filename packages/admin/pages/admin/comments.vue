@@ -177,7 +177,7 @@ header.flex.flex-col.mb-4.gap-4(class="sm:flex-row sm:items-center")
       tr(v-for="(comment, index) in commentsList" :key="comment.id")
         td {{ comment.id }}
         td
-          p {{ comment.content }}
+          p.break-all {{ comment.content }}
           .mt-4.chat.chat-end(
             v-if="comment.children?.length"
           )
