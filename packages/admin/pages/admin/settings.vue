@@ -40,6 +40,10 @@ async function doSave(event: Event): Promise<void> {
   {
     return;
   }
+  if (auth0 && !auth0.isAuthenticated.value) {
+    message.value = 'Sorry, you must login first.';
+    return;
+  }
 
   isSaving.value = true;
   message.value = '';
@@ -72,6 +76,11 @@ async function doSave(event: Event): Promise<void> {
 }
 
 onMounted(async () => {
+  if (!auth0?.isAuthenticated.value) {
+    message.value = 'Sorry, you must login first.';
+    return;
+  }
+
   isLoading.value = true;
   await store.initStore();
   isLoading.value = false;
@@ -85,11 +94,17 @@ header.flex.items-center.pb-4.mb-4.border-b
   button.btn.ml-auto(
     form="config-form"
     :class="isSaved ? 'btn-success' : 'btn-primary'"
-    :disabled="isSaving"
+    :disabled="isSaving || !auth0?.isAuthenticated"
   )
     span.loading.loading-spinner(v-if="isSaving")
     i.bi.bi-check-lg(v-else)
     | Save
+
+.alert.alert-error.mb-4(v-if="message")
+  p
+    i.bi.bi-exclamation-triangle-fill.mr-2
+    | {{ message }}
+
 form#config-form(
   class="w-1/2"
   @submit.prevent="doSave"

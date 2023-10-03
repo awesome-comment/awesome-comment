@@ -55,6 +55,13 @@ export async function checkUserPermission(event: H3Event): Promise<[User, AcConf
 
 export async function getUser(accessToken: string, domain?: string): Promise<User> {
   domain ??= process.env.AUTH0_DOMAIN || '';
+  const store = useStorage('data');
+  const key = `user-${domain}-${accessToken}`;
+  const cached = await store.getItem(key);
+  if (cached) {
+    return cached as User;
+  }
+
   const response = await fetch(
     `https://${domain}/userinfo`,
     {
@@ -67,7 +74,11 @@ export async function getUser(accessToken: string, domain?: string): Promise<Use
   if (!response.ok) {
     throw new Error(`${response.status} ${response.statusText}`);
   }
-  return await response.json();
+  const user = (await response.json()) as User;
+  await store.setItem(key, user, {
+    ttl: 60 * 60,
+  });
+  return user;
 }
 
 export function getCacheKey(postId: string): string {

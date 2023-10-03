@@ -21,12 +21,7 @@ function doLogin() {
 }
 
 async function doLogout(): Promise<void> {
-  await auth0?.logout({
-    logoutParams: {
-      returnTo: location.href,
-    },
-  });
-  navigateTo('/admin/login');
+  await auth0?.logout();
 }
 </script>
 

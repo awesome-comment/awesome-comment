@@ -18,7 +18,7 @@ const hasMore = ref<boolean>(false);
 const loadingMore = ref<boolean>(false);
 const message = ref<string>('');
 const filterStatus = ref<CommentStatus | 'all'>(route.query.status || CommentStatus.Pending);
-const filterPostId = ref<string>('');
+const filterPostId = ref<string>(route.query.post_id || '');
 const comments = ref<Record<number, RowItem>>({});
 
 definePageMeta({
@@ -29,6 +29,10 @@ const { data: commentsList, pending } = await useAsyncData(
   'comments',
   async function () {
     if (!auth0) return;
+    if (!auth0.isAuthenticated.value) {
+      message.value = 'Sorry, you must login first.'
+      return;
+    }
 
     const token = await auth0.getAccessTokenSilently();
     const { data, meta } = await $fetch('/api/admin/comments', {
@@ -118,25 +122,30 @@ function doLoadMore() {
   start.value += 20;
 }
 function doFilter(postId: string): void {
-  comments.value = {};
-  commentsList.value = [];
-  start.value = 0;
-  hasMore.value = false;
   filterPostId.value = postId;
+  updateUrl();
 }
 function onStatusChange(): void {
-  comments.value = {};
-  commentsList.value = [];
-  const router = useRouter();
-  router.push({
-    query: {
-      status: filterStatus.value,
-    },
-  });
+  updateUrl();
 }
 function onReply(reply: Comment, parent: Comment): void {
   parent.children ??= [];
   parent.children.push(reply);
+}
+function updateUrl(): void {
+  comments.value = {};
+  commentsList.value = [];
+  start.value = 0;
+  hasMore.value = false;
+  const query: { status?: CommentStatus | 'all', post_id: string} = {};
+  if (filterStatus.value !== 'all') {
+    query.status = filterStatus.value;
+  }
+  if (filterPostId) {
+    query.post_id = filterPostId.value;
+  }
+  const router = useRouter();
+  router.push({ query });
 }
 </script>
 
@@ -152,6 +161,11 @@ header.flex.flex-col.mb-4.gap-4(class="sm:flex-row sm:items-center")
     )
       option(value="all") All
       option(v-for="key in CSKeys", :value="key", :key="key") {{ CommentStatus[key] }}
+
+.alert.alert-error.mb-4(v-if="message")
+  p
+    i.bi.bi-exclamation-triangle-fill.mr-2
+    | {{ message }}
 
 .flex.mb-4(v-if="filterPostId")
   button.btn.btn-outline.btn-sm.normal-case(
