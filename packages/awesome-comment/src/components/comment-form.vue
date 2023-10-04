@@ -6,6 +6,10 @@ import type { CommentStatus } from '@awesome-comment/core/data';
 import type { ResponseBody } from '@awesome-comment/core/types';
 import useStore from '../store';
 
+type PostResponse = {
+  id: number,
+  status: CommentStatus,
+};
 type Props = {
   noVersion?: boolean;
   parentId?: number;
@@ -54,7 +58,7 @@ async function doSubmit(event: Event): Promise<void> {
       }),
     });
 
-    const json = (await response.json()) as ResponseBody<{id: number, status: CommentStatus}>;
+    const json = (await response.json()) as ResponseBody<PostResponse>;
 
     if (!response.ok || json.message) {
       message.value = 'Failed to post comment: ' + (json.message || 'Unknown');
@@ -62,7 +66,7 @@ async function doSubmit(event: Event): Promise<void> {
       return;
     }
 
-    const { id, status } = json.data;
+    const { id, status } = json.data as PostResponse;
     if (props.ancestorId || props.parentId) {
       store.addComment(
         id, comment.value,
