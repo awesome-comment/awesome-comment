@@ -5,7 +5,12 @@ import { getUser, getCacheKey, getConfig, checkCommentStatus } from '~/utils/api
 import { getTidbKey } from '~/utils/tidb';
 import { getHeaders } from '#imports';
 
-export default defineEventHandler(async function (event): Promise<ResponseBody<number>> {
+type PostResponse = ResponseBody<{
+  id: number,
+  status: CommentStatus,
+}>;
+
+export default defineEventHandler(async function (event): Promise<PostResponse> {
   const headers = getHeaders(event);
   const authorization = headers[ 'authorization' ];
   if (!authorization) {
@@ -48,15 +53,15 @@ export default defineEventHandler(async function (event): Promise<ResponseBody<n
     email,
     sub,
   } = user;
-  let status = 0;
+  let status = CommentStatus.Pending;
 
   // check if user is admin
   const config = await getConfig();
-  // if (config.adminEmails.includes(email)) {
-  //   status = CommentStatus.Approved;
-  // } else {
+  if (config.adminEmails.includes(email)) {
+    status = CommentStatus.Approved;
+  } else {
     status = await checkCommentStatus(sub, body, config);
-  // }
+  }
 
   const ip = headers[ 'x-real-ip' ]
     || headers[ 'x-forwarded-for' ]
@@ -107,6 +112,9 @@ export default defineEventHandler(async function (event): Promise<ResponseBody<n
 
   return {
     code: 0,
-    data: id,
+    data: {
+      id,
+      status,
+    },
   };
 })

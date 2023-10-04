@@ -2,13 +2,14 @@
 import { inject, onMounted, ref } from 'vue';
 import { useAuth0 } from '@auth0/auth0-vue';
 import { useI18n } from 'vue-i18n';
+import type { CommentStatus } from '@awesome-comment/core/data';
 import type { ResponseBody } from '@awesome-comment/core/types';
 import useStore from '../store';
 
 type Props = {
   noVersion?: boolean;
-  parentId?: number | string;
-  ancestorId?: number | string;
+  parentId?: number;
+  ancestorId?: number;
 }
 const props = defineProps<Props>();
 type Emits = {
@@ -53,16 +54,25 @@ async function doSubmit(event: Event): Promise<void> {
       }),
     });
 
-    const json = (await response.json()) as ResponseBody<number>;
+    const json = (await response.json()) as ResponseBody<{id: number, status: CommentStatus}>;
 
     if (!response.ok || json.message) {
-      throw new Error('Failed to post comment: ' + (json.message || 'Unknown'));
+      message.value = 'Failed to post comment: ' + (json.message || 'Unknown');
+      isSending.value = false;
+      return;
     }
 
+    const { id, status } = json.data;
     if (props.ancestorId || props.parentId) {
-      store.addComment(json.data as number, comment.value, auth0.user.value, Number(props.ancestorId), Number(props.parentId));
+      store.addComment(
+        id, comment.value,
+        auth0.user.value,
+        props.ancestorId,
+        props.parentId,
+        status,
+      );
     } else {
-      store.addComment(json.data as number, comment.value, auth0.user.value);
+      store.addComment(id, comment.value, auth0.user.value, status);
     }
     comment.value = '';
   } catch (e) {

@@ -19,7 +19,8 @@ function loadMore() {
     v-for="comment in Object.values(store.comments).reverse()"
     :key="comment.id"
     :comment="comment"
-    :ancestor-id="Number(comment.id)"
+    :parent-id="comment.parentId"
+    :ancestor-id="comment.id"
     is-first-level
   )
 

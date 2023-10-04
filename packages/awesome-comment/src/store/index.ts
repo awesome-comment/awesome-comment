@@ -5,9 +5,16 @@ import { CommentStatus } from '@awesome-comment/core/data';
 import { User } from '@auth0/auth0-vue';
 
 function formatHelper(item: ResponseComment): Comment {
-  const { created_at: createdAt, ...rest } = item;
+  const {
+    created_at: createdAt,
+    parent_id: parentId,
+    ancestor_id: ancestorId,
+    ...rest
+  } = item;
   return {
     ...rest,
+    parentId,
+    ancestorId,
     status: Number(item.status),
     createdAt: new Date(createdAt),
   };
@@ -77,7 +84,14 @@ const useStore = defineStore('store', () => {
     loadingMore.value = false;
     return data;
   }
-  function addComment(id: number, comment: string, user: User, ancestorId?: number, parentId?: number): void {
+  function addComment(
+    id: number,
+    comment: string,
+    user: User,
+    status: CommentStatus = CommentStatus.Pending,
+    ancestorId?: number,
+    parentId?: number
+  ): void {
     const {
       sub = '',
       name = '',
@@ -96,7 +110,7 @@ const useStore = defineStore('store', () => {
         name: nickname || name,
       },
       userId: sub,
-      status: CommentStatus.Pending,
+      status,
       isNew: true,
     }
     if (ancestorId || parentId) {
