@@ -17,7 +17,7 @@ export default defineEventHandler(async function (event): Promise<ResponseBody<C
   }
 
   const storage = useStorage('data');
-  const key = getCacheKey(postId + '-' + start as string);
+  const key = getCacheKey(postId + (start ? '-' + start : ''));
   const stored = await storage.getItem(key) as Comment[];
   if (stored) {
     console.log('[cache] get comments from cache: ', key);

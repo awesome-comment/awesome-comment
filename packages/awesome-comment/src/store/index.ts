@@ -117,10 +117,10 @@ const useStore = defineStore('store', () => {
       newComment.ancestorId = ancestorId;
       newComment.parentId = parentId;
       const ancestor = comments.value[ ancestorId as number ];
+      if (!ancestor.children) {
+        ancestor.children = []
+      }
       if (ancestorId === parentId) { // if same value, means the comment is just reply to the ancestor item
-        if (!ancestor.children) {
-          ancestor.children = []
-        }
         ancestor.children!.unshift(newComment);
       } else { // means the comment is the reply to the previous parent item
         const idx = ancestor.children!.findIndex(i => Number(i.id) === parentId);

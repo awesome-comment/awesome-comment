@@ -69,7 +69,8 @@ async function doSubmit(event: Event): Promise<void> {
     const { id, status } = json.data as PostResponse;
     if (props.ancestorId || props.parentId) {
       store.addComment(
-        id, comment.value,
+        id,
+        comment.value,
         auth0.user.value,
         props.ancestorId,
         props.parentId,
@@ -79,12 +80,12 @@ async function doSubmit(event: Event): Promise<void> {
       store.addComment(id, comment.value, auth0.user.value, status);
     }
     comment.value = '';
+    emit('close');
   } catch (e) {
     message.value = (e as Error).message || String(e);
   }
 
   isSending.value = false;
-  emit('close');
 }
 function doLogin(): void {
   auth0.loginWithPopup();
