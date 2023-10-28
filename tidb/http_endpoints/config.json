@@ -1,9 +1,9 @@
 [
   {
-    "name": "v2 moderator get comments",
+    "name": "[depracated] admin get comment",
     "description": "",
     "method": "GET",
-    "endpoint": "/v2/moderator/get",
+    "endpoint": "/v1/admin/get",
     "data_source": {
       "cluster_id": 1379661944646254419
     },
@@ -12,21 +12,7 @@
         "name": "status",
         "type": "number",
         "required": 1,
-        "default": "",
-        "description": "0"
-      },
-      {
-        "name": "user_id",
-        "type": "string",
-        "required": 1,
-        "default": "",
-        "description": ""
-      },
-      {
-        "name": "post_id",
-        "type": "string",
-        "required": 0,
-        "default": "",
+        "default": "0",
         "description": ""
       },
       {
@@ -38,15 +24,15 @@
       }
     ],
     "settings": {
-      "timeout": 30000,
-      "row_limit": 1000,
+      "timeout": 5000,
+      "row_limit": 50,
       "cache_enabled": 0,
       "cache_ttl": 0,
       "enable_pagination": 0
     },
-    "tag": "Default",
+    "tag": "",
     "batch_operation": 0,
-    "sql_file": "sql/GET-v2-moderator-get.sql",
+    "sql_file": "sql/GET-v1-admin-get.sql",
     "type": "sql_endpoint",
     "return_type": "json"
   },
@@ -88,16 +74,16 @@
     "return_type": "json"
   },
   {
-    "name": "get comment by user",
+    "name": "get comment",
     "description": "",
     "method": "GET",
-    "endpoint": "/v1/user",
+    "endpoint": "/v1/get",
     "data_source": {
       "cluster_id": 1379661944646254419
     },
     "params": [
       {
-        "name": "user_id",
+        "name": "post_id",
         "type": "string",
         "required": 1,
         "default": "",
@@ -107,7 +93,7 @@
         "name": "start",
         "type": "number",
         "required": 0,
-        "default": "",
+        "default": "0",
         "description": ""
       }
     ],
@@ -118,9 +104,9 @@
       "cache_ttl": 0,
       "enable_pagination": 0
     },
-    "tag": "Default",
+    "tag": "",
     "batch_operation": 0,
-    "sql_file": "sql/GET-v1-user.sql",
+    "sql_file": "sql/GET-v1-get.sql",
     "type": "sql_endpoint",
     "return_type": "json"
   },
@@ -188,80 +174,6 @@
     "tag": "",
     "batch_operation": 0,
     "sql_file": "sql/POST-v1-moderator-review.sql",
-    "type": "sql_endpoint",
-    "return_type": "json"
-  },
-  {
-    "name": "moderator get comments",
-    "description": "",
-    "method": "GET",
-    "endpoint": "/v1/moderator/get",
-    "data_source": {
-      "cluster_id": 1379661944646254419
-    },
-    "params": [
-      {
-        "name": "status",
-        "type": "string",
-        "required": 1,
-        "default": "",
-        "description": ""
-      },
-      {
-        "name": "start",
-        "type": "number",
-        "required": 0,
-        "default": "0",
-        "description": ""
-      }
-    ],
-    "settings": {
-      "timeout": 5000,
-      "row_limit": 50,
-      "cache_enabled": 0,
-      "cache_ttl": 0,
-      "enable_pagination": 0
-    },
-    "tag": "",
-    "batch_operation": 0,
-    "sql_file": "sql/GET-v1-moderator-get.sql",
-    "type": "sql_endpoint",
-    "return_type": "json"
-  },
-  {
-    "name": "admin get comment",
-    "description": "",
-    "method": "GET",
-    "endpoint": "/v1/admin/get",
-    "data_source": {
-      "cluster_id": 1379661944646254419
-    },
-    "params": [
-      {
-        "name": "status",
-        "type": "number",
-        "required": 1,
-        "default": "0",
-        "description": ""
-      },
-      {
-        "name": "start",
-        "type": "number",
-        "required": 0,
-        "default": "0",
-        "description": ""
-      }
-    ],
-    "settings": {
-      "timeout": 5000,
-      "row_limit": 50,
-      "cache_enabled": 0,
-      "cache_ttl": 0,
-      "enable_pagination": 0
-    },
-    "tag": "",
-    "batch_operation": 0,
-    "sql_file": "sql/GET-v1-admin-get.sql",
     "type": "sql_endpoint",
     "return_type": "json"
   },
@@ -338,18 +250,69 @@
     "return_type": "json"
   },
   {
-    "name": "get comment",
+    "name": "get comment by user",
     "description": "",
     "method": "GET",
-    "endpoint": "/v1/get",
+    "endpoint": "/v1/user",
     "data_source": {
       "cluster_id": 1379661944646254419
     },
     "params": [
       {
-        "name": "post_id",
+        "name": "user_id",
         "type": "string",
         "required": 1,
+        "default": "",
+        "description": ""
+      },
+      {
+        "name": "start",
+        "type": "number",
+        "required": 0,
+        "default": "",
+        "description": ""
+      }
+    ],
+    "settings": {
+      "timeout": 5000,
+      "row_limit": 50,
+      "cache_enabled": 0,
+      "cache_ttl": 0,
+      "enable_pagination": 0
+    },
+    "tag": "Default",
+    "batch_operation": 0,
+    "sql_file": "sql/GET-v1-user.sql",
+    "type": "sql_endpoint",
+    "return_type": "json"
+  },
+  {
+    "name": "v2 moderator get comments",
+    "description": "",
+    "method": "GET",
+    "endpoint": "/v2/moderator/get",
+    "data_source": {
+      "cluster_id": 1379661944646254419
+    },
+    "params": [
+      {
+        "name": "status",
+        "type": "number",
+        "required": 1,
+        "default": "",
+        "description": "0"
+      },
+      {
+        "name": "user_id",
+        "type": "string",
+        "required": 1,
+        "default": "",
+        "description": ""
+      },
+      {
+        "name": "post_id",
+        "type": "string",
+        "required": 0,
         "default": "",
         "description": ""
       },
@@ -362,15 +325,15 @@
       }
     ],
     "settings": {
-      "timeout": 5000,
-      "row_limit": 50,
+      "timeout": 30000,
+      "row_limit": 1000,
       "cache_enabled": 0,
       "cache_ttl": 0,
       "enable_pagination": 0
     },
-    "tag": "",
+    "tag": "Default",
     "batch_operation": 0,
-    "sql_file": "sql/GET-v1-get.sql",
+    "sql_file": "sql/GET-v2-moderator-get.sql",
     "type": "sql_endpoint",
     "return_type": "json"
   }
