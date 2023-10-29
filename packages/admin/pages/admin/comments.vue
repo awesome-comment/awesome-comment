@@ -126,6 +126,10 @@ function doFilter(postId: string): void {
   filterPostId.value = postId;
   updateUrl();
 }
+function doRemoveFilterPostId(): void {
+  filterPostId.value = '';
+  updateUrl();
+}
 function onStatusChange(): void {
   updateUrl();
 }
@@ -171,7 +175,7 @@ header.flex.flex-col.mb-4.gap-4(class="sm:flex-row sm:items-center")
 .flex.mb-4(v-if="filterPostId")
   button.btn.btn-outline.btn-sm.normal-case(
     type="button"
-    @click="filterPostId = ''"
+    @click="doRemoveFilterPostId"
   )
     i.bi.bi-funnel-fill
     | {{filterPostId}}
