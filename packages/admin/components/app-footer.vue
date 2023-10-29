@@ -1,6 +1,7 @@
 <script setup lang="ts">
-const runtime = useRuntimeConfig();
 const year = new Date().getFullYear();
+const version = __VERSION__;
+const acVersion = __AC_VERSION__;
 </script>
 
 <template lang="pug">
@@ -9,9 +10,9 @@ footer.bg-neutral.text-neutral-content.mt-auto
     .items-center.grid-flow-col
       img.w-8.h-8.object-cover.rounded-full.mr-1(src="https://evereditor.com/mui2.jpg", alt="")
       p Copyright © {{year}} - All right reserved
-        span.ml-4 Site v{{runtime.public.version}}
+        span.ml-4 Site v{{version}}
         span.mx-2 |
-        span Awesome Comment v{{runtime.public.acVersion}}
+        span Awesome Comment v{{acVersion}}
 
     .grid-flow-col.gap-4(class="md:place-self-center md:justify-self-end")
       nuxt-link.text-2xl(

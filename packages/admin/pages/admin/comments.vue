@@ -9,6 +9,7 @@ type RowItem = Comment & {
   from: string;
 }
 
+const postIdPrefix = __POST_ID_PREFIX__;
 const CSKeys = Object.values(CommentStatus).filter((v) => !isNaN(Number(v)));
 const auth0 = process.client ? useAuth0() : undefined;
 const route = useRoute();
@@ -191,7 +192,7 @@ header.flex.flex-col.mb-4.gap-4(class="sm:flex-row sm:items-center")
       tr(v-for="(comment, index) in commentsList" :key="comment.id")
         td {{ comment.id }}
         td
-          p.break-all {{ comment.content }}
+          p.break-words {{ comment.content }}
           .mt-4.chat.chat-end(
             v-if="comment.children?.length"
           )
@@ -206,7 +207,7 @@ header.flex.flex-col.mb-4.gap-4(class="sm:flex-row sm:items-center")
           )
         td
           time.text-xs(:datetime="comment.created_at") {{ comment.created_at }}
-        td {{ comment.postId }}
+        td {{ comment.postId.replace(postIdPrefix, '') }}
           .flex.gap-2.mt-2
             button.btn.btn-xs.btn-ghost(
               type="button"
@@ -214,6 +215,7 @@ header.flex.flex-col.mb-4.gap-4(class="sm:flex-row sm:items-center")
             )
               i.bi.bi-funnel-fill
             nuxt-link.btn.btn-xs.btn-ghost(
+              target="_blank"
               external
               :to="comment.post_id"
             )

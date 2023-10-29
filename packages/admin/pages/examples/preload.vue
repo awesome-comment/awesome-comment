@@ -1,10 +1,8 @@
 <script setup lang="ts">
-const runtime = useRuntimeConfig();
-
 useHead({
   script: [
     {
-      src: runtime.public.repoUrl + '/awesome-comment.umd.js',
+      src: __REPO_URL__ + '/awesome-comment.umd.js',
       crossorigin: 'anonymous',
       async: true,
     },
@@ -27,8 +25,8 @@ async function doPreload(): Promise<void> {
   await AwesomeComment.preload(
     'awesome-comment-self',
     '',
-    runtime.public.auth0Domain,
-    runtime.public.auth0ClientId,
+    __AUTH0_DOMAIN__,
+    __AUTH0_CLIENT_ID__,
   );
   isPreloading.value = false;
   isPreloaded.value = true;
@@ -38,8 +36,8 @@ function doStart(): void {
     '#awesome-comment',
     'awesome-comment-self',
     '',
-    runtime.public.auth0Domain,
-    runtime.public.auth0ClientId,
+    __AUTH0_DOMAIN__,
+    __AUTH0_CLIENT_ID__,
   )
 }
 onMounted(initAwesomeComment);

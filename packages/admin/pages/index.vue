@@ -1,10 +1,8 @@
 <script setup lang="ts">
-const runtime = useRuntimeConfig();
-
 useHead({
   script: [
     {
-      src: runtime.public.repoUrl + '/awesome-comment.umd.js',
+      src: __REPO_URL__ + '/awesome-comment.umd.js',
       crossorigin: 'anonymous',
       async: true,
     },
@@ -20,8 +18,8 @@ function initAwesomeComment(): void {
     '#comment',
     {
       postId: 'awesome-comment-self',
-      domain: runtime.public.auth0Domain,
-      clientId: runtime.public.auth0ClientId,
+      domain: __AUTH0_DOMAIN__,
+      clientId: __AUTH0_CLIENT_ID__,
     },
   );
 }

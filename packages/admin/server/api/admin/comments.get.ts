@@ -15,11 +15,7 @@ export default defineEventHandler(async function (event): Promise<ResponseBody<C
     const url = 'https://ap-northeast-1.data.tidbcloud.com/api/v1beta/app/dataapp-NFYbhmOK/endpoint/v2/moderator/get';
     const params = new URLSearchParams();
     params.set('start', start as string);
-    if (Array.isArray(status)) {
-      status.forEach((item) => params.append('status', item));
-    } else {
-      params.append('status', status as string);
-    }
+    params.set('status', Array.isArray(status) ? status.join(',') : status as string);
     params.set('user_id', event.context.user.id);
     params.set('post_id', postId as string);
     const kv = await getTidbKey();

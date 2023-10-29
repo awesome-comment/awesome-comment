@@ -44,15 +44,6 @@ export default defineNuxtConfig({
       data: { driver: 'vercelKV' },
     },
   },
-  runtimeConfig: {
-    public: {
-      version: pkg.version,
-      acVersion: acPkg.version,
-      auth0Domain: process.env.AUTH0_DOMAIN,
-      auth0ClientId: process.env.AUTH0_CLIENT_ID,
-      repoUrl,
-    },
-  },
   postcss: {
     plugins: {
       'postcss-import': {},
@@ -72,5 +63,15 @@ export default defineNuxtConfig({
     '/admin/**': { ssr: false },
     // Add cors headers on API routes
     '/api/**': { cors: true },
+  },
+  vite: {
+    define: {
+      __VERSION__: JSON.stringify(pkg.version),
+      __AC_VERSION__: JSON.stringify(acPkg.version),
+      __AUTH0_DOMAIN__: JSON.stringify(process.env.AUTH0_DOMAIN),
+      __AUTH0_CLIENT_ID__: JSON.stringify(process.env.AUTH0_CLIENT_ID),
+      __REPO_URL__: JSON.stringify(repoUrl),
+      __POST_ID_PREFIX__: JSON.stringify(process.env.POST_ID_PREFIX || ''),
+    },
   },
 })
