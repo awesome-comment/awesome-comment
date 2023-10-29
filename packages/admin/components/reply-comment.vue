@@ -40,6 +40,7 @@ async function doReply(event: Event): Promise<void> {
         postId: props.comment.postId,
         ancestorId: props.comment.id,
         parentId: props.comment.id,
+        status: props.comment.status,
       },
     });
     emit('reply', {

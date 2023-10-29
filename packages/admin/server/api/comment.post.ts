@@ -3,7 +3,6 @@ import { CommentStatus } from '@awesome-comment/core/data';
 import digestFetch, { FetchError } from '@meathill/digest-fetch';
 import { getUser, getCacheKey, getConfig, checkCommentStatus } from '~/utils/api';
 import { getTidbKey } from '~/utils/tidb';
-import { getHeaders } from '#imports';
 
 type PostResponse = ResponseBody<{
   id: number,
@@ -53,7 +52,7 @@ export default defineEventHandler(async function (event): Promise<PostResponse> 
     email,
     sub,
   } = user;
-  let status = CommentStatus.Pending;
+  let status: CommentStatus;
 
   // check if user is admin
   const config = await getConfig();
@@ -101,6 +100,23 @@ export default defineEventHandler(async function (event): Promise<PostResponse> 
       statusCode: (e as FetchError).status,
       message,
     });
+  }
+
+  // if admin reply, update parent_id to be approved
+  if (config.adminEmails.includes(email) && body.parentId && body.status === CommentStatus.Pending) {
+    const url = 'https://ap-northeast-1.data.tidbcloud.com/api/v1beta/app/dataapp-NFYbhmOK/endpoint/v1/moderator/review';
+    const kv = await getTidbKey();
+    await digestFetch(url,
+      {
+        status: CommentStatus.Approved,
+        id,
+      },
+      {
+        method: 'POST',
+        realm: 'tidb.cloud',
+        ...kv,
+      },
+    );
   }
 
   // if comment directly approved, clear cache
