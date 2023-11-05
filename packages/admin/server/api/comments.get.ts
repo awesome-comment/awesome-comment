@@ -5,10 +5,8 @@ import { getCacheKey, getConfig } from '~/utils/api';
 
 export default defineEventHandler(async function (event): Promise<ResponseBody<Comment[]>> {
   const query = getQuery(event);
-  const {
-    start = 0,
-    postId,
-  } = query;
+  const { postId } = query;
+  const start = Number(query.start || 0);
   if (!postId) {
     throw createError({
       statusCode: 404,
