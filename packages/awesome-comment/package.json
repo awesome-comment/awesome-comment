@@ -14,14 +14,14 @@
     "animate.css": "^4.1.1",
     "pinia": "^2.1.7",
     "snarkdown": "^2.0.0",
-    "vue": "^3.3.7",
+    "vue": "^3.3.8",
     "vue-i18n": "^9.6.5",
     "vue-router": "^4.2.5"
   },
   "devDependencies": {
     "@tailwindcss/typography": "^0.5.10",
-    "@types/node": "^20.8.10",
-    "@vitejs/plugin-vue": "^4.4.0",
+    "@types/node": "^20.9.0",
+    "@vitejs/plugin-vue": "^4.4.1",
     "autoprefixer": "^10.4.16",
     "daisyui": "^3.9.4",
     "postcss": "^8.4.31",
