@@ -12,7 +12,34 @@
     "post_reply": "POST REPLY",
     "reply": "Reply",
     "reply_to": "reply to",
+    "ui_texts": [
+      "Be the first to start the discussion!",
+      "Join the Conversation (#)",
+      "Loading...",
+      "Load Comments"
+    ],
     "your_comment": "Your comment"
+  },
+  "es": {
+    "admin": "Administrador",
+    "anonymous": "Anónimo",
+    "approve_hint": "los comentarios son normalmente aprobados dentro de 24 horas",
+    "discussion": "Discusión",
+    "load_more": "Cargar Más",
+    "login": "INICIAR SESIÓN",
+    "logout": "Cerrar Sesión",
+    "placeholder": "Escribe un comentario...",
+    "post_comment": "PUBLICAR COMENTARIO",
+    "post_reply": "PUBLICAR RESPUESTA",
+    "reply": "Responder",
+    "reply_to": "Responder a",
+    "ui_texts": [
+      "¡Sé el primero en iniciar la discusión!",
+      "Únete a la Conversación (#)",
+      "Cargando...",
+      "Cargar Comentarios"
+    ],
+    "your_comment": "Tu comentario"
   },
   "id": {
     "admin": "Admin",
@@ -88,6 +115,27 @@
     "reply": "Responder",
     "reply_to": "responder a",
     "your_comment": "Seu comentário"
+  },
+  "th": {
+    "admin": "Admin",
+    "anonymous": "Anonymous",
+    "approve_hint": "comments normally got approved within 24 hours",
+    "discussion": "Discussion",
+    "load_more": "Load More",
+    "login": "LOGIN",
+    "logout": "Logout",
+    "placeholder": "Write a comment...",
+    "post_comment": "POST COMMENT",
+    "post_reply": "POST REPLY",
+    "reply": "Reply",
+    "reply_to": "reply to",
+    "ui_texts": [
+      "Be the first to start the discussion!",
+      "Join the Conversation (#)",
+      "Loading...",
+      "Load Comments"
+    ],
+    "your_comment": "Your comment"
   },
   "zh": {
     "admin": "管理員",
