@@ -2,7 +2,7 @@
   "en": {
     "admin": "Admin",
     "anonymous": "Anonymous",
-    "approve_hint": "comments normally got approved within 24 hours",
+    "approve_hint": "We’ll reply to your comment within 24 hours without spamming your email, so please check back soon :)",
     "discussion": "Discussion",
     "load_more": "Load More",
     "login": "LOGIN",
@@ -117,30 +117,30 @@
     "your_comment": "Seu comentário"
   },
   "th": {
-    "admin": "Admin",
-    "anonymous": "Anonymous",
-    "approve_hint": "comments normally got approved within 24 hours",
-    "discussion": "Discussion",
-    "load_more": "Load More",
-    "login": "LOGIN",
-    "logout": "Logout",
-    "placeholder": "Write a comment...",
-    "post_comment": "POST COMMENT",
-    "post_reply": "POST REPLY",
-    "reply": "Reply",
-    "reply_to": "reply to",
+    "admin": "แอดมิน",
+    "anonymous": "นิรนาม",
+    "approve_hint": "โดยปกติความคิดเห็นจะได้รับการอนุมัติภายใน 24 ชั่วโมง",
+    "discussion": "การอภิปราย",
+    "load_more": "โหลดเพิ่ม",
+    "login": "ลงชื่อเข้าใช้",
+    "logout": "ลงชื่อออก",
+    "placeholder": "เขียนความคิดเห็น...",
+    "post_comment": "โพสต์ความคิดเห็น",
+    "post_reply": "โพสต์การตอบกลับ",
+    "reply": "ตอบกลับ",
+    "reply_to": "ตอบกลับถึง",
     "ui_texts": [
-      "Be the first to start the discussion!",
-      "Join the Conversation (#)",
-      "Loading...",
-      "Load Comments"
+      "เป็นคนแรกที่เริ่มการอภิปราย",
+      "เข้าร่วมการสนทนา (#)",
+      "กำลังโหลด...",
+      "โหลดความคิดเห็น"
     ],
-    "your_comment": "Your comment"
+    "your_comment": "ความคิดเห็นของคุณ"
   },
   "zh": {
     "admin": "管理員",
     "anonymous": "匿名",
-    "approve_hint": "評論通常在24小時內獲得批準",
+    "approve_hint": "評論通常在24小時內獲得批準，並且每壹條評論都會獲得回復",
     "discussion": "討論",
     "load_more": "加載更多",
     "login": "登錄",
@@ -155,7 +155,7 @@
   "zh-CN": {
     "admin": "管理员",
     "anonymous": "匿名",
-    "approve_hint": "评论通常在24小时内获得批准",
+    "approve_hint": "评论通常在24小时内公开（我们也会回复您）",
     "discussion": "讨论",
     "load_more": "加载更多",
     "login": "登录",
