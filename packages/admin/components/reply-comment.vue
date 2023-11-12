@@ -38,7 +38,7 @@ async function doReply(event: Event): Promise<void> {
       body: {
         comment: reply.value,
         postId: props.comment.postId,
-        ancestorId: props.comment.id,
+        ancestorId: props.comment.ancestorId || props.comment.id,
         parentId: props.comment.id,
         status: props.comment.status,
       },
@@ -46,9 +46,9 @@ async function doReply(event: Event): Promise<void> {
     emit('reply', {
       id: data,
       content: reply.value,
-      parentId: props.comment.id,
       postId: props.comment.postId,
-      ancestorId: props.comment.id,
+      parentId: props.comment.id,
+      ancestorId: props.comment.ancestorId || props.comment.id,
       status: CommentStatus.Approved,
       createdAt: new Date(),
       user: {
@@ -74,33 +74,34 @@ button.btn.btn-success.btn-sm(
   span.loading.loading-xs.loading-spinner(v-if="isReplying")
   | Reply
 
-dialog.modal(
-  ref="modal"
-  :id="'comment-' + comment.id"
-)
-  form.modal-box(
-    @submit.prevent="doReply"
+teleport(to="body")
+  dialog.modal(
+    ref="modal"
+    :id="'comment-' + comment.id"
   )
-    .mb-2 Reply to
-    blockquote.mb-2.border-l-2.border-gray-200.bg-base-200.pl-2.py-2 {{comment.content}}
-    .form-control.mb-4
-      label.label
-        span.label-text Your replyment
-      textarea.textarea.textarea-bordered(
-        rows="3"
-        v-model="reply"
-        required
-      )
-    .alert.alert-error.mb-4(v-if="message")
-      p {{message}}
-    footer.flex.justify-end
-      button.btn.btn-primary(
-        :disabled="isReplying"
-      )
-        span.loading.loading-spinner(v-if="isReplying")
-        | Reply
-  form.modal-backdrop(
-    method="dialog"
-  )
-    button close
+    form.modal-box(
+      @submit.prevent="doReply"
+    )
+      .mb-2 Reply to
+      blockquote.mb-2.border-l-2.border-gray-200.bg-base-200.pl-2.py-2 {{comment.content}}
+      .form-control.mb-4
+        label.label
+          span.label-text Your replyment
+        textarea.textarea.textarea-bordered(
+          rows="3"
+          v-model="reply"
+          required
+        )
+      .alert.alert-error.mb-4(v-if="message")
+        p {{message}}
+      footer.flex.justify-end
+        button.btn.btn-primary(
+          :disabled="isReplying"
+        )
+          span.loading.loading-spinner(v-if="isReplying")
+          | Reply
+    form.modal-backdrop(
+      method="dialog"
+    )
+      button close
 </template>

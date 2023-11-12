@@ -10,6 +10,7 @@ type PostResponse = {
   id: number,
   status: CommentStatus,
 };
+
 type Props = {
   noVersion?: boolean;
   parentId?: number;

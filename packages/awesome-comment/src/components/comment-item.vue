@@ -92,7 +92,7 @@ function getParentUserName(id: number): string {
   comment-form.mt-3.ml-12(
     v-if="comment.isReplying && isFirstLevel"
     no-version
-    :ancestor-id="Number(ancestorId)"
+    :ancestor-id="ancestorId"
     :parent-id="Number(comment.id)"
     @close="comment.isReplying = false"
   )
@@ -101,13 +101,14 @@ function getParentUserName(id: number): string {
       v-for="child in comment.children"
       :key="child.id"
       :comment="child"
-      :ancestor-id="Number(ancestorId)"
+      :ancestor-id="ancestorId"
       :is-first-level="false"
     )
   comment-form.mt-3.ml-12(
     v-if="comment.isReplying && !isFirstLevel"
-    :ancestor-id="Number(ancestorId)"
-    :parent-id="Number(comment.id)"
+    no-version
+    :ancestor-id="ancestorId"
+    :parent-id="comment.id"
   )
 </template>
 

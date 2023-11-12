@@ -6,6 +6,7 @@ import { User } from '@auth0/auth0-vue';
 
 function formatHelper(item: ResponseComment): Comment {
   const {
+    id,
     created_at: createdAt,
     parent_id: parentId,
     ancestor_id: ancestorId,
@@ -13,8 +14,9 @@ function formatHelper(item: ResponseComment): Comment {
   } = item;
   return {
     ...rest,
-    parentId,
-    ancestorId,
+    id: Number(id),
+    parentId: Number(parentId),
+    ancestorId: Number(ancestorId),
     status: Number(item.status),
     createdAt: new Date(createdAt),
   };
@@ -46,7 +48,7 @@ const useStore = defineStore('store', () => {
     deeper.forEach((item: ResponseComment) => {
       if (item.ancestor_id as number in res) {
         const parent = res[ item.ancestor_id as number ];
-        parent.children = [...(parent.children || []), formatHelper(item)];
+        parent.children = [formatHelper(item), ...(parent.children || [])];
       }
     });
     return res;
