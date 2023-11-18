@@ -81,7 +81,7 @@ function getParentUserName(id: number): string {
         @click="comment.isReplying = !comment.isReplying"
       )
         i.bi.bi-reply-fill.h-4.w-4
-    p.text-gray-500(
+    p.text-gray-500.break-words(
       class="dark:text-gray-400"
       v-html="snarkdown(comment.content)"
     )

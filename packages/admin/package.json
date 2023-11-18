@@ -1,6 +1,6 @@
 {
   "name": "@awesome-comment/admin",
-  "version": "0.3.15",
+  "version": "0.3.16",
   "private": true,
   "scripts": {
     "build": "nuxt build",
@@ -13,9 +13,9 @@
     "@nuxt/content": "^2.9.0",
     "@nuxt/devtools": "latest",
     "@pinia/nuxt": "^0.5.1",
-    "@types/node": "^20.9.0",
+    "@types/node": "^20.9.1",
     "autoprefixer": "^10.4.16",
-    "daisyui": "^3.9.4",
+    "daisyui": "^4.4.0",
     "nuxt": "^3.8.1",
     "postcss": "^8.4.31",
     "pug": "^3.0.2",
