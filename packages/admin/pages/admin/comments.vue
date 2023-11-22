@@ -55,8 +55,8 @@ const { data: commentsList, pending } = await useAsyncData(
       c.isReviewing = false;
       c.from = c.user_id.split('|')[ 0 ];
       c.postId = c.post_id;
-      c.parentId = c.parent_id;
-      c.ancestorId = c.ancestor_id;
+      c.parentId = Number(c.parent_id);
+      c.ancestorId = Number(c.ancestor_id);
       if (adminEmails.includes(c.user.email)) {
         replies.push(c);
       } else {
