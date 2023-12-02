@@ -22,6 +22,10 @@ function formatHelper(item: ResponseComment): Comment {
   };
 }
 
+const LOCAL_STORAGE_KEY = 'awesome-comment-comments';
+const local = localStorage.getItem(LOCAL_STORAGE_KEY);
+const localComments: Record<string, Comment> = local ? JSON.parse(local) : {};
+
 const useStore = defineStore('store', () => {
   const postId = inject('postId') as string;
   const preloaded = inject('comments') as ResponseComment[];
@@ -38,12 +42,21 @@ const useStore = defineStore('store', () => {
     const res: Record<number, Comment> = {};
     const deeper: ResponseComment[] = [];
     from.forEach((item: ResponseComment) => {
+      removeLocalComment(Number(item.id));
       if (!item.ancestor_id || Number(item.ancestor_id) === 0) {
         res[ item.id as number ] = formatHelper(item);
       } else {
         deeper.push(item);
       }
     });
+    const comment = localComments[ postId ];
+    if (comment) {
+      if (!comment.ancestorId || Number(comment.ancestorId) === 0) {
+        res[ comment.id as number ] = comment;
+      } else {
+        deeper.push(comment as ResponseComment);
+      }
+    }
 
     deeper.forEach((item: ResponseComment) => {
       if (item.ancestor_id as number in res) {
@@ -134,6 +147,17 @@ const useStore = defineStore('store', () => {
       comments.value = { [ id ]: newComment, ...comments.value }; // new comment should be positioned at the beginning
     }
     total.value++;
+
+    // save comment to local if user is not admin
+    if (status !== CommentStatus.Approved) {
+      localComments[ postId ] = newComment;
+      localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(localComments));
+    }
+  }
+  function removeLocalComment(id: number): void {
+    if (localComments[ postId ]?.id !== id) return;
+    delete localComments[ postId ];
+    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(localComments));
   }
 
   return {

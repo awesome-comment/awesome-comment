@@ -2,6 +2,9 @@ export function toTen(num: number): string {
   return num < 10 ? `0${num}` : `${num}`;
 }
 export function getDate(date: Date): string {
+  if (!(date instanceof Date)) {
+    date = new Date(date);
+  }
   const year = date.getFullYear();
   const month = date.getMonth() + 1;
   const day = date.getDate();
@@ -9,6 +12,9 @@ export function getDate(date: Date): string {
   return `${year}-${toTen(month)}-${toTen(day)}`;
 }
 export function formatTime(date: Date): string {
+  if (!(date instanceof Date)) {
+    date = new Date(date);
+  }
   const today = new Date();
   const dateStr = getDate(date);
   if (getDate(today) === dateStr) {

@@ -85,7 +85,7 @@ function getParentUserName(id: number): string {
       class="dark:text-gray-400"
       v-html="snarkdown(comment.content)"
     )
-    p.italic.mt-4.text-gray-500.mb-0.text-sm(
+    p.italic.mt-4.text-emerald-600.mb-0.text-sm(
       v-if="comment.status === CommentStatus.Pending"
       class="dark:text-gray-400"
     ) {{t('approve_hint')}}
