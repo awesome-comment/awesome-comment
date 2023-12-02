@@ -109,7 +109,7 @@ export default defineEventHandler(async function (event): Promise<PostResponse> 
     await digestFetch(url,
       {
         status: CommentStatus.Approved,
-        id,
+        id: body.parentId,
       },
       {
         method: 'POST',
