@@ -87,7 +87,7 @@ function getParentUserName(id: number): string {
     )
     p.italic.mt-4.text-emerald-600.mb-0.text-sm(
       v-if="comment.status === CommentStatus.Pending"
-      class="dark:text-gray-400"
+      class="dark:text-emerald-300"
     ) {{t('approve_hint')}}
   comment-form.mt-3.ml-12(
     v-if="comment.isReplying && isFirstLevel"
