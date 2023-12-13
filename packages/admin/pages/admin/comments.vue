@@ -260,6 +260,10 @@ header.flex.flex-col.mb-4.gap-4(class="sm:flex-row sm:items-center")
               :comment="comment"
               @reply="onReply($event, comment)"
             )
+            edit-comment(
+              :comment="comment"
+              @save="comment.content = $event"
+            )
   button.mt-2.btn.btn-neutral.btn-sm.btn-block(
     v-if="hasMore",
     type="button",

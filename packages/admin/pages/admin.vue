@@ -25,9 +25,9 @@ const path = computed<string>(() => {
 </script>
 
 <template lang="pug">
-.container.mx-auto.flex.flex-col.p-4.gap-4(class="sm:flex-row sm:px-0 sm:py-8")
-  aside.w-auto(class="sm:w-64")
-    ul.menu.menu-horizontal.bg-base-200.rounded-box(class="sm:menu-vertical")
+.container.mx-auto.flex.flex-col.p-4.gap-4(class="xl:flex-row sm:px-0 sm:py-8")
+  aside.w-auto(class="xl:w-64")
+    ul.menu.menu-horizontal.bg-base-200.rounded-box(class="xl:menu-vertical")
       li(
         v-for="item in links"
         :key="item.path"

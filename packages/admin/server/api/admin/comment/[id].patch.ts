@@ -4,12 +4,19 @@ import { ResponseBody } from '@awesome-comment/core/types';
 import { getTidbKey } from '~/utils/tidb';
 import { getCacheKey } from '~/utils/api';
 
+type PatchRequest = {
+  status?: CommentStatus;
+  content?: string;
+  postId?: string;
+};
+
 export default defineEventHandler(async function (event): Promise<ResponseBody<string>> {
-  const body = await readBody(event);
-  if (!body.status) {
+  const body = (await readBody(event)) as PatchRequest;
+  const { status, content } = body;
+  if (!status && !content) {
     throw createError({
       statusCode: 400,
-      message: 'Status is required',
+      message: 'Invalided body',
     });
   }
   const id = event.context.params?.id;
@@ -20,12 +27,15 @@ export default defineEventHandler(async function (event): Promise<ResponseBody<s
     });
   }
 
+  const url = body.content
+    ? 'https://ap-northeast-1.data.tidbcloud.com/api/v1beta/app/dataapp-NFYbhmOK/endpoint/v1/moderator/patch'
+    : 'https://ap-northeast-1.data.tidbcloud.com/api/v1beta/app/dataapp-NFYbhmOK/endpoint/v1/moderator/review';
   try {
-    const url = 'https://ap-northeast-1.data.tidbcloud.com/api/v1beta/app/dataapp-NFYbhmOK/endpoint/v1/moderator/review';
     const kv = await getTidbKey();
     await digestFetch(url,
       {
-        status: body.status,
+        ...status !== undefined && { status },
+        ...content && { content },
         id,
       },
       {

@@ -8,17 +8,17 @@ type Props = {
 }
 const props = defineProps<Props>();
 type Emits = {
-  (event: 'reply', reply: Comment): (event: Event) => boolean | void;
+  (event: 'save', content: string): (event: Event) => boolean | void;
 }
 const emit = defineEmits<Emits>();
 const auth0 = useAuth0();
 
 const modal = ref<HTMLDialogElement>();
 
+const isSaving = ref<boolean>(false);
 const hasModal = ref<boolean>(false);
-const isReplying = ref<boolean>(false);
 const message = ref<string>('');
-const reply = ref<string>('');
+const newContent = ref<string>(props.comment.content);
 
 async function doOpenModal(): Promise<void> {
   hasModal.value = true;
@@ -26,56 +26,40 @@ async function doOpenModal(): Promise<void> {
   modal.value?.showModal();
 }
 async function doReply(event: Event): Promise<void> {
-  if (isReplying.value || (event.target as HTMLFormElement).matches(':invalid')) return;
+  if (isSaving.value || (event.target as HTMLFormElement).matches(':invalid')) return;
 
-  isReplying.value = true;
+  isSaving.value = true;
   message.value = '';
   try {
     const accessToken = await auth0.getAccessTokenSilently();
-    const { data } = await $fetch('/api/comment', {
-      method: 'POST',
+    await $fetch('/api/admin/comment/' + props.comment.id, {
+      method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${accessToken}`,
       },
       body: {
-        comment: reply.value,
-        postId: props.comment.postId,
-        ancestorId: props.comment.ancestorId || props.comment.id,
-        parentId: props.comment.id,
-        status: props.comment.status,
+        content: newContent.value,
       },
     });
-    emit('reply', {
-      id: data,
-      content: reply.value,
-      postId: props.comment.postId,
-      parentId: props.comment.id,
-      ancestorId: props.comment.ancestorId || props.comment.id,
-      status: CommentStatus.Approved,
-      createdAt: new Date(),
-      user: {
-        email: auth0.user.value?.email,
-        name: auth0.user.value?.name,
-      },
-    } as Comment);
+    emit('save', newContent.value);
     modal.value.close();
   } catch (e) {
     message.value = (e as Error).message || String(e);
   }
-  isReplying.value = false;
+  isSaving.value = false;
 }
 </script>
 
 <template lang="pug">
-button.btn.btn-success.btn-sm(
+button.btn.btn-warning.btn-sm(
   type="button",
   class="sm:btn-xs"
-  :disabled="isReplying"
+  :disabled="isSaving"
   @click="doOpenModal"
 )
-  span.loading.loading-xs.loading-spinner(v-if="isReplying")
-  | Reply
+  span.loading.loading-xs.loading-spinner(v-if="isSaving")
+  | Edit
 
 teleport(
   v-if="hasModal"
@@ -84,28 +68,30 @@ teleport(
   dialog.modal(
     ref="modal"
     :id="'comment-' + comment.id"
+    @close="hasModal = false"
   )
     form.modal-box(
       @submit.prevent="doReply"
     )
-      .mb-2 Reply to
+      .mb-2 Edit
       blockquote.mb-2.border-l-2.border-gray-200.bg-base-200.pl-2.py-2 {{comment.content}}
       .form-control.mb-4
         label.label
-          span.label-text Your replyment
+          span.label-text New content
         textarea.textarea.textarea-bordered(
           rows="3"
-          v-model="reply"
+          v-model="newContent"
           required
         )
       .alert.alert-error.mb-4(v-if="message")
         p {{message}}
       footer.flex.justify-end
         button.btn.btn-primary(
-          :disabled="isReplying"
+          :disabled="isSaving"
         )
-          span.loading.loading-spinner(v-if="isReplying")
-          | Reply
+          span.loading.loading-spinner(v-if="isSaving")
+          i.bi.bi-check-lg(v-else)
+          | Save
     form.modal-backdrop(
       method="dialog"
     )
