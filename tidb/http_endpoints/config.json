@@ -2,7 +2,7 @@
   {
     "name": "Patch comment",
     "description": "",
-    "method": "PUT",
+    "method": "POST",
     "endpoint": "/v1/moderator/patch",
     "data_source": {
       "cluster_id": 1379661944646254419
@@ -32,7 +32,7 @@
     },
     "tag": "Default",
     "batch_operation": 0,
-    "sql_file": "sql/PUT-v1-moderator-patch.sql",
+    "sql_file": "sql/POST-v1-moderator-patch.sql",
     "type": "sql_endpoint",
     "return_type": "json"
   },
