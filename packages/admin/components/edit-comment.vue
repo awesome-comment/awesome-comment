@@ -4,9 +4,12 @@ import { CommentStatus } from '@awesome-comment/core/data';
 import { useAuth0 } from '@auth0/auth0-vue';
 
 type Props = {
+  buttonClass?: string;
   comment: Comment,
 }
-const props = defineProps<Props>();
+const props = withDefaults(defineProps<Props>(), {
+  buttonClass: 'btn-warning',
+});
 type Emits = {
   (event: 'save', content: string): (event: Event) => boolean | void;
 }
@@ -52,9 +55,10 @@ async function doReply(event: Event): Promise<void> {
 </script>
 
 <template lang="pug">
-button.btn.btn-warning.btn-sm(
+button.btn.btn-sm(
   type="button",
   class="sm:btn-xs"
+  :class="buttonClass"
   :disabled="isSaving"
   @click="doOpenModal"
 )

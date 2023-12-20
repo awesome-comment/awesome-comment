@@ -138,6 +138,8 @@ function onStatusChange(): void {
 function onReply(reply: Comment, parent: Comment): void {
   parent.children ??= [];
   parent.children.push(reply);
+  // replied comment will be auto approved
+  parent.status = CommentStatus.Approved;
 }
 function updateUrl(): void {
   comments.value = {};
@@ -202,9 +204,15 @@ header.flex.flex-col.mb-4.gap-4(class="sm:flex-row sm:items-center")
           .mt-4.chat.chat-end(
             v-if="comment.children?.length"
           )
+            .chat-header
+              edit-comment(
+                button-class=""
+                :comment="comment.children[0]"
+                @save="comment.children[0].content = $event"
+              )
             .chat-bubble {{comment.children[0].content}}
             .chat-footer.mt-1
-              i.bi.bi-patch-check-fill.mr-1
+              i.bi.bi-patch-check-fill.me-1
               | {{comment.children[0].user.email}}
         td
           user-cell(
