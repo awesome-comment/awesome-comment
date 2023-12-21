@@ -59,6 +59,7 @@ async function doReply(event: Event): Promise<void> {
         name: auth0.user.value?.name,
       },
     } as Comment);
+    reply.value = '';
     modal.value.close();
   } catch (e) {
     message.value = (e as Error).message || String(e);

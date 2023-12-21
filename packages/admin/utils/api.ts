@@ -144,6 +144,7 @@ export async function checkCommentStatus(userId: string, comment: Comment, confi
   return CommentStatus.Pending;
 }
 
+// if autoApprove is enabled, and current postId is included in autoApprove.include
 // if user has 2 or more approved comments, they can post comment freely
 export function isAutoApprove(config: AcConfig, postId: string, history: ResponseComment[]): boolean {
   if (config.autoApprove && !config.autoApprove.enabled) return false;
