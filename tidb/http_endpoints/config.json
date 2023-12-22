@@ -3,7 +3,7 @@
     "name": "v3 moderator get comments",
     "description": "",
     "method": "GET",
-    "endpoint": "/v2/moderator/get_dump_WzlpRV",
+    "endpoint": "/v3/moderator/get",
     "data_source": {
       "cluster_id": 1379661944646254419
     },
@@ -48,7 +48,7 @@
     },
     "tag": "Default",
     "batch_operation": 0,
-    "sql_file": "sql/GET-v2-moderator-get_dump_WzlpRV.sql",
+    "sql_file": "sql/GET-v3-moderator-get.sql",
     "type": "sql_endpoint",
     "return_type": "json"
   },
