@@ -12,11 +12,11 @@ export default defineEventHandler(async function (event): Promise<ResponseBody<C
 
   const data: Comment[] = [];
   try {
-    const url = 'https://ap-northeast-1.data.tidbcloud.com/api/v1beta/app/dataapp-NFYbhmOK/endpoint/v2/moderator/get';
+    const url = 'https://ap-northeast-1.data.tidbcloud.com/api/v1beta/app/dataapp-NFYbhmOK/endpoint/v3/moderator/get';
     const params = new URLSearchParams();
     params.set('start', start as string);
     params.set('status', Array.isArray(status) ? status.join(',') : status as string);
-    params.set('user_id', event.context.user.id);
+    params.set('emails', event.context.config.adminEmails);
     params.set('post_id', postId as string);
     const kv = await getTidbKey();
     const response = await digestFetch(`${url}?${params}`, null, {
