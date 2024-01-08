@@ -47,7 +47,7 @@ async function doReply(event: Event): Promise<void> {
       },
     });
     emit('reply', {
-      id: data,
+      id: data.id,
       content: reply.value,
       postId: props.comment.postId,
       parentId: props.comment.id,
