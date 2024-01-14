@@ -5,7 +5,7 @@ WITH CTE AS (
   FROM ac_comment
   WHERE status IN (${status})
     AND deleted_at is NULL
-    AND JSON_EXTRACT(user, '$.email') NOT IN (${emails})
+    AND COALESCE(JSON_EXTRACT(user, '$.email'), '') NOT IN (${emails})
     AND IF(LENGTH(${post_id}) > 0, post_id = ${post_id}, 1)
   ORDER BY id DESC
   LIMIT ${start}, 20
