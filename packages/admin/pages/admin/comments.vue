@@ -18,7 +18,7 @@ const start = ref<number>(0);
 const hasMore = ref<boolean>(false);
 const loadingMore = ref<boolean>(false);
 const message = ref<string>('');
-const filterStatus = ref<CommentStatus | 'all'>(route.query.status || CommentStatus.Pending);
+const filterStatus = ref<CommentStatus | 'all'>(route.query.status || CommentStatus.Uncommented);
 const filterPostId = ref<string>(route.query.post_id || '');
 const comments = ref<Record<number, RowItem>>({});
 
@@ -38,7 +38,7 @@ const { data: commentsList, pending } = await useAsyncData(
     const token = await auth0.getAccessTokenSilently();
     const { data, meta } = await $fetch('/api/admin/comments', {
       query: {
-        status: filterStatus.value === 'all' ? ['0' ,'1'] : filterStatus.value,
+        status: filterStatus.value === 'all' ? null : filterStatus.value,
         postId: filterPostId.value,
         start: start.value,
       },
@@ -57,7 +57,7 @@ const { data: commentsList, pending } = await useAsyncData(
       c.postId = c.post_id;
       c.parentId = Number(c.parent_id);
       c.ancestorId = Number(c.ancestor_id);
-      if (adminEmails.includes(c.user.email)) {
+      if (adminEmails.includes(c.user.email) && c.parentId) {
         replies.push(c);
       } else {
         map[ c.id ] = c;

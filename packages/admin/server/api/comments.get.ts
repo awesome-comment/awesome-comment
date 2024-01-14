@@ -30,7 +30,7 @@ export default defineEventHandler(async function (event): Promise<ResponseBody<C
     const url = `https://ap-northeast-1.data.tidbcloud.com/api/v1beta/app/dataapp-NFYbhmOK/endpoint/v1/get?post_id=${postId}&start=${start}`;
     const params = new URLSearchParams();
     params.set('post_id', postId as string);
-    params.set('start', start as string);
+    params.set('start', start.toString());
     const kv = await getTidbKey();
     const response = await digestFetch(`${url}?${params}`, null, {
       method: 'GET',

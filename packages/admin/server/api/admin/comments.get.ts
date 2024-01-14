@@ -1,5 +1,6 @@
 import digestFetch, { FetchError } from '@meathill/digest-fetch';
 import { Comment, ResponseBody } from '@awesome-comment/core/types';
+import { CommentStatus } from '@awesome-comment/core/data';
 import { getTidbKey } from '~/utils/tidb';
 
 export default defineEventHandler(async function (event): Promise<ResponseBody<Comment[]>> {
@@ -12,12 +13,20 @@ export default defineEventHandler(async function (event): Promise<ResponseBody<C
 
   const data: Comment[] = [];
   try {
-    const url = 'https://ap-northeast-1.data.tidbcloud.com/api/v1beta/app/dataapp-NFYbhmOK/endpoint/v3/moderator/get';
+    let url = 'https://ap-northeast-1.data.tidbcloud.com/api/v1beta/app/dataapp-NFYbhmOK/endpoint/v3/moderator/get';
     const params = new URLSearchParams();
     params.set('start', start as string);
-    params.set('status', Array.isArray(status) ? status.join(',') : status as string);
     params.set('emails', event.context.config.adminEmails);
-    params.set('post_id', postId as string);
+    if (status) {
+      if (Number(status) === CommentStatus.Uncommented) {
+        url = 'https://ap-northeast-1.data.tidbcloud.com/api/v1beta/app/dataapp-NFYbhmOK/endpoint/v3/moderator/uncommented'
+      } else {
+        params.set('status', status as string);
+      }
+    }
+    if (postId) {
+      params.set('post_id', postId as string);
+    }
     const kv = await getTidbKey();
     const response = await digestFetch(`${url}?${params}`, null, {
       method: 'GET',
