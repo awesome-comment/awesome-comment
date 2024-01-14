@@ -429,7 +429,7 @@
     "return_type": "json"
   },
   {
-    "name": "/v3",
+    "name": "v3 moderator uncommentd",
     "description": "",
     "method": "GET",
     "endpoint": "/v3/moderator/uncommented",
