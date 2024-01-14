@@ -401,11 +401,10 @@
       },
       {
         "name": "status",
-        "type": "integer",
+        "type": "string",
         "required": 0,
         "default": "",
-        "description": "0",
-        "enum": "0,1,2"
+        "description": ""
       },
       {
         "name": "start",
