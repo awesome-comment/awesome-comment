@@ -18,7 +18,7 @@ const start = ref<number>(0);
 const hasMore = ref<boolean>(false);
 const loadingMore = ref<boolean>(false);
 const message = ref<string>('');
-const filterStatus = ref<CommentStatus | 'all'>(route.query.status || CommentStatus.Uncommented);
+const filterStatus = ref<CommentStatus | 'all'>(route.query.status || CommentStatus.UnReplied);
 const filterPostId = ref<string>(route.query.post_id || '');
 const comments = ref<Record<number, RowItem>>({});
 

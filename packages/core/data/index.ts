@@ -2,5 +2,5 @@ export enum CommentStatus {
   Pending,
   Approved,
   Rejected,
-  Uncommented = 255,
+  UnReplied = 255,
 }
