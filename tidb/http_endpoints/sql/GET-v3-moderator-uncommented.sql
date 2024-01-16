@@ -12,6 +12,5 @@ WHERE b.id IS NULL
   AND a.status IN (0, 1)
   AND a.deleted_at IS NULL
   AND IF(LENGTH(${post_id}) > 0, a.post_id = ${post_id}, 1)
-  AND a.user_id != 'legacy'
 ORDER BY a.id DESC
 LIMIT ${start}, 20;
