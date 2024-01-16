@@ -4,7 +4,7 @@ SELECT a.*
 FROM ac_comment a
   LEFT JOIN ac_comment b ON a.id = b.parent_id
 WHERE b.id IS NULL
-  AND a.parent_id = 0
+  AND (a.parent_id = 0 OR a.parent_id IS NULL)
   AND (
     JSON_EXTRACT(a.user, '$.email') IS NULL
     OR JSON_EXTRACT(a.user, '$.email') NOT IN (${emails})
