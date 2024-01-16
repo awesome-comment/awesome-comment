@@ -36,7 +36,7 @@ function getParentUserName(id: number): string {
   :class="{'animated flash': comment.isNew}"
   @animationend="comment.isNew = false"
 )
-  article.p-6.text-base.bg-base-200.rounded-lg(class="dark:bg-gray-900")
+  .p-6.text-base.bg-base-200.rounded-lg(class="dark:bg-gray-900")
     header.flex.justify-between.items-center.font-sans.mb-2
       .flex.items-center.text-sm.text-base-content(
         class="dark:text-white"
@@ -81,7 +81,7 @@ function getParentUserName(id: number): string {
         @click="comment.isReplying = !comment.isReplying"
       )
         i.bi.bi-reply-fill.h-4.w-4
-    p.text-gray-500.break-words(
+    article.text-gray-500.break-words.overflow-x-auto(
       class="dark:text-gray-400"
       v-html="snarkdown(comment.content)"
     )
