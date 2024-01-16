@@ -16,7 +16,7 @@ export default defineEventHandler(async function (event): Promise<ResponseBody<C
     let url = 'https://ap-northeast-1.data.tidbcloud.com/api/v1beta/app/dataapp-NFYbhmOK/endpoint/v3/moderator/get';
     const params = new URLSearchParams();
     params.set('start', start as string);
-    params.set('emails', event.context.config.adminEmails.map(JSON.stringify).join(','));
+    params.set('emails', event.context.config.adminEmails);
     if (status) {
       if (Number(status) === CommentStatus.UnReplied) {
         url = 'https://ap-northeast-1.data.tidbcloud.com/api/v1beta/app/dataapp-NFYbhmOK/endpoint/v3/moderator/uncommented'
