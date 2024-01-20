@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import snarkdown from 'snarkdown';
+import { marked } from 'marked';
 import { useI18n } from 'vue-i18n';
 import type { Comment } from '@awesome-comment/core/types';
 import { CommentStatus } from '@awesome-comment/core/data';
@@ -83,7 +83,7 @@ function getParentUserName(id: number): string {
         i.bi.bi-reply-fill.h-4.w-4
     article.text-gray-500.break-words.overflow-x-auto(
       class="dark:text-gray-400"
-      v-html="snarkdown(comment.content)"
+      v-html="marked(comment.content)"
     )
     p.italic.mt-4.text-emerald-600.mb-0.text-sm(
       v-if="comment.status === CommentStatus.Pending"
