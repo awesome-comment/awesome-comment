@@ -221,7 +221,10 @@ header.flex.flex-col.mb-4.gap-4(class="sm:flex-row sm:items-center")
             v-if="Number(filterStatus) === CommentStatus['Replied to Admin']"
           )
             p.mb-2 {{comment.toContent}}
-            p.text-xs(class="text-base-content/50") - {{comment.toUser.name || comment.toUser.email}}
+            p.text-xs(
+              v-if="comment.toUser"
+              class="text-base-content/50"
+            ) - {{comment.toUser.name || comment.toUser.email}}
           p.break-words.max-w-sm.overflow-hidden {{ comment.content }}
           .mt-4.chat.chat-end(
             v-if="comment.children?.length"
