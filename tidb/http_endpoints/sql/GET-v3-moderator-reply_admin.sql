@@ -1,6 +1,6 @@
 USE arealme;
 
-SELECT a.*, b.id, b.content
+SELECT a.*, b.id, b.content, b.ancestor_id
 FROM ac_comment a
     LEFT JOIN ac_comment b on a.parent_id = b.id # b is Admin
     LEFT JOIN ac_comment c on c.parent_id = a.id # c is Users
