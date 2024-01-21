@@ -1,6 +1,6 @@
 USE arealme;
 
-SELECT a.*, b.id, b.content, b.ancestor_id, b.user
+SELECT a.*, b.id as toId, b.content as toContent, b.user as toUser
 FROM ac_comment a
     LEFT JOIN ac_comment b on a.parent_id = b.id # b is Admin
 WHERE COALESCE(JSON_UNQUOTE(JSON_EXTRACT(b.user, '$.email')), '') IN (${emails})
