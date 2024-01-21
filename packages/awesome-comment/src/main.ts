@@ -37,7 +37,6 @@ function init(domain: string, clientId: string, locale: string = navigator.langu
     fallbackLocale: 'en',
     messages,
   });
-  // @ts-ignore
   app.use(auth0);
   app.use(pinia);
   app.use(i18n);

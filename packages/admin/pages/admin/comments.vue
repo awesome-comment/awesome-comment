@@ -26,7 +26,7 @@ definePageMeta({
   middleware: ['auth'],
 });
 
-const { data: commentsList, pending } = await useAsyncData(
+const { data: commentsList, pending, refresh } = await useAsyncData(
   'comments',
   async function () {
     if (!auth0) return;
@@ -50,6 +50,7 @@ const { data: commentsList, pending } = await useAsyncData(
     const { adminEmails = [] } = meta.config;
     const [cms, replies]: [Record<number, Comment>, Comment[]] = (data || []).reduce(([map, replies], c) => {
       c.user = JSON.parse((c.user || '{}') as string);
+      c.toUser = c.toUser ? JSON.parse(c.toUser) : null,
       c.status = Number(c.status);
       c.id = Number(c.id);
       c.isReviewing = false;
@@ -111,12 +112,16 @@ async function doDelete(comment: RowItem): Promise<void> {
     method: 'DELETE',
     body: {
       postId: comment.postId,
-      statue: comment.status,
+      status: comment.status,
     },
     headers: {
       Authorization: `Bearer ${token}`,
     },
   });
+  const index = commentsList.value.findIndex((c) => c.id === comment.id);
+  if (index > -1) {
+    commentsList.value.splice(index, 1);
+  }
   delete comments.value[ comment.id ];
   comment.isReviewing = false;
 }
@@ -141,6 +146,10 @@ function onReply(reply: Comment, parent: Comment): void {
   // replied comment will be auto approved
   parent.status = CommentStatus.Approved;
 }
+function doRefresh(): void {
+  comments.value = {};
+  refresh();
+}
 function updateUrl(): void {
   comments.value = {};
   commentsList.value = [];
@@ -160,8 +169,16 @@ function updateUrl(): void {
 
 <template lang="pug">
 header.flex.flex-col.mb-4.gap-4(class="sm:flex-row sm:items-center")
-  h1.text-2xl.font-bold Comments Management
-  .form-control.flex-row.gap-2(class="sm:ml-auto")
+  h1.text-2xl.font-bold(class="sm:me-auto") Comments Management
+  button.btn.btn-sm.me-2(
+    v-if="filterStatus >= CommentStatus.UnReplied"
+    type="button"
+    :disabled="pending"
+    @click="refresh"
+  )
+    i.bi.bi-arrow-clockwise
+    | Refresh
+  .form-control.flex-row.gap-2
     label.label
       span.text-xs Status
     select.select.select-bordered.select-sm(
@@ -200,7 +217,12 @@ header.flex.flex-col.mb-4.gap-4(class="sm:flex-row sm:items-center")
       tr(v-for="(comment, index) in commentsList" :key="comment.id")
         td {{ comment.id }}
         td
-          p.break-words {{ comment.content }}
+          blockquote.ps-2.border-s-4.mb-2(
+            v-if="Number(filterStatus) === CommentStatus['Replied to Admin']"
+          )
+            p.mb-2 {{comment.toContent}}
+            p.text-xs(class="text-base-content/50") - {{comment.toUser.name || comment.toUser.email}}
+          p.break-words.max-w-sm.overflow-hidden {{ comment.content }}
           .mt-4.chat.chat-end(
             v-if="comment.children?.length"
           )
@@ -273,7 +295,7 @@ header.flex.flex-col.mb-4.gap-4(class="sm:flex-row sm:items-center")
               @save="comment.content = $event"
             )
   button.mt-2.btn.btn-neutral.btn-sm.btn-block(
-    v-if="hasMore",
+    v-if="filterStatus <= CommentStatus.Rejected && hasMore",
     type="button",
     :disabled="loadingMore",
     @click="doLoadMore",
