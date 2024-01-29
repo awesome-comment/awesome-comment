@@ -25,7 +25,7 @@
     ],
     "settings": {
       "timeout": 5000,
-      "row_limit": 50,
+      "row_limit": 250,
       "cache_enabled": 0,
       "cache_ttl": 0,
       "enable_pagination": 0
