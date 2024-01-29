@@ -174,9 +174,10 @@ header.flex.flex-col.mb-4.gap-4(class="sm:flex-row sm:items-center")
     v-if="filterStatus >= CommentStatus.UnReplied"
     type="button"
     :disabled="pending"
-    @click="refresh"
+    @click="doRefresh"
   )
-    i.bi.bi-arrow-clockwise
+    span.loading.loading-spinner(v-if="pending")
+    i.bi.bi-arrow-clockwise(v-else)
     | Refresh
   .form-control.flex-row.gap-2
     label.label
