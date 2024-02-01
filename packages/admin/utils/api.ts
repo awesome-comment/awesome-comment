@@ -2,7 +2,7 @@ import { Comment, ResponseComment, User, AcConfig } from '@awesome-comment/core/
 import digestFetch from '@meathill/digest-fetch';
 import { getTidbKey } from './tidb';
 import { H3Event } from 'h3';
-import { CommentStatus } from '@awesome-comment/core/data';
+import {CommentStatus, MarkdownLinkRegex} from '@awesome-comment/core/data';
 
 export async function getConfig(): Promise<AcConfig> {
   const storage = useStorage('data');
@@ -120,12 +120,13 @@ export async function checkCommentStatus(userId: string, comment: Comment, confi
     });
   }
 
-  // if user has 2 or more pending comments, they cannot post new comment
-  if (isAutoApprove(config, comment.postId, history)) {
+  // check if the comment should be auto approved
+  if (isAutoApprove(config, comment.postId, history, comment.content)) {
     console.log(`user_id: ${userId} can post comment freely.`);
     return CommentStatus.Approved;
   }
 
+  // if user has 2 or more pending comments, they cannot post new comment
   if (history.filter(c => Number(c.status) === CommentStatus.Pending).length >= 2) {
     console.log(`user_id: ${userId} have 2 or more pending comments, cannot post new comment.`);
     throw createError({
@@ -146,7 +147,12 @@ export async function checkCommentStatus(userId: string, comment: Comment, confi
 
 // if autoApprove is enabled, and current postId is included in autoApprove.include
 // if user has 2 or more approved comments, they can post comment freely
-export function isAutoApprove(config: AcConfig, postId: string, history: ResponseComment[]): boolean {
+export function isAutoApprove(
+  config: AcConfig,
+  postId: string,
+  history: ResponseComment[],
+  content: string,
+): boolean {
   if (config.autoApprove && !config.autoApprove.enabled) return false;
   if (config.autoApprove?.include
     && !(new RegExp(config.autoApprove.include, 'i').test(postId))
@@ -154,5 +160,6 @@ export function isAutoApprove(config: AcConfig, postId: string, history: Respons
   if (config.autoApprove?.exclude
     && new RegExp(config.autoApprove.exclude, 'i').test(postId)
   ) return false;
-  return history.filter(c => Number(c.status) === CommentStatus.Approved).length >= 2;
+  return !MarkdownLinkRegex.test(content)
+    && history.filter(c => Number(c.status) === CommentStatus.Approved).length >= 2;
 }

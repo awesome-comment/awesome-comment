@@ -66,6 +66,10 @@ async function doReply(event: Event): Promise<void> {
   }
   isReplying.value = false;
 }
+
+defineExpose({
+  doOpenModal,
+});
 </script>
 
 <template lang="pug">
