@@ -2,6 +2,7 @@
 import type { Comment } from '@awesome-comment/core/types';
 import { CommentStatus } from '@awesome-comment/core/data';
 import { useAuth0 } from '@auth0/auth0-vue';
+import ReplyComment from '~/components/reply-comment.vue';
 
 type RowItem = Comment & {
   isReviewing: boolean;
@@ -13,6 +14,7 @@ const postIdPrefix = __POST_ID_PREFIX__;
 const CSKeys = Object.values(CommentStatus).filter((v) => !isNaN(Number(v)));
 const auth0 = process.client ? useAuth0() : undefined;
 const route = useRoute();
+const replyComment = shallowRef <ReplyComment[]>();
 
 const start = ref<number>(0);
 const hasMore = ref<boolean>(false);
@@ -21,10 +23,8 @@ const message = ref<string>('');
 const filterStatus = ref<CommentStatus | 'all'>(route.query.status || CommentStatus.UnReplied);
 const filterPostId = ref<string>(route.query.post_id || '');
 const comments = ref<Record<number, RowItem>>({});
-
-definePageMeta({
-  middleware: ['auth'],
-});
+const currentItem = ref<number>(-1);
+const hasReplyModal = ref<boolean>(false);
 
 const { data: commentsList, pending, refresh } = await useAsyncData(
   'comments',
@@ -137,6 +137,41 @@ function doRemoveFilterPostId(): void {
   filterPostId.value = '';
   updateUrl();
 }
+function doRefresh(): void {
+  comments.value = {};
+  currentItem.value = -1;
+  refresh();
+}
+function onKeydown(event: KeyboardEvent): void {
+  if (event.ctrlKey || event.metaKey || event.altKey || event.shiftKey) return;
+  if (hasReplyModal.value) return;
+
+  switch (event.key) {
+    case 'k':
+    case 'K':
+      currentItem.value++;
+      if (currentItem.value >= commentsList.value.length) {
+        currentItem.value = 0;
+      }
+      break;
+
+    case 'j':
+    case 'J':
+      currentItem.value--;
+      if (currentItem.value < 0) {
+        currentItem.value = commentsList.value.length - 1;
+      }
+      break;
+
+    case 'r':
+    case 'R':
+      if (currentItem.value === -1) return;
+
+      replyComment.value?.[ currentItem.value ].doOpenModal();
+      event.preventDefault();
+      break;
+  }
+}
 function onStatusChange(): void {
   updateUrl();
 }
@@ -145,10 +180,6 @@ function onReply(reply: Comment, parent: Comment): void {
   parent.children.push(reply);
   // replied comment will be auto approved
   parent.status = CommentStatus.Approved;
-}
-function doRefresh(): void {
-  comments.value = {};
-  refresh();
 }
 function updateUrl(): void {
   comments.value = {};
@@ -165,6 +196,17 @@ function updateUrl(): void {
   const router = useRouter();
   router.push({ query });
 }
+
+onMounted(() => {
+  document.body.addEventListener('keydown', onKeydown);
+});
+onBeforeUnmount(() => {
+  document.body.removeEventListener('keydown', onKeydown);
+});
+
+definePageMeta({
+  middleware: ['auth'],
+});
 </script>
 
 <template lang="pug">
@@ -215,7 +257,11 @@ header.flex.flex-col.mb-4.gap-4(class="sm:flex-row sm:items-center")
         th Status
         th
     tbody(v-if="commentsList?.length")
-      tr(v-for="(comment, index) in commentsList" :key="comment.id")
+      tr(
+        v-for="(comment, index) in commentsList"
+        :key="comment.id"
+        :class="{'ring-4 ring-inset': index === currentItem}"
+      )
         td {{ comment.id }}
         td
           blockquote.ps-2.border-s-4.mb-2(
@@ -291,8 +337,11 @@ header.flex.flex-col.mb-4.gap-4(class="sm:flex-row sm:items-center")
               | Delete
 
             reply-comment(
+              ref="replyComment"
               :comment="comment"
               @reply="onReply($event, comment)"
+              @open="hasReplyModal = true"
+              @close="hasReplyModal = false"
             )
             edit-comment(
               :comment="comment"
