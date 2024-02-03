@@ -151,6 +151,8 @@ function doFilter(postId: string): void {
 function doRefresh(event?: MouseEvent): void {
   comments.value = {};
   currentItem.value = -1;
+  start.value = 0;
+  hasMore.value = false;
   if (event) refresh();
 }
 function onKeydown(event: KeyboardEvent): void {
@@ -158,16 +160,16 @@ function onKeydown(event: KeyboardEvent): void {
   if (hasReplyModal.value) return;
 
   switch (event.key) {
-    case 'k':
-    case 'K':
+    case 'j':
+    case 'J':
       currentItem.value++;
       if (currentItem.value >= commentsList.value.length) {
         currentItem.value = 0;
       }
       break;
 
-    case 'j':
-    case 'J':
+    case 'k':
+    case 'K':
       currentItem.value--;
       if (currentItem.value < 0) {
         currentItem.value = commentsList.value.length - 1;
@@ -193,12 +195,15 @@ function onReply(reply: Comment, parent: Comment): void {
   parent.status = CommentStatus.Approved;
 }
 function updateUrl(): void {
-  comments.value = {};
-  commentsList.value = [];
-  start.value = 0;
-  hasMore.value = false;
+  doRefresh();
   const router = useRouter();
-  router.push({ query: filter.value });
+  router.push({
+    query: {
+      status: filterStatus.value,
+      post_id: filterPostId.value,
+      user: filterUser.value,
+    },
+  });
 }
 
 onMounted(() => {
