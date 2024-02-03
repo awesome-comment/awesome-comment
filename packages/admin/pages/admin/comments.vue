@@ -2,7 +2,7 @@
 import type { Comment } from '@awesome-comment/core/types';
 import { CommentStatus } from '@awesome-comment/core/data';
 import { useAuth0 } from '@auth0/auth0-vue';
-import ReplyComment from "~/components/reply-comment.vue";
+import ReplyComment from '~/components/reply-comment.vue';
 
 type RowItem = Comment & {
   isReviewing: boolean;
@@ -24,6 +24,7 @@ const filterStatus = ref<CommentStatus | 'all'>(route.query.status || CommentSta
 const filterPostId = ref<string>(route.query.post_id || '');
 const comments = ref<Record<number, RowItem>>({});
 const currentItem = ref<number>(-1);
+const hasReplyModal = ref<boolean>(false);
 
 const { data: commentsList, pending, refresh } = await useAsyncData(
   'comments',
@@ -141,7 +142,10 @@ function doRefresh(): void {
   currentItem.value = -1;
   refresh();
 }
-function onKeyDown(event: KeyboardEvent): void {
+function onKeydown(event: KeyboardEvent): void {
+  if (event.ctrlKey || event.metaKey || event.altKey || event.shiftKey) return;
+  if (hasReplyModal.value) return;
+
   switch (event.key) {
     case 'k':
     case 'K':
@@ -164,6 +168,7 @@ function onKeyDown(event: KeyboardEvent): void {
       if (currentItem.value === -1) return;
 
       replyComment.value?.[ currentItem.value ].doOpenModal();
+      event.preventDefault();
       break;
   }
 }
@@ -193,10 +198,10 @@ function updateUrl(): void {
 }
 
 onMounted(() => {
-  document.body.addEventListener('keydown', onKeyDown);
+  document.body.addEventListener('keydown', onKeydown);
 });
 onBeforeUnmount(() => {
-  document.body.removeEventListener('keydown', onKeyDown);
+  document.body.removeEventListener('keydown', onKeydown);
 });
 
 definePageMeta({
@@ -335,6 +340,8 @@ header.flex.flex-col.mb-4.gap-4(class="sm:flex-row sm:items-center")
               ref="replyComment"
               :comment="comment"
               @reply="onReply($event, comment)"
+              @open="hasReplyModal = true"
+              @close="hasReplyModal = false"
             )
             edit-comment(
               :comment="comment"

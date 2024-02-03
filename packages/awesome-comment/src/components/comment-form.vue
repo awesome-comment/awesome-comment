@@ -4,6 +4,7 @@ import { useAuth0 } from '@auth0/auth0-vue';
 import { useI18n } from 'vue-i18n';
 import type { CommentStatus } from '@awesome-comment/core/data';
 import type { ResponseBody } from '@awesome-comment/core/types';
+import { withCommandModifier } from '@awesome-comment/core/utils';
 import useStore from '../store';
 
 type PostResponse = {
@@ -92,8 +93,7 @@ function doLogin(): void {
   auth0.loginWithPopup();
 }
 function onKeydown(event: KeyboardEvent): void {
-  const isMac = navigator.userAgent.match(/Macintosh/);
-  if (isMac && event.metaKey || !isMac && event.ctrlKey) {
+  if (withCommandModifier(event, 'enter')) {
     doSubmit(event);
   }
 }

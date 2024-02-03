@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { Comment } from '@awesome-comment/core/types';
 import { CommentStatus } from '@awesome-comment/core/data';
+import { withCommandModifier } from '@awesome-comment/core/utils';
 import { useAuth0 } from '@auth0/auth0-vue';
 
 type Props = {
@@ -8,7 +9,9 @@ type Props = {
 }
 const props = defineProps<Props>();
 type Emits = {
-  (event: 'reply', reply: Comment): (event: Event) => boolean | void;
+  (event: 'reply', reply: Comment): void;
+  (event: 'open'): void;
+  (event: 'close'): void;
 }
 const emit = defineEmits<Emits>();
 const auth0 = useAuth0();
@@ -24,6 +27,7 @@ async function doOpenModal(): Promise<void> {
   hasModal.value = true;
   await nextTick();
   modal.value?.showModal();
+  emit('open');
 }
 async function doReply(event: Event): Promise<void> {
   if (isReplying.value || (event.target as HTMLFormElement).matches(':invalid')) return;
@@ -67,6 +71,16 @@ async function doReply(event: Event): Promise<void> {
   isReplying.value = false;
 }
 
+function onClose(): void {
+  hasModal.value = false;
+  emit('close');
+}
+function onKeydown(event: KeyboardEvent): void {
+  if (withCommandModifier(event, 'Enter')) {
+    doReply(event);
+  }
+}
+
 defineExpose({
   doOpenModal,
 });
@@ -89,6 +103,7 @@ teleport(
   dialog.modal(
     ref="modal"
     :id="'comment-' + comment.id"
+    @close="onClose"
   )
     form.modal-box(
       @submit.prevent="doReply"
@@ -102,6 +117,7 @@ teleport(
           rows="3"
           v-model="reply"
           required
+          @keydown="onKeydown"
         )
       .alert.alert-error.mb-4(v-if="message")
         p {{message}}
