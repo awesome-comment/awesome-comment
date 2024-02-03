@@ -407,6 +407,13 @@
         "description": ""
       },
       {
+        "name": "user_id",
+        "type": "string",
+        "required": 0,
+        "default": "",
+        "description": ""
+      },
+      {
         "name": "start",
         "type": "integer",
         "required": 0,
@@ -452,6 +459,13 @@
         "description": ""
       },
       {
+        "name": "user_id",
+        "type": "string",
+        "required": 0,
+        "default": "",
+        "description": ""
+      },
+      {
         "name": "start",
         "type": "integer",
         "required": 0,
@@ -491,6 +505,13 @@
       },
       {
         "name": "post_id",
+        "type": "string",
+        "required": 0,
+        "default": "",
+        "description": ""
+      },
+      {
+        "name": "user_id",
         "type": "string",
         "required": 0,
         "default": "",
