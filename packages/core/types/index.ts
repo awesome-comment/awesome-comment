@@ -20,6 +20,16 @@ export type ResponseBody<T> = {
   };
 }
 
+export type User = {
+  id: string;
+  name: string;
+  nickname: string;
+  picture: string;
+  email: string;
+  sub: string;
+  avatar: string;
+}
+
 type BaseComment = {
   id?: number;
   postId: string;
@@ -33,11 +43,7 @@ type BaseComment = {
 }
 export type Comment = BaseComment & {
   createdAt: Date;
-  user?: {
-    email: string;
-    name: string;
-    avatar: string;
-  };
+  user?: User;
   isNew?: boolean;
   isAdmin?: boolean;
 }
@@ -45,13 +51,4 @@ export type ResponseComment = BaseComment & {
   created_at: string;
   parent_id?: number;
   ancestor_id?: number;
-}
-
-export type User = {
-  id: string;
-  name: string;
-  nickname: string;
-  picture: string;
-  email: string;
-  sub: string;
 }

@@ -22,9 +22,23 @@ const loadingMore = ref<boolean>(false);
 const message = ref<string>('');
 const filterStatus = ref<CommentStatus | 'all'>(route.query.status || CommentStatus.UnReplied);
 const filterPostId = ref<string>(route.query.post_id || '');
+const filterUser = ref<string>(route.query.user || '');
 const comments = ref<Record<number, RowItem>>({});
 const currentItem = ref<number>(-1);
 const hasReplyModal = ref<boolean>(false);
+const filter = computed<URLSearchParams>(() => {
+  const params = new URLSearchParams();
+  if (filterStatus.value !== 'all') {
+    params.set('status', filterStatus.value.toString());
+  }
+  if (filterPostId.value) {
+    params.set('post_id', filterPostId.value);
+  }
+  if (filterUser.value) {
+    params.set('user', filterUser.value);
+  }
+  return params;
+});
 
 const { data: commentsList, pending, refresh } = await useAsyncData(
   'comments',
@@ -41,6 +55,7 @@ const { data: commentsList, pending, refresh } = await useAsyncData(
         status: filterStatus.value === 'all' ? null : filterStatus.value,
         postId: filterPostId.value,
         start: start.value,
+        user: filterUser.value,
       },
       headers: {
         Authorization: `Bearer ${token}`,
@@ -80,7 +95,7 @@ const { data: commentsList, pending, refresh } = await useAsyncData(
     default() {
       return Object.values(comments.value).reverse();
     },
-    watch: [filterStatus, filterPostId, start],
+    watch: [filterStatus, filterPostId, filterUser, start],
   }
 );
 
@@ -133,14 +148,10 @@ function doFilter(postId: string): void {
   filterPostId.value = postId;
   updateUrl();
 }
-function doRemoveFilterPostId(): void {
-  filterPostId.value = '';
-  updateUrl();
-}
-function doRefresh(): void {
+function doRefresh(event?: MouseEvent): void {
   comments.value = {};
   currentItem.value = -1;
-  refresh();
+  if (event) refresh();
 }
 function onKeydown(event: KeyboardEvent): void {
   if (event.ctrlKey || event.metaKey || event.altKey || event.shiftKey) return;
@@ -186,15 +197,8 @@ function updateUrl(): void {
   commentsList.value = [];
   start.value = 0;
   hasMore.value = false;
-  const query: { status?: CommentStatus | 'all', post_id: string} = {};
-  if (filterStatus.value !== 'all') {
-    query.status = filterStatus.value;
-  }
-  if (filterPostId) {
-    query.post_id = filterPostId.value;
-  }
   const router = useRouter();
-  router.push({ query });
+  router.push({ query: filter.value });
 }
 
 onMounted(() => {
@@ -236,13 +240,22 @@ header.flex.flex-col.mb-4.gap-4(class="sm:flex-row sm:items-center")
     i.bi.bi-exclamation-triangle-fill.mr-2
     | {{ message }}
 
-.flex.mb-4(v-if="filterPostId")
+.flex.gap-4.mb-4(v-if="filterPostId || filterUser")
   button.btn.btn-outline.btn-sm.normal-case(
+    v-if="filterPostId"
     type="button"
-    @click="doRemoveFilterPostId"
+    @click="doRefresh(); filterPostId = ''"
   )
     i.bi.bi-funnel-fill
     | {{filterPostId}}
+    i.bi.bi-x-lg
+  button.btn.btn-outline.btn-sm.normal-case(
+    v-if="filterUser"
+    type="button"
+    @click="doRefresh(); filterUser = ''"
+  )
+    i.bi.bi-funnel-fill
+    | {{filterUser}}
     i.bi.bi-x-lg
 
 .overflow-x-auto
@@ -288,8 +301,11 @@ header.flex.flex-col.mb-4.gap-4(class="sm:flex-row sm:items-center")
               | {{comment.children[0].user.email}}
         td
           user-cell(
+            :filter="filter"
             :user="comment.user"
+            :user-id="comment.user_id"
             :from="comment.from"
+            @select-user="filterUser = $event"
           )
         td
           time.text-xs(:datetime="comment.created_at") {{ comment.created_at }}

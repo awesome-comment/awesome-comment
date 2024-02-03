@@ -9,6 +9,7 @@ export default defineEventHandler(async function (event): Promise<ResponseBody<C
     start = 0,
     status, // 0=to be reviewed, 1=approved
     postId = '',
+    user = '',
   } = query;
 
   const data: Comment[] = [];
@@ -34,6 +35,9 @@ export default defineEventHandler(async function (event): Promise<ResponseBody<C
     }
     if (postId) {
       params.set('post_id', postId as string);
+    }
+    if (user) {
+      params.set('user_id', user as string);
     }
     const kv = await getTidbKey();
     const response = await digestFetch(`${url}?${params}`, null, {
