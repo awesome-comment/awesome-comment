@@ -192,6 +192,7 @@ function onKeydown(event: KeyboardEvent): void {
   }
 }
 function onStatusChange(): void {
+  doReset();
   updateUrl();
 }
 function onReply(reply: Comment, parent: Comment): void {
