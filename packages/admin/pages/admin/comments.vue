@@ -145,15 +145,21 @@ function doLoadMore() {
   start.value += 20;
 }
 function doFilter(postId: string): void {
+  doReset();
   filterPostId.value = postId;
   updateUrl();
 }
-function doRefresh(event?: MouseEvent): void {
+function doFilterByUser(userId: string): void {
+  doReset();
+  filterUser.value = userId;
+  updateUrl();
+}
+function doReset(shouldRefresh?: MouseEvent | boolean): void {
   comments.value = {};
   currentItem.value = -1;
   start.value = 0;
   hasMore.value = false;
-  if (event) refresh();
+  if (shouldRefresh) refresh();
 }
 function onKeydown(event: KeyboardEvent): void {
   if (event.ctrlKey || event.metaKey || event.altKey || event.shiftKey) return;
@@ -195,7 +201,6 @@ function onReply(reply: Comment, parent: Comment): void {
   parent.status = CommentStatus.Approved;
 }
 function updateUrl(): void {
-  doRefresh();
   const router = useRouter();
   router.push({
     query: {
@@ -221,11 +226,14 @@ definePageMeta({
 <template lang="pug">
 header.flex.flex-col.mb-4.gap-4(class="sm:flex-row sm:items-center")
   h1.text-2xl.font-bold(class="sm:me-auto") Comments Management
+  span.loading.loading-spinner(
+    v-if="pending && filterStatus < CommentStatus.UnReplied"
+  )
   button.btn.btn-sm.me-2(
     v-if="filterStatus >= CommentStatus.UnReplied"
     type="button"
     :disabled="pending"
-    @click="doRefresh"
+    @click="doReset"
   )
     span.loading.loading-spinner(v-if="pending")
     i.bi.bi-arrow-clockwise(v-else)
@@ -249,7 +257,7 @@ header.flex.flex-col.mb-4.gap-4(class="sm:flex-row sm:items-center")
   button.btn.btn-outline.btn-sm.normal-case(
     v-if="filterPostId"
     type="button"
-    @click="doRefresh(); filterPostId = ''"
+    @click="doFilter('')"
   )
     i.bi.bi-funnel-fill
     | {{filterPostId}}
@@ -257,7 +265,7 @@ header.flex.flex-col.mb-4.gap-4(class="sm:flex-row sm:items-center")
   button.btn.btn-outline.btn-sm.normal-case(
     v-if="filterUser"
     type="button"
-    @click="doRefresh(); filterUser = ''"
+    @click="doFilterByUser('')"
   )
     i.bi.bi-funnel-fill
     | {{filterUser}}
@@ -310,7 +318,7 @@ header.flex.flex-col.mb-4.gap-4(class="sm:flex-row sm:items-center")
             :user="comment.user"
             :user-id="comment.user_id"
             :from="comment.from"
-            @select-user="filterUser = $event"
+            @select-user="doFilterByUser"
           )
         td
           time.text-xs(:datetime="comment.created_at") {{ comment.created_at }}
