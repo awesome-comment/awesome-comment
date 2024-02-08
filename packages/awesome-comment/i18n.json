@@ -18,7 +18,9 @@
       "Loading...",
       "Load Comments"
     ],
-    "your_comment": "Your comment"
+    "your_comment": "Your comment",
+    "edit": "Edit",
+    "save_editing": "Save"
   },
   "es": {
     "admin": "Administrador",
