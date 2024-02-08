@@ -47,7 +47,7 @@ const filterLink = computed<string>(() => {
         :to="`https://clients1.google.co.in/url?sa=i&url=https://www.ip138.com/iplookup.php?ip=${user.ip}&action=2`"
       ) {{ user.ip }}
     .text-xs.capitalize
-      i.bi.mr-1(
+      i.bi.me-1(
         v-if="from !== 'auth0'"
         :class="'bi-' + from"
       )

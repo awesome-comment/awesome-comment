@@ -14,12 +14,16 @@ type PostResponse = {
 
 type Props = {
   noVersion?: boolean;
+  currentId?: number;
   parentId?: number;
   ancestorId?: number;
+  content?: string;
+  status?: CommentStatus;
 }
 const props = defineProps<Props>();
 type Emits = {
-  (event: 'close'): (event: Event) => boolean | void;
+  (event: 'close'): void;
+  (event: 'update', value: string): void;
 }
 const emit = defineEmits<Emits>();
 
@@ -32,7 +36,7 @@ const version = __VERSION__;
 const textarea = ref<HTMLTextAreaElement>();
 
 const isSending = ref<boolean>(false);
-const comment = ref<string>('');
+const comment = ref<string>(props.content || '');
 const message = ref<string>('');
 
 async function doSubmit(event: Event): Promise<void> {
@@ -43,10 +47,16 @@ async function doSubmit(event: Event): Promise<void> {
 
   isSending.value = true;
   message.value = '';
+  let url = baseUrl + '/api/comment';
+  let method = 'POST';
+  if (props.currentId) {
+    url += '/' + props.currentId;
+    method = 'PATCH';
+  }
   try {
     const accessToken = await auth0.getAccessTokenSilently();
-    const response = await fetch(baseUrl + '/api/comment', {
-      method: 'POST',
+    const response = await fetch(url, {
+      method,
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${accessToken}`,
@@ -57,6 +67,7 @@ async function doSubmit(event: Event): Promise<void> {
         domain: auth0domain,
         ancestorId: props.ancestorId ? Number(props.ancestorId) : undefined,
         parentId: props.parentId ? Number(props.parentId) : undefined,
+        status: props.status,
       }),
     });
 
@@ -78,6 +89,8 @@ async function doSubmit(event: Event): Promise<void> {
         props.parentId,
         status,
       );
+    } else if (props.currentId) {
+      emit('update', comment.value);
     } else {
       store.addComment(id, comment.value, auth0.user.value, status);
     }
@@ -93,7 +106,7 @@ function doLogin(): void {
   auth0.loginWithPopup();
 }
 function onKeydown(event: KeyboardEvent): void {
-  if (withCommandModifier(event, 'enter')) {
+  if (withCommandModifier(event, 'Enter')) {
     doSubmit(event);
   }
 }
@@ -130,11 +143,13 @@ form.mb-6(
         class="text-neutral-400/40"
       ) v{{version}}
       .ac-alert.ac-alert-error.mx-4.py-1(v-if="message") {{message}}
-      button.ac-btn.ac-btn-primary.ac-btn-sm.ml-auto(
+      button.ac-btn.ac-btn-primary.ac-btn-sm.ms-auto(
         :disabled="isSending"
       )
         span.ac-loading.ac-loading-spinner(v-if="isSending")
-        | {{parentId ? t('post_reply') : t('post_comment')}}
+        template(v-if="currentId") {{t('save_editing')}}
+        template(v-else-if="parentId") {{ t('post_reply')}}
+        template(v-else) {{t('post_comment')}}
 </template>
 
 <script lang="ts">

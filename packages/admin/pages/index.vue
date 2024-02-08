@@ -90,24 +90,24 @@ main.container.mx-auto.py-8.flex.flex-col.gap-4.px-4(class="sm:flex-row sm:px-0"
         class="hover:border-primary hover:bg-primary/10 sm:rounded-tr-none sm:rounded-l-box"
         to="/examples"
       )
-        i.bi.bi-code.mr-2
+        i.bi.bi-code.me-2
         | Examples
       nuxt-link.p-4.border-x.text-center(
         class="hover:border-primary hover:bg-primary/10 sm:border-y sm:border-x-0"
         to="https://github.com/meathill/awesome-comment/issues"
       )
-        i.bi.bi-record-circle.mr-2
+        i.bi.bi-record-circle.me-2
         | Issues
       nuxt-link.p-4.border.rounded-b-box.text-center(
         class="hover:border-primary hover:bg-primary/10 sm:rounded-bl-none sm:rounded-r-box"
         to="https://paypal.me/meathill?country.x=C2&locale.x=zh_XC"
       )
-        i.bi.bi-heart-fill.mr-2
+        i.bi.bi-heart-fill.me-2
         | Support us
 
 
     h2.text-2xl.font-bold.mb-4
-      i.bi.bi-newspaper.mr-2
+      i.bi.bi-newspaper.me-2
       | News
     .bg-base-200.py-4.mb-4.text-center.text-sm(class="text-neutral/20") (WIP)
 

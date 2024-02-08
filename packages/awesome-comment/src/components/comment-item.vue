@@ -1,5 +1,7 @@
 <script setup lang="ts">
+import { useAuth0 } from '@auth0/auth0-vue';
 import { marked } from 'marked';
+import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import type { Comment } from '@awesome-comment/core/types';
 import { CommentStatus } from '@awesome-comment/core/data';
@@ -8,14 +10,27 @@ import { formatTime } from '../utils/time.ts';
 import CommentForm from './comment-form.vue';
 import useStore from '../store';
 
-const { t } = useI18n();
-const store = useStore();
-
-const props = defineProps<{
+type Props = {
   comment: Comment;
   isFirstLevel: boolean;
   ancestorId?: number;
-}>();
+};
+const props = defineProps<Props>();
+
+const { t } = useI18n();
+const store = useStore();
+const { user } = useAuth0();
+let interval: ReturnType<typeof setInterval>;
+
+const now = ref<number>(Date.now());
+const isEditing = ref<boolean>(false);
+const isEditable = computed<boolean>(() => {
+  return props.comment.user_id === user.value?.sub
+    && now.value - props.comment.createdAt.getTime() < 36E5;
+});
+const isAdmin = computed<boolean>(() => {
+  return
+})
 
 function getCommentLink(id: number): string {
   return `${location.origin}${location.pathname}#awcm-${id}`;
@@ -28,6 +43,20 @@ function getParentUserName(id: number): string {
   }
   return '';
 }
+
+onMounted(() => {
+  if (!isEditable.value) return;
+
+  interval = setInterval(() => {
+    now.value = Date.now();
+    if (!isEditable.value) {
+      clearInterval(interval);
+    }
+  }, 1000);
+});
+onBeforeUnmount(() => {
+  clearInterval(interval);
+});
 </script>
 
 <template lang="pug">
@@ -41,7 +70,7 @@ function getParentUserName(id: number): string {
       .flex.items-center.text-sm.text-base-content(
         class="dark:text-white"
       )
-        .ac-avatar.mr-2
+        .ac-avatar.me-2
           .w-6.h-6(v-if="comment.user.avatar")
             img.rounded-full.max-w-full.max-h-full(
               :src="comment.user.avatar"
@@ -53,12 +82,12 @@ function getParentUserName(id: number): string {
           )
             span.text-neutral-content.mix-blend-color-dodge.uppercase.font-bold.leading-6 {{(comment.user.name || t('anonymous')).substring(0, 1)}}
         | {{comment.user.name}}
-        .ac-tooltip.ml-2(
+        .ac-tooltip.ms-2(
           v-if="comment.isAdmin"
           :data-tip="t('admin')"
         )
           i.bi.bi-patch-check-fill.text-success
-        a.ml-4.no-underline(
+        a.ms-4.no-underline(
           class="hover:underline"
           :href="getCommentLink(comment.id)"
         )
@@ -68,10 +97,18 @@ function getParentUserName(id: number): string {
             :datetime="comment.createdAt"
             :title="formatTime(comment.createdAt)"
           ) {{formatTime(comment.createdAt)}}
-        a.text-xs.link.link-hover.ml-4(
+        a.text-xs.link.link-hover.ms-4(
           v-if="!isFirstLevel && comment.parent_id !== comment.ancestor_id"
           :href="'#awcm-' + comment.parent_id"
         ) {{t('reply_to')}} {{getParentUserName(comment.parent_id)}}(\#{{ comment.parent_id }})
+        //- edit button
+        button.ac-btn.ac-btn-link.ac-btn-xs.ms-4(
+          v-if="isEditable"
+          class="hover:no-underline"
+          type="button"
+          @click="isEditing = !isEditing"
+        ) {{t('edit')}}
+        button.ac-btn.ac-btn-ghost.ac-btn-xs.ms-4
 
       //- reply button
       button.ac-btn.ac-btn-sm.ac-btn-circle.border-0(
@@ -89,7 +126,16 @@ function getParentUserName(id: number): string {
       v-if="comment.status === CommentStatus.Pending"
       class="dark:text-emerald-300"
     ) {{t('approve_hint')}}
-  comment-form.mt-3.ml-12(
+  comment-form.mt-3(
+    v-if="isEditing"
+    no-version
+    :content="comment.content"
+    :current-id="comment.id"
+    :status="comment.status"
+    @update="comment.content = $event"
+    @close="isEditing = false"
+  )
+  comment-form.mt-3.ms-12(
     v-if="comment.isReplying && isFirstLevel"
     no-version
     :ancestor-id="ancestorId"
@@ -97,18 +143,19 @@ function getParentUserName(id: number): string {
     @close="comment.isReplying = false"
   )
   template(v-if="comment.children?.length")
-    comment-item.ml-12(
+    comment-item.ms-12(
       v-for="child in comment.children"
       :key="child.id"
       :comment="child"
       :ancestor-id="ancestorId"
       :is-first-level="false"
     )
-  comment-form.mt-3.ml-12(
+  comment-form.mt-3.ms-12(
     v-if="comment.isReplying && !isFirstLevel"
     no-version
     :ancestor-id="ancestorId"
     :parent-id="comment.id"
+    @close="comment.isReplying = false"
   )
 </template>
 

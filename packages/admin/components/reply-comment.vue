@@ -109,7 +109,7 @@ teleport(
       @submit.prevent="doReply"
     )
       .mb-2 Reply to
-      blockquote.mb-2.border-l-2.border-gray-200.bg-base-200.pl-2.py-2 {{comment.content}}
+      blockquote.mb-2.border-l-2.border-gray-200.bg-base-200.ps-2.py-2 {{comment.content}}
       .form-control.mb-4
         label.label
           span.label-text Your replyment

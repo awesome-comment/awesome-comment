@@ -8,9 +8,9 @@ const acVersion = __AC_VERSION__;
 footer.bg-neutral.text-neutral-content.mt-auto
   .container.mx-auto.footer.items-center.p-4
     .items-center.grid-flow-col
-      img.w-8.h-8.object-cover.rounded-full.mr-1(src="https://evereditor.com/mui2.jpg", alt="")
+      img.w-8.h-8.object-cover.rounded-full.me-1(src="https://evereditor.com/mui2.jpg", alt="")
       p Copyright © {{year}} - All right reserved
-        span.ml-4 Site v{{version}}
+        span.ms-4 Site v{{version}}
         span.mx-2 |
         span Awesome Comment v{{acVersion}}
 

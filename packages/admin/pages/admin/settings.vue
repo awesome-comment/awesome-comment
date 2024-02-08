@@ -90,8 +90,8 @@ onMounted(async () => {
 <template lang="pug">
 header.flex.items-center.pb-4.mb-4.border-b
   h1.text-xl.font-bold Settings
-  span.loading.loading-spinner.ml-4(v-if="isLoading")
-  button.btn.ml-auto(
+  span.loading.loading-spinner.ms-4(v-if="isLoading")
+  button.btn.ms-auto(
     form="config-form"
     :class="isSaved ? 'btn-success' : 'btn-primary'"
     :disabled="isSaving || !auth0?.isAuthenticated"
@@ -102,7 +102,7 @@ header.flex.items-center.pb-4.mb-4.border-b
 
 .alert.alert-error.mb-4(v-if="message")
   p
-    i.bi.bi-exclamation-triangle-fill.mr-2
+    i.bi.bi-exclamation-triangle-fill.me-2
     | {{ message }}
 
 form#config-form(
@@ -135,12 +135,12 @@ form#config-form(
         span.label-text(
           :class="config.autoApprove.enabled ? 'text-primary font-bold' : ''"
         ) ON
-      input.input.input-bordered.font-mono.ml-4(
+      input.input.input-bordered.font-mono.ms-4(
         v-if="config.autoApprove.enabled"
         placeholder="Include URLs, default all"
         v-model="config.autoApprove.include"
       )
-      input.input.input-bordered.font-mono.ml-4(
+      input.input.input-bordered.font-mono.ms-4(
         v-if="config.autoApprove.enabled"
         placeholder="Exclude URLs"
         v-model="config.autoApprove.exclude"

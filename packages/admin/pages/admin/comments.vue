@@ -251,7 +251,7 @@ header.flex.flex-col.mb-4.gap-4(class="sm:flex-row sm:items-center")
 
 .alert.alert-error.mb-4(v-if="message")
   p
-    i.bi.bi-exclamation-triangle-fill.mr-2
+    i.bi.bi-exclamation-triangle-fill.me-2
     | {{ message }}
 
 .flex.gap-4.mb-4(v-if="filterPostId || filterUser")
@@ -308,6 +308,8 @@ header.flex.flex-col.mb-4.gap-4(class="sm:flex-row sm:items-center")
                 button-class=""
                 :comment="comment.children[0]"
                 @save="comment.children[0].content = $event"
+                @open="hasReplyModal = true"
+                @close="hasReplyModal = false"
               )
             .chat-bubble {{comment.children[0].content}}
             .chat-footer.mt-1
@@ -376,6 +378,8 @@ header.flex.flex-col.mb-4.gap-4(class="sm:flex-row sm:items-center")
             edit-comment(
               :comment="comment"
               @save="comment.content = $event"
+              @open="hasReplyModal = true"
+              @close="hasReplyModal = false"
             )
   button.mt-2.btn.btn-neutral.btn-sm.btn-block(
     v-if="filterStatus <= CommentStatus.Rejected && hasMore",

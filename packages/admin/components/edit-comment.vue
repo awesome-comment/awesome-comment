@@ -12,6 +12,8 @@ const props = withDefaults(defineProps<Props>(), {
 });
 type Emits = {
   (event: 'save', content: string): (event: Event) => boolean | void;
+  (event: 'open'): void;
+  (event: 'close'): void;
 }
 const emit = defineEmits<Emits>();
 const auth0 = useAuth0();
@@ -27,6 +29,7 @@ async function doOpenModal(): Promise<void> {
   hasModal.value = true;
   await nextTick();
   modal.value?.showModal();
+  emit('open');
 }
 async function doReply(event: Event): Promise<void> {
   if (isSaving.value || (event.target as HTMLFormElement).matches(':invalid')) return;
@@ -52,6 +55,10 @@ async function doReply(event: Event): Promise<void> {
   }
   isSaving.value = false;
 }
+function onModalClose(): void {
+  hasModal.value = false;
+  emit('close');
+}
 </script>
 
 <template lang="pug">
@@ -72,13 +79,13 @@ teleport(
   dialog.modal(
     ref="modal"
     :id="'comment-' + comment.id"
-    @close="hasModal = false"
+    @close="onModalClose"
   )
     form.modal-box(
       @submit.prevent="doReply"
     )
       .mb-2 Edit
-      blockquote.mb-2.border-l-2.border-gray-200.bg-base-200.pl-2.py-2 {{comment.content}}
+      blockquote.mb-2.border-l-2.border-gray-200.bg-base-200.ps-2.py-2 {{comment.content}}
       .form-control.mb-4
         label.label
           span.label-text New content
