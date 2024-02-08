@@ -10,11 +10,13 @@ function formatHelper(item: ResponseComment): Comment {
     created_at: createdAt,
     parent_id: parentId,
     ancestor_id: ancestorId,
+    user_id: userId,
     ...rest
   } = item;
   return {
     ...rest,
     id: Number(id),
+    userId,
     parentId: Number(parentId),
     ancestorId: Number(ancestorId),
     status: Number(item.status),
@@ -40,28 +42,30 @@ const useStore = defineStore('store', () => {
 
   function formatComment(from: ResponseComment[]): Record<number, Comment> {
     const res: Record<number, Comment> = {};
-    const deeper: ResponseComment[] = [];
+    const deeper: Comment[] = [];
     from.forEach((item: ResponseComment) => {
       removeLocalComment(Number(item.id));
+      const formatted = formatHelper(item);
       if (!item.ancestor_id || Number(item.ancestor_id) === 0) {
-        res[ item.id as number ] = formatHelper(item);
+        res[ item.id as number ] = formatted;
       } else {
-        deeper.push(item);
+        deeper.push(formatted);
       }
     });
     const comment = localComments[ postId ];
     if (comment) {
+      comment.createdAt = new Date(comment.createdAt);
       if (!comment.ancestorId || Number(comment.ancestorId) === 0) {
         res[ comment.id as number ] = comment;
       } else {
-        deeper.push(comment as ResponseComment);
+        deeper.push(comment);
       }
     }
 
-    deeper.forEach((item: ResponseComment) => {
-      if (item.ancestor_id as number in res) {
-        const parent = res[ item.ancestor_id as number ];
-        parent.children = [formatHelper(item), ...(parent.children || [])];
+    deeper.forEach((item: Comment) => {
+      if (item.ancestorId as number in res) {
+        const parent = res[ item.ancestorId as number ];
+        parent.children = [item, ...(parent.children || [])];
       }
     });
     return res;

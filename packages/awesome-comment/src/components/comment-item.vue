@@ -25,12 +25,9 @@ let interval: ReturnType<typeof setInterval>;
 const now = ref<number>(Date.now());
 const isEditing = ref<boolean>(false);
 const isEditable = computed<boolean>(() => {
-  return props.comment.user_id === user.value?.sub
+  return props.comment.userId === user.value?.sub
     && now.value - props.comment.createdAt.getTime() < 36E5;
 });
-const isAdmin = computed<boolean>(() => {
-  return
-})
 
 function getCommentLink(id: number): string {
   return `${location.origin}${location.pathname}#awcm-${id}`;

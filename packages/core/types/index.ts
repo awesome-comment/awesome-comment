@@ -29,6 +29,11 @@ export type User = {
   sub: string;
   avatar: string;
 }
+export type CommentUser = {
+  avatar: string;
+  email: string;
+  name: string;
+}
 
 type BaseComment = {
   id?: number;
@@ -43,7 +48,7 @@ type BaseComment = {
 }
 export type Comment = BaseComment & {
   createdAt: Date;
-  user?: User;
+  user?: CommentUser;
   isNew?: boolean;
   isAdmin?: boolean;
 }
@@ -51,4 +56,5 @@ export type ResponseComment = BaseComment & {
   created_at: string;
   parent_id?: number;
   ancestor_id?: number;
+  user_id: string;
 }
