@@ -41,7 +41,13 @@ export default defineNuxtConfig({
   ],
   nitro: {
     storage: {
-      data: { driver: 'vercelKV' },
+      data: {
+        driver: 'redis',
+        host: process.env.UPSTASH_REDIS_HOST,
+        tls: !!process.env.UPSATSH_REDIS_TLS,
+        port: process.env.UPSTASH_REDIS_PORT,
+        password: process.env.UPSTASH_REDIS_PASSWORD,
+      },
     },
   },
   postcss: {

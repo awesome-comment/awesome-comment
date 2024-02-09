@@ -277,7 +277,7 @@ header.flex.flex-col.mb-4.gap-4(class="sm:flex-row sm:items-center")
     thead
       tr
         th ID
-        th Content
+        th.min-w-60 Content
         th User
         th Time
         th Post
