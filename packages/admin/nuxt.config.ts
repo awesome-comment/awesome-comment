@@ -43,7 +43,6 @@ export default defineNuxtConfig({
     storage: {
       data: {
         driver: 'redis',
-        base: 'awesome-comment',
         host: process.env.UPSTASH_REDIS_HOST,
         tls: !!process.env.UPSATSH_REDIS_TLS,
         port: process.env.UPSTASH_REDIS_PORT,

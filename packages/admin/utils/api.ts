@@ -5,7 +5,7 @@ import { H3Event } from 'h3';
 import { CommentStatus, MarkdownLinkRegex } from '@awesome-comment/core/data';
 
 export async function getConfig(): Promise<AcConfig> {
-  const storage = useStorage('awesome-comment');
+  const storage = useStorage('data');
   const key = getConfigKey();
   return (await storage.getItem(key)) as AcConfig;
 }
@@ -55,7 +55,7 @@ export async function checkUserPermission(event: H3Event): Promise<[User, AcConf
 
 export async function getUser(accessToken: string, domain?: string): Promise<User> {
   domain ??= process.env.AUTH0_DOMAIN || '';
-  const store = useStorage('awesome-comment');
+  const store = useStorage('data');
   const key = `user-${domain}-${accessToken}`;
   const cached = await store.getItem(key);
   if (cached) {

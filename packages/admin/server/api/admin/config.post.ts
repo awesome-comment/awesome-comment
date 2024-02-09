@@ -5,7 +5,7 @@ import { getConfigKey } from '~/utils/api';
 export default defineEventHandler(async function (event: H3Event): Promise<ResponseBody<string>> {
   const body = await readBody(event);
 
-  const storage = useStorage('awesome-comment');
+  const storage = useStorage('data');
   const key = getConfigKey();
   const {
     adminEmails,
@@ -14,6 +14,7 @@ export default defineEventHandler(async function (event: H3Event): Promise<Respo
   await storage.setItem(key, {
     adminEmails,
     autoApprove,
+    test: 1,
   });
 
   return {
