@@ -76,7 +76,7 @@ export default defineEventHandler(async function (event): Promise<ResponseBody<s
 
   // clear cache if the comment has been approved
   if (body.status === CommentStatus.Approved) {
-    const storage = useStorage('data');
+    const storage = useStorage('awesome-comment');
     const key = getCacheKey(body.postId);
     await storage.removeItem(key);
   }

@@ -41,7 +41,14 @@ export default defineNuxtConfig({
   ],
   nitro: {
     storage: {
-      data: { driver: 'vercelKV' },
+      data: {
+        driver: 'redis',
+        base: 'awesome-comment',
+        host: 'usw2-topical-jawfish-30910.upstash.io',
+        tls: true,
+        port: 30910,
+        password: process.env.UPSTASH_REDIS_PASSWORD,
+      },
     },
   },
   postcss: {

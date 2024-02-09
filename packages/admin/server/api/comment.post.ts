@@ -121,7 +121,7 @@ export default defineEventHandler(async function (event): Promise<PostResponse> 
 
   // if comment directly approved, clear cache
   if (status === CommentStatus.Approved) {
-    const storage = useStorage('data');
+    const storage = useStorage('awesome-comment');
     const key = getCacheKey(body.postId);
     await storage.removeItem(key);
   }

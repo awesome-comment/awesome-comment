@@ -12,7 +12,7 @@
   "devDependencies": {
     "@nuxt/devtools": "latest",
     "@pinia/nuxt": "^0.5.1",
-    "@types/node": "^20.11.16",
+    "@types/node": "^20.11.17",
     "autoprefixer": "^10.4.17",
     "daisyui": "^4.6.2",
     "postcss": "^8.4.35",
@@ -29,6 +29,6 @@
     "@vercel/kv": "^1.0.1",
     "nuxt": "^3.10.1",
     "pinia": "^2.1.7",
-    "vue": "^3.4.16"
+    "vue": "^3.4.18"
   }
 }
