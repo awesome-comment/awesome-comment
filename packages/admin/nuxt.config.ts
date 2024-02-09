@@ -44,9 +44,9 @@ export default defineNuxtConfig({
       data: {
         driver: 'redis',
         base: 'awesome-comment',
-        host: 'usw2-topical-jawfish-30910.upstash.io',
-        tls: true,
-        port: 30910,
+        host: process.env.UPSTASH_REDIS_HOST,
+        tls: !!process.env.UPSATSH_REDIS_TLS,
+        port: process.env.UPSTASH_REDIS_PORT,
         password: process.env.UPSTASH_REDIS_PASSWORD,
       },
     },
