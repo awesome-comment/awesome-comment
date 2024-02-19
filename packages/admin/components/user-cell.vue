@@ -44,7 +44,7 @@ const filterLink = computed<string>(() => {
         class="hover:no-underline"
         target="_blank"
         external
-        :to="`https://clients1.google.co.in/url?sa=i&url=https://www.ip138.com/iplookup.php?ip=${user.ip}&action=2`"
+        :to="`https://clients1.google.co.in/url?sa=i&url=https://www.ipshudi.com/${user.ip}.htm`"
       ) {{ user.ip }}
     .text-xs.capitalize
       i.bi.me-1(

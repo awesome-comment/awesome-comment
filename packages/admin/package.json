@@ -1,6 +1,6 @@
 {
   "name": "@awesome-comment/admin",
-  "version": "0.6.5",
+  "version": "0.6.6",
   "private": true,
   "scripts": {
     "build": "nuxt build",
@@ -11,10 +11,11 @@
   },
   "devDependencies": {
     "@nuxt/devtools": "latest",
+    "@opentelemetry/api": "^1.7.0",
     "@pinia/nuxt": "^0.5.1",
-    "@types/node": "^20.11.17",
+    "@types/node": "^20.11.19",
     "autoprefixer": "^10.4.17",
-    "daisyui": "^4.6.2",
+    "daisyui": "^4.7.2",
     "postcss": "^8.4.35",
     "pug": "^3.0.2",
     "tailwindcss": "^3.4.1"
@@ -25,10 +26,10 @@
     "@awesome-comment/core": "workspace:*",
     "@meathill/digest-fetch": "^0.1.4",
     "@nuxt/content": "^2.12.0",
-    "@vercel/edge-config": "^0.4.1",
+    "@vercel/edge-config": "^1.0.2",
     "@vercel/kv": "^1.0.1",
-    "nuxt": "^3.10.1",
+    "nuxt": "^3.10.2",
     "pinia": "^2.1.7",
-    "vue": "^3.4.18"
+    "vue": "^3.4.19"
   }
 }
