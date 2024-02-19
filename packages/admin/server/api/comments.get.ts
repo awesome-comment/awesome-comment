@@ -55,7 +55,7 @@ export default defineEventHandler(async function (event): Promise<ResponseBody<C
   }
 
   await storage.setItem(key, data, {
-    ttl: 60 * 60,
+    ttl: 60 * 30,
   });
 
   return {
