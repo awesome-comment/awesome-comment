@@ -52,6 +52,7 @@ const useStore = defineStore('store', () => {
         deeper.push(formatted);
       }
     });
+
     const comment = localComments[ postId ];
     if (comment) {
       comment.createdAt = new Date(comment.createdAt);
@@ -95,9 +96,13 @@ const useStore = defineStore('store', () => {
     }
 
     const formatted = formatComment(data.data || []);
+    hasMore.value = Object.keys(formatted).length > 20;
+    // remove extra comment
+    if (hasMore.value) {
+      delete formatted[ Object.keys(formatted)[0] as unknown as number ];
+    }
     Object.assign(comments.value, formatted);
     const count = data.data?.length || 0;
-    hasMore.value = Object.values(formatted).length >= 20;
     total.value += count;
     isLoaded.value = true;
     loadingMore.value = false;
