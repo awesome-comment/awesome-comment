@@ -34,7 +34,7 @@ const useStore = defineStore('store', () => {
   const isLoaded = ref<boolean>(!!preloaded?.length);
   const start = ref<number>(0);
   const message = ref<string>('');
-  const comments = ref<Record<number, Comment>>(formatComment(preloaded || []));
+  const comments = ref<Record<number, Comment>>([]);
   const total = ref<number>(0);
   const baseUrl = inject('ApiBaseUrl');
   const loadingMore = ref<boolean>(false);
@@ -72,41 +72,49 @@ const useStore = defineStore('store', () => {
     return res;
   }
 
-  async function loadComments() {
+  async function loadComments(init = false) {
+    if (loadingMore.value) return;
+
     message.value = '';
     loadingMore.value = true;
-    const params = new URLSearchParams();
-    params.append('postId', postId);
-    params.append('start', start.value.toString());
-    const res = await fetch(`${baseUrl}/api/comments?${params}`);
+    let formatted: Record<number, Comment>;
+    if (init && preloaded?.length) {
+      formatted = formatComment(preloaded);
+    } else {
+      const params = new URLSearchParams();
+      params.append('postId', postId);
+      params.append('start', start.value.toString());
+      const res = await fetch(`${baseUrl}/api/comments?${params}`);
 
-    if (!res.ok) {
-      message.value = 'Load comments failed. ' + res.statusText;
-      isLoaded.value = true;
-      loadingMore.value = false;
-      return;
+      if (!res.ok) {
+        message.value = 'Load comments failed. ' + res.statusText;
+        isLoaded.value = true;
+        loadingMore.value = false;
+        return;
+      }
+
+      const data = (await res.json()) as ResponseBody<ResponseComment[]>;
+      if (data.code !== 0) {
+        message.value = 'Load comments failed. ' + data.message;
+        isLoaded.value = true;
+        loadingMore.value = false;
+        return;
+      }
+      formatted = formatComment(data.data || []);
     }
 
-    const data = (await res.json()) as ResponseBody<ResponseComment[]>;
-    if (data.code !== 0) {
-      message.value = 'Load comments failed. ' + data.message;
-      isLoaded.value = true;
-      loadingMore.value = false;
-      return;
-    }
 
-    const formatted = formatComment(data.data || []);
     hasMore.value = Object.keys(formatted).length > 20;
     // remove extra comment
     if (hasMore.value) {
       delete formatted[ Object.keys(formatted)[0] as unknown as number ];
     }
     Object.assign(comments.value, formatted);
-    const count = data.data?.length || 0;
-    total.value += count;
+    total.value = Object.values(comments.value).reduce((acc, comment) => {
+      return acc + 1 + (comment.children?.length || 0);
+    }, 0);
     isLoaded.value = true;
     loadingMore.value = false;
-    return data;
   }
   function addComment(
     id: number,

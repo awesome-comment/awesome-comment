@@ -5,7 +5,7 @@ import useStore from '../store';
 
 const { t } = useI18n();
 const store = useStore();
-store.loadComments();
+store.loadComments(true);
 
 function loadMore() {
   store.start += 20;
