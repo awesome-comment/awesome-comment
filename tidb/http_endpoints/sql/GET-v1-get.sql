@@ -3,6 +3,7 @@ USE arealme;
 WITH CTE AS (
     SELECT id
     FROM ac_comment
+    USE INDEX()
     WHERE post_id=${post_id}
       AND status=1
       AND (
