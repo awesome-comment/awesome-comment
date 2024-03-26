@@ -7,3 +7,7 @@
     max-width: 100%;
   }
 }
+
+.comment-item article p:first-child {
+  @apply mt-1;
+}

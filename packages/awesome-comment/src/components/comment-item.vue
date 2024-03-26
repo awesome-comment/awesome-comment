@@ -62,8 +62,8 @@ onBeforeUnmount(() => {
   :class="{'animated flash': comment.isNew}"
   @animationend="comment.isNew = false"
 )
-  .p-6.text-base.bg-base-200.rounded-lg(class="dark:bg-gray-900")
-    header.flex.justify-between.items-center.font-sans.mb-2
+  .pt-2.ps-4.text-base.bg-base-200.rounded-lg(class="dark:bg-gray-900")
+    header.flex.justify-between.items-center.font-sans
       .flex.items-center.text-sm.text-base-content(
         class="dark:text-white"
       )
@@ -110,6 +110,7 @@ onBeforeUnmount(() => {
       //- reply button
       button.ac-btn.ac-btn-sm.ac-btn-circle.border-0(
         type="button"
+        class="me-2.5"
         :title="t('reply')"
         :aria-label="t('reply')"
         @click="comment.isReplying = !comment.isReplying"
@@ -132,7 +133,7 @@ onBeforeUnmount(() => {
     @update="comment.content = $event"
     @close="isEditing = false"
   )
-  comment-form.mt-3.ms-12(
+  comment-form.mt-3.ms-7(
     v-if="comment.isReplying && isFirstLevel"
     no-version
     :ancestor-id="ancestorId"
@@ -140,14 +141,14 @@ onBeforeUnmount(() => {
     @close="comment.isReplying = false"
   )
   template(v-if="comment.children?.length")
-    comment-item.ms-12(
+    comment-item.ms-7.mt-2(
       v-for="child in comment.children"
       :key="child.id"
       :comment="child"
       :ancestor-id="ancestorId"
       :is-first-level="false"
     )
-  comment-form.mt-3.ms-12(
+  comment-form.mt-3.ms-7(
     v-if="comment.isReplying && !isFirstLevel"
     no-version
     :ancestor-id="ancestorId"
