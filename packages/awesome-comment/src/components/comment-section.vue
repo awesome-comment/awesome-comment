@@ -24,7 +24,7 @@ function loadMore() {
     is-first-level
   )
 
-  button.ac-btn.ac-btn-neutral.ac-btn-sm.ac-btn-block(
+  button.ac-btn.h-11.min-h-fit.ac-btn-block.text-white.border-0.bg-green-middle(
     v-if="store.hasMore"
     type="button"
     @click="loadMore"

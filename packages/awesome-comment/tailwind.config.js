@@ -1,5 +1,4 @@
 import DaisyUI from 'daisyui';
-import typography from '@tailwindcss/typography';
 
 /** @type {import('tailwindcss').Config} */
 export default {
@@ -8,10 +7,15 @@ export default {
     './src/**/*.{js,ts,jsx,tsx,vue}',
   ],
   theme: {
-    extend: {},
+    extend: {
+      colors: {
+        green: {
+          middle: '#090',
+        },
+      },
+    },
   },
   plugins: [
-    typography,
     DaisyUI,
   ],
   daisyui: {

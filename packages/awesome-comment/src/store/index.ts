@@ -107,7 +107,7 @@ const useStore = defineStore('store', () => {
     hasMore.value = Object.keys(formatted).length > 20;
     // remove extra comment
     if (hasMore.value) {
-      delete formatted[ Object.keys(formatted)[0] as unknown as number ];
+      delete formatted[ Object.keys(formatted)[ 0 ] as unknown as number ];
     }
     Object.assign(comments.value, formatted);
     total.value = Object.values(comments.value).reduce((acc, comment) => {

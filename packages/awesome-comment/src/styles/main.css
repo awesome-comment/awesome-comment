@@ -8,6 +8,12 @@
   }
 }
 
-.comment-item article p:first-child {
-  @apply mt-1;
+.comment-item article {
+  a {
+    @apply text-green-middle;
+  }
+
+  p:first-child {
+    @apply mt-1;
+  }
 }
