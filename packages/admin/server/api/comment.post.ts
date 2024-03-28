@@ -80,7 +80,7 @@ export default defineEventHandler(async function (event): Promise<PostResponse> 
         user_id: sub,
         user: JSON.stringify({
           email,
-          name: nickname || name,
+          name: name || nickname,
           avatar: picture,
           ip,
         }),
