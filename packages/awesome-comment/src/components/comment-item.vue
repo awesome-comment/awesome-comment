@@ -90,7 +90,6 @@ onBeforeUnmount(() => {
         )
           time.text-xs.text-gray-600(
             class="dark:text-gray-400"
-            pubdate
             :datetime="comment.createdAt"
             :title="formatTime(comment.createdAt)"
           ) {{formatTime(comment.createdAt)}}
@@ -105,7 +104,6 @@ onBeforeUnmount(() => {
           type="button"
           @click="isEditing = !isEditing"
         ) {{t('edit')}}
-        button.ac-btn.ac-btn-ghost.ac-btn-xs.ms-4
 
       //- reply button
       button.ac-btn.ac-btn-sm.ac-btn-circle.border-0(

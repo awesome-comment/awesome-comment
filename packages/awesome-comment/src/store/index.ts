@@ -66,7 +66,7 @@ const useStore = defineStore('store', () => {
     deeper.forEach((item: Comment) => {
       if (item.ancestorId as number in res) {
         const parent = res[ item.ancestorId as number ];
-        parent.children = [item, ...(parent.children || [])];
+        parent.children = [...(parent.children || []), item];
       }
     });
     return res;

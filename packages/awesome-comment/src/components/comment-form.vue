@@ -44,6 +44,8 @@ async function doSubmit(event: Event): Promise<void> {
     return doLogin();
   }
   if ((event.target as HTMLFormElement).matches(':invalid')) return;
+  const commentContent = comment.value.trim();
+  if (!commentContent) return;
 
   isSending.value = true;
   message.value = '';
@@ -62,7 +64,7 @@ async function doSubmit(event: Event): Promise<void> {
         Authorization: `Bearer ${accessToken}`,
       },
       body: JSON.stringify({
-        comment: comment.value,
+        comment: commentContent,
         postId: store.postId,
         domain: auth0domain,
         ancestorId: props.ancestorId ? Number(props.ancestorId) : undefined,
@@ -83,16 +85,16 @@ async function doSubmit(event: Event): Promise<void> {
     if (props.ancestorId || props.parentId) {
       store.addComment(
         id,
-        comment.value,
+        commentContent,
         auth0.user.value,
         props.ancestorId,
         props.parentId,
         status,
       );
     } else if (props.currentId) {
-      emit('update', comment.value);
+      emit('update', commentContent);
     } else {
-      store.addComment(id, comment.value, auth0.user.value, status);
+      store.addComment(id, commentContent, auth0.user.value, status);
     }
     comment.value = '';
     emit('close');
