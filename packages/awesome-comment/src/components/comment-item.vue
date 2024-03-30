@@ -115,9 +115,14 @@ onBeforeUnmount(() => {
       )
         i.bi.bi-reply-fill.h-4.w-4
     article.text-gray-500.break-words.overflow-x-auto(
+      v-if="comment.isAdmin"
       class="dark:text-gray-400"
       v-html="marked(comment.content)"
     )
+    p.text-gray-500.break-words.overflow-x-auto.whitespace-pre-line.pb-3.mb-0(
+      v-else
+      class="dark:text-gray-400"
+    ) {{comment.content}}
     p.italic.mt-4.text-emerald-600.mb-0.text-sm(
       v-if="comment.status === CommentStatus.Pending"
       class="dark:text-emerald-300"
