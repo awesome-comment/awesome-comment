@@ -11,12 +11,12 @@ WITH CTE AS (
   ORDER BY id DESC
   LIMIT ${start}, 20
 )
-SELECT *
-FROM ac_comment
+SELECT a.*, b.content AS toComment
+FROM ac_comment AS a LEFT JOIN ac_comment AS b ON a.parent_id=b.id
 WHERE
-  id IN (SELECT * FROM CTE)
+  a.id IN (SELECT * FROM CTE)
   OR (
-    parent_id IN (SELECT * FROM CTE)
-    AND JSON_EXTRACT(user, '$.email') IN (${emails})
+    a.parent_id IN (SELECT * FROM CTE)
+    AND JSON_EXTRACT(a.user, '$.email') IN (${emails})
   )
-ORDER BY id DESC;
+ORDER BY a.id DESC;
