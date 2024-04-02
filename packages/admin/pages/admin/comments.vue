@@ -291,10 +291,11 @@ header.flex.flex-col.mb-4.gap-4(class="sm:flex-row sm:items-center")
       )
         td {{ comment.id }}
         td
-          blockquote.ps-2.border-s-4.mb-2(
+          blockquote.ps-3.border-s-4.mb-2(
             v-if="comment.toContent"
+            class="bg-base-300/50 border-base-content"
           )
-            p.mb-2 {{comment.toContent}}
+            p.py-1.mb-2 {{comment.toContent}}
             p.text-xs(
               v-if="comment.toUser"
               class="text-base-content/50"
