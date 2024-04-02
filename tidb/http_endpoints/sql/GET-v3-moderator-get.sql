@@ -11,7 +11,7 @@ WITH CTE AS (
   ORDER BY id DESC
   LIMIT ${start}, 20
 )
-SELECT a.*, b.content AS toComment
+SELECT a.*, b.content AS toContent
 FROM ac_comment AS a LEFT JOIN ac_comment AS b ON a.parent_id=b.id
 WHERE
   a.id IN (SELECT * FROM CTE)
