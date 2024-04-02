@@ -292,7 +292,7 @@ header.flex.flex-col.mb-4.gap-4(class="sm:flex-row sm:items-center")
         td {{ comment.id }}
         td
           blockquote.ps-2.border-s-4.mb-2(
-            v-if="Number(filterStatus) === CommentStatus['Replied to Admin']"
+            v-if="comment.toContent"
           )
             p.mb-2 {{comment.toContent}}
             p.text-xs(
