@@ -31,11 +31,12 @@ const localComments: Record<string, Comment> = local ? JSON.parse(local) : {};
 const useStore = defineStore('store', () => {
   const postId = inject('postId') as string;
   const preloaded = inject('comments') as ResponseComment[];
+  const preloadedTotal = inject('total') as number;
   const isLoaded = ref<boolean>(!!preloaded?.length);
   const start = ref<number>(0);
   const message = ref<string>('');
   const comments = ref<Record<number, Comment>>([]);
-  const total = ref<number>(0);
+  const total = ref<number>(preloadedTotal || 0);
   const baseUrl = inject('ApiBaseUrl');
   const loadingMore = ref<boolean>(false);
   const hasMore = ref<boolean>(false);
@@ -101,6 +102,7 @@ const useStore = defineStore('store', () => {
         return;
       }
       formatted = formatComment(data.data || []);
+      total.value = data.meta?.total || data.data?.length || 0;
     }
 
 
@@ -110,9 +112,6 @@ const useStore = defineStore('store', () => {
       delete formatted[ Object.keys(formatted)[ 0 ] as unknown as number ];
     }
     Object.assign(comments.value, formatted);
-    total.value = Object.values(comments.value).reduce((acc, comment) => {
-      return acc + 1 + (comment.children?.length || 0);
-    }, 0);
     isLoaded.value = true;
     loadingMore.value = false;
   }

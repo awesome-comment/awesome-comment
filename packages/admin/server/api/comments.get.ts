@@ -19,19 +19,26 @@ export default defineEventHandler(async function (event): Promise<ResponseBody<C
   const stored = await storage.getItem(key) as Comment[];
   if (stored) {
     console.log('[cache] get comments from cache: ', key);
+    // TODO remove this compatibility code after the next release
+    const data = ('data' in stored ? stored.data : stored) as Comment[];
+    const total = ('total' in stored ? stored.total : (data as unknown[]).length) as number;
     return {
       code: 0,
-      data: stored,
+      data,
+      meta: {
+        total,
+      },
     };
   }
 
   const data: Comment[] = [];
+  let total = 0;
+  const params = new URLSearchParams();
+  params.set('post_id', postId as string);
+  params.set('start', start.toString());
+  const kv = await getTidbKey();
   try {
     const url = 'https://ap-northeast-1.data.tidbcloud.com/api/v1beta/app/dataapp-NFYbhmOK/endpoint/v1/get';
-    const params = new URLSearchParams();
-    params.set('post_id', postId as string);
-    params.set('start', start.toString());
-    const kv = await getTidbKey();
     const response = await digestFetch(`${url}?${params}`, null, {
       method: 'GET',
       realm: 'tidb.cloud',
@@ -53,13 +60,32 @@ export default defineEventHandler(async function (event): Promise<ResponseBody<C
       message,
     });
   }
+  try {
+    const url = 'https://ap-northeast-1.data.tidbcloud.com/api/v1beta/app/dataapp-NFYbhmOK/endpoint/v1/count';
+    const response = await digestFetch(`${url}?${params}`, null, {
+      method: 'GET',
+      realm: 'tidb.cloud',
+      ...kv,
+    });
+    const json = await response.json();
+    total = Number(json.data.rows[ 0 ].num);
+  } catch (e) {
+    const message = 'Failed to fetch the quantity of comments. ' + (e as Error).message || String(e);
+    throw createError({
+      statusCode: (e as FetchError).status,
+      message,
+    });
+  }
 
-  await storage.setItem(key, data, {
+  await storage.setItem(key, { data, total }, {
     ttl: 60 * 30,
   });
 
   return {
     code: 0,
     data,
+    meta: {
+      total,
+    },
   };
 });

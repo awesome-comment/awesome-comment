@@ -19,6 +19,7 @@ export type InitOptions = {
 };
 
 const comments: ResponseComment[] = [];
+let total = 0;
 let preAuth0: Auth0Plugin | null = null;
 
 function init(domain: string, clientId: string, locale: string = navigator.language) {
@@ -76,6 +77,7 @@ const AwesomeComment = {
     app.provide('postId', postId);
     app.provide('Auth0Domain', domain);
     app.provide('comments', comments);
+    app.provide('total', total);
     app.mount(dom);
   },
   async preload(postId: string, apiUrl: string, domain: string, clientId: string): Promise<void> {
@@ -97,11 +99,12 @@ const AwesomeComment = {
     const json = (await response.json()) as ResponseBody<ResponseComment[]>;
     if (json.data) {
       comments.push(...json.data);
+      total = json.meta?.total || json.data.length;
 
       const event = new CustomEvent('AwesomeComment:total', {
         bubbles: true,
         cancelable: true,
-        detail: comments.length,
+        detail: total,
       });
       document.body.dispatchEvent(event);
     }
