@@ -9,6 +9,7 @@ WITH CTE AS (
         ancestor_id IS NULL
             OR ancestor_id=0
         )
+      AND deleted_at IS NULL
     ORDER BY id DESC
     LIMIT ${start}, 21
 )
