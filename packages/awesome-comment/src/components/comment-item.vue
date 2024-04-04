@@ -28,6 +28,12 @@ const isEditable = computed<boolean>(() => {
   return props.comment.userId === user.value?.sub
     && now.value - props.comment.createdAt.getTime() < 36E5;
 });
+const username = computed<string>(() => {
+  let name = props.comment.user.name || t('anonymous');
+  // replace email appendix
+  name = name.replace(/@[\w-]+\.[\w-]{2,63}$/, '');
+  return name;
+});
 
 function getCommentLink(id: number): string {
   return `${location.origin}${location.pathname}#awcm-${id}`;
@@ -71,14 +77,14 @@ onBeforeUnmount(() => {
           .w-6.h-6(v-if="comment.user.avatar")
             img.rounded-full.max-w-full.max-h-full(
               :src="comment.user.avatar"
-              :alt="comment.user.name"
+              :alt="username"
             )
           .avatar-char.rounded-full.w-6.h-6.text-center(
             v-else
-            :style="{'background-color': stringToColor(comment.user.name || t('anonymous'))}"
+            :style="{'background-color': stringToColor(username)}"
           )
-            span.text-neutral-content.mix-blend-color-dodge.uppercase.font-bold.leading-6 {{(comment.user.name || t('anonymous')).substring(0, 1)}}
-        | {{comment.user.name}}
+            span.text-neutral-content.mix-blend-color-dodge.uppercase.font-bold.leading-6 {{username.substring(0, 1)}}
+        | {{username}}
         .ac-tooltip.ms-2(
           v-if="comment.isAdmin"
           :data-tip="t('admin')"
