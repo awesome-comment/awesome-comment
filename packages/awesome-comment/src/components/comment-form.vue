@@ -87,9 +87,9 @@ async function doSubmit(event: Event): Promise<void> {
         id,
         commentContent,
         auth0.user.value,
+        status,
         props.ancestorId,
         props.parentId,
-        status,
       );
     } else if (props.currentId) {
       emit('update', commentContent);
