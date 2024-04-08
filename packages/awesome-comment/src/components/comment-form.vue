@@ -125,7 +125,7 @@ onMounted(() => {
 form.mb-6(
   @submit.prevent="doSubmit"
 )
-  .ac-form-control.border.border-neutral.bg-base-200.rounded-lg
+  .ac-form-control.bg-base-200.rounded-lg
     label.sr-only(
       for="ac-comment"
     ) {{t('your_comment')}}

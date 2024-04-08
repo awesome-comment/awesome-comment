@@ -68,7 +68,7 @@ onBeforeUnmount(() => {
   :class="{'animated flash': comment.isNew}"
   @animationend="comment.isNew = false"
 )
-  .pt-2.ps-4.text-base.bg-base-200.rounded-lg(class="dark:bg-gray-900")
+  .pt-2.pb-3.ps-4.text-base.bg-base-200.rounded-lg(class="dark:bg-gray-900")
     header.flex.justify-between.items-center.font-sans
       .flex.items-center.text-sm.text-base-content(
         class="dark:text-white"
@@ -99,10 +99,6 @@ onBeforeUnmount(() => {
             :datetime="comment.createdAt"
             :title="formatTime(comment.createdAt)"
           ) {{formatTime(comment.createdAt)}}
-        a.text-xs.link.link-hover.ms-4(
-          v-if="!isFirstLevel && comment.parent_id !== comment.ancestor_id"
-          :href="'#awcm-' + comment.parent_id"
-        ) {{t('reply_to')}} {{getParentUserName(comment.parent_id)}}(\#{{ comment.parent_id }})
         //- edit button
         button.ac-btn.ac-btn-link.ac-btn-xs.ms-4(
           v-if="isEditable"
@@ -120,6 +116,12 @@ onBeforeUnmount(() => {
         @click="comment.isReplying = !comment.isReplying"
       )
         i.bi.bi-reply-fill.h-4.w-4
+    a.inline-block.px-2.py-1.rounded-lg.mt-2.bg-base-300.text-gray-500(
+      v-if="comment.parentId && comment.parentId !== comment.ancestorId"
+      class="dark:bg-neutral-400/20 dark:text-gray-400"
+      :href="`#awcm-${comment.parentId}`"
+      target="_self"
+    ) @{{getParentUserName(comment.parentId)}}
     article.text-gray-500.break-words.overflow-x-auto(
       v-if="comment.isAdmin"
       class="dark:text-gray-400"
@@ -128,7 +130,14 @@ onBeforeUnmount(() => {
     p.text-gray-500.break-words.overflow-x-auto.whitespace-pre-line.pb-3.mb-0(
       v-else
       class="dark:text-gray-400"
-    ) {{comment.content}}
+    )
+      a.inline-block.px-2.py-1.rounded-lg.me-1.bg-base-300.text-gray-500(
+        v-if="comment.parentId && comment.parentId !== comment.ancestorId"
+        class="dark:bg-neutral-400/20 dark:text-gray-400"
+        :href="`#awcm-${comment.parentId}`"
+        target="_self"
+      ) @{{getParentUserName(comment.parentId)}}
+      | {{comment.content}}
     p.italic.mt-4.text-emerald-600.mb-0.text-sm(
       v-if="comment.status === CommentStatus.Pending"
       class="dark:text-emerald-300"
