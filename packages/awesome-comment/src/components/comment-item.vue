@@ -42,7 +42,7 @@ function getParentUserName(id: number): string {
   if (props.ancestorId) {
     const ancestor = store.comments[ props.ancestorId ];
     const parent = ancestor?.children?.find((c) => Number(c.id) === Number(id));
-    return parent?.user?.name || '';
+    return parent?.user?.name || parent?.user?.email || '';
   }
   return '';
 }
@@ -116,17 +116,17 @@ onBeforeUnmount(() => {
         @click="comment.isReplying = !comment.isReplying"
       )
         i.bi.bi-reply-fill.h-4.w-4
-    a.inline-block.px-2.py-1.rounded-lg.mt-2.bg-base-300.text-gray-500(
-      v-if="comment.parentId && comment.parentId !== comment.ancestorId"
-      class="dark:bg-neutral-400/20 dark:text-gray-400"
-      :href="`#awcm-${comment.parentId}`"
-      target="_self"
-    ) @{{getParentUserName(comment.parentId)}}
-    article.text-gray-500.break-words.overflow-x-auto(
-      v-if="comment.isAdmin"
-      class="dark:text-gray-400"
-      v-html="marked(comment.content)"
-    )
+    template(v-if="comment.isAdmin")
+      a.inline-block.px-2.py-1.rounded-lg.mt-2.bg-base-300.text-gray-500(
+        v-if="comment.parentId && comment.parentId !== comment.ancestorId"
+        class="dark:bg-neutral-400/20 dark:text-gray-400"
+        :href="`#awcm-${comment.parentId}`"
+        target="_self"
+      ) @{{getParentUserName(comment.parentId)}}
+      article.text-gray-500.break-words.overflow-x-auto(
+        class="dark:text-gray-400"
+        v-html="marked(comment.content)"
+      )
     p.text-gray-500.break-words.overflow-x-auto.whitespace-pre-line.pb-3.mb-0(
       v-else
       class="dark:text-gray-400"
