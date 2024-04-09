@@ -67,9 +67,19 @@ const useStore = defineStore('store', () => {
     deeper.forEach((item: Comment) => {
       if (item.ancestorId as number in res) {
         const parent = res[ item.ancestorId as number ];
-        parent.children = [...(parent.children || []), item];
+        parent.children = [item, ...(parent.children || [])];
       }
     });
+
+    // sort by id
+    for (const key in res) {
+      if (!res.hasOwnProperty(key)) continue;
+      const item = res[ key ];
+      if (item.children) {
+        item.children = item.children
+          .sort((a, b) => (a.id as number) - (b.id as number));
+      }
+    }
     return res;
   }
 

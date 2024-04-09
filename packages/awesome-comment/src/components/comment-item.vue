@@ -64,6 +64,7 @@ onBeforeUnmount(() => {
 
 <template lang="pug">
 .comment-item.rounded-lg.my-4(
+  class="target:outline target:outline-green-500 target:outline-2 dark:target:outline-1"
   :id="'awcm-' + comment.id"
   :class="{'animated flash': comment.isNew}"
   @animationend="comment.isNew = false"
