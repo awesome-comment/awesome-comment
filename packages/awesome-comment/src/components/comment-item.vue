@@ -29,6 +29,8 @@ const isEditable = computed<boolean>(() => {
     && now.value - props.comment.createdAt.getTime() < 36E5;
 });
 const username = computed<string>(() => {
+  if (props.comment.isAdmin) return t('admin');
+
   let name = props.comment.user?.name || t('anonymous');
   // replace email appendix
   name = name.replace(/@[\w-]+\.[\w-]{2,63}$/, '');
