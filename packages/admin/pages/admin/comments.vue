@@ -14,7 +14,7 @@ const postIdPrefix = __POST_ID_PREFIX__;
 const CSKeys = Object.values(CommentStatus).filter((v) => !isNaN(Number(v)));
 const auth0 = process.client ? useAuth0() : undefined;
 const route = useRoute();
-const replyComment = shallowRef <ReplyComment[]>();
+const replyComment = shallowRef<ReplyComment[]>();
 
 const start = ref<number>(0);
 const hasMore = ref<boolean>(false);
@@ -40,7 +40,7 @@ const filter = computed<URLSearchParams>(() => {
   return params;
 });
 
-const { data: commentsList, pending, refresh } = await useAsyncData(
+const { data: commentsList, pending, refresh } = useLazyAsyncData(
   'comments',
   async function () {
     if (!auth0) return;
@@ -80,7 +80,7 @@ const { data: commentsList, pending, refresh } = await useAsyncData(
       }
       return [map, replies];
     }, [{}, []]);
-    hasMore.value = data.length >= 20;
+    hasMore.value = Object.values(cms).length >= 20;
     for (const reply of replies) {
       const parent = cms[ reply.parent_id ];
       if (!parent) continue;
@@ -250,9 +250,8 @@ header.flex.flex-col.mb-4.gap-4(class="sm:flex-row sm:items-center")
       option(v-for="key in CSKeys", :value="key", :key="key") {{ CommentStatus[key] }}
 
 .alert.alert-error.mb-4(v-if="message")
-  p
-    i.bi.bi-exclamation-triangle-fill.me-2
-    | {{ message }}
+  i.bi.bi-exclamation-triangle-fill.me-2
+  span {{ message }}
 
 .flex.gap-4.mb-4(v-if="filterPostId || filterUser")
   button.btn.btn-outline.btn-sm.normal-case(

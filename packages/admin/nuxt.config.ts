@@ -38,6 +38,7 @@ export default defineNuxtConfig({
         autoImports: ['defineStore'],
       },
     ],
+    '@nuxt/ui',
   ],
   nitro: {
     storage: {

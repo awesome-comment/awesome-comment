@@ -15,8 +15,10 @@ type Emits = {
 }
 const emit = defineEmits<Emits>();
 const auth0 = useAuth0();
+const Emojis = ['❤️', '👍', '😂'];
 
 const modal = ref<HTMLDialogElement>();
+const textarea = ref<HTMLTextAreaElement>();
 
 const hasModal = ref<boolean>(false);
 const isReplying = ref<boolean>(false);
@@ -70,6 +72,18 @@ async function doReply(event: Event): Promise<void> {
   }
   isReplying.value = false;
 }
+function doInsertEmoji(emoji: string): void {
+  // insert emoji at cursor position
+  if (!textarea.value) return;
+
+  textarea.value.focus();
+  const { selectionStart, selectionEnd } = textarea.value;
+  const text = reply.value;
+  const before = text.substring(0, selectionStart);
+  const after = text.substring(selectionEnd);
+  reply.value = before + emoji + after;
+  textarea.value.selectionStart = textarea.value.selectionEnd = selectionStart + emoji.length;
+}
 
 function onClose(): void {
   hasModal.value = false;
@@ -111,9 +125,18 @@ teleport(
       .mb-2 Reply to
       blockquote.mb-2.border-l-2.border-gray-200.bg-base-200.ps-2.py-2 {{comment.content}}
       .form-control.mb-4
-        label.label
-          span.label-text Your replyment
+        .label
+          label.label-text Your replyment
+          .label-text-alt
+            button.btn.btn-xs.btn-ghost.btn-square(
+              v-for="item in Emojis"
+              :key="item"
+              type="button"
+              @click="doInsertEmoji(item)"
+            ) {{item}}
+
         textarea.textarea.textarea-bordered(
+          ref="textarea"
           rows="3"
           v-model="reply"
           required

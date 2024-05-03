@@ -73,7 +73,6 @@ const useStore = defineStore('store', () => {
 
     // sort by id
     for (const key in res) {
-      if (!res.hasOwnProperty(key)) continue;
       const item = res[ key ];
       if (item.children) {
         item.children = item.children

@@ -58,3 +58,7 @@ export type ResponseComment = BaseComment & {
   ancestor_id?: number;
   user_id: string;
 }
+export type PostCount = {
+  post_id: string;
+  comment_count: number;
+}

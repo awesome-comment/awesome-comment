@@ -1,15 +1,14 @@
 <script setup lang="ts">
-definePageMeta({
-  title: 'Admin | Awesome comment',
-  description: 'Admin',
-  redirect: '/admin/login',
-});
-
 const links = [
   {
     label: 'Comments Management',
     icon: 'chat-dots-fill',
     path: 'comments',
+  },
+  {
+    label: 'Comments by Post ID',
+    icon: 'list-ul',
+    path: 'by-post',
   },
   {
     label: 'Settings',
@@ -22,6 +21,15 @@ const route = useRoute();
 const path = computed<string>(() => {
   return route.path;
 })
+
+useHead({
+  title: 'Admin | Awesome comment',
+  description: 'Admin',
+});
+definePageMeta({
+  name: 'Admin',
+  redirect: '/admin/login',
+});
 </script>
 
 <template lang="pug">
@@ -33,7 +41,7 @@ const path = computed<string>(() => {
         :key="item.path"
       )
         nuxt-link(
-          :class="{active: path === '/admin/' + item.path}"
+          active-class="active"
           :to="'/admin/' + item.path"
         )
           i.bi(:class="'bi-' + item.icon")
