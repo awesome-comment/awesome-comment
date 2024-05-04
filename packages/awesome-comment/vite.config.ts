@@ -24,7 +24,7 @@ export default defineConfig(function ({ command }) {
       },
       rollupOptions: {
         output: {
-          banner: '// @AwesomeComment v' + pkg.version + '\n// https://github.com/meathill/awesome-comment',
+          banner: '// @AwesomeComment v' + pkg.version + '\n// https://github.com/awesome-comment/awesome-comment',
         },
       }
     },

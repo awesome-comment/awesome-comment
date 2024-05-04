@@ -12,7 +12,7 @@ header.navbar.bg-base-200
         li
           nuxt-link(
             external
-            to="https://github.com/meathill/awesome-comment"
+            to="https://github.com/awesome-comment/awesome-comment"
           )
             i.bi.bi-github
             | GitHub

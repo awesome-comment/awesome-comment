@@ -94,7 +94,7 @@ main.container.mx-auto.py-8.flex.flex-col.gap-4.px-4(class="sm:flex-row sm:px-0"
         | Examples
       nuxt-link.p-4.border-x.text-center(
         class="hover:border-primary hover:bg-primary/10 sm:border-y sm:border-x-0"
-        to="https://github.com/meathill/awesome-comment/issues"
+        to="https://github.com/awesome-comment/awesome-comment/issues"
       )
         i.bi.bi-record-circle.me-2
         | Issues
