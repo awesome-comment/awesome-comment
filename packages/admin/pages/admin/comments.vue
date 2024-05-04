@@ -252,7 +252,6 @@ header.flex.flex-col.mb-4.gap-4(class="sm:flex-row sm:items-center")
 .alert.alert-error.mb-4(v-if="message")
   i.bi.bi-exclamation-triangle-fill.me-2
   span {{ message }}
-
 .flex.gap-4.mb-4(v-if="filterPostId || filterUser")
   button.btn.btn-outline.btn-sm.normal-case(
     v-if="filterPostId"
@@ -382,7 +381,7 @@ header.flex.flex-col.mb-4.gap-4(class="sm:flex-row sm:items-center")
               @close="hasReplyModal = false"
             )
   button.mt-2.btn.btn-neutral.btn-sm.btn-block(
-    v-if="filterStatus <= CommentStatus.Rejected && hasMore",
+    v-if="hasMore",
     type="button",
     :disabled="loadingMore",
     @click="doLoadMore",
