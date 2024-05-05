@@ -1,6 +1,6 @@
 {
   "name": "@roudanio/awesome-comment",
-  "version": "0.7.14",
+  "version": "0.7.15",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -12,23 +12,23 @@
     "@auth0/auth0-vue": "^2.3.3",
     "@awesome-comment/core": "workspace:*",
     "animate.css": "^4.1.1",
-    "marked": "^12.0.1",
+    "marked": "^12.0.2",
     "pinia": "^2.1.7",
-    "vue": "^3.4.23",
-    "vue-i18n": "^9.12.1",
-    "vue-router": "^4.3.0"
+    "vue": "^3.4.26",
+    "vue-i18n": "^9.13.1",
+    "vue-router": "^4.3.2"
   },
   "devDependencies": {
-    "@types/node": "^20.12.7",
+    "@types/node": "^20.12.8",
     "@vitejs/plugin-vue": "^5.0.4",
     "autoprefixer": "^10.4.19",
-    "daisyui": "^4.10.2",
+    "daisyui": "^4.10.5",
     "postcss": "^8.4.38",
     "pug": "^3.0.2",
     "tailwindcss": "^3.4.3",
     "typescript": "^5.4.5",
-    "vite": "^5.2.9",
-    "vue-tsc": "^2.0.13"
+    "vite": "^5.2.11",
+    "vue-tsc": "^2.0.16"
   },
   "author": {
     "email": "meathill@gmail.com",

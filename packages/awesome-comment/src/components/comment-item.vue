@@ -71,7 +71,7 @@ onBeforeUnmount(() => {
   :class="{'animated flash': comment.isNew}"
   @animationend="comment.isNew = false"
 )
-  .pt-2.pb-3.ps-4.text-base.bg-base-200.rounded-lg(class="dark:bg-gray-900")
+  .pt-2.pb-3.px-4.text-base.bg-base-200.rounded-lg(class="dark:bg-gray-900")
     header.flex.justify-between.items-center.font-sans
       .flex.items-center.text-sm.text-base-content(
         class="dark:text-white"
@@ -94,7 +94,7 @@ onBeforeUnmount(() => {
         )
           i.bi.bi-patch-check-fill.text-success
         a.ms-4.no-underline(
-          class="hover:underline"
+          class="hover:underline hover:decoration-green-middle"
           :href="getCommentLink(comment.id)"
         )
           time.text-xs.text-gray-600(
@@ -113,7 +113,7 @@ onBeforeUnmount(() => {
       //- reply button
       button.ac-btn.ac-btn-sm.ac-btn-circle.border-0(
         type="button"
-        class="me-2.5"
+        class="-me-1.5"
         :title="t('reply')"
         :aria-label="t('reply')"
         @click="comment.isReplying = !comment.isReplying"
