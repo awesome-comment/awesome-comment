@@ -14,7 +14,6 @@ export default defineEventHandler(async function (event: H3Event): Promise<Respo
   await storage.setItem(key, {
     adminEmails,
     autoApprove,
-    test: 1,
   });
 
   return {

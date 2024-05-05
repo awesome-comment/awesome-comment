@@ -1,4 +1,4 @@
-import { Comment, ResponseComment, User, AcConfig } from '@awesome-comment/core/types';
+import type { Comment, ResponseComment, User, AcConfig } from '@awesome-comment/core/types';
 import digestFetch from '@meathill/digest-fetch';
 import { getTidbKey } from './tidb';
 import { H3Event } from 'h3';

@@ -77,9 +77,7 @@ export default defineEventHandler(async function (event): Promise<ResponseBody<C
     });
   }
 
-  await storage.setItem(key, { data, total }, {
-    ttl: 60 * 30,
-  });
+  await storage.setItem(key, { data, total });
 
   return {
     code: 0,
