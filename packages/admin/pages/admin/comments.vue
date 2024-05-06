@@ -287,8 +287,8 @@ header.flex.flex-col.mb-4.gap-4(class="sm:flex-row sm:items-center")
         :key="comment.id"
         :class="{'ring-4 ring-inset': index === currentItem}"
       )
-        td {{ comment.id }}
-        td
+        td.align-top {{ comment.id }}
+        td.align-top
           blockquote.ps-3.border-s-4.mb-2(
             v-if="comment.toContent"
             class="bg-base-300/50 border-base-content"
@@ -299,22 +299,26 @@ header.flex.flex-col.mb-4.gap-4(class="sm:flex-row sm:items-center")
               class="text-base-content/50"
             ) - {{comment.toUser.name || comment.toUser.email}}
           p.break-words.max-w-sm.overflow-hidden {{ comment.content }}
-          .mt-4.chat.chat-end(
+          template(
             v-if="comment.children?.length"
           )
-            .chat-header
-              edit-comment(
-                button-class=""
-                :comment="comment.children[0]"
-                @save="comment.children[0].content = $event"
-                @open="hasReplyModal = true"
-                @close="hasReplyModal = false"
-              )
-            .chat-bubble {{comment.children[0].content}}
-            .chat-footer.mt-1
-              i.bi.bi-patch-check-fill.me-1
-              | {{comment.children[0].user.email}}
-        td
+            .mt-4.chat.chat-end(
+              v-for="child in comment.children"
+              :key="child.id"
+            )
+              .chat-header
+                edit-comment(
+                  button-class=""
+                  :comment="child"
+                  @save="child.content = $event"
+                  @open="hasReplyModal = true"
+                  @close="hasReplyModal = false"
+                )
+              .chat-bubble(v-html="child.content")
+              .chat-footer.mt-1
+                i.bi.bi-patch-check-fill.me-1
+                | {{child.user.email}}
+        td.align-top
           user-cell(
             :filter="filter"
             :user="comment.user"
@@ -322,9 +326,9 @@ header.flex.flex-col.mb-4.gap-4(class="sm:flex-row sm:items-center")
             :from="comment.from"
             @select-user="doFilterByUser"
           )
-        td
+        td.align-top
           time.text-xs(:datetime="comment.created_at") {{ comment.created_at }}
-        td {{ comment.postId.replace(postIdPrefix, '') }}
+        td.align-top {{ comment.postId.replace(postIdPrefix, '') }}
           .flex.gap-2.mt-2
             button.btn.btn-xs.btn-ghost(
               type="button"
@@ -337,8 +341,8 @@ header.flex.flex-col.mb-4.gap-4(class="sm:flex-row sm:items-center")
               :to="comment.post_id"
             )
               i.bi.bi-box-arrow-up-right
-        td {{ CommentStatus[comment.status] }}
-        th
+        td.align-top {{ CommentStatus[comment.status] }}
+        td.align-top
           .flex.flex-wrap.gap-2
             button.btn.btn-outline.btn-success.btn-sm(
               v-if="comment.status === CommentStatus.Pending || comment.status === CommentStatus.Rejected"
@@ -400,3 +404,9 @@ export default {
   name: 'AdminCommentsPage',
 }
 </script>
+
+<style>
+.chat-bubble a {
+  @apply text-info underline hover:no-underline;
+}
+</style>
