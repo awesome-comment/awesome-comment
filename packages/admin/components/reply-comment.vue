@@ -84,6 +84,14 @@ function doInsertEmoji(emoji: string): void {
   reply.value = before + emoji + after;
   textarea.value.selectionStart = textarea.value.selectionEnd = selectionStart + emoji.length;
 }
+function doInsertUsername(): void {
+  let username = props.comment.user.name || props.comment.user.email;
+  username = username.split(' ')[0];
+  if (username.includes('@')) {
+    username = username.split('@')[0];
+  }
+  doInsertEmoji(username);
+}
 
 function onClose(): void {
   hasModal.value = false;
@@ -128,6 +136,10 @@ teleport(
         .label
           label.label-text Your replyment
           .label-text-alt
+            button.btn.btn-xs.btn-ghost.text-success(
+              type="button"
+              @click="doInsertUsername"
+            ) [Name]
             button.btn.btn-xs.btn-ghost.btn-square(
               v-for="item in Emojis"
               :key="item"

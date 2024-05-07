@@ -15,6 +15,7 @@ const CSKeys = Object.values(CommentStatus).filter((v) => !isNaN(Number(v)));
 const auth0 = process.client ? useAuth0() : undefined;
 const route = useRoute();
 const replyComment = shallowRef<ReplyComment[]>();
+const tr = ref<HTMLTableRowElement[]>([]);
 
 const start = ref<number>(0);
 const hasMore = ref<boolean>(false);
@@ -165,9 +166,11 @@ function onKeydown(event: KeyboardEvent): void {
   if (event.ctrlKey || event.metaKey || event.altKey || event.shiftKey) return;
   if (hasReplyModal.value) return;
 
+  let shouldScroll = false;
   switch (event.key) {
     case 'j':
     case 'J':
+      shouldScroll = true;
       currentItem.value++;
       if (currentItem.value >= commentsList.value.length) {
         currentItem.value = 0;
@@ -176,6 +179,7 @@ function onKeydown(event: KeyboardEvent): void {
 
     case 'k':
     case 'K':
+      shouldScroll = true;
       currentItem.value--;
       if (currentItem.value < 0) {
         currentItem.value = commentsList.value.length - 1;
@@ -189,6 +193,12 @@ function onKeydown(event: KeyboardEvent): void {
       replyComment.value?.[ currentItem.value ].doOpenModal();
       event.preventDefault();
       break;
+  }
+  if (shouldScroll) {
+    tr.value[ currentItem.value ].scrollIntoView({
+      behavior: 'smooth',
+      block: 'center',
+    });
   }
 }
 function onStatusChange(): void {
@@ -284,6 +294,7 @@ header.flex.flex-col.mb-4.gap-4(class="sm:flex-row sm:items-center")
     tbody(v-if="commentsList?.length")
       tr(
         v-for="(comment, index) in commentsList"
+        ref="tr"
         :key="comment.id"
         :class="{'ring-4 ring-inset': index === currentItem}"
       )
