@@ -3,7 +3,7 @@ import { Comment, ResponseBody } from '@awesome-comment/core/types';
 import { getTidbKey } from '~/utils/tidb';
 import { getCacheKey, getConfig } from '~/utils/api';
 
-export default defineEventHandler(async function (event): Promise<ResponseBody<Comment[]>> {
+export default defineCachedEventHandler(async function (event): Promise<ResponseBody<Comment[]>> {
   const query = getQuery(event);
   const { postId } = query;
   const start = Number(query.start || 0);
@@ -86,4 +86,4 @@ export default defineEventHandler(async function (event): Promise<ResponseBody<C
       total,
     },
   };
-});
+}, { maxAge: 60 * 15 });

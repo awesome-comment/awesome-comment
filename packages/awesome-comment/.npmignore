@@ -1,6 +1,8 @@
+build
 src
 public
 .env.*
+i18n.json
 index.html
 postcss.config.js
 tailwind.config.js
