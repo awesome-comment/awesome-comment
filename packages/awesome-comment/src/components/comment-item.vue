@@ -4,7 +4,7 @@ import { marked } from 'marked';
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import type { Comment } from '@awesome-comment/core/types';
-import { CommentStatus } from '@awesome-comment/core/data';
+import { CommentStatus, EmailAppendixRegex } from '@awesome-comment/core/data';
 import { stringToColor } from '../utils';
 import { formatTime } from '../utils/time.ts';
 import CommentForm from './comment-form.vue';
@@ -33,7 +33,7 @@ const username = computed<string>(() => {
 
   let name = props.comment.user?.name || t('anonymous');
   // replace email appendix
-  name = name.replace(/@[\w-]+\.[\w-]{2,63}$/, '');
+  name = name.replace(EmailAppendixRegex, '');
   return name;
 });
 
