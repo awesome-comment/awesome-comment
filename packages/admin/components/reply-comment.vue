@@ -86,9 +86,9 @@ function doInsertEmoji(emoji: string): void {
 }
 function doInsertUsername(): void {
   let username = props.comment.user.name || props.comment.user.email;
-  username = username.split(' ')[0];
+  username = username.split(' ')[ 0 ];
   if (username.includes('@')) {
-    username = username.split('@')[0];
+    username = username.split('@')[ 0 ];
   }
   doInsertEmoji(username);
 }

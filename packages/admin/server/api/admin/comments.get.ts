@@ -1,7 +1,7 @@
 import digestFetch, { FetchError } from '@meathill/digest-fetch';
 import { Comment, ResponseBody } from '@awesome-comment/core/types';
 import { CommentStatus } from '@awesome-comment/core/data';
-import { getTidbKey } from '~/utils/tidb';
+import { getTidbKey } from '~/server/utils/tidb';
 
 export default defineEventHandler(async function (event): Promise<ResponseBody<Comment[]>> {
   const query = getQuery(event);

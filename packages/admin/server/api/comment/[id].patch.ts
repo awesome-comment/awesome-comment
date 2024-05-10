@@ -1,8 +1,8 @@
 import digestFetch, { FetchError } from '@meathill/digest-fetch';
 import { CommentStatus } from '@awesome-comment/core/data';
 import { ResponseBody, User } from '@awesome-comment/core/types';
-import { getTidbKey } from '~/utils/tidb';
-import { getCacheKey, getUser } from '~/utils/api';
+import { getTidbKey } from '~/server/utils/tidb';
+import { clearCache, getCacheKey, getUser } from '~/server/utils';
 
 type PatchRequest = {
   status: CommentStatus;
@@ -50,7 +50,6 @@ export default defineEventHandler(async function (event): Promise<ResponseBody<s
   }
 
   // user can only modify their own comments
-
   const url = 'https://ap-northeast-1.data.tidbcloud.com/api/v1beta/app/dataapp-NFYbhmOK/endpoint/v1/patch';
   try {
     const kv = await getTidbKey();
@@ -78,7 +77,7 @@ export default defineEventHandler(async function (event): Promise<ResponseBody<s
   if (body.status === CommentStatus.Approved) {
     const storage = useStorage('data');
     const key = getCacheKey(body.postId);
-    await storage.removeItem(key);
+    await clearCache(storage, key);
   }
 
   return {

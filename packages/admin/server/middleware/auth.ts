@@ -1,4 +1,4 @@
-import { checkUserPermission } from '~/utils/api';
+import { checkUserPermission } from '~/server/utils';
 
 export default defineEventHandler(async function (event) {
   // not visit admin

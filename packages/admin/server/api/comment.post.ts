@@ -1,8 +1,8 @@
 import { ResponseBody, User } from '@awesome-comment/core/types';
 import { CommentStatus } from '@awesome-comment/core/data';
 import digestFetch, { FetchError } from '@meathill/digest-fetch';
-import { getUser, getCacheKey, getConfig, checkCommentStatus } from '~/utils/api';
-import { getTidbKey } from '~/utils/tidb';
+import { getUser, getCacheKey, getConfig, checkCommentStatus, clearCache } from '~/server/utils';
+import { getTidbKey } from '~/server/utils/tidb';
 
 type PostResponse = ResponseBody<{
   id: number,
@@ -123,7 +123,7 @@ export default defineEventHandler(async function (event): Promise<PostResponse> 
   if (status === CommentStatus.Approved) {
     const storage = useStorage('data');
     const key = getCacheKey(body.postId);
-    await storage.removeItem(key);
+    await clearCache(storage, key);
   }
 
   return {

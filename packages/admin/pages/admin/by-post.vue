@@ -99,7 +99,8 @@ definePageMeta({
             <nuxt-link
               class="link link-info hover:no-underline"
               :to="`/admin/comments?post_id=${ item.post_id }&status=${CommentStatus.Approved}`"
-            >{{ item.comment_count }}
+            >
+              {{ item.comment_count }}
             </nuxt-link>
           </td>
         </tr>

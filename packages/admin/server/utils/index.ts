@@ -1,8 +1,9 @@
+import { H3Event } from 'h3';
+import type { Storage } from 'unstorage';
 import type { Comment, ResponseComment, User, AcConfig } from '@awesome-comment/core/types';
+import { CommentStatus, MarkdownLinkRegex } from '@awesome-comment/core/data';
 import digestFetch from '@meathill/digest-fetch';
 import { getTidbKey } from './tidb';
-import { H3Event } from 'h3';
-import { CommentStatus, MarkdownLinkRegex } from '@awesome-comment/core/data';
 
 export async function getConfig(): Promise<AcConfig> {
   const storage = useStorage('data');
@@ -162,4 +163,12 @@ export function isAutoApprove(
   ) return false;
   return !MarkdownLinkRegex.test(content)
     && history.filter(c => Number(c.status) === CommentStatus.Approved).length >= 2;
+}
+
+export async function clearCache(storage: Storage, key: string): Promise<void> {
+  const keys = await storage.getKeys(key);
+  await storage.removeItem(key);
+  for (const key of keys) {
+    await storage.removeItem(key);
+  }
 }
