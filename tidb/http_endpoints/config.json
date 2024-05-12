@@ -485,5 +485,116 @@
     "sql_file": "sql/GET-v1-count.sql",
     "type": "sql_endpoint",
     "return_type": "json"
+  },
+  {
+    "name": "moderator by post",
+    "description": "",
+    "method": "GET",
+    "endpoint": "/v1/moderator/by_post",
+    "data_source": {
+      "cluster_id": 1379661944646254419
+    },
+    "params": [
+      {
+        "name": "start",
+        "type": "number",
+        "required": 0,
+        "default": "0",
+        "description": ""
+      }
+    ],
+    "settings": {
+      "timeout": 30000,
+      "row_limit": 1000,
+      "cache_enabled": 0,
+      "cache_ttl": 0,
+      "enable_pagination": 0
+    },
+    "tag": "Default",
+    "batch_operation": 0,
+    "sql_file": "sql/GET-v1-moderator-by_post.sql",
+    "type": "sql_endpoint",
+    "return_type": "json"
+  },
+  {
+    "name": "moderator count post",
+    "description": "",
+    "method": "GET",
+    "endpoint": "/v1/moderator/count_post",
+    "data_source": {
+      "cluster_id": 1379661944646254419
+    },
+    "params": [],
+    "settings": {
+      "timeout": 30000,
+      "row_limit": 1000,
+      "cache_enabled": 0,
+      "cache_ttl": 0,
+      "enable_pagination": 0
+    },
+    "tag": "Default",
+    "batch_operation": 0,
+    "sql_file": "sql/GET-v1-moderator-count_post.sql",
+    "type": "sql_endpoint",
+    "return_type": "json"
+  },
+  {
+    "name": "/cron/daily_stat",
+    "description": "",
+    "method": "POST",
+    "endpoint": "/v1/cron/daily_stat",
+    "data_source": {
+      "cluster_id": 1379661944646254419
+    },
+    "params": [],
+    "settings": {
+      "timeout": 30000,
+      "row_limit": 1000,
+      "cache_enabled": 0,
+      "cache_ttl": 0,
+      "enable_pagination": 0
+    },
+    "tag": "Default",
+    "batch_operation": 0,
+    "sql_file": "sql/POST-v1-cron-daily_stat.sql",
+    "type": "sql_endpoint",
+    "return_type": "json"
+  },
+  {
+    "name": "/v1/daily_stat",
+    "description": "",
+    "method": "GET",
+    "endpoint": "/v1/daily_stat",
+    "data_source": {
+      "cluster_id": 1379661944646254419
+    },
+    "params": [
+      {
+        "name": "start",
+        "type": "string",
+        "required": 1,
+        "default": "",
+        "description": ""
+      },
+      {
+        "name": "end",
+        "type": "string",
+        "required": 1,
+        "default": "",
+        "description": ""
+      }
+    ],
+    "settings": {
+      "timeout": 30000,
+      "row_limit": 1000,
+      "cache_enabled": 0,
+      "cache_ttl": 0,
+      "enable_pagination": 0
+    },
+    "tag": "Default",
+    "batch_operation": 0,
+    "sql_file": "sql/GET-v1-daily_stat.sql",
+    "type": "sql_endpoint",
+    "return_type": "json"
   }
 ]
