@@ -11,6 +11,11 @@ const links = [
     path: 'by-post',
   },
   {
+    label: 'Daily Stat by Language',
+    icon: 'calendar',
+    path: 'daily-stat-by-lang',
+  },
+  {
     label: 'Settings',
     icon: 'gear-fill',
     path: 'settings',

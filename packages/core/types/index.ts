@@ -62,3 +62,9 @@ export type PostCount = {
   post_id: string;
   comment_count: number;
 }
+
+export type StatDailyByLanguage = {
+  date: string;
+  lang: string;
+  total: number;
+}

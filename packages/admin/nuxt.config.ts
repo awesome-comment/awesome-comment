@@ -39,6 +39,7 @@ export default defineNuxtConfig({
       },
     ],
     '@nuxt/ui',
+    'dayjs-nuxt',
   ],
   nitro: {
     storage: {
