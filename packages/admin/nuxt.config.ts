@@ -82,4 +82,7 @@ export default defineNuxtConfig({
       __POST_ID_PREFIX__: JSON.stringify(process.env.POST_ID_PREFIX || ''),
     },
   },
-})
+  dayjs: {
+    plugins: ['utc', 'timezone'],
+  },
+});

@@ -3,6 +3,7 @@ import { inject, ref } from 'vue';
 import { Comment, ResponseBody, ResponseComment } from '@awesome-comment/core/types';
 import { CommentStatus } from '@awesome-comment/core/data';
 import { User } from '@auth0/auth0-vue';
+import { createUTCDate } from '../utils/time.ts';
 
 function formatHelper(item: ResponseComment): Comment {
   const {
@@ -20,7 +21,7 @@ function formatHelper(item: ResponseComment): Comment {
     parentId: Number(parentId),
     ancestorId: Number(ancestorId),
     status: Number(item.status),
-    createdAt: new Date(createdAt),
+    createdAt: createUTCDate(createdAt),
   };
 }
 

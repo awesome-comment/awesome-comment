@@ -90,7 +90,7 @@ function doInsertUsername(): void {
   if (username.includes('@')) {
     username = username.split('@')[ 0 ];
   }
-  doInsertEmoji(username);
+  doInsertEmoji(`Hello ${username}, `);
 }
 
 function onClose(): void {
@@ -149,7 +149,7 @@ teleport(
 
         textarea.textarea.textarea-bordered(
           ref="textarea"
-          rows="3"
+          rows="6"
           v-model="reply"
           required
           @keydown="onKeydown"

@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import type { Comment } from '@awesome-comment/core/types';
-import { CommentStatus } from '@awesome-comment/core/data';
+import { CommentStatus, Languages } from '@awesome-comment/core/data';
 import { useAuth0 } from '@auth0/auth0-vue';
 import ReplyComment from '~/components/reply-comment.vue';
+import dayjs from 'dayjs';
 
 type RowItem = Comment & {
   isReviewing: boolean;
@@ -24,6 +25,7 @@ const message = ref<string>('');
 const filterStatus = ref<CommentStatus | 'all'>(route.query.status || CommentStatus.UnReplied);
 const filterPostId = ref<string>(route.query.post_id || '');
 const filterUser = ref<string>(route.query.user || '');
+const filterLanguage = ref<string>(route.query.language || '');
 const comments = ref<Record<number, RowItem>>({});
 const currentItem = ref<number>(-1);
 const hasReplyModal = ref<boolean>(false);
@@ -57,6 +59,7 @@ const { data: commentsList, pending, refresh } = useLazyAsyncData(
         postId: filterPostId.value,
         start: start.value,
         user: filterUser.value,
+        language: filterLanguage.value,
       },
       headers: {
         Authorization: `Bearer ${token}`,
@@ -218,8 +221,13 @@ function updateUrl(): void {
       status: filterStatus.value,
       post_id: filterPostId.value,
       user: filterUser.value,
+      language: filterLanguage.value,
     },
   });
+}
+
+function formatTime(time: string): string {
+  return dayjs.utc(time).local().format('YYYY-MM-DD HH:mm:ss');
 }
 
 onMounted(() => {
@@ -249,10 +257,25 @@ header.flex.flex-col.mb-4.gap-4(class="sm:flex-row sm:items-center")
     span.loading.loading-spinner(v-if="pending")
     i.bi.bi-arrow-clockwise(v-else)
     | Refresh
+  .form-control.flex-row.gap-2.me-2
+    label.label(for="language")
+      span.text-xs Language
+    select.select.select-bordered.select-sm(
+      id="language"
+      v-model="filterLanguage"
+      @change="onStatusChange"
+    )
+      option(value="") All
+      option(
+        v-for="lang in Languages",
+        :value="lang",
+        :key="lang"
+      ) {{ lang }}
   .form-control.flex-row.gap-2
-    label.label
+    label.label(for="status")
       span.text-xs Status
     select.select.select-bordered.select-sm(
+      id="status"
       v-model="filterStatus"
       @change="onStatusChange"
     )
@@ -338,7 +361,7 @@ header.flex.flex-col.mb-4.gap-4(class="sm:flex-row sm:items-center")
             @select-user="doFilterByUser"
           )
         td.align-top
-          time.text-xs(:datetime="comment.created_at") {{ comment.created_at }}
+          time.text-xs(:datetime="comment.created_at") {{ formatTime(comment.created_at) }}
         td.align-top {{ comment.postId.replace(postIdPrefix, '') }}
           .flex.gap-2.mt-2
             button.btn.btn-xs.btn-ghost(

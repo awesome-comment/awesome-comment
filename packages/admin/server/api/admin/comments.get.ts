@@ -10,6 +10,7 @@ export default defineEventHandler(async function (event): Promise<ResponseBody<C
     status, // 0=to be reviewed, 1=approved
     postId = '',
     user = '',
+    language = '',
   } = query;
 
   const data: Comment[] = [];
@@ -18,6 +19,9 @@ export default defineEventHandler(async function (event): Promise<ResponseBody<C
     const params = new URLSearchParams();
     params.set('start', start as string);
     params.set('emails', event.context.config.adminEmails);
+    if (language) {
+      params.set('lang', `%/${language}/%`);
+    }
     if (status) {
       switch (Number(status)) {
         case CommentStatus.UnReplied:

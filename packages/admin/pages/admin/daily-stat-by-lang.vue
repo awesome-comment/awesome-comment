@@ -150,7 +150,12 @@ definePageMeta({
             :key="lang"
             class="uppercase"
           >
-            {{ lang }}
+            <nuxt-link
+              class="link link-info hover:no-underline"
+              :to="`/admin/comments?status=all&language=${lang}`"
+            >
+              {{ lang }}
+            </nuxt-link>
           </th>
           <th>Total</th>
         </tr>

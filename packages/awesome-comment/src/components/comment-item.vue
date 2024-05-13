@@ -44,7 +44,7 @@ function getParentUserName(id: number): string {
   if (props.ancestorId) {
     const ancestor = store.comments[ props.ancestorId ];
     const parent = ancestor?.children?.find((c) => Number(c.id) === Number(id));
-    return parent?.user?.name || parent?.user?.email || '';
+    return parent.isAdmin ? t('admin') : (parent?.user?.name || parent?.user?.email || '');
   }
   return '';
 }
