@@ -8,6 +8,7 @@ WITH CTE AS (
     AND IF(LENGTH(${post_id}) > 0, post_id = ${post_id}, 1)
     AND IF(LENGTH(${status}) > 0, status = ${status}, 1)
     AND IF(LENGTH(${user_id}) > 0, user_id = ${user_id}, 1)
+    AND IF(LENGTH(${lang}) > 0, post_id LIKE ${lang}, 1)
   ORDER BY id DESC
   LIMIT ${start}, 20
 )
