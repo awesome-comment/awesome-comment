@@ -90,7 +90,7 @@ function doInsertUsername(): void {
   if (username.includes('@')) {
     username = username.split('@')[ 0 ];
   }
-  doInsertEmoji(`Hello ${username}, `);
+  doInsertEmoji(`Hi ${username}, `);
 }
 
 function onClose(): void {

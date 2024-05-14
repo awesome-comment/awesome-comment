@@ -6,7 +6,9 @@ import ReplyComment from '~/components/reply-comment.vue';
 import dayjs from 'dayjs';
 
 type RowItem = Comment & {
-  isReviewing: boolean;
+  isApproving: boolean;
+  isRejecting: boolean;
+  isDeleting: boolean;
   isReplying: boolean;
   from: string;
 }
@@ -72,7 +74,6 @@ const { data: commentsList, pending, refresh } = useLazyAsyncData(
       c.toUser = c.toUser ? JSON.parse(c.toUser) : null,
       c.status = Number(c.status);
       c.id = Number(c.id);
-      c.isReviewing = false;
       c.from = c.user_id.split('|')[ 0 ];
       c.postId = c.post_id;
       c.parentId = Number(c.parent_id);
@@ -106,7 +107,13 @@ const { data: commentsList, pending, refresh } = useLazyAsyncData(
 async function doReview(comment: RowItem, status: CommentStatus) {
   if (!auth0) return;
 
-  comment.isReviewing = true;
+  if (comment.isApproving || comment.isRejecting || comment.isDeleting) return;
+
+  if (status === CommentStatus.Approved) {
+    comment.isApproving = true;
+  } else {
+    comment.isRejecting = true;
+  }
   const token = await auth0.getAccessTokenSilently();
   await $fetch('/api/admin/comment/' + comment.id, {
     method: 'PATCH',
@@ -119,13 +126,14 @@ async function doReview(comment: RowItem, status: CommentStatus) {
     },
   });
   comment.status = status;
-  comment.isReviewing = false;
+  comment.isApproving = comment.isRejecting = false;
 }
 async function doDelete(comment: RowItem): Promise<void> {
   if (!auth0) return;
+  if (comment.isApproving || comment.isRejecting || comment.isDeleting) return;
   if (!confirm('Are you sure to delete this comment?')) { return }
 
-  comment.isReviewing = true;
+  comment.isDeleting = true;
   const token = await auth0.getAccessTokenSilently();
   await $fetch('/api/admin/comment/' + comment.id, {
     method: 'DELETE',
@@ -142,7 +150,7 @@ async function doDelete(comment: RowItem): Promise<void> {
     commentsList.value.splice(index, 1);
   }
   delete comments.value[ comment.id ];
-  comment.isReviewing = false;
+  comment.isDeleting = false;
 }
 function doLoadMore() {
   loadingMore.value = true;
@@ -304,11 +312,13 @@ header.flex.flex-col.mb-4.gap-4(class="sm:flex-row sm:items-center")
     i.bi.bi-x-lg
 
 .overflow-x-auto
-  table.table.table-pin-rows.table-pin-cols
+  table.table.table-pin-rows.table-pin-cols.table-sm(
+    class="sm:table-md"
+  )
     thead
       tr
         th ID
-        th.min-w-60 Content
+        th(class="sm:min-w-60") Content
         th User
         th Time
         th Post
@@ -377,33 +387,33 @@ header.flex.flex-col.mb-4.gap-4(class="sm:flex-row sm:items-center")
               i.bi.bi-box-arrow-up-right
         td.align-top {{ CommentStatus[comment.status] }}
         td.align-top
-          .flex.flex-wrap.gap-2
+          .grid.grid-cols-2.gap-2.w-40(class="sm:flex sm:flex-wrap sm:w-auto")
             button.btn.btn-outline.btn-success.btn-sm(
               v-if="comment.status === CommentStatus.Pending || comment.status === CommentStatus.Rejected"
               type="button"
               class="sm:btn-xs"
-              :disabled="comment.isReviewing || loadingMore",
+              :disabled="comment.isApproving || comment.isRejecting || comment.isDeleting || loadingMore",
               @click="doReview(comment, CommentStatus.Approved)"
             )
-              span.loading.loading-xs.loading-spinner(v-if="comment.isReviewing")
-              | Approve
+              span.loading.loading-xs.loading-spinner(v-if="comment.isApproving")
+              template(v-else) Approve
             button.btn.btn-outline.btn-warning.btn-sm(
               v-if="comment.status === CommentStatus.Pending || comment.status === CommentStatus.Approved"
               type="button",
               class="sm:btn-xs"
-              :disabled="comment.isReviewing || loadingMore",
+              :disabled="comment.isApproving || comment.isRejecting || comment.isDeleting || loadingMore",
               @click="doReview(comment, CommentStatus.Rejected)"
             )
-              span.loading.loading-xs.loading-spinner(v-if="comment.isReviewing")
-              | Reject
+              span.loading.loading-xs.loading-spinner(v-if="comment.isRejecting")
+              template(v-else) Reject
             button.btn.btn-outline.btn-error.btn-sm(
               type="button",
               class="sm:btn-xs"
-              :disabled="comment.isReviewing || loadingMore",
+              :disabled="comment.isApproving || comment.isRejecting || comment.isDeleting || loadingMore",
               @click="doDelete(comment)"
             )
-              span.loading.loading-xs.loading-spinner(v-if="comment.isReviewing")
-              | Delete
+              span.loading.loading-xs.loading-spinner(v-if="comment.isDeleting")
+              template(v-else) Delete
 
             reply-comment(
               ref="replyComment"
