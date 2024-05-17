@@ -16,6 +16,9 @@ export default {
       lineHeight: {
         16: '4rem',
       },
+      zIndex: {
+        1: 1,
+      },
     },
   },
   plugins: [

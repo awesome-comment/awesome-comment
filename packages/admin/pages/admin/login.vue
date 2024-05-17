@@ -11,7 +11,7 @@ const isLoading = computed<boolean>(() => {
 });
 const user = computed<User | null>(() => {
   return auth0?.user.value || null;
-})
+});
 
 function doLogin() {
   auth0?.checkSession();
@@ -23,6 +23,17 @@ function doLogin() {
 async function doLogout(): Promise<void> {
   await auth0?.logout();
 }
+
+useHead({
+  title: 'Admin Login',
+  meta: [
+    { name: 'robots', content: 'noindex, nofollow' },
+  ],
+});
+definePageMeta({
+  layout: 'admin',
+  name: 'Admin Login',
+});
 </script>
 
 <template lang="pug">

@@ -109,7 +109,7 @@ defineExpose({
 </script>
 
 <template lang="pug">
-button.btn.btn-success.btn-sm(
+button.btn.btn-info.btn-sm(
   type="button",
   class="sm:btn-xs"
   :disabled="isReplying"

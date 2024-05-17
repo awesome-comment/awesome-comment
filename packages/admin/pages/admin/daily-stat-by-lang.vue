@@ -90,8 +90,8 @@ function onDateRangeChange(value: DatePickerRangeObject) {
 useHead({
   title: 'Daily Stat by Language',
 });
-
 definePageMeta({
+  layout: 'admin',
   middleware: ['auth'],
   name: 'daily-stat-by-lang',
 });

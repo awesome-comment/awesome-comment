@@ -32,8 +32,8 @@ useHead({
   description: 'Admin',
 });
 definePageMeta({
+  layout: 'admin',
   name: 'Admin',
-  redirect: '/admin/login',
 });
 </script>
 

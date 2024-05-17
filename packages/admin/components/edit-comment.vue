@@ -8,7 +8,7 @@ type Props = {
   comment: Comment,
 }
 const props = withDefaults(defineProps<Props>(), {
-  buttonClass: 'btn-warning',
+  buttonClass: 'btn-sm btn-warning sm:btn-xs',
 });
 type Emits = {
   (event: 'save', content: string): (event: Event) => boolean | void;
@@ -62,9 +62,8 @@ function onModalClose(): void {
 </script>
 
 <template lang="pug">
-button.btn.btn-sm(
+button.btn(
   type="button",
-  class="sm:btn-xs"
   :class="buttonClass"
   :disabled="isSaving"
   @click="doOpenModal"

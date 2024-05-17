@@ -2,8 +2,9 @@
 import type { Comment } from '@awesome-comment/core/types';
 import { CommentStatus, Languages } from '@awesome-comment/core/data';
 import { useAuth0 } from '@auth0/auth0-vue';
-import ReplyComment from '~/components/reply-comment.vue';
 import dayjs from 'dayjs';
+import keyBy from 'lodash-es/keyBy';
+import ReplyComment from '~/components/reply-comment.vue';
 
 type RowItem = Comment & {
   isApproving: boolean;
@@ -100,7 +101,7 @@ const { data: commentsList, pending, refresh } = useLazyAsyncData(
     default() {
       return Object.values(comments.value).reverse();
     },
-    watch: [filterStatus, filterPostId, filterUser, start],
+    watch: [filterStatus, filterPostId, filterUser, filterLanguage, start],
   }
 );
 
@@ -238,6 +239,9 @@ function formatTime(time: string): string {
   return dayjs.utc(time).local().format('YYYY-MM-DD HH:mm:ss');
 }
 
+onBeforeMount(() => {
+  comments.value = keyBy(commentsList.value, 'id');
+});
 onMounted(() => {
   document.body.addEventListener('keydown', onKeydown);
 });
@@ -246,7 +250,9 @@ onBeforeUnmount(() => {
 });
 
 definePageMeta({
+  layout: 'admin',
   middleware: ['auth'],
+  name: 'admin-comments',
 });
 </script>
 
@@ -388,7 +394,7 @@ header.flex.flex-col.mb-4.gap-4(class="sm:flex-row sm:items-center")
         td.align-top {{ CommentStatus[comment.status] }}
         td.align-top
           .grid.grid-cols-2.gap-2.w-40(class="sm:flex sm:flex-wrap sm:w-auto")
-            button.btn.btn-outline.btn-success.btn-sm(
+            button.btn.btn-success.btn-sm(
               v-if="comment.status === CommentStatus.Pending || comment.status === CommentStatus.Rejected"
               type="button"
               class="sm:btn-xs"
@@ -397,24 +403,6 @@ header.flex.flex-col.mb-4.gap-4(class="sm:flex-row sm:items-center")
             )
               span.loading.loading-xs.loading-spinner(v-if="comment.isApproving")
               template(v-else) Approve
-            button.btn.btn-outline.btn-warning.btn-sm(
-              v-if="comment.status === CommentStatus.Pending || comment.status === CommentStatus.Approved"
-              type="button",
-              class="sm:btn-xs"
-              :disabled="comment.isApproving || comment.isRejecting || comment.isDeleting || loadingMore",
-              @click="doReview(comment, CommentStatus.Rejected)"
-            )
-              span.loading.loading-xs.loading-spinner(v-if="comment.isRejecting")
-              template(v-else) Reject
-            button.btn.btn-outline.btn-error.btn-sm(
-              type="button",
-              class="sm:btn-xs"
-              :disabled="comment.isApproving || comment.isRejecting || comment.isDeleting || loadingMore",
-              @click="doDelete(comment)"
-            )
-              span.loading.loading-xs.loading-spinner(v-if="comment.isDeleting")
-              template(v-else) Delete
-
             reply-comment(
               ref="replyComment"
               :comment="comment"
@@ -422,12 +410,41 @@ header.flex.flex-col.mb-4.gap-4(class="sm:flex-row sm:items-center")
               @open="hasReplyModal = true"
               @close="hasReplyModal = false"
             )
-            edit-comment(
-              :comment="comment"
-              @save="comment.content = $event"
-              @open="hasReplyModal = true"
-              @close="hasReplyModal = false"
-            )
+            details.dropdown.dropdown-end
+              summary.btn.btn-outline.btn-sm.btn-square(
+                class="sm:btn-xs"
+                role="button"
+                aria-label="More actions"
+              )
+                i.bi.bi-three-dots-vertical
+                span.sr-only More actions
+              .p-2.shadow.dropdown-content.z-1.bg-base-100.rounded-box.w-36.flex.flex-col.gap-1.border(
+                class="border-base-content/25"
+              )
+                edit-comment(
+                  button-class="btn btn-sm sm:btn-xs btn-outline btn-warning"
+                  :comment="comment"
+                  @save="comment.content = $event"
+                  @open="hasReplyModal = true"
+                  @close="hasReplyModal = false"
+                )
+                button.btn.btn-outline.btn-warning.btn-sm(
+                  v-if="comment.status === CommentStatus.Pending || comment.status === CommentStatus.Approved"
+                  type="button",
+                  class="sm:btn-xs"
+                  :disabled="comment.isApproving || comment.isRejecting || comment.isDeleting || loadingMore",
+                  @click="doReview(comment, CommentStatus.Rejected)"
+                )
+                  span.loading.loading-xs.loading-spinner(v-if="comment.isRejecting")
+                  template(v-else) Reject
+                button.btn.btn-outline.btn-error.btn-sm(
+                  type="button",
+                  class="sm:btn-xs"
+                  :disabled="comment.isApproving || comment.isRejecting || comment.isDeleting || loadingMore",
+                  @click="doDelete(comment)"
+                )
+                  span.loading.loading-xs.loading-spinner(v-if="comment.isDeleting")
+                  template(v-else) Delete
   button.mt-2.btn.btn-neutral.btn-sm.btn-block(
     v-if="hasMore",
     type="button",

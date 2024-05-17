@@ -28,10 +28,6 @@ const adminEmails = computed<string>({
   },
 });
 
-definePageMeta({
-  middleware: ['auth'],
-});
-
 async function doSave(event: Event): Promise<void> {
   if (
     !auth0
@@ -84,6 +80,16 @@ onMounted(async () => {
   isLoading.value = true;
   await store.initStore();
   isLoading.value = false;
+});
+
+useHead({
+  title: 'Admin Settings',
+  description: 'Admin Settings',
+});
+definePageMeta({
+  layout: 'admin',
+  middleware: ['auth'],
+  name: 'admin-settings',
 });
 </script>
 

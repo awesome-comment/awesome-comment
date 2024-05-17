@@ -1,11 +1,14 @@
+<script setup lang="ts">
+
+</script>
+
 <template>
-  <layouts-landing-header />
+  <layouts-admin-header />
   <nuxt-page />
-  <layouts-landing-footer />
 </template>
 
 <script lang="ts">
 export default {
-  name: 'DefaultLayout',
+  name: 'AdminLayout',
 }
 </script>

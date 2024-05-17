@@ -49,6 +49,7 @@ useHead({
 });
 
 definePageMeta({
+  layout: 'admin',
   middleware: ['auth'],
   name: 'posts',
 });

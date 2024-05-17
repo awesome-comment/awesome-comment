@@ -85,4 +85,7 @@ export default defineNuxtConfig({
   dayjs: {
     plugins: ['utc', 'timezone'],
   },
+  ui: {
+    icons: ['bi'],
+  },
 });
