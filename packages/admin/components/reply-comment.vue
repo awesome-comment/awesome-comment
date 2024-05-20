@@ -109,61 +109,48 @@ defineExpose({
 </script>
 
 <template lang="pug">
-button.btn.btn-info.btn-sm(
-  type="button",
-  class="sm:btn-xs"
+ui-modal(
+  button-class="btn-info btn-sm sm:btn-xs text-white"
   :disabled="isReplying"
-  @click="doOpenModal"
+  title="Reply to"
 )
-  span.loading.loading-xs.loading-spinner(v-if="isReplying")
-  | Reply
+  template(#button)
+    span.loading.loading-xs.loading-spinner(v-if="isReplying")
+    | Reply
 
-teleport(
-  v-if="hasModal"
-  to="body"
-)
-  dialog.modal(
-    ref="modal"
-    :id="'comment-' + comment.id"
-    @close="onClose"
+  form(
+    @submit.prevent="doReply"
   )
-    form.modal-box(
-      @submit.prevent="doReply"
-    )
-      .mb-2 Reply to
-      blockquote.mb-2.border-l-2.border-gray-200.bg-base-200.ps-2.py-2 {{comment.content}}
-      .form-control.mb-4
-        .label
-          label.label-text Your replyment
-          .label-text-alt
-            button.btn.btn-xs.btn-ghost.text-success(
-              type="button"
-              @click="doInsertUsername"
-            ) [Name]
-            button.btn.btn-xs.btn-ghost.btn-square(
-              v-for="item in Emojis"
-              :key="item"
-              type="button"
-              @click="doInsertEmoji(item)"
-            ) {{item}}
+    blockquote.mb-2.border-l-2.border-gray-200.bg-base-200.ps-2.py-2 {{comment.content}}
+    .form-control.mb-4
+      .label
+        label.label-text Your replyment
+          ai-reply-helper
+        .label-text-alt
+          button.btn.btn-xs.btn-ghost.text-success(
+            type="button"
+            @click="doInsertUsername"
+          ) [Name]
+          button.btn.btn-xs.btn-ghost.btn-square(
+            v-for="item in Emojis"
+            :key="item"
+            type="button"
+            @click="doInsertEmoji(item)"
+          ) {{item}}
 
-        textarea.textarea.textarea-bordered(
-          ref="textarea"
-          rows="6"
-          v-model="reply"
-          required
-          @keydown="onKeydown"
-        )
-      .alert.alert-error.mb-4(v-if="message")
-        p {{message}}
-      footer.flex.justify-end
-        button.btn.btn-primary(
-          :disabled="isReplying"
-        )
-          span.loading.loading-spinner(v-if="isReplying")
-          | Reply
-    form.modal-backdrop(
-      method="dialog"
-    )
-      button close
+      textarea.textarea.textarea-bordered(
+        ref="textarea"
+        rows="6"
+        v-model="reply"
+        required
+        @keydown="onKeydown"
+      )
+    .alert.alert-error.mb-4(v-if="message")
+      p {{message}}
+    footer.flex.justify-end
+      button.btn.btn-primary(
+        :disabled="isReplying"
+      )
+        span.loading.loading-spinner(v-if="isReplying")
+        | Reply
 </template>
