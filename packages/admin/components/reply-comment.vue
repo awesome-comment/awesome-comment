@@ -72,7 +72,7 @@ async function doReply(event: Event): Promise<void> {
   }
   isReplying.value = false;
 }
-function doInsertEmoji(emoji: string): void {
+async function doInsertEmoji(emoji: string): Promise<void> {
   // insert emoji at cursor position
   if (!textarea.value) return;
 
@@ -82,6 +82,7 @@ function doInsertEmoji(emoji: string): void {
   const before = text.substring(0, selectionStart);
   const after = text.substring(selectionEnd);
   reply.value = before + emoji + after;
+  await nextTick();
   textarea.value.selectionStart = textarea.value.selectionEnd = selectionStart + emoji.length;
 }
 function doInsertUsername(): void {

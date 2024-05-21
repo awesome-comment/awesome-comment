@@ -393,7 +393,7 @@ header.flex.flex-col.mb-4.gap-4(class="sm:flex-row sm:items-center")
               i.bi.bi-box-arrow-up-right
         td.align-top {{ CommentStatus[comment.status] }}
         td.align-top
-          .grid.grid-cols-2.gap-2.w-40(class="sm:flex sm:flex-wrap sm:w-auto")
+          .grid.grid-cols-2.gap-2.w-40(class="sm:flex sm:w-auto")
             button.btn.btn-success.btn-sm.text-white(
               v-if="comment.status === CommentStatus.Pending || comment.status === CommentStatus.Rejected"
               type="button"

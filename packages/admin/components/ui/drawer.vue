@@ -53,3 +53,9 @@ watch(() => props.modelValue, async (value: boolean) => {
     </div>
   </teleport>
 </template>
+
+<script lang="ts">
+export default {
+  name: 'UiDrawer',
+}
+</script>

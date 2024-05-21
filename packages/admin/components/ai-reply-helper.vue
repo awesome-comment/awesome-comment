@@ -1,6 +1,6 @@
 <script setup lang="ts">
-const isOpenModal = ref<boolean>(false);
-const isCreating = ref<boolean>(false);
+const isNewPrompt = ref<boolean>(false);
+const isManagement = ref<boolean>(false);
 
 const helpOptions = computed(() => {
   return [
@@ -9,16 +9,14 @@ const helpOptions = computed(() => {
         label: 'Manage prompt templates',
         icon: 'i-bi-list-ul',
         click() {
-          isCreating.value = false;
-          isOpenModal.value = true;
+          isManagement.value = false;
         },
       },
       {
         label: 'Add prompt template',
         icon: 'i-bi-plus-lg',
         click() {
-          isCreating.value = true;
-          isOpenModal.value = true;
+          isNewPrompt.value = true;
         },
       },
     ],
@@ -41,9 +39,20 @@ const helpOptions = computed(() => {
     </button>
   </u-dropdown>
 
-  <ui-modal v-model="isOpenModal" :has-button="false">
-    <ai-prompt-management
-      v-if="!isCreating"
-    />
+  <ui-modal
+    v-model="isNewPrompt"
+    :has-button="false"
+    modal-class="w-11/12 max-w-3xl"
+    title="Add new prompt"
+  >
+    <ai-edit-prompt />
+  </ui-modal>
+
+  <ui-modal
+    v-model="isManagement"
+    :has-button="false"
+    title="Manage prompt templates"
+  >
+    <ai-prompt-management />
   </ui-modal>
 </template>

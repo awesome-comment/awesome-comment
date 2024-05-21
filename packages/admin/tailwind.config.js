@@ -13,6 +13,14 @@ export default {
   ],
   theme: {
     extend: {
+      container: {
+        screens: {
+          '3xl': '1880px',
+        },
+        padding: {
+          '3xl': '1rem',
+        },
+      },
       lineHeight: {
         16: '4rem',
       },
