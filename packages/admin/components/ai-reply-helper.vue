@@ -1,15 +1,27 @@
 <script setup lang="ts">
+import usePromptStore from '~/store/prompt';
+
+const promptStore = usePromptStore();
+
 const isNewPrompt = ref<boolean>(false);
 const isManagement = ref<boolean>(false);
 
 const helpOptions = computed(() => {
-  return [
+  const templates = Object.entries(promptStore.prompts).map(([key, value]) => {
+    return {
+      label: value.title,
+      click() {
+        doUseTemplate(key);
+      },
+    };
+  });
+  const items = [
     [
       {
         label: 'Manage prompt templates',
         icon: 'i-bi-list-ul',
         click() {
-          isManagement.value = false;
+          isManagement.value = true;
         },
       },
       {
@@ -21,6 +33,18 @@ const helpOptions = computed(() => {
       },
     ],
   ];
+  if (templates.length) {
+    items.unshift(templates);
+  }
+  return items;
+});
+
+function doUseTemplate(id) {
+
+}
+
+onBeforeMount(() => {
+  promptStore.init();
 });
 </script>
 
@@ -39,20 +63,11 @@ const helpOptions = computed(() => {
     </button>
   </u-dropdown>
 
-  <ui-modal
-    v-model="isNewPrompt"
-    :has-button="false"
-    modal-class="w-11/12 max-w-3xl"
-    title="Add new prompt"
-  >
-    <ai-edit-prompt />
-  </ui-modal>
+  <ai-edit-prompt
+    v-model:is-open="isNewPrompt"
+  />
 
-  <ui-modal
-    v-model="isManagement"
-    :has-button="false"
-    title="Manage prompt templates"
-  >
-    <ai-prompt-management />
-  </ui-modal>
+  <ai-prompt-management
+    v-model:is-open="isManagement"
+  />
 </template>

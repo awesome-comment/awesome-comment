@@ -149,7 +149,7 @@ ui-modal(
     .alert.alert-error.mb-4(v-if="message")
       p {{message}}
     footer.flex.justify-end
-      button.btn.btn-primary(
+      button.btn.btn-primary.btn-sm.text-white.min-w-64(
         :disabled="isReplying"
       )
         span.loading.loading-spinner(v-if="isReplying")

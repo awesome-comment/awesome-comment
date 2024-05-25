@@ -22,6 +22,8 @@ const props = withDefaults(defineProps<Props>(), {
   title: 'Modal Title',
 });
 type Emits = {
+  (event: 'open'): void;
+  (event: 'close'): void;
   (event: 'update:modelValue', value: boolean): void;
 }
 const emit = defineEmits<Emits>();
@@ -34,10 +36,15 @@ async function doOpenModal(): Promise<void> {
   isOpenModal.value = true;
   await nextTick();
   modal.value?.showModal();
+  emit('open');
 }
 function close(): void {
   modal.value?.close();
+}
+function onClose(): void {
+  isOpenModal.value = false;
   emit('update:modelValue', false);
+  emit('close');
 }
 
 watch(() => props.modelValue, (value: boolean) => {
@@ -78,7 +85,7 @@ defineExpose({
     <dialog
       ref="modal"
       class="modal"
-      @close="isOpenModal = false"
+      @close="onClose"
     >
       <div
         class="modal-box"
@@ -88,6 +95,7 @@ defineExpose({
           <h3 class="text-lg font-medium">
             {{ title }}
           </h3>
+          <slot name="header" />
           <form
             method="dialog"
             class="ms-auto"
