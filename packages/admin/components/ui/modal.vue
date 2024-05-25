@@ -120,6 +120,6 @@ defineExpose({
 
 <script lang="ts">
 export default {
-  name: 'UiDrawer',
+  name: 'UiModal',
 }
 </script>
