@@ -1,9 +1,11 @@
 <script setup lang="ts">
+import type { UiModal } from '#components';
 import usePromptStore from '~/store/prompt';
 
-const isOpen = defineModel('isOpen', Boolean);
 const promptStore = usePromptStore();
+const root = ref<UiModal>();
 
+const isOpen = defineModel('isOpen', Boolean);
 const isNewPrompt = ref<boolean>(false);
 const targetId = ref<string>('');
 
@@ -18,6 +20,10 @@ function doEdit(id: string) {
 
 onBeforeMount(() => {
   promptStore.init();
+});
+
+onMounted(() => {
+  root.value?.open();
 });
 </script>
 
@@ -81,6 +87,7 @@ onBeforeMount(() => {
   </ui-modal>
 
   <ai-edit-prompt
+    v-if="isNewPrompt"
     v-model:is-open="isNewPrompt"
     :prompt-id="targetId"
     @close="targetId = ''"

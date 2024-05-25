@@ -10,8 +10,6 @@ type Props = {
 const props = defineProps<Props>();
 type Emits = {
   (event: 'reply', reply: Comment): void;
-  (event: 'open'): void;
-  (event: 'close'): void;
 }
 const emit = defineEmits<Emits>();
 const auth0 = useAuth0();
@@ -29,7 +27,6 @@ async function doOpenModal(): Promise<void> {
   hasModal.value = true;
   await nextTick();
   modal.value?.showModal();
-  emit('open');
 }
 async function doReply(event: Event): Promise<void> {
   if (isReplying.value || (event.target as HTMLFormElement).matches(':invalid')) return;
@@ -96,7 +93,6 @@ function doInsertUsername(): void {
 
 function onClose(): void {
   hasModal.value = false;
-  emit('close');
 }
 function onKeydown(event: KeyboardEvent): void {
   if (withCommandModifier(event, 'Enter')) {
@@ -126,7 +122,9 @@ ui-modal(
     .form-control.mb-4
       .label
         label.label-text Your replyment
-          ai-reply-helper
+          ai-reply-helper(
+            :comment="comment"
+          )
         .label-text-alt
           button.btn.btn-xs.btn-ghost.text-success(
             type="button"

@@ -66,6 +66,10 @@ function onModalOpen() {
     template.value = '';
   }
 }
+
+onMounted(() => {
+  root.value?.open();
+});
 </script>
 
 <template>

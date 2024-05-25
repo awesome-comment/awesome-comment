@@ -56,6 +56,7 @@ watch(() => props.modelValue, (value: boolean) => {
 });
 
 defineExpose({
+  open: doOpenModal,
   close,
 });
 </script>

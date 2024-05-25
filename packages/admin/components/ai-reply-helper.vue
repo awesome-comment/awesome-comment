@@ -1,10 +1,17 @@
 <script setup lang="ts">
 import usePromptStore from '~/store/prompt';
 
+type Props = {
+  comment: Comment;
+}
+const props = defineProps<Props>();
+
 const promptStore = usePromptStore();
 
 const isNewPrompt = ref<boolean>(false);
 const isManagement = ref<boolean>(false);
+const isUsingTemplate = ref<boolean>(false);
+const templateId = ref<string>('');
 
 const helpOptions = computed(() => {
   const templates = Object.entries(promptStore.prompts).map(([key, value]) => {
@@ -40,7 +47,8 @@ const helpOptions = computed(() => {
 });
 
 function doUseTemplate(id) {
-
+  templateId.value = id;
+  isUsingTemplate.value = true;
 }
 
 onBeforeMount(() => {
@@ -64,10 +72,19 @@ onBeforeMount(() => {
   </u-dropdown>
 
   <ai-edit-prompt
+    v-if="isNewPrompt"
     v-model:is-open="isNewPrompt"
   />
 
   <ai-prompt-management
+    v-if="isManagement"
     v-model:is-open="isManagement"
+  />
+
+  <ai-use-template
+    v-if="isUsingTemplate"
+    v-model:is-open="isUsingTemplate"
+    :prompt-id="templateId"
+    :comment="comment"
   />
 </template>
