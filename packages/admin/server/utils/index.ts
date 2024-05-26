@@ -1,6 +1,6 @@
 import { H3Event } from 'h3';
 import type { Storage } from 'unstorage';
-import type { Comment, ResponseComment, User, AcConfig } from '@awesome-comment/core/types';
+import type { AcConfig, Comment, ResponseComment, User } from '@awesome-comment/core/types';
 import { CommentStatus, MarkdownLinkRegex } from '@awesome-comment/core/data';
 import digestFetch from '@meathill/digest-fetch';
 import { getTidbKey } from './tidb';
@@ -127,15 +127,32 @@ export async function checkCommentStatus(userId: string, comment: Comment, confi
     return CommentStatus.Approved;
   }
 
-  // if user has 2 or more pending comments, they cannot post new comment
-  if (history.filter(c => Number(c.status) === CommentStatus.Pending).length >= 2) {
-    console.log(`user_id: ${userId} have 2 or more pending comments, cannot post new comment.`);
+  // if user has 5 or more pending comments in current postId,
+  // or have pending comments in 10 postId,
+  // they cannot post new comment
+  const pendingForCurrentPost = history.filter(c =>
+    c.post_id === comment.postId && c.status === CommentStatus.Pending);
+  if (pendingForCurrentPost.length >= 5) {
+    console.log(`user_id: ${userId} have 5 or more pending comments in this post_id, cannot post new comment.`);
     throw createError({
       statusCode: 405,
       message: 'You have 2 or more pending comments. Please wait for approval first.',
     });
-  } else if (history.filter(c => Number(c.status) === CommentStatus.Rejected).length >= 5) {
-    // if user has 5 or more rejected comments, they will be keep out until we give them a pass
+  }
+  const pendingPosts = history.reduce((acc, c) => {
+    if (c.status !== CommentStatus.Pending) return acc;
+    acc.add(c.post_id);
+    return acc;
+  }, new Set<string>());
+  if (pendingPosts.size >= 10) {
+    console.log(`user_id: ${userId} have pending comments in 10 or more posts, cannot post new comment.`);
+    throw createError({
+      statusCode: 405,
+      message: 'You have pending comments in 10 or more posts. Please wait for approval first.',
+    });
+  }
+  // if user has 5 or more rejected comments, they will be keep out until we give them a pass
+  if (history.filter(c => Number(c.status) === CommentStatus.Rejected).length >= 5) {
     console.log(`user_id: ${userId} have 5 or more rejected comments, is banned currently.`);
     throw createError({
       statusCode: 405,
