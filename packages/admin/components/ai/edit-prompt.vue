@@ -5,6 +5,7 @@ import type { UiModal } from '#components';
 
 type Props = {
   promptId?: string;
+  isFork?: boolean;
 }
 const props = defineProps<Props>();
 type Emits = {
@@ -21,6 +22,7 @@ const Variables = [
   '%COMMENT%',
 ];
 const root = ref<UiModal>();
+const promptTitle = ref<HTMLInputElement>();
 const textarea = ref<HTMLTextAreaElement>();
 const promptStore = usePromptStore();
 const isOpen = defineModel('isOpen', Boolean);
@@ -47,7 +49,7 @@ async function doSubmit(event: Event): Promise<void> {
   const id = promptStore.setPrompt({
     title: title.value,
     template: template.value,
-  }, props.promptId);
+  }, props.isFork ? '' : props.promptId);
 
   isSaved.value = true;
   await sleep(1500);
@@ -59,7 +61,7 @@ async function doSubmit(event: Event): Promise<void> {
 function onModalOpen() {
   const prompt = promptStore.prompts[ props.promptId ];
   if (prompt) {
-    title.value = prompt.title;
+    title.value = props.isFork ? `Fork of ${prompt.title}` : prompt.title;
     template.value = prompt.template;
   } else {
     title.value = '';
@@ -67,8 +69,11 @@ function onModalOpen() {
   }
 }
 
-onMounted(() => {
+onMounted(async () => {
   root.value?.open();
+  await nextTick();
+  promptTitle.value?.focus();
+  promptTitle.value?.select();
 });
 </script>
 
@@ -78,7 +83,7 @@ onMounted(() => {
     v-model="isOpen"
     :has-button="false"
     modal-class="w-11/12 max-w-3xl"
-    title="Add new prompt"
+    :title="isFork ? 'Fork prompt' : (promptId ? 'Edit prompt' : 'Add new prompt')"
     @open="onModalOpen"
     @close="emit('close')"
   >
@@ -94,6 +99,7 @@ onMounted(() => {
         </label>
         <input
           id="prompt-title"
+          ref="promptTitle"
           v-model="title"
           class="input input-bordered input-sm"
           required
@@ -132,11 +138,12 @@ onMounted(() => {
         <button
           type="button"
           class="btn btn-ghost btn-sm"
+          @click="root.close()"
         >
           Cancel
         </button>
         <button
-          class="btn btn-sm min-w-64 text-white"
+          class="btn btn-sm min-w-64 text-white hover:text-white"
           :class="isSaved ? 'btn-success' : 'btn-primary'"
         >
           <i

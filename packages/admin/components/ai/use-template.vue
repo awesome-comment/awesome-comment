@@ -80,13 +80,13 @@ onMounted(() => {
         class="loading loading-spinner ms-4"
       />
     </template>
-    <blockquote class="px-4 py-2 bg-base-300 border-l-2 mb-4">
+    <blockquote class="px-4 py-2 bg-base-300 border-l-2 mb-4 whitespace-pre-wrap">
       {{ replaced }}
     </blockquote>
     <footer class="flex justify-end">
       <button
         type="button"
-        class="btn btn-sm min-w-64 text-white"
+        class="btn btn-sm min-w-64 text-white hover:text-white"
         :class="isCopied ? 'btn-success' : 'btn-primary'"
         :disabled="isLoadingTitle"
         @click="doCopy"

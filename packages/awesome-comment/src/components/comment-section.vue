@@ -26,7 +26,7 @@ function loadMore() {
 
   button.ac-btn.h-11.min-h-fit.ac-btn-block.text-white.border-0.bg-green-middle(
     v-if="store.hasMore"
-    class="hover:bg-green-middle/75"
+    class="hover:bg-green-middle/75 hover:text-white"
     type="button"
     @click="loadMore"
     :disabled="store.loadingMore"

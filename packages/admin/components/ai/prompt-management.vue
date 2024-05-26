@@ -1,12 +1,14 @@
 <script setup lang="ts">
 import type { UiModal } from '#components';
 import usePromptStore from '~/store/prompt';
+import { readFile } from '~/utils/ui';
 
 const promptStore = usePromptStore();
 const root = ref<UiModal>();
 
 const isOpen = defineModel('isOpen', Boolean);
 const isNewPrompt = ref<boolean>(false);
+const isFork = ref<boolean>(false);
 const targetId = ref<string>('');
 
 function doDelete(id: string) {
@@ -14,8 +16,46 @@ function doDelete(id: string) {
   promptStore.deletePrompt(id);
 }
 function doEdit(id: string) {
+  isFork.value = false;
   isNewPrompt.value = true;
   targetId.value = id;
+}
+function doFork(id: string): void {
+  isNewPrompt.value = true;
+  isFork.value = true;
+  targetId.value = id;
+}
+function doNew(): void {
+  targetId.value = '';
+  isNewPrompt.value = true;
+}
+function doExport(): void {
+  // download all prompts
+  const blob = new Blob([JSON.stringify(promptStore.prompts)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'prompt-templates.json';
+  a.click();
+  URL.revokeObjectURL(url);
+}
+async function doImport(event: Event): Promise<void> {
+  const input = event.target as HTMLInputElement;
+  if (!input.files?.length) return;
+
+  const file = input.files[ 0 ];
+  if (!file) return;
+
+  if (promptStore.length
+    && !confirm('Continue importing will overwrite all existing prompts, are you sure?'))
+  {
+    return
+  }
+
+  const data = await readFile(file);
+  if (!data) return;
+
+  promptStore.importPrompts(data);
 }
 
 onBeforeMount(() => {
@@ -35,17 +75,40 @@ onMounted(() => {
     modal-class="w-11/12 max-w-3xl"
     title="Manage prompt templates"
   >
-    <template #header>
+    <header class="flex items-center mb-4">
       <button
         type="button"
-        class="btn btn-xs btn-primary ms-4 text-white"
+        class="btn btn-xs btn-primary text-white hover:text-white"
         title="Add prompt template"
-        @click="isNewPrompt = true"
+        @click="doNew"
       >
         <i class="bi bi-plus-lg" />
         Add prompt
       </button>
-    </template>
+      <button
+        type="button"
+        class="btn btn-xs btn-neutral ms-auto"
+        title="Export prompt templates"
+        @click="doExport"
+      >
+        <i class="bi bi-download" />
+        Export
+      </button>
+      <label
+        role="button"
+        class="btn btn-xs btn-neutral ms-2"
+        title="Import prompt templates"
+      >
+        <input
+          type="file"
+          accept="application/json"
+          class="hidden"
+          @change="doImport"
+        >
+        <i class="bi bi-upload" />
+        Export
+      </label>
+    </header>
     <table class="table">
       <thead>
         <tr>
@@ -53,7 +116,7 @@ onMounted(() => {
           <th>Actions</th>
         </tr>
       </thead>
-      <tbody>
+      <tbody class="sm:max-h-80 sm:overflow-auto">
         <tr
           v-for="(prompt, id) in promptStore.prompts"
           :key="id"
@@ -63,7 +126,7 @@ onMounted(() => {
             <div class="flex items-center gap-2">
               <button
                 type="button"
-                class="btn btn-xs btn-info text-white"
+                class="btn btn-xs btn-info text-white hover:text-white"
                 title="Edit prompt"
                 @click="doEdit(id)"
               >
@@ -72,7 +135,16 @@ onMounted(() => {
               </button>
               <button
                 type="button"
-                class="btn btn-xs btn-error text-white"
+                class="btn btn-xs btn-success text-white hover:text-white"
+                title="Fork prompt"
+                @click="doFork(id)"
+              >
+                <i class="bi bi-copy" />
+                Fork
+              </button>
+              <button
+                type="button"
+                class="btn btn-xs btn-error text-white hover:text-white"
                 title="Delete prompt"
                 @click="doDelete(id)"
               >
@@ -89,7 +161,7 @@ onMounted(() => {
   <ai-edit-prompt
     v-if="isNewPrompt"
     v-model:is-open="isNewPrompt"
+    :is-fork="isFork"
     :prompt-id="targetId"
-    @close="targetId = ''"
   />
 </template>

@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import * as net from 'node:net';
-
 type Props = {
   buttonClass?: string;
   buttonLabel?: string;

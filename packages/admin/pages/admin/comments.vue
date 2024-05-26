@@ -176,6 +176,7 @@ function doReset(shouldRefresh?: MouseEvent | boolean): void {
 }
 function onKeydown(event: KeyboardEvent): void {
   if (event.ctrlKey || event.metaKey || event.altKey || event.shiftKey) return;
+  if (event.target instanceof HTMLInputElement || event.target instanceof HTMLTextAreaElement) return;
   if (hasReplyModal.value) return;
 
   let shouldScroll = false;
@@ -397,7 +398,7 @@ header.flex.flex-col.mb-4.gap-4(class="sm:flex-row sm:items-center")
             button.btn.btn-success.btn-sm.text-white(
               v-if="comment.status === CommentStatus.Pending || comment.status === CommentStatus.Rejected"
               type="button"
-              class="sm:btn-xs"
+              class="sm:btn-xs hover:text-white"
               :disabled="comment.isApproving || comment.isRejecting || comment.isDeleting || loadingMore",
               @click="doReview(comment, CommentStatus.Approved)"
             )

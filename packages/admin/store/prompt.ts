@@ -5,6 +5,7 @@ const LOCAL_KEY = 'ac-prompt-templates';
 const usePromptStore = defineStore('prompt', () => {
   let isInit = false;
   const prompts = ref<Record<string, AiPromptTemplate>>({});
+  const length = computed(() => Object.keys(prompts.value).length);
 
   function setPrompt(prompt: AiPromptTemplate, id?: string): string {
     id ||= crypto.randomUUID();
@@ -14,6 +15,11 @@ const usePromptStore = defineStore('prompt', () => {
   }
   function deletePrompt(id: string) {
     delete prompts.value[ id ];
+    localStorage.setItem(LOCAL_KEY, JSON.stringify(prompts.value));
+  }
+  function importPrompts(data: string): void {
+    const parsed = JSON.parse(data);
+    prompts.value = parsed;
     localStorage.setItem(LOCAL_KEY, JSON.stringify(prompts.value));
   }
   function init(): void {
@@ -28,9 +34,11 @@ const usePromptStore = defineStore('prompt', () => {
 
   return {
     prompts,
+    length,
 
     setPrompt,
     deletePrompt,
+    importPrompts,
     init,
   };
 });

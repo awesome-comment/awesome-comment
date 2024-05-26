@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { UiModal } from '#components';
 import type { Comment } from '@awesome-comment/core/types';
 import { CommentStatus } from '@awesome-comment/core/data';
 import { withCommandModifier } from '@awesome-comment/core/utils';
@@ -17,7 +18,7 @@ const emit = defineEmits<Emits>();
 const auth0 = useAuth0();
 const Emojis = ['❤️', '👍', '😂'];
 
-const modal = ref<HTMLDialogElement>();
+const modal = ref<UiModal>();
 const textarea = ref<HTMLTextAreaElement>();
 
 const hasModal = ref<boolean>(false);
@@ -28,7 +29,6 @@ const reply = ref<string>('');
 async function doOpenModal(): Promise<void> {
   hasModal.value = true;
   await nextTick();
-  modal.value?.showModal();
   emit('open');
 }
 async function doReply(event: Event): Promise<void> {
@@ -111,9 +111,11 @@ defineExpose({
 
 <template lang="pug">
 ui-modal(
-  button-class="btn-info btn-sm sm:btn-xs text-white"
+  ref="modal"
+  button-class="btn-info btn-sm sm:btn-xs text-white hover:text-white"
   :disabled="isReplying"
   title="Reply to"
+  @close="onClose"
 )
   template(#button)
     span.loading.loading-xs.loading-spinner(v-if="isReplying")
@@ -122,7 +124,7 @@ ui-modal(
   form(
     @submit.prevent="doReply"
   )
-    blockquote.mb-2.border-l-2.border-gray-200.bg-base-200.ps-2.py-2 {{comment.content}}
+    blockquote.mb-2.border-l-2.border-gray-200.bg-base-200.ps-2.py-2.max-h-64.overflow-auto.rounded-box {{comment.content}}
     .form-control.mb-4
       .label
         label.label-text Your replyment
@@ -152,6 +154,7 @@ ui-modal(
       p {{message}}
     footer.flex.justify-end
       button.btn.btn-primary.btn-sm.text-white.min-w-64(
+        class="hover:text-white"
         :disabled="isReplying"
       )
         span.loading.loading-spinner(v-if="isReplying")
