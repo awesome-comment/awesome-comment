@@ -13,13 +13,16 @@ const usePromptStore = defineStore('prompt', () => {
     localStorage.setItem(LOCAL_KEY, JSON.stringify(prompts.value));
     return id;
   }
+  function setPromptProp(id: string, props: Partial<AiPromptTemplate>): void {
+    Object.assign(prompts.value[ id ], props);
+    localStorage.setItem(LOCAL_KEY, JSON.stringify(prompts.value));
+  }
   function deletePrompt(id: string) {
     delete prompts.value[ id ];
     localStorage.setItem(LOCAL_KEY, JSON.stringify(prompts.value));
   }
   function importPrompts(data: string): void {
-    const parsed = JSON.parse(data);
-    prompts.value = parsed;
+    prompts.value = JSON.parse(data);
     localStorage.setItem(LOCAL_KEY, JSON.stringify(prompts.value));
   }
   function init(): void {
@@ -37,6 +40,7 @@ const usePromptStore = defineStore('prompt', () => {
     length,
 
     setPrompt,
+    setPromptProp,
     deletePrompt,
     importPrompts,
     init,

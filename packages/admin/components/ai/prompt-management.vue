@@ -29,6 +29,10 @@ function doNew(): void {
   targetId.value = '';
   isNewPrompt.value = true;
 }
+function doSetPrompt(event: Event, id: string): void {
+  const checkbox = event.target as HTMLInputElement;
+  promptStore.setPromptProp(id, { isFix: checkbox.checked });
+}
 function doExport(): void {
   // download all prompts
   const blob = new Blob([JSON.stringify(promptStore.prompts)], { type: 'application/json' });
@@ -106,13 +110,14 @@ onMounted(() => {
           @change="doImport"
         >
         <i class="bi bi-upload" />
-        Export
+        Import
       </label>
     </header>
     <table class="table">
       <thead>
         <tr>
           <th>Title</th>
+          <th>Fix</th>
           <th>Actions</th>
         </tr>
       </thead>
@@ -122,6 +127,15 @@ onMounted(() => {
           :key="id"
         >
           <td>{{ prompt.title }}</td>
+          <td>
+            <input
+              v-model="prompt.isFix"
+              type="checkbox"
+              class="checkbox"
+              name="is-fix"
+              @change="doSetPrompt($event, id)"
+            >
+          </td>
           <td>
             <div class="flex items-center gap-2">
               <button

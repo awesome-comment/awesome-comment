@@ -124,7 +124,7 @@ ui-modal(
   form(
     @submit.prevent="doReply"
   )
-    blockquote.mb-2.border-l-2.border-gray-200.bg-base-200.ps-2.py-2.max-h-64.overflow-auto.rounded-box {{comment.content}}
+    blockquote.mb-2.border-l-2.border-gray-200.bg-base-200.ps-2.py-2.max-h-64.overflow-auto.rounded-r-box {{comment.content}}
     .form-control.mb-4
       .label
         label.label-text Your replyment
@@ -152,6 +152,9 @@ ui-modal(
       )
     .alert.alert-error.mb-4(v-if="message")
       p {{message}}
+    ai-fixed-prompt-templates(
+      :comment="comment"
+    )
     footer.flex.justify-end
       button.btn.btn-primary.btn-sm.text-white.min-w-64(
         class="hover:text-white"
