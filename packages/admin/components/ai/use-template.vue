@@ -44,6 +44,14 @@ const replaced = computed<string>(() => {
     }
   });
 });
+const isAutoCopy = computed<boolean>({
+  get() {
+    return promptStore.isAutoCopy;
+  },
+  set(value: boolean) {
+    promptStore.setAutoCopy(value);
+  },
+});
 
 async function doCopy(): Promise<void> {
   await navigator.clipboard.writeText(replaced.value ?? '');
@@ -60,7 +68,9 @@ onBeforeMount(async () => {
   const res = await $fetch<ResponseBody<{ title: string }>>('/api/fetch-url?url=' + props.comment?.postId);
   title.value = res.data.title;
   isLoadingTitle.value = false;
-})
+
+  doCopy();
+});
 onMounted(() => {
   root.value?.open();
 });
@@ -83,10 +93,21 @@ onMounted(() => {
     <blockquote class="px-4 py-2 bg-base-300 border-l-2 mb-4 whitespace-pre-wrap">
       {{ replaced }}
     </blockquote>
-    <footer class="flex justify-end">
+    <footer class="flex items-center">
+      <div class="form-control">
+        <label class="label cursor-pointer gap-2 py-0">
+          <span class="label-text">Auto copy</span>
+          <input
+            v-model="isAutoCopy"
+            type="checkbox"
+            class="checkbox"
+            :class="{'checkbox-success': isAutoCopy}"
+          >
+        </label>
+      </div>
       <button
         type="button"
-        class="btn btn-sm min-w-64 text-white hover:text-white"
+        class="btn btn-sm min-w-64 text-white hover:text-white ms-auto"
         :class="isCopied ? 'btn-success' : 'btn-primary'"
         :disabled="isLoadingTitle"
         @click="doCopy"

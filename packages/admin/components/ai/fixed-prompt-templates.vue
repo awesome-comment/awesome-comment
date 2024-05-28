@@ -26,7 +26,7 @@ function doUse(id: string): void {
 <template>
   <div
     v-if="length"
-    class="flex items-center mb-4"
+    class="flex flex-wrap gap-1 items-center mb-4"
   >
     <button
       v-for="(template, id) in fixed"

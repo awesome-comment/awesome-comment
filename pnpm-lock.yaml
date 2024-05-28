@@ -50,9 +50,6 @@ importers:
       '@vercel/edge-config':
         specifier: ^1.1.0
         version: 1.1.0(@opentelemetry/api@1.8.0)(typescript@5.4.5)
-      '@vercel/kv':
-        specifier: ^1.0.1
-        version: 1.0.1
       dayjs:
         specifier: ^1.11.11
         version: 1.11.11
@@ -6875,6 +6872,7 @@ snapshots:
   '@upstash/redis@1.25.1':
     dependencies:
       crypto-js: 4.2.0
+    optional: true
 
   '@vercel/edge-config-fs@0.1.0': {}
 
@@ -6890,6 +6888,7 @@ snapshots:
   '@vercel/kv@1.0.1':
     dependencies:
       '@upstash/redis': 1.25.1
+    optional: true
 
   '@vercel/nft@0.26.5(encoding@0.1.13)':
     dependencies:
@@ -7643,7 +7642,8 @@ snapshots:
 
   crossws@0.2.4: {}
 
-  crypto-js@4.2.0: {}
+  crypto-js@4.2.0:
+    optional: true
 
   css-declaration-sorter@7.2.0(postcss@8.4.38):
     dependencies:
