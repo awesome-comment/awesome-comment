@@ -10,6 +10,14 @@ const isOpen = defineModel('isOpen', Boolean);
 const isNewPrompt = ref<boolean>(false);
 const isFork = ref<boolean>(false);
 const targetId = ref<string>('');
+const isAutoCopy = computed<boolean>({
+  get() {
+    return promptStore.isAutoCopy;
+  },
+  set(value: boolean) {
+    promptStore.setAutoCopy(value);
+  },
+});
 
 function doDelete(id: string) {
   if (!confirm('Are you sure you want to delete this prompt?')) return;
@@ -89,6 +97,17 @@ onMounted(() => {
         <i class="bi bi-plus-lg" />
         Add prompt
       </button>
+      <div class="form-control ms-4">
+        <label class="label cursor-pointer gap-2 py-0">
+          <input
+            v-model="isAutoCopy"
+            type="checkbox"
+            class="checkbox"
+            :class="{'checkbox-success': isAutoCopy}"
+          >
+          <span class="label-text">Auto copy</span>
+        </label>
+      </div>
       <button
         type="button"
         class="btn btn-xs btn-neutral ms-auto"

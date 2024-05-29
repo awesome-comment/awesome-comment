@@ -1,7 +1,10 @@
 <script setup lang="ts">
+import type { Comment, ResponseBody } from '@awesome-comment/core/types';
 import pickBy from 'lodash/pickBy';
 import usePromptStore from '~/store/prompt';
 import type { AiPromptTemplate } from '~/types';
+import { replaceTemplate } from '~/utils';
+import { sleep } from '@antfu/utils';
 
 type Props = {
   comment: Comment;
@@ -12,14 +15,34 @@ const promptStore = usePromptStore();
 
 const templateId = ref<string>('');
 const isUsingTemplate = ref<boolean>(false);
+const isLoading = ref<string>('');
+const isCopied = ref<string>('');
 const fixed = computed<Record<string, AiPromptTemplate>>(() => {
   return pickBy(promptStore.prompts, item => item.isFix);
 });
 const length = computed<number>(() => Object.keys(fixed.value).length);
 
-function doUse(id: string): void {
+async function doUse(id: string): Promise<void> {
   templateId.value = id;
-  isUsingTemplate.value = true;
+  if (!promptStore.isAutoCopy) {
+    isUsingTemplate.value = true;
+    return;
+  }
+
+  isLoading.value = id;
+  const item = promptStore.prompts[ id ];
+  if (!item) return;
+  let title = '';
+  if (item.template.includes('%TITLE%')) {
+    const res = await $fetch<ResponseBody<{ title: string }>>('/api/fetch-url?url=' + props.comment.postId);
+    title = res.data.title;
+  }
+  const replaced = replaceTemplate(item.template, props.comment, title);
+  await navigator.clipboard.writeText(replaced);
+  isLoading.value = '';
+  isCopied.value = id;
+  await sleep(1500);
+  isCopied.value = '';
 }
 </script>
 
@@ -32,9 +55,19 @@ function doUse(id: string): void {
       v-for="(template, id) in fixed"
       :key="id"
       type="button"
-      class="btn btn-xs btn-info btn-outline"
+      class="btn btn-xs btn-outline"
+      :class="isCopied ? 'btn-success' : 'btn-info'"
+      :disabled="!!isLoading"
       @click="doUse(id)"
     >
+      <span
+        v-if="isLoading === id"
+        class="loading loading-spinner w-3 h-3"
+      />
+      <i
+        v-if="isCopied"
+        class="bi bi-check"
+      />
       {{ template.title }}
     </button>
   </div>

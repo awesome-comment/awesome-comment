@@ -117,7 +117,7 @@ onMounted(async () => {
           id="prompt-text"
           ref="textarea"
           v-model="template"
-          class="textarea textarea-bordered"
+          class="textarea textarea-bordered h-screen max-h-60svh"
           required
           placeholder="Enter prompt template"
           rows="4"

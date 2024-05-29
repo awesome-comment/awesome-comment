@@ -24,6 +24,9 @@ export default {
       lineHeight: {
         16: '4rem',
       },
+      spacing: {
+        '60svh': '60svh',
+      },
       zIndex: {
         1: 1,
       },

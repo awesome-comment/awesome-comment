@@ -115,7 +115,7 @@ ui-modal(
   button-class="btn-info btn-sm sm:btn-xs text-white hover:text-white"
   modal-class="w-11/12 max-w-3xl"
   :disabled="isReplying"
-  title="Reply to"
+  :title="comment.postId"
   @close="onClose"
 )
   template(#button)
