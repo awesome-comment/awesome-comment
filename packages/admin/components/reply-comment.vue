@@ -36,6 +36,9 @@ async function doReply(event: Event): Promise<void> {
 
   isReplying.value = true;
   message.value = '';
+  const content = reply.value.trim();
+  if (!content) return;
+
   try {
     const accessToken = await auth0.getAccessTokenSilently();
     const { data } = await $fetch('/api/comment', {
@@ -45,7 +48,7 @@ async function doReply(event: Event): Promise<void> {
         Authorization: `Bearer ${accessToken}`,
       },
       body: {
-        comment: reply.value,
+        comment: content,
         postId: props.comment.postId,
         ancestorId: props.comment.ancestorId || props.comment.id,
         parentId: props.comment.id,
@@ -54,7 +57,7 @@ async function doReply(event: Event): Promise<void> {
     });
     emit('reply', {
       id: data.id,
-      content: reply.value,
+      content: content,
       postId: props.comment.postId,
       parentId: props.comment.id,
       ancestorId: props.comment.ancestorId || props.comment.id,

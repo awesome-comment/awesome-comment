@@ -4,7 +4,6 @@ import pickBy from 'lodash/pickBy';
 import usePromptStore from '~/store/prompt';
 import type { AiPromptTemplate } from '~/types';
 import { replaceTemplate } from '~/utils';
-import { sleep } from '@antfu/utils';
 
 type Props = {
   comment: Comment;
@@ -41,9 +40,15 @@ async function doUse(id: string): Promise<void> {
   await navigator.clipboard.writeText(replaced);
   isLoading.value = '';
   isCopied.value = id;
-  await sleep(1500);
-  isCopied.value = '';
+  promptStore.setRecentUsage(props.comment.postId, id);
 }
+
+onMounted(() => {
+  const promptId = promptStore.recentUsage[ props.comment.postId ];
+  if (promptId && fixed.value[ promptId ]) {
+    doUse(promptId);
+  }
+});
 </script>
 
 <template>
@@ -55,7 +60,7 @@ async function doUse(id: string): Promise<void> {
       v-for="(template, id) in fixed"
       :key="id"
       type="button"
-      class="btn btn-xs btn-outline"
+      class="btn btn-xs btn-outline text-white"
       :class="isCopied ? 'btn-success' : 'btn-info'"
       :disabled="!!isLoading"
       @click="doUse(id)"

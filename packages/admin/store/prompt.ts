@@ -2,10 +2,12 @@ import type { AiPromptTemplate } from '~/types';
 
 const LOCAL_KEY = 'ac-prompt-templates';
 const LOCAL_AUTO_COPY = 'ac-prompt-auto-copy';
+const LOCAL_RECENT = 'ac-recent-usage';
 
 const usePromptStore = defineStore('prompt', () => {
   let isInit = false;
   const prompts = ref<Record<string, AiPromptTemplate>>({});
+  const recentUsage = ref<Record<string, string>>({});
   const isAutoCopy = ref<boolean>(true);
   const length = computed(() => Object.keys(prompts.value).length);
 
@@ -31,6 +33,10 @@ const usePromptStore = defineStore('prompt', () => {
     isAutoCopy.value = value;
     localStorage.setItem(LOCAL_AUTO_COPY, String(value));
   }
+  function setRecentUsage(postId: string, promptId: string): void {
+    recentUsage.value[ postId ] = promptId;
+    localStorage.setItem(LOCAL_RECENT, JSON.stringify(recentUsage.value));
+  }
   function init(): void {
     if (isInit) return;
 
@@ -41,18 +47,24 @@ const usePromptStore = defineStore('prompt', () => {
     }
     const autoCopy = localStorage.getItem(LOCAL_AUTO_COPY);
     isAutoCopy.value = !autoCopy || autoCopy === '1';
+    const recent = localStorage.getItem(LOCAL_RECENT);
+    if (recent) {
+      recentUsage.value = JSON.parse(recent);
+    }
   }
 
   return {
     prompts,
     length,
     isAutoCopy,
+    recentUsage,
 
     setPrompt,
     setPromptProp,
     deletePrompt,
     importPrompts,
     setAutoCopy,
+    setRecentUsage,
     init,
   };
 });
