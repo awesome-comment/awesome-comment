@@ -20,3 +20,29 @@ export function replaceTemplate(template: string, comment: Comment, title: strin
     }
   });
 }
+
+export async function writeToClipboard(text: string): Promise<void> {
+  if (navigator.clipboard) {
+    try {
+      await navigator.clipboard.writeText(text);
+      return ;
+    } catch (e) {
+      // do nothing
+    }
+  }
+
+  // 回退到旧的方法
+  const textArea = document.createElement('textarea');
+  textArea.value = text;
+
+  // 防止元素影响页面布局
+  textArea.style.position = 'fixed';
+  textArea.style.top = '0';
+  textArea.style.left = '0';
+  document.body.appendChild(textArea);
+  textArea.focus();
+  textArea.select();
+
+  document.execCommand('copy');
+  document.body.removeChild(textArea);
+}

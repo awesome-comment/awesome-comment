@@ -1,4 +1,5 @@
 import type { AiPromptTemplate } from '~/types';
+import { isSafari } from '~/utils/ui';
 
 const LOCAL_KEY = 'ac-prompt-templates';
 const LOCAL_AUTO_COPY = 'ac-prompt-auto-copy';
@@ -8,8 +9,13 @@ const usePromptStore = defineStore('prompt', () => {
   let isInit = false;
   const prompts = ref<Record<string, AiPromptTemplate>>({});
   const recentUsage = ref<Record<string, string>>({});
-  const isAutoCopy = ref<boolean>(true);
+  const _isAutoCopy = ref<boolean>(true);
   const length = computed(() => Object.keys(prompts.value).length);
+  const isAutoCopy = computed<boolean>(() => {
+    if (process.client && isSafari()) return false;
+
+    return _isAutoCopy.value;
+  });
 
   function setPrompt(prompt: AiPromptTemplate, id?: string): string {
     id ||= crypto.randomUUID();
@@ -30,7 +36,7 @@ const usePromptStore = defineStore('prompt', () => {
     localStorage.setItem(LOCAL_KEY, JSON.stringify(prompts.value));
   }
   function setAutoCopy(value: boolean): void {
-    isAutoCopy.value = value;
+    _isAutoCopy.value = value;
     localStorage.setItem(LOCAL_AUTO_COPY, String(value));
   }
   function setRecentUsage(postId: string, promptId: string): void {
@@ -46,7 +52,7 @@ const usePromptStore = defineStore('prompt', () => {
       prompts.value = JSON.parse(localData);
     }
     const autoCopy = localStorage.getItem(LOCAL_AUTO_COPY);
-    isAutoCopy.value = !autoCopy || autoCopy === '1';
+    _isAutoCopy.value = !autoCopy || autoCopy === '1';
     const recent = localStorage.getItem(LOCAL_RECENT);
     if (recent) {
       recentUsage.value = JSON.parse(recent);

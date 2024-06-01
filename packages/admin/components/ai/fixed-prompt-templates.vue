@@ -3,7 +3,7 @@ import type { Comment, ResponseBody } from '@awesome-comment/core/types';
 import pickBy from 'lodash/pickBy';
 import usePromptStore from '~/store/prompt';
 import type { AiPromptTemplate } from '~/types';
-import { replaceTemplate } from '~/utils';
+import { replaceTemplate, writeToClipboard } from '~/utils';
 
 type Props = {
   comment: Comment;
@@ -37,15 +37,16 @@ async function doUse(id: string): Promise<void> {
     title = res.data.title;
   }
   const replaced = replaceTemplate(item.template, props.comment, title);
-  await navigator.clipboard.writeText(replaced);
+  await writeToClipboard(replaced);
   isLoading.value = '';
   isCopied.value = id;
   promptStore.setRecentUsage(props.comment.postId, id);
 }
 
-onMounted(() => {
+onMounted(async () => {
   const promptId = promptStore.recentUsage[ props.comment.postId ];
   if (promptId && fixed.value[ promptId ]) {
+    await nextTick();
     doUse(promptId);
   }
 });
@@ -61,7 +62,7 @@ onMounted(() => {
       :key="id"
       type="button"
       class="btn btn-xs btn-outline text-white"
-      :class="isCopied ? 'btn-success' : 'btn-info'"
+      :class="isCopied === id ? 'btn-success' : 'btn-info'"
       :disabled="!!isLoading"
       @click="doUse(id)"
     >
@@ -70,7 +71,7 @@ onMounted(() => {
         class="loading loading-spinner w-3 h-3"
       />
       <i
-        v-if="isCopied"
+        v-if="isCopied === id"
         class="bi bi-check"
       />
       {{ template.title }}

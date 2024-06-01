@@ -97,7 +97,10 @@ onMounted(() => {
         <i class="bi bi-plus-lg" />
         Add prompt
       </button>
-      <div class="form-control ms-4">
+      <div
+        v-if="!isSafari()"
+        class="form-control ms-4"
+      >
         <label class="label cursor-pointer gap-2 py-0">
           <input
             v-model="isAutoCopy"

@@ -8,3 +8,8 @@ export async function readFile(file: Blob): Promise<string> {
     reader.readAsText(file);
   });
 }
+
+export function isSafari(): boolean {
+  const userAgent = navigator.userAgent.toLowerCase();
+  return userAgent.includes('safari') && !userAgent.includes('chrome');
+}
