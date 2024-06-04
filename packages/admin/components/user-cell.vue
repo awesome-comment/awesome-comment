@@ -19,6 +19,7 @@ const from = computed(() => {
 });
 const filterLink = computed<string>(() => {
   const params = new URLSearchParams(props.filter);
+  params.set('status', 'all');
   params.set('user', props.userId);
   return '?' + params.toString();
 });

@@ -149,7 +149,7 @@ ui-modal(
 
       textarea.textarea.textarea-bordered(
         ref="textarea"
-        rows="6"
+        rows="16"
         v-model="reply"
         required
         @keydown="onKeydown"
