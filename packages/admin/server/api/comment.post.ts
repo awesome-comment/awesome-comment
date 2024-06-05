@@ -83,6 +83,8 @@ export default defineEventHandler(async function (event): Promise<PostResponse> 
           name: name || nickname,
           avatar: picture,
           ip,
+          agent: headers[ 'user-agent' ],
+          window: body.window || '',
         }),
         status,
       },

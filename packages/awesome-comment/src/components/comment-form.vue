@@ -70,6 +70,7 @@ async function doSubmit(event: Event): Promise<void> {
         ancestorId: props.ancestorId ? Number(props.ancestorId) : undefined,
         parentId: props.parentId ? Number(props.parentId) : undefined,
         status: props.status,
+        window: `${window.innerWidth}x${window.innerHeight}`,
       }),
     });
 
