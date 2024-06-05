@@ -1,5 +1,6 @@
 import type { Comment } from '@awesome-comment/core/types';
 import { ChineseLanguageName, LanguageName } from '~/data/lang';
+import type { UserAgentInfo } from '~/types';
 
 export function replaceTemplate(template: string, comment: Comment, title: string): string {
   const lang = comment?.postId.replace(/\/$/, '').split('/').pop();
@@ -45,4 +46,57 @@ export async function writeToClipboard(text: string): Promise<void> {
 
   document.execCommand('copy');
   document.body.removeChild(textArea);
+}
+
+export function parseUserAgent(userAgent: string): UserAgentInfo {
+  const result: UserAgentInfo = {
+    deviceType: '',
+    browser: '',
+    browserVersion: '',
+    os: '',
+    osVersion: ''
+  };
+
+  // Determine device type
+  const mobileRegex = /Mobile|Android|iP(ad|od|hone)/;
+  result.deviceType = mobileRegex.test(userAgent) ? 'Mobile / Tablet' : 'Desktop';
+
+  // Determine browser and browser version
+  const browserRegexes = [
+    { name: 'Edge', regex: /Edg\/([0-9.]+)/ },
+    { name: 'Chrome', regex: /Chrome\/([0-9.]+)/ },
+    { name: 'Firefox', regex: /Firefox\/([0-9.]+)/ },
+    { name: 'Safari', regex: /Version\/([0-9.]+).*Safari/ },
+    { name: 'Opera', regex: /OPR\/([0-9.]+)/ },
+    { name: 'Internet Explorer', regex: /MSIE ([0-9.]+)/ }
+  ];
+
+  for (const browser of browserRegexes) {
+    const match = userAgent.match(browser.regex);
+    if (match) {
+      result.browser = browser.name;
+      result.browserVersion = match[ 1 ];
+      break;
+    }
+  }
+
+  // Determine OS and OS version
+  const osRegexes = [
+    { name: 'Windows', regex: /Windows NT ([0-9.]+)/ },
+    { name: 'Mac OS', regex: /Mac OS X ([0-9_]+)/ },
+    { name: 'iOS', regex: /iP(hone|od|ad).*OS ([0-9_]+)/ },
+    { name: 'Android', regex: /Android ([0-9.]+)/ },
+    { name: 'Linux', regex: /Linux/ }
+  ];
+
+  for (const os of osRegexes) {
+    const match = userAgent.match(os.regex);
+    if (match) {
+      result.os = os.name;
+      result.osVersion = match[ 1 ]?.replace(/_/g, '.') || '';
+      break;
+    }
+  }
+
+  return result;
 }

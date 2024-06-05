@@ -5,7 +5,7 @@ import { isMac } from '@awesome-comment/core/utils';
 import { useAuth0 } from '@auth0/auth0-vue';
 import dayjs from 'dayjs';
 import keyBy from 'lodash-es/keyBy';
-import ReplyComment from '#components';
+import { ReplyComment } from '#components';
 
 type RowItem = Comment & {
   isApproving: boolean;
@@ -19,7 +19,7 @@ const postIdPrefix = __POST_ID_PREFIX__;
 const CSKeys = Object.values(CommentStatus).filter((v) => !isNaN(Number(v)));
 const auth0 = process.client ? useAuth0() : undefined;
 const route = useRoute();
-const replyComment = shallowRef<ReplyComment[]>();
+const replyComments = shallowRef<ReplyComment[]>();
 const tr = ref<HTMLTableRowElement[]>([]);
 
 const start = ref<number>(0);
@@ -413,7 +413,7 @@ header.flex.flex-col.mb-4.gap-4(class="sm:flex-row sm:items-center")
               span.loading.loading-xs.loading-spinner(v-if="comment.isApproving")
               template(v-else) Approve
             reply-comment(
-              ref="replyComment"
+              ref="replyComments"
               :comment="comment"
               @reply="onReply($event, comment)"
               @open="hasReplyModal = true"

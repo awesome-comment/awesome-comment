@@ -3,3 +3,11 @@ export type AiPromptTemplate = {
   template: string;
   isFix?: boolean;
 };
+
+export type UserAgentInfo = {
+  deviceType: string;
+  browser: string;
+  browserVersion: string;
+  os: string;
+  osVersion: string;
+}

@@ -11,14 +11,21 @@ export default defineEventHandler(async function (event: H3Event) {
     });
   }
 
-  const url = 'https://ap-northeast-1.data.tidbcloud.com/api/v1beta/app/dataapp-NFYbhmOK/endpoint/v1/cron/daily_stat';
   const kv = await getTidbKey();
-  const response = await digestFetch(url, {}, {
-    method: 'POST',
-    realm: 'tidb.cloud',
-    ...kv,
+  const URLs = [
+    'https://ap-northeast-1.data.tidbcloud.com/api/v1beta/app/dataapp-NFYbhmOK/endpoint/v1/cron/daily_stat',
+    'https://ap-northeast-1.data.tidbcloud.com/api/v1beta/app/dataapp-NFYbhmOK/endpoint/cron/daily_stat_by_user',
+  ];
+  const requests = URLs.map(async url => {
+    const response = await digestFetch(url, {}, {
+      method: 'POST',
+      realm: 'tidb.cloud',
+      ...kv,
+    });
+    const json = await response.json();
+    return [url, json.data.result.message];
   });
-  const json = await response.json();
-  console.log('[Cron] ', json.data.result.message);
+  const result = await Promise.all(requests);
+  console.log('[Cron] ', result);
   return 'ok';
 });

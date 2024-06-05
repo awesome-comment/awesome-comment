@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import type { User } from '@awesome-comment/core/types';
 import { isMac } from '@awesome-comment/core/utils';
+import type { UserAgentInfo } from '~/types';
+import { parseUserAgent } from '~/utils';
 
 type Props = {
   from: string;
@@ -23,6 +25,9 @@ const filterLink = computed<string>(() => {
   params.set('status', 'all');
   params.set('user', props.userId);
   return '?' + params.toString();
+});
+const agentInfo = computed<UserAgentInfo>(() => {
+  return parseUserAgent(props.user.agent);
 });
 
 function doSelectUser(event: MouseEvent): void {
@@ -60,4 +65,10 @@ function doSelectUser(event: MouseEvent): void {
         :class="'bi-' + from"
       )
       | {{ from }}
+    .text-xs.bg-base-200.px-2.py-1.border-l-2.border-neutral(v-if="user.agent") {{agentInfo.deviceType}}
+      br
+      | {{agentInfo.os}} {{agentInfo.osVersion}}
+      br
+      | {{agentInfo.browser}} {{agentInfo.browserVersion}}
+    .text-xs.bg-base-200.px-2.py-1.border-l-2.border-neutral(v-if="user.window") Resolution: {{user.window}}
 </template>

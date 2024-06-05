@@ -28,6 +28,8 @@ export type User = {
   email: string;
   sub: string;
   avatar: string;
+  agent?: string;
+  window?: string;
 }
 export type CommentUser = {
   avatar: string;
