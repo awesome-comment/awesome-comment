@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import type { Comment } from '@awesome-comment/core/types';
 import { CommentStatus, Languages } from '@awesome-comment/core/data';
+import { isMac } from '@awesome-comment/core/utils';
 import { useAuth0 } from '@auth0/auth0-vue';
 import dayjs from 'dayjs';
 import keyBy from 'lodash-es/keyBy';
-import ReplyComment from '~/components/reply-comment.vue';
+import ReplyComment from '#components';
 
 type RowItem = Comment & {
   isApproving: boolean;
@@ -157,7 +158,9 @@ function doLoadMore() {
   loadingMore.value = true;
   start.value += 20;
 }
-function doFilter(postId: string): void {
+function doFilter(postId: string, event: MouseEvent): void {
+  if (event && (isMac() ? event.metaKey : event.ctrlKey)) return;
+
   doReset();
   filterPostId.value = postId;
   updateUrl();
@@ -238,6 +241,11 @@ function updateUrl(): void {
 
 function formatTime(time: string): string {
   return dayjs.utc(time).local().format('YYYY-MM-DD HH:mm:ss');
+}
+function getUrl(postId: string): string {
+  const url = new URL(location.href);
+  url.searchParams.set('post_id', postId);
+  return url.toString();
 }
 
 onBeforeMount(() => {
@@ -381,9 +389,9 @@ header.flex.flex-col.mb-4.gap-4(class="sm:flex-row sm:items-center")
           time.text-xs(:datetime="comment.created_at") {{ formatTime(comment.created_at) }}
         td.align-top {{ comment.postId.replace(postIdPrefix, '') }}
           .flex.gap-2.mt-2
-            button.btn.btn-xs.btn-ghost(
-              type="button"
-              @click="doFilter(comment.postId)"
+            nuxt-link.btn.btn-xs.btn-ghost(
+              :to="getUrl(comment.postId)"
+              @click="doFilter(comment.postId, $event)"
             )
               i.bi.bi-funnel-fill
             nuxt-link.btn.btn-xs.btn-ghost(

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { User } from '@awesome-comment/core/types';
+import { isMac } from '@awesome-comment/core/utils';
 
 type Props = {
   from: string;
@@ -23,6 +24,12 @@ const filterLink = computed<string>(() => {
   params.set('user', props.userId);
   return '?' + params.toString();
 });
+
+function doSelectUser(event: MouseEvent): void {
+  if (isMac() ? event.metaKey : event.ctrlKey) return;
+
+  emit('select-user', props.userId);
+}
 </script>
 
 <template lang="pug">
@@ -37,7 +44,7 @@ const filterLink = computed<string>(() => {
     nuxt-link.truncate.underline.font-semibold.leading-none.mb-1(
       class="hover:no-underline"
       :to="filterLink"
-      @click="emit('select-user', props.userId)"
+      @click="doSelectUser"
     ) {{ user.name }}
     .text-xs.truncate {{ user.email }}
     .text-xs(v-if="user.ip")
