@@ -13,8 +13,8 @@ export default defineEventHandler(async function (event: H3Event) {
 
   const kv = await getTidbKey();
   const URLs = [
-    'https://ap-northeast-1.data.tidbcloud.com/api/v1beta/app/dataapp-NFYbhmOK/endpoint/v1/cron/daily_stat',
-    'https://ap-northeast-1.data.tidbcloud.com/api/v1beta/app/dataapp-NFYbhmOK/endpoint/cron/daily_stat_by_user',
+    process.env.TIDB_END_POINT + '/v1/cron/daily_stat',
+    process.env.TIDB_END_POINT + '/cron/daily_stat_by_user',
   ];
   const requests = URLs.map(async url => {
     const response = await digestFetch(url, {}, {

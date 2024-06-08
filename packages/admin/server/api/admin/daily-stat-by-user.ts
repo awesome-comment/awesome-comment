@@ -15,7 +15,7 @@ export default defineEventHandler(async function (event): Promise<ResponseBody<S
   params.set('end', end as string);
   try {
     const kv = await getTidbKey();
-    const url = process.env.TIDB_END_POINT + '/v1/daily_stat';
+    const url = process.env.TIDB_END_POINT + '/v1/daily_stat_by_user';
     const response = await digestFetch(`${url}?${params}`, null, {
       method: 'GET',
       realm: 'tidb.cloud',

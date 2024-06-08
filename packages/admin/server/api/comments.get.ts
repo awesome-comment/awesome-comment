@@ -38,7 +38,7 @@ export default defineCachedEventHandler(async function (event): Promise<Response
   params.set('start', start.toString());
   const kv = await getTidbKey();
   try {
-    const url = 'https://ap-northeast-1.data.tidbcloud.com/api/v1beta/app/dataapp-NFYbhmOK/endpoint/v1/get';
+    const url = process.env.TIDB_END_POINT + '/v1/get';
     const response = await digestFetch(`${url}?${params}`, null, {
       method: 'GET',
       realm: 'tidb.cloud',
@@ -61,7 +61,7 @@ export default defineCachedEventHandler(async function (event): Promise<Response
     });
   }
   try {
-    const url = 'https://ap-northeast-1.data.tidbcloud.com/api/v1beta/app/dataapp-NFYbhmOK/endpoint/v1/count';
+    const url = process.env.TIDB_END_POINT + '/v1/count';
     const response = await digestFetch(`${url}?${params}`, null, {
       method: 'GET',
       realm: 'tidb.cloud',

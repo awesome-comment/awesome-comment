@@ -14,7 +14,7 @@ export default defineEventHandler(async function (event): Promise<ResponseBody<n
 
   let num = 0;
   try {
-    const url = 'https://ap-northeast-1.data.tidbcloud.com/api/v1beta/app/dataapp-NFYbhmOK/endpoint/v1/count';
+    const url = process.env.TIDB_END_POINT + '/v1/count';
     const params = new URLSearchParams();
     params.set('post_id', postId as string);
     const kv = await getTidbKey();

@@ -50,7 +50,7 @@ export default defineEventHandler(async function (event): Promise<ResponseBody<s
   }
 
   // user can only modify their own comments
-  const url = 'https://ap-northeast-1.data.tidbcloud.com/api/v1beta/app/dataapp-NFYbhmOK/endpoint/v1/patch';
+  const url = process.env.TIDB_END_POINT + '/v1/patch';
   try {
     const kv = await getTidbKey();
     await digestFetch(url,

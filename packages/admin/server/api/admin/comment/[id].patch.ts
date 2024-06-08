@@ -28,8 +28,8 @@ export default defineEventHandler(async function (event): Promise<ResponseBody<s
   }
 
   const url = body.content
-    ? 'https://ap-northeast-1.data.tidbcloud.com/api/v1beta/app/dataapp-NFYbhmOK/endpoint/v1/moderator/patch'
-    : 'https://ap-northeast-1.data.tidbcloud.com/api/v1beta/app/dataapp-NFYbhmOK/endpoint/v1/moderator/review';
+    ? process.env.TIDB_END_POINT + '/v1/moderator/patch'
+    : process.env.TIDB_END_POINT + '/v1/moderator/review';
   try {
     const kv = await getTidbKey();
     await digestFetch(url,

@@ -92,7 +92,7 @@ export function getConfigKey(): string {
 
 export async function getUserComments(userId: string): Promise<ResponseComment[]> {
   const data: ResponseComment[] = [];
-  const url = 'https://ap-northeast-1.data.tidbcloud.com/api/v1beta/app/dataapp-NFYbhmOK/endpoint/v1/user';
+  const url = process.env.TIDB_END_POINT + '/v1/user';
   const params = new URLSearchParams();
   params.set('user_id', userId as string);
   params.set('start', '0');
