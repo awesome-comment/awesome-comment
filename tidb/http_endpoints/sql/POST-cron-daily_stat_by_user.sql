@@ -1,12 +1,17 @@
 USE arealme;
 
-INSERT INTO ac_comment_daily_stat_by_user (stat_date, total, user_id)
+INSERT INTO ac_comment_daily_stat_by_user 
+    (stat_date, total, posts, user_id, user_info)
 SELECT
-    CURDATE(),
+    CURDATE() as stat_date,
     COUNT(*) AS total,
-    user_id
+    COUNT(DISTINCT post_id) as posts,
+    user_id,
+    MAX(user) as user_info
 FROM ac_comment
 WHERE
     deleted_at IS NULL
+    AND status=1
+    AND created_at >= CURDATE() - INTERVAL 30 DAY
 GROUP BY
     user_id;
