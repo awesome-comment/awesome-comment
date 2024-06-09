@@ -73,7 +73,15 @@ export type StatDailyByLanguage = {
 }
 
 export type StatDailyByUser = {
-  date: string;
+  from: string;
+  stat_date: string;
   user_id: string;
   total: number;
+  posts: number;
+  user_info: string;
+  userInfo: {
+    avatar: string;
+    email: string;
+    name: string;
+  };
 }

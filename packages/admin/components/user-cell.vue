@@ -8,9 +8,15 @@ type Props = {
   from: string;
   user: User;
   userId: string;
-  filter: URLSearchParams;
+  prefix?: string;
+  filter?: URLSearchParams;
 };
-const props = defineProps<Props>();
+const props = withDefaults(defineProps<Props>(), {
+  prefix: '',
+  filter() {
+    return new URLSearchParams();
+  },
+});
 type Emits = {
   (event: 'select-user', userId: string): void;
 }
@@ -24,7 +30,7 @@ const filterLink = computed<string>(() => {
   const params = new URLSearchParams(props.filter);
   params.set('status', 'all');
   params.set('user', props.userId);
-  return '?' + params.toString();
+  return `${props.prefix}?${params.toString()}`;
 });
 const agentInfo = computed<UserAgentInfo>(() => {
   return parseUserAgent(props.user.agent);
