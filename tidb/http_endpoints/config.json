@@ -650,17 +650,17 @@
     },
     "params": [
       {
-        "name": "start",
+        "name": "date",
         "type": "string",
         "required": 1,
         "default": "",
         "description": ""
       },
       {
-        "name": "end",
-        "type": "string",
-        "required": 1,
-        "default": "",
+        "name": "start",
+        "type": "integer",
+        "required": 0,
+        "default": "0",
         "description": ""
       }
     ],
