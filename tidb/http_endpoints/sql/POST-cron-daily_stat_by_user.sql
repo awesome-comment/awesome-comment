@@ -7,7 +7,11 @@ SELECT
     COUNT(*) AS total,
     COUNT(DISTINCT post_id) as posts,
     user_id,
-    MAX(user) as user_info
+    JSON_OBJECT(
+        'avatar', JSON_UNQUOTE(JSON_EXTRACT(MAX(user), '$.avatar')),
+        'email', JSON_UNQUOTE(JSON_EXTRACT(MAX(user), '$.email')),
+        'name', JSON_UNQUOTE(JSON_EXTRACT(MAX(user), '$.name'))
+    ) AS user_info
 FROM ac_comment
 WHERE
     deleted_at IS NULL
