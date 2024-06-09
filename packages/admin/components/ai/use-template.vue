@@ -3,7 +3,7 @@ import type { Comment, ResponseBody } from '@awesome-comment/core/types';
 import type { UiModal } from '#components';
 import usePromptStore from '~/store/prompt';
 import type { AiPromptTemplate } from '~/types';
-import { ChineseLanguageName, LanguageName } from '~/data/lang';
+import { LocalLanguageName, LanguageName } from '~/data/lang';
 import { sleep } from '@antfu/utils';
 import { replaceTemplate } from '~/utils';
 

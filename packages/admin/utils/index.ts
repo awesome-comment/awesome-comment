@@ -1,5 +1,5 @@
 import type { Comment } from '@awesome-comment/core/types';
-import { ChineseLanguageName, LanguageName } from '~/data/lang';
+import { LocalLanguageName, LanguageName } from '~/data/lang';
 import type { UserAgentInfo } from '~/types';
 
 export function replaceTemplate(template: string, comment: Comment, title: string): string {
@@ -9,7 +9,7 @@ export function replaceTemplate(template: string, comment: Comment, title: strin
       case 'TITLE':
         return title;
       case 'LANG_LOCAL':
-        return ChineseLanguageName[ lang ] ?? '';
+        return LocalLanguageName[ lang ] ?? '';
       case 'LANG_EN':
         return LanguageName[ lang ] ?? '';
       case 'USERNAME':
