@@ -68,7 +68,7 @@ export default defineEventHandler(async function (event): Promise<PostResponse> 
     || '';
   let id: number | null = null;
   try {
-    const url = 'https://ap-northeast-1.data.tidbcloud.com/api/v1beta/app/dataapp-NFYbhmOK/endpoint/v1/post';
+    const url = process.env.TIDB_END_POINT + '/v1/post';
     const kv = await getTidbKey();
     const response = await digestFetch(
       url,
@@ -106,7 +106,7 @@ export default defineEventHandler(async function (event): Promise<PostResponse> 
 
   // if admin reply, update parent_id to be approved
   if (config.adminEmails.includes(email) && body.parentId && body.status === CommentStatus.Pending) {
-    const url = 'https://ap-northeast-1.data.tidbcloud.com/api/v1beta/app/dataapp-NFYbhmOK/endpoint/v1/moderator/review';
+    const url = process.env.TIDB_END_POINT + '/v1/moderator/review';
     const kv = await getTidbKey();
     await digestFetch(url,
       {

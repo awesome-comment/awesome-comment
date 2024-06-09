@@ -16,6 +16,11 @@ const links = [
     path: 'daily-stat-by-lang',
   },
   {
+    label: 'Daily Stat by User',
+    icon: 'person-fill',
+    path: 'daily-stat-by-user',
+  },
+  {
     label: 'Settings',
     icon: 'gear-fill',
     path: 'settings',
@@ -38,7 +43,7 @@ definePageMeta({
 </script>
 
 <template lang="pug">
-.container.mx-auto.flex.flex-col.p-4.gap-4(class="xl:flex-row sm:px-0 sm:py-8")
+.container.mx-auto.flex.flex-col.p-4.gap-4(class="xl:flex-row sm:py-8")
   aside.w-auto.flex-none(class="xl:w-64")
     ul.menu.menu-horizontal.bg-base-200.rounded-box(class="xl:menu-vertical")
       li(

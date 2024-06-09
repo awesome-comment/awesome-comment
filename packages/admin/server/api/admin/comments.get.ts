@@ -15,7 +15,7 @@ export default defineEventHandler(async function (event): Promise<ResponseBody<C
 
   const data: Comment[] = [];
   try {
-    let url = 'https://ap-northeast-1.data.tidbcloud.com/api/v1beta/app/dataapp-NFYbhmOK/endpoint/v3/moderator/get';
+    let url = process.env.TIDB_END_POINT + '/v3/moderator/get';
     const params = new URLSearchParams();
     params.set('start', start as string);
     params.set('emails', event.context.config.adminEmails);
@@ -25,11 +25,11 @@ export default defineEventHandler(async function (event): Promise<ResponseBody<C
     if (status) {
       switch (Number(status)) {
         case CommentStatus.UnReplied:
-          url = 'https://ap-northeast-1.data.tidbcloud.com/api/v1beta/app/dataapp-NFYbhmOK/endpoint/v3/moderator/uncommented';
+          url = process.env.TIDB_END_POINT + '/v3/moderator/uncommented';
           break;
 
         case CommentStatus[ 'Replied to Admin' ]:
-          url = 'https://ap-northeast-1.data.tidbcloud.com/api/v1beta/app/dataapp-NFYbhmOK/endpoint/v3/moderator/reply_admin';
+          url = process.env.TIDB_END_POINT + '/v3/moderator/reply_admin';
           break;
 
         default:

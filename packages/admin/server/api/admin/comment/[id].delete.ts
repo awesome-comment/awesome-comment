@@ -14,7 +14,7 @@ export default defineEventHandler(async function (event): Promise<ResponseBody<s
   }
 
   try {
-    const url = 'https://ap-northeast-1.data.tidbcloud.com/api/v1beta/app/dataapp-NFYbhmOK/endpoint/v1/moderator/delete';
+    const url = process.env.TIDB_END_POINT + '/v1/moderator/delete';
     const kv = await getTidbKey();
     const response = await digestFetch(url,
       {

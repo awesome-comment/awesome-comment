@@ -12,7 +12,7 @@ export default defineEventHandler(async function (event): Promise<ResponseBody<P
   let total = 0;
   const kv = await getTidbKey();
   try {
-    const url = 'https://ap-northeast-1.data.tidbcloud.com/api/v1beta/app/dataapp-NFYbhmOK/endpoint/v1/moderator/count_post';
+    const url = process.env.TIDB_END_POINT + '/v1/moderator/count_post';
     const response = await digestFetch(url, null, {
       method: 'GET',
       realm: 'tidb.cloud',
@@ -29,7 +29,7 @@ export default defineEventHandler(async function (event): Promise<ResponseBody<P
   }
 
   try {
-    const url = 'https://ap-northeast-1.data.tidbcloud.com/api/v1beta/app/dataapp-NFYbhmOK/endpoint/v1/moderator/by_post';
+    const url = process.env.TIDB_END_POINT + '/v1/moderator/by_post';
     const params = new URLSearchParams();
     params.set('start', start as string);
     const response = await digestFetch(`${url}?${params}`, null, {
