@@ -1,6 +1,6 @@
 {
   "name": "@awesome-comment/admin",
-  "version": "0.10.1",
+  "version": "0.10.2",
   "private": true,
   "scripts": {
     "build": "nuxt build",
@@ -19,7 +19,7 @@
     "daisyui": "^4.12.2",
     "postcss": "^8.4.38",
     "pug": "^3.0.3",
-    "tailwindcss": "^3.4.3"
+    "tailwindcss": "^3.4.4"
   },
   "type": "module",
   "dependencies": {
@@ -28,14 +28,14 @@
     "@iconify-json/bi": "^1.1.23",
     "@meathill/digest-fetch": "^0.1.4",
     "@nuxt/content": "^2.12.1",
-    "@nuxt/ui": "^2.16.0",
-    "@vercel/edge-config": "^1.1.1",
+    "@nuxt/ui": "^2.17.0",
+    "@vercel/edge-config": "^1.2.0",
     "dayjs": "^1.11.11",
     "dayjs-nuxt": "^2.1.9",
     "lodash-es": "^4.17.21",
-    "nuxt": "^3.11.2",
+    "nuxt": "^3.12.2",
     "pinia": "^2.1.7",
     "v-calendar": "^3.1.2",
-    "vue": "^3.4.27"
+    "vue": "^3.4.29"
   }
 }

@@ -159,7 +159,13 @@ function doLoadMore() {
   start.value += 20;
 }
 function doFilter(postId: string, event: MouseEvent): void {
-  if (event && (isMac() ? event.metaKey : event.ctrlKey)) return;
+  if (event && (isMac() ? event.metaKey : event.ctrlKey)) {
+    const target = (event.currentTarget as HTMLLinkElement);
+    const url = new URL(target.href);
+    url.searchParams.delete('user');
+    target.href = url.toString();
+    return;
+  }
 
   doReset();
   filterPostId.value = postId;
