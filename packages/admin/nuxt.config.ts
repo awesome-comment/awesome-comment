@@ -4,6 +4,7 @@ import acPkg from '../awesome-comment/package.json' assert { type: 'json' };
 const repoUrl = 'https://unpkg.com/@roudanio/awesome-comment@latest/dist'; // use online ver for now
 const modules = [
   '@nuxt/content',
+  '@nuxt/image',
   [
     '@pinia/nuxt',
     {
