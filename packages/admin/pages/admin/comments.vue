@@ -158,15 +158,7 @@ function doLoadMore() {
   loadingMore.value = true;
   start.value += 20;
 }
-function doFilter(postId: string, event: MouseEvent): void {
-  if (event && (isMac() ? event.metaKey : event.ctrlKey)) {
-    const target = (event.currentTarget as HTMLLinkElement);
-    const url = new URL(target.href);
-    url.searchParams.delete('user');
-    target.href = url.toString();
-    return;
-  }
-
+function doFilter(postId: string): void {
   doReset();
   filterPostId.value = postId;
   updateUrl();
@@ -248,7 +240,13 @@ function updateUrl(): void {
 function formatTime(time: string): string {
   return dayjs.utc(time).local().format('YYYY-MM-DD HH:mm:ss');
 }
-function getUrl(postId: string): string {
+function getUrl(postId: string, only = false): string {
+  if (only) {
+    const params = new URLSearchParams();
+    params.set('post_id', postId);
+    return `?${params.toString()}`;
+  }
+
   const url = new URL(location.href);
   url.searchParams.set('post_id', postId);
   return url.toString();
@@ -389,17 +387,22 @@ header.flex.flex-col.mb-4.gap-4(class="sm:flex-row sm:items-center")
             :user="comment.user"
             :user-id="comment.user_id"
             :from="comment.from"
-            @select-user="doFilterByUser"
           )
         td.align-top
           time.text-xs(:datetime="comment.created_at") {{ formatTime(comment.created_at) }}
         td.align-top {{ comment.postId.replace(postIdPrefix, '') }}
           .flex.gap-2.mt-2
-            nuxt-link.btn.btn-xs.btn-ghost(
-              :to="getUrl(comment.postId)"
-              @click="doFilter(comment.postId, $event)"
-            )
-              i.bi.bi-funnel-fill
+            context-menu-dropdown
+              nuxt-link.btn.btn-xs.btn-ghost(
+                :to="getUrl(comment.postId)"
+              )
+                i.bi.bi-funnel-fill
+
+              template(#menu)
+                li
+                  nuxt-link(
+                    :to="getUrl(comment.postId, true)"
+                  ) Filter by post
             nuxt-link.btn.btn-xs.btn-ghost(
               target="_blank"
               external

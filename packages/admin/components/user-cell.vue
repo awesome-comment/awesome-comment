@@ -26,55 +26,100 @@ const from = computed(() => {
   if (props.from.includes('google')) return 'google';
   return props.from;
 });
-const filterLink = computed<string>(() => {
+const toLink = computed<string>(() => {
   const params = new URLSearchParams(props.filter);
-  params.set('status', 'all');
   params.set('user', props.userId);
+  return `${props.prefix}?${params.toString()}`;
+});
+const userLink = computed<string>(() => {
+  const params = new URLSearchParams();
+  params.set('user', props.userId);
+  params.set('status', 'all');
   return `${props.prefix}?${params.toString()}`;
 });
 const agentInfo = computed<UserAgentInfo>(() => {
   return parseUserAgent(props.user.agent);
 });
-
-function doSelectUser(event: MouseEvent): void {
-  if (isMac() ? event.metaKey : event.ctrlKey) return;
-
-  emit('select-user', props.userId);
-}
 </script>
 
-<template lang="pug">
-.flex.gap-2.items-start
-  .avatar(v-if="user.avatar")
-    .w-8.rounded
-      img(:src="user.avatar" alt="avatar")
-  .avatar.placeholder(v-else-if="user.name")
-    .bg-neutral-focus.text-neutral-content.rounded-full.w-8
-      span.text-xs.uppercase {{ user.name[0] }}
-  .flex.flex-col.gap-1.w-40
-    nuxt-link.truncate.underline.font-semibold.leading-none.mb-1(
-      class="hover:no-underline"
-      :to="filterLink"
-      @click="doSelectUser"
-    ) {{ user.name }}
-    .text-xs.truncate {{ user.email }}
-    .text-xs(v-if="user.ip")
-      nuxt-link.link(
-        class="hover:no-underline"
-        target="_blank"
-        external
-        :to="`https://clients1.google.co.in/url?sa=i&url=https://www.ipshudi.com/${user.ip}.htm`"
-      ) {{ user.ip }}
-    .text-xs.capitalize
-      i.bi.me-1(
-        v-if="from !== 'auth0'"
-        :class="'bi-' + from"
-      )
-      | {{ from }}
-    .text-xs.bg-base-200.px-2.py-1.border-l-2.border-neutral(v-if="user.agent") {{agentInfo.deviceType}}
-      br
-      | {{agentInfo.os}} {{agentInfo.osVersion}}
-      br
-      | {{agentInfo.browser}} {{agentInfo.browserVersion}}
-    .text-xs.bg-base-200.px-2.py-1.border-l-2.border-neutral(v-if="user.window") Resolution: {{user.window}}
+<template>
+  <div class="flex gap-2 items-start">
+    <div
+      v-if="user.avatar"
+      class="avatar"
+    >
+      <div class="w-8 rounded">
+        <img
+          :src="user.avatar"
+          alt="avatar"
+        >
+      </div>
+    </div>
+    <div
+      v-else-if="user.name"
+      class="avatar placeholder"
+    >
+      <div class="bg-neutral-focus text-neutral-content rounded-full w-8">
+        <span class="text-xs uppercase">{{
+          user.name[0]
+        }}</span>
+      </div>
+    </div>
+    <div class="flex flex-col gap-1 w-40">
+      <context-menu-dropdown>
+        <nuxt-link
+          :to="toLink"
+          class="truncate underline font-semibold leading-none mb-1 hover:no-underline"
+        >
+          {{ user.name }}
+        </nuxt-link>
+
+        <template #menu>
+          <li>
+            <nuxt-link
+              :to="userLink"
+            >Filter by user</nuxt-link>
+          </li>
+        </template>
+      </context-menu-dropdown>
+
+      <div class="text-xs truncate">
+        {{ user.email }}
+      </div>
+      <div
+        v-if="user.ip"
+        class="text-xs"
+      >
+        <nuxt-link
+          :to="`https://clients1.google.co.in/url?sa=i&url=https://www.ipshudi.com/${user.ip}.htm`"
+          class="link hover:no-underline"
+          external="external"
+          target="_blank"
+        >
+          {{ user.ip }}
+        </nuxt-link>
+      </div>
+      <div class="text-xs capitalize">
+        <i
+          v-if="from !== 'auth0'"
+          :class="'bi-' + from"
+          class="bi me-1"
+        />{{ from }}
+      </div>
+      <div
+        v-if="user.agent"
+        class="text-xs bg-base-200 px-2 py-1 border-l-2 border-neutral"
+      >
+        {{ agentInfo.deviceType }}<br>{{ agentInfo.os }} {{ agentInfo.osVersion }}<br>{{ agentInfo.browser }}
+        {{ agentInfo.browserVersion }}
+      </div>
+      <div
+        v-if="user.window"
+        class="text-xs bg-base-200 px-2 py-1 border-l-2 border-neutral"
+      >
+        Resolution:
+        {{ user.window }}
+      </div>
+    </div>
+  </div>
 </template>
