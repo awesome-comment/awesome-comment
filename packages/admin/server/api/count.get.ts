@@ -2,7 +2,7 @@ import digestFetch, { FetchError } from '@meathill/digest-fetch';
 import { ResponseBody } from '@awesome-comment/core/types';
 import { getTidbKey } from '~/server/utils/tidb';
 
-export default defineEventHandler(async function (event): Promise<ResponseBody<number>> {
+export default defineCachedEventHandler(async function (event): Promise<ResponseBody<number>> {
   const query = getQuery(event);
   const { postId } = query;
   if (!postId) {
@@ -37,4 +37,4 @@ export default defineEventHandler(async function (event): Promise<ResponseBody<n
     code: 0,
     data: num,
   };
-});
+}, { maxAge: 60 * 20 });

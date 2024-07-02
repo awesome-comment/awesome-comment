@@ -86,4 +86,4 @@ export default defineCachedEventHandler(async function (event): Promise<Response
       total,
     },
   };
-}, { maxAge: 60 * 15 });
+}, { maxAge: 60 * 20 });
