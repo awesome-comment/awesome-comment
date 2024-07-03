@@ -11,13 +11,13 @@
     {
       "source": "/api/comments",
       "headers": [
-        {"key": "Cache-Control", "value": "public, max-age=1200, s-maxage=1200, stale-while-revalidate=600"}
+        {"key": "Cache-Control", "value": "s-maxage=1200, stale-while-revalidate=600"}
       ]
     },
     {
       "source": "/api/count",
       "headers": [
-        {"key": "Cache-Control", "value": "public, max-age=1200, s-maxage=1200, stale-while-revalidate=600"}
+        {"key": "Cache-Control", "value": "s-maxage=1200, stale-while-revalidate=600"}
       ]
     }
   ],
