@@ -33,7 +33,6 @@ export default defineCachedEventHandler(async function (event): Promise<Response
     });
   }
 
-  setResponseHeader(event, 'Vercel-CDN-Cache-Control', 'max-age=1200');
   return {
     code: 0,
     data: num,

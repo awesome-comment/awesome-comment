@@ -78,8 +78,6 @@ export default defineCachedEventHandler(async function (event): Promise<Response
   }
 
   await storage.setItem(key, { data, total });
-
-  setResponseHeader(event, 'Vercel-CDN-Cache-Control', 'max-age=1200');
   return {
     code: 0,
     data,
