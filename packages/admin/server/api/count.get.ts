@@ -33,7 +33,7 @@ export default defineEventHandler(async function (event): Promise<ResponseBody<n
     });
   }
 
-  setHeader(event, 'Cache-Control', 'public, s-maxage=1200');
+  setHeader(event, 'Cache-Control', 'public, s-maxage=1200, max-age=1200');
   return {
     code: 0,
     data: num,
