@@ -78,7 +78,9 @@ const agentInfo = computed<UserAgentInfo>(() => {
           <li>
             <nuxt-link
               :to="userLink"
-            >Filter by user</nuxt-link>
+            >
+              Filter by user
+            </nuxt-link>
           </li>
         </template>
       </context-menu-dropdown>

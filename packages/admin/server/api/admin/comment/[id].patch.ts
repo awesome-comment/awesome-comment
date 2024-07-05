@@ -54,9 +54,8 @@ export default defineEventHandler(async function (event): Promise<ResponseBody<s
 
   // clear cache
   if (body.status === CommentStatus.Approved && body.postId) {
-    const storage = useStorage('data');
     const key = getCacheKey(body.postId);
-    await clearCache(storage, key);
+    await clearCache(key);
   }
 
   return {

@@ -11,7 +11,7 @@ export default defineNuxtConfig({
       link: [
         {
           rel: 'stylesheet',
-          href: 'https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css',
+          href: 'https://unpkg.com/bootstrap-icons@1.11.3/font/bootstrap-icons.css',
         },
         {
           rel: 'stylesheet',
@@ -26,6 +26,7 @@ export default defineNuxtConfig({
       ],
     },
   },
+  compatibilityDate: '2024-07-06',
   css: [
     '~/assets/css/main.css',
   ],
@@ -42,15 +43,7 @@ export default defineNuxtConfig({
     'dayjs-nuxt',
   ],
   nitro: {
-    storage: {
-      data: {
-        driver: 'redis',
-        host: process.env.UPSTASH_REDIS_HOST,
-        tls: !!process.env.UPSATSH_REDIS_TLS,
-        port: process.env.UPSTASH_REDIS_PORT,
-        password: process.env.UPSTASH_REDIS_PASSWORD,
-      },
-    },
+    preset: 'cloudflare-pages',
   },
   postcss: {
     plugins: {

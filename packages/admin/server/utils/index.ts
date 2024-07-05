@@ -1,14 +1,17 @@
 import { H3Event } from 'h3';
-import type { Storage } from 'unstorage';
 import type { AcConfig, Comment, ResponseComment, User } from '@awesome-comment/core/types';
 import { CommentStatus, MarkdownLinkRegex } from '@awesome-comment/core/data';
 import digestFetch from '@meathill/digest-fetch';
 import { getTidbKey } from './tidb';
+import { Redis } from '@upstash/redis/cloudflare';
 
-export async function getConfig(): Promise<AcConfig> {
-  const storage = useStorage('data');
+export async function getConfig(redis?: Redis): Promise<AcConfig> {
+  redis = redis || new Redis({
+    url: process.env.UPSTASH_REDIS_REST_URL as string,
+    token: process.env.UPSTASH_REDIS_REST_TOKEN as string,
+  });
   const key = getConfigKey();
-  return (await storage.getItem(key)) as AcConfig;
+  return (await redis.get(key)) as AcConfig;
 }
 
 export async function checkUserPermission(event: H3Event): Promise<[User, AcConfig] | void> {
@@ -56,9 +59,12 @@ export async function checkUserPermission(event: H3Event): Promise<[User, AcConf
 
 export async function getUser(accessToken: string, domain?: string): Promise<User> {
   domain ??= process.env.AUTH0_DOMAIN || '';
-  const store = useStorage('data');
+  const redis = new Redis({
+    url: process.env.UPSTASH_REDIS_REST_URL as string,
+    token: process.env.UPSTASH_REDIS_REST_TOKEN as string,
+  });
   const key = `user-${domain}-${accessToken}`;
-  const cached = await store.getItem(key);
+  const cached = await redis.get(key);
   if (cached) {
     return cached as User;
   }
@@ -182,10 +188,14 @@ export function isAutoApprove(
     && history.filter(c => Number(c.status) === CommentStatus.Approved).length >= 2;
 }
 
-export async function clearCache(storage: Storage, key: string): Promise<void> {
-  const keys = await storage.getKeys(key);
-  await storage.removeItem(key);
-  for (const key of keys) {
-    await storage.removeItem(key);
-  }
+export async function clearCache(key: string): Promise<void> {
+  const redis = new Redis({
+    url: process.env.UPSTASH_REDIS_REST_URL as string,
+    token: process.env.UPSTASH_REDIS_REST_TOKEN as string,
+  });
+  const keys = await redis.scan(0, {
+    match: key + '*',
+    count: 100,
+  });
+  await redis.del(...keys[ 1 ]);
 }
