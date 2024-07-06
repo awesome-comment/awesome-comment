@@ -82,8 +82,8 @@ export async function getUser(accessToken: string, domain?: string): Promise<Use
     throw new Error(`${response.status} ${response.statusText}`);
   }
   const user = (await response.json()) as User;
-  await store.setItem(key, user, {
-    ttl: 60 * 60,
+  await redis.set(key, user, {
+    ex: 60 * 60,
   });
   return user;
 }
