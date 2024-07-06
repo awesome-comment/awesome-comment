@@ -1,7 +1,5 @@
-import digestFetch, { FetchError } from '@meathill/digest-fetch';
 import { Comment, ResponseBody } from '@awesome-comment/core/types';
 import { CommentStatus } from '@awesome-comment/core/data';
-import { getTidbKey } from '~/server/utils/tidb';
 
 export default defineEventHandler(async function (event): Promise<ResponseBody<Comment[]>> {
   const query = getQuery(event);
@@ -14,6 +12,7 @@ export default defineEventHandler(async function (event): Promise<ResponseBody<C
   } = query;
 
   const data: Comment[] = [];
+  const encodedCredentials = btoa(`${process.env.TIDB_PUBLIC_KEY}:${process.env.TIDB_PRIVATE_KEY}`);
   try {
     let url = process.env.TIDB_END_POINT + '/v3/moderator/get';
     const params = new URLSearchParams();
@@ -43,18 +42,18 @@ export default defineEventHandler(async function (event): Promise<ResponseBody<C
     if (user) {
       params.set('user_id', user as string);
     }
-    const kv = await getTidbKey();
-    const response = await digestFetch(`${url}?${params}`, null, {
+    const response = await fetch(`${url}?${params}`, {
       method: 'GET',
-      realm: 'tidb.cloud',
-      ...kv,
+      headers: {
+        'Authorization': `Basic ${encodedCredentials}`,
+      },
     });
     const result = await response.json();
     data.push(...result.data.rows);
   } catch (e) {
     const message = (e as Error).message || String(e);
     throw createError({
-      statusCode: (e as FetchError).status,
+      statusCode: 400,
       message,
     });
   }

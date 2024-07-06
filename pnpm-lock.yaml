@@ -38,9 +38,6 @@ importers:
       '@iconify-json/bi':
         specifier: ^1.1.23
         version: 1.1.23
-      '@meathill/digest-fetch':
-        specifier: ^0.1.4
-        version: 0.1.4
       '@nuxt/content':
         specifier: ^2.13.1
         version: 2.13.1(@upstash/redis@1.32.0)(@vercel/kv@1.0.1)(ioredis@5.4.1)(magicast@0.3.4)(nuxt@3.12.3(@parcel/watcher@2.4.1)(@types/node@20.14.9)(@upstash/redis@1.32.0)(@vercel/kv@1.0.1)(encoding@0.1.13)(eslint@8.57.0)(ioredis@5.4.1)(magicast@0.3.4)(optionator@0.9.4)(rollup@4.18.0)(terser@5.31.1)(typescript@5.4.5)(vite@5.3.3(@types/node@20.14.9)(terser@5.31.1))(vue-tsc@2.0.19(typescript@5.4.5)))(rollup@4.18.0)(vue@3.4.31(typescript@5.4.5))
@@ -967,10 +964,6 @@ packages:
   '@mapbox/node-pre-gyp@1.0.11':
     resolution: {integrity: sha512-Yhlar6v9WQgUp/He7BdgzOz8lqMQ8sU+jkCq7Wx8Myc5YFJLbEe7lgui/V7G1qB1DJykHSGwreceSaD60Y0PUQ==}
     hasBin: true
-
-  '@meathill/digest-fetch@0.1.4':
-    resolution: {integrity: sha512-hy6EVwyWkbmEMS/pVExUT7LpEet+jgtEmmgb/RBWMe78ME+E5olF3Giw6yNV5+MT479F3Jx3q8GqALm/6rd+2Q==}
-    engines: {chrome: '>=11.0.0', edge: '>=12.0.0', node: '>=16.0.0', safari: '>=5.1'}
 
   '@netlify/functions@2.8.1':
     resolution: {integrity: sha512-+6wtYdoz0yE06dSa9XkP47tw5zm6g13QMeCwM3MmHx1vn8hzwFa51JtmfraprdkL7amvb7gaNM+OOhQU1h6T8A==}
@@ -5873,8 +5866,6 @@ snapshots:
       - encoding
       - supports-color
 
-  '@meathill/digest-fetch@0.1.4': {}
-
   '@netlify/functions@2.8.1':
     dependencies:
       '@netlify/serverless-functions-api': 1.19.1
@@ -6928,10 +6919,10 @@ snapshots:
   '@vue/language-core@2.0.19(typescript@5.4.5)':
     dependencies:
       '@volar/language-core': 2.2.5
-      '@vue/compiler-dom': 3.4.27
-      '@vue/shared': 3.4.27
+      '@vue/compiler-dom': 3.4.31
+      '@vue/shared': 3.4.31
       computeds: 0.0.1
-      minimatch: 9.0.4
+      minimatch: 9.0.5
       path-browserify: 1.0.1
       vue-template-compiler: 2.7.16
     optionalDependencies:
@@ -7061,9 +7052,9 @@ snapshots:
     dependencies:
       acorn: 8.12.0
 
-  acorn-jsx@5.3.2(acorn@8.12.0):
+  acorn-jsx@5.3.2(acorn@8.12.1):
     dependencies:
-      acorn: 8.12.0
+      acorn: 8.12.1
 
   acorn@7.4.1: {}
 
@@ -7956,8 +7947,8 @@ snapshots:
 
   espree@9.6.1:
     dependencies:
-      acorn: 8.12.0
-      acorn-jsx: 5.3.2(acorn@8.12.0)
+      acorn: 8.12.1
+      acorn-jsx: 5.3.2(acorn@8.12.1)
       eslint-visitor-keys: 3.4.3
 
   esquery@1.5.0:

@@ -1,7 +1,6 @@
 import { H3Event } from 'h3';
 import type { AcConfig, Comment, ResponseComment, User } from '@awesome-comment/core/types';
 import { CommentStatus, MarkdownLinkRegex } from '@awesome-comment/core/data';
-import digestFetch from '@meathill/digest-fetch';
 import { getTidbKey } from './tidb';
 import { Redis } from '@upstash/redis/cloudflare';
 
@@ -103,11 +102,12 @@ export async function getUserComments(userId: string): Promise<ResponseComment[]
   params.set('user_id', userId as string);
   params.set('start', '0');
   // params.set('status', status.toString());
-  const kv = await getTidbKey();
-  const response = await digestFetch(`${url}?${params}`, null, {
+  const encodedCredentials = btoa(`${process.env.TIDB_PUBLIC_KEY}:${process.env.TIDB_PRIVATE_KEY}`);
+  const response = await fetch(`${url}?${params}`, {
     method: 'GET',
-    realm: 'tidb.cloud',
-    ...kv,
+    headers: {
+      'Authorization': `Basic ${encodedCredentials}`,
+    },
   });
   const result = await response.json();
   data.push(...result.data.rows);

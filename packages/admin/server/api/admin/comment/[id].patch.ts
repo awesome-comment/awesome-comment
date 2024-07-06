@@ -1,7 +1,5 @@
-import digestFetch, { FetchError } from '@meathill/digest-fetch';
 import { CommentStatus } from '@awesome-comment/core/data';
 import { ResponseBody } from '@awesome-comment/core/types';
-import { getTidbKey } from '~/server/utils/tidb';
 import { clearCache, getCacheKey } from '~/server/utils';
 
 type PatchRequest = {
@@ -31,23 +29,23 @@ export default defineEventHandler(async function (event): Promise<ResponseBody<s
     ? process.env.TIDB_END_POINT + '/v1/moderator/patch'
     : process.env.TIDB_END_POINT + '/v1/moderator/review';
   try {
-    const kv = await getTidbKey();
-    await digestFetch(url,
-      {
+    const encodedCredentials = btoa(`${process.env.TIDB_PUBLIC_KEY}:${process.env.TIDB_PRIVATE_KEY}`);
+    await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Basic ${encodedCredentials}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
         ...status !== undefined && { status },
         ...content && { content },
         id,
-      },
-      {
-        method: 'POST',
-        realm: 'tidb.cloud',
-        ...kv,
-      },
-    );
+      }),
+    });
   } catch (e) {
     const message = (e as Error).message || String(e);
     throw createError({
-      statusCode: (e as FetchError).status,
+      statusCode: 400,
       message,
     });
   }

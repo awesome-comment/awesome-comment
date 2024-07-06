@@ -27,7 +27,6 @@
     "@auth0/auth0-vue": "^2.3.3",
     "@awesome-comment/core": "workspace:*",
     "@iconify-json/bi": "^1.1.23",
-    "@meathill/digest-fetch": "^0.1.4",
     "@nuxt/content": "^2.13.1",
     "@nuxt/ui": "^2.17.0",
     "@upstash/redis": "^1.32.0",

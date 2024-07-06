@@ -1,6 +1,4 @@
-import digestFetch, { FetchError } from '@meathill/digest-fetch';
 import { Comment, ResponseBody } from '@awesome-comment/core/types';
-import { getTidbKey } from '~/server/utils/tidb';
 import { getCacheKey, getConfig } from '~/server/utils';
 import { Redis } from '@upstash/redis/cloudflare';
 import { H3Event } from 'h3';
@@ -22,6 +20,7 @@ export default defineCachedEventHandler(async function (event: H3Event): Promise
   });
   const key = getCacheKey(postId + (start ? '-' + start : ''));
   const stored = await redis.get(key) as Comment[];
+  const encodedCredentials = btoa(`${process.env.TIDB_PUBLIC_KEY}:${process.env.TIDB_PRIVATE_KEY}`);
   if (stored) {
     console.log('[cache] get comments from cache: ', key);
     // TODO remove this compatibility code after the next release
@@ -41,13 +40,13 @@ export default defineCachedEventHandler(async function (event: H3Event): Promise
   const params = new URLSearchParams();
   params.set('post_id', postId as string);
   params.set('start', start.toString());
-  const kv = await getTidbKey();
   try {
     const url = process.env.TIDB_END_POINT + '/v1/get';
-    const response = await digestFetch(`${url}?${params}`, null, {
+    const response = await fetch(`${url}?${params}`, {
       method: 'GET',
-      realm: 'tidb.cloud',
-      ...kv,
+      headers: {
+        'Authorization': `Basic ${encodedCredentials}`,
+      },
     });
     const result = await response.json();
     data.push(...result.data.rows);
@@ -61,28 +60,29 @@ export default defineCachedEventHandler(async function (event: H3Event): Promise
   } catch (e) {
     const message = (e as Error).message || String(e);
     throw createError({
-      statusCode: (e as FetchError).status,
+      statusCode: 400,
       message,
     });
   }
   try {
     const url = process.env.TIDB_END_POINT + '/v1/count';
-    const response = await digestFetch(`${url}?${params}`, null, {
+    const response = await fetch(`${url}?${params}`, {
       method: 'GET',
-      realm: 'tidb.cloud',
-      ...kv,
+      headers: {
+        'Authorization': `Basic ${encodedCredentials}`,
+      },
     });
     const json = await response.json();
     total = Number(json.data.rows[ 0 ].num);
   } catch (e) {
     const message = 'Failed to fetch the quantity of comments. ' + (e as Error).message || String(e);
     throw createError({
-      statusCode: (e as FetchError).status,
+      statusCode: 400,
       message,
     });
   }
 
-  await storage.setItem(key, { data, total });
+  await redis.set(key, { data, total });
   return {
     code: 0,
     data,

@@ -1,6 +1,4 @@
-import digestFetch, { FetchError } from '@meathill/digest-fetch';
 import { ResponseBody, StatDailyByLanguage } from '@awesome-comment/core/types';
-import { getTidbKey } from '~/server/utils/tidb';
 
 export default defineEventHandler(async function (event): Promise<ResponseBody<StatDailyByLanguage[]>> {
   const query = getQuery(event);
@@ -14,19 +12,20 @@ export default defineEventHandler(async function (event): Promise<ResponseBody<S
   params.set('start', start as string);
   params.set('end', end as string);
   try {
-    const kv = await getTidbKey();
+    const encodedCredentials = btoa(`${process.env.TIDB_PUBLIC_KEY}:${process.env.TIDB_PRIVATE_KEY}`);
     const url = process.env.TIDB_END_POINT + '/v1/daily_stat';
-    const response = await digestFetch(`${url}?${params}`, null, {
+    const response = await fetch(`${url}?${params}`, {
       method: 'GET',
-      realm: 'tidb.cloud',
-      ...kv,
+      headers: {
+        'Authorization': `Basic ${encodedCredentials}`,
+      },
     });
     const result = await response.json();
     rows.push(...result.data.rows);
   } catch (e) {
     const message = (e as Error).message || String(e);
     throw createError({
-      statusCode: (e as FetchError).status,
+      statusCode: 400,
       message,
     });
   }
