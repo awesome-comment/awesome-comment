@@ -394,6 +394,7 @@ header.flex.flex-col.mb-4.gap-4(class="sm:flex-row sm:items-center")
           .flex.gap-2.mt-2
             context-menu-dropdown
               nuxt-link.btn.btn-xs.btn-ghost(
+                target="_blank"
                 :to="getUrl(comment.postId)"
               )
                 i.bi.bi-funnel-fill
