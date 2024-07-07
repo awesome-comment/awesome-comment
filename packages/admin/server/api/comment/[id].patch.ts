@@ -31,7 +31,7 @@ export default defineEventHandler(async function (event): Promise<ResponseBody<s
 
   let user: User | null = null;
   try {
-    user = await getUser(authorization, body.domain);
+    user = await getUser(event.context.cloudflare.env.KV, authorization, body.domain);
   } catch (e) {
     const message = (e as Error).message || e;
     throw createError({
@@ -74,7 +74,7 @@ export default defineEventHandler(async function (event): Promise<ResponseBody<s
   // clear cache if the comment has been approved
   if (body.status === CommentStatus.Approved) {
     const key = getCacheKey(body.postId);
-    await clearCache(key);
+    await clearCache(event.context.cloudflare.env.KV, key);
   }
 
   return {

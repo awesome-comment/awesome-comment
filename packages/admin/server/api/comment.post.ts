@@ -25,9 +25,10 @@ export default defineEventHandler(async function (event): Promise<PostResponse> 
     });
   }
 
+  const KV = event.context.cloudflare.env.KV;
   let user: User | null = null;
   try {
-    user = await getUser(authorization, body.domain);
+    user = await getUser(KV, authorization, body.domain);
   } catch (e) {
     const message = (e as Error).message || e;
     throw createError({
@@ -53,7 +54,7 @@ export default defineEventHandler(async function (event): Promise<PostResponse> 
   let status: CommentStatus;
 
   // check if user is admin
-  const config = await getConfig();
+  const config = await getConfig(KV);
   if (config.adminEmails.includes(email)) {
     status = CommentStatus.Approved;
   } else {
@@ -85,7 +86,7 @@ export default defineEventHandler(async function (event): Promise<PostResponse> 
           name: name || nickname,
           avatar: picture,
           ip,
-          agent: headers['user-agent'],
+          agent: headers[ 'user-agent' ],
           window: body.window || '',
         }),
         status,
@@ -121,7 +122,7 @@ export default defineEventHandler(async function (event): Promise<PostResponse> 
   // if comment directly approved, clear cache
   if (status === CommentStatus.Approved) {
     const key = getCacheKey(body.postId);
-    await clearCache(key);
+    await clearCache(KV, key);
   }
 
   return {

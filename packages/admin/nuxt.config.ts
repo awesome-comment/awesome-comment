@@ -41,6 +41,7 @@ export default defineNuxtConfig({
     ],
     '@nuxt/ui',
     'dayjs-nuxt',
+    'nitro-cloudflare-dev'
   ],
   nitro: {
     preset: 'cloudflare-pages',

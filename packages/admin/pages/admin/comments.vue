@@ -252,13 +252,13 @@ function getUrl(postId: string, only = false): string {
   return url.toString();
 }
 
-onBeforeMount(() => {
-  comments.value = keyBy(commentsList.value, 'id');
-});
 onMounted(() => {
+  comments.value = keyBy(commentsList.value, 'id');
   document.body.addEventListener('keydown', onKeydown);
 });
 onBeforeUnmount(() => {
+  comments.value = {};
+  commentsList.value.length = 0;
   document.body.removeEventListener('keydown', onKeydown);
 });
 

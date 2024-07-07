@@ -53,7 +53,7 @@ export default defineEventHandler(async function (event): Promise<ResponseBody<s
   // clear cache
   if (body.status === CommentStatus.Approved && body.postId) {
     const key = getCacheKey(body.postId);
-    await clearCache(key);
+    await clearCache(event.context.cloudflare.env.KV, key);
   }
 
   return {

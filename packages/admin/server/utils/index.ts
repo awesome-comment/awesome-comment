@@ -1,20 +1,16 @@
 import { H3Event } from 'h3';
 import type { AcConfig, Comment, ResponseComment, User } from '@awesome-comment/core/types';
 import { CommentStatus, MarkdownLinkRegex } from '@awesome-comment/core/data';
-import { getTidbKey } from './tidb';
-import { Redis } from '@upstash/redis/cloudflare';
+import { KVNamespace } from '@cloudflare/workers-types';
 
-export async function getConfig(redis?: Redis): Promise<AcConfig> {
-  redis = redis || new Redis({
-    url: process.env.UPSTASH_REDIS_REST_URL as string,
-    token: process.env.UPSTASH_REDIS_REST_TOKEN as string,
-  });
+export async function getConfig(KV: KVNamespace): Promise<AcConfig> {
   const key = getConfigKey();
-  return (await redis.get(key)) as AcConfig;
+  return (await KV.get(key, { type: 'json' })) as AcConfig;
 }
 
 export async function checkUserPermission(event: H3Event): Promise<[User, AcConfig] | void> {
-  const config = await getConfig();
+  const KV = event.context.cloudflare.env.KV;
+  const config = await getConfig(KV);
   // not configured, it's a new site
   if (!config) {
     return;
@@ -30,7 +26,7 @@ export async function checkUserPermission(event: H3Event): Promise<[User, AcConf
 
   let user: User | null = null;
   try {
-    user = await getUser(authorization);
+    user = await getUser(KV, authorization);
   } catch (e) {
     const message =  (e as Error).message || e;
     throw createError({
@@ -56,14 +52,10 @@ export async function checkUserPermission(event: H3Event): Promise<[User, AcConf
   return [user, config];
 }
 
-export async function getUser(accessToken: string, domain?: string): Promise<User> {
+export async function getUser(KV: KVNamespace, accessToken: string, domain?: string): Promise<User> {
   domain ??= process.env.AUTH0_DOMAIN || '';
-  const redis = new Redis({
-    url: process.env.UPSTASH_REDIS_REST_URL as string,
-    token: process.env.UPSTASH_REDIS_REST_TOKEN as string,
-  });
   const key = `user-${domain}-${accessToken}`;
-  const cached = await redis.get(key);
+  const cached = await KV.get(key, { type: 'json' });
   if (cached) {
     return cached as User;
   }
@@ -81,8 +73,8 @@ export async function getUser(accessToken: string, domain?: string): Promise<Use
     throw new Error(`${response.status} ${response.statusText}`);
   }
   const user = (await response.json()) as User;
-  await redis.set(key, user, {
-    ex: 60 * 60,
+  await KV.put(key, JSON.stringify(user), {
+    expirationTtl: 60 * 60,
   });
   return user;
 }
@@ -188,14 +180,11 @@ export function isAutoApprove(
     && history.filter(c => Number(c.status) === CommentStatus.Approved).length >= 2;
 }
 
-export async function clearCache(key: string): Promise<void> {
-  const redis = new Redis({
-    url: process.env.UPSTASH_REDIS_REST_URL as string,
-    token: process.env.UPSTASH_REDIS_REST_TOKEN as string,
-  });
-  const keys = await redis.scan(0, {
-    match: key + '*',
-    count: 100,
-  });
-  await redis.del(...keys[ 1 ]);
+export async function clearCache(KV: KVNamespace, key: string): Promise<void> {
+   const keys = await KV.list({
+     prefix: key,
+   });
+ for (const k of keys.keys) {
+   await KV.delete(k.name);
+ }
 }

@@ -1,6 +1,5 @@
 import { Comment, ResponseBody } from '@awesome-comment/core/types';
 import { getCacheKey, getConfig } from '~/server/utils';
-import { Redis } from '@upstash/redis/cloudflare';
 import { H3Event } from 'h3';
 
 export default defineCachedEventHandler(async function (event: H3Event): Promise<ResponseBody<Comment[]>> {
@@ -14,12 +13,9 @@ export default defineCachedEventHandler(async function (event: H3Event): Promise
     });
   }
 
-  const redis = new Redis({
-    url: process.env.UPSTASH_REDIS_REST_URL as string,
-    token: process.env.UPSTASH_REDIS_REST_TOKEN as string,
-  });
+  const KV = event.context.cloudflare.env.KV;
   const key = getCacheKey(postId + (start ? '-' + start : ''));
-  const stored = await redis.get(key) as Comment[];
+  const stored = await KV.get(key, { type: 'json' }) as Comment[];
   const encodedCredentials = btoa(`${process.env.TIDB_PUBLIC_KEY}:${process.env.TIDB_PRIVATE_KEY}`);
   if (stored) {
     console.log('[cache] get comments from cache: ', key);
@@ -51,7 +47,7 @@ export default defineCachedEventHandler(async function (event: H3Event): Promise
     const result = await response.json();
     data.push(...result.data.rows);
 
-    const config = await getConfig(redis);
+    const config = await getConfig(KV);
     for (const item of data) {
       if (!item.user) continue;
       item.user = JSON.parse(String(item.user));
@@ -82,7 +78,7 @@ export default defineCachedEventHandler(async function (event: H3Event): Promise
     });
   }
 
-  await redis.set(key, { data, total });
+  await KV.put(key, JSON.stringify({ data, total }));
   return {
     code: 0,
     data,
