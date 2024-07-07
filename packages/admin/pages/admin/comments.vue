@@ -26,7 +26,7 @@ const start = ref<number>(0);
 const hasMore = ref<boolean>(false);
 const loadingMore = ref<boolean>(false);
 const message = ref<string>('');
-const filterStatus = ref<CommentStatus | 'all'>(route.query.status || CommentStatus.UnReplied);
+const filterStatus = ref<CommentStatus | 'all'>(route.query.status || CommentStatus.Pending);
 const filterPostId = ref<string>(route.query.post_id || '');
 const filterUser = ref<string>(route.query.user || '');
 const filterLanguage = ref<string>(route.query.language || '');
@@ -47,7 +47,7 @@ const filter = computed<URLSearchParams>(() => {
   return params;
 });
 
-const { data: commentsList, pending, refresh } = useLazyAsyncData(
+const { data: commentsList, status, refresh, error } = useLazyAsyncData(
   'comments',
   async function () {
     if (!auth0) return;
@@ -273,15 +273,15 @@ definePageMeta({
 header.flex.flex-col.mb-4.gap-4(class="sm:flex-row sm:items-center")
   h1.text-2xl.font-bold(class="sm:me-auto") Comments Management
   span.loading.loading-spinner(
-    v-if="pending && filterStatus < CommentStatus.UnReplied"
+    v-if="status === 'pending' && filterStatus < CommentStatus.UnReplied"
   )
   button.btn.btn-sm.me-2(
     v-if="filterStatus >= CommentStatus.UnReplied"
     type="button"
-    :disabled="pending"
+    :disabled="status === 'pending'"
     @click="doReset"
   )
-    span.loading.loading-spinner(v-if="pending")
+    span.loading.loading-spinner(v-if="status === 'pending'")
     i.bi.bi-arrow-clockwise(v-else)
     | Refresh
   .form-control.flex-row.gap-2.me-2
@@ -309,9 +309,9 @@ header.flex.flex-col.mb-4.gap-4(class="sm:flex-row sm:items-center")
       option(value="all") All
       option(v-for="key in CSKeys", :value="key", :key="key") {{ CommentStatus[key] }}
 
-.alert.alert-error.mb-4(v-if="message")
+.alert.alert-error.mb-4(v-if="message || error")
   i.bi.bi-exclamation-triangle-fill.me-2
-  span {{ message }}
+  span {{ message || error.message }}
 .flex.gap-4.mb-4(v-if="filterPostId || filterUser")
   button.btn.btn-outline.btn-sm.normal-case(
     v-if="filterPostId"
@@ -473,7 +473,7 @@ header.flex.flex-col.mb-4.gap-4(class="sm:flex-row sm:items-center")
     span.loading.loading-xs.loading-spinner(v-if="loadingMore")
     | Load More
 
-  .w-full.h-32.flex.items-center.justify-center(v-if="!commentsList?.length && pending")
+  .w-full.h-32.flex.items-center.justify-center(v-if="!commentsList?.length && status === 'pending'")
     span.loading.loading-spinner
   .w-full.h-32.flex.items-center.justify-center(v-else-if="!commentsList?.length")
     .text-lg.text-center.text-neutral-content No Data to display
