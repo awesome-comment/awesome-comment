@@ -134,6 +134,7 @@ ui-modal(
         label.label-text Your replyment
           ai-reply-helper(
             :comment="comment"
+            :reply="reply"
           )
         .label-text-alt
           button.btn.btn-xs.btn-ghost.text-success(
@@ -158,6 +159,7 @@ ui-modal(
       p {{message}}
     ai-fixed-prompt-templates(
       :comment="comment"
+      :reply="reply"
     )
     footer.flex.justify-end
       button.btn.btn-primary.btn-sm.text-white.min-w-64(

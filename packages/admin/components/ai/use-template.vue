@@ -3,12 +3,12 @@ import type { Comment, ResponseBody } from '@awesome-comment/core/types';
 import type { UiModal } from '#components';
 import usePromptStore from '~/store/prompt';
 import type { AiPromptTemplate } from '~/types';
-import { LocalLanguageName, LanguageName } from '~/data/lang';
 import { sleep } from '@antfu/utils';
 import { replaceTemplate } from '~/utils';
 
 type Props = {
   comment?: Comment;
+  reply: string;
   promptId: string;
 }
 const props = defineProps<Props>();
@@ -27,7 +27,12 @@ const isCopied = ref<boolean>(false);
 const title = ref<string>('(loading title...)');
 const prompt = computed<AiPromptTemplate>(() => promptStore.prompts[ props.promptId ]);
 const replaced = computed<string>(() => {
-  return replaceTemplate(prompt.value.template, props.comment, title.value);
+  return replaceTemplate(
+    prompt.value.template,
+    props.comment,
+    title.value,
+    props.reply,
+  );
 });
 
 async function doCopy(): Promise<void> {

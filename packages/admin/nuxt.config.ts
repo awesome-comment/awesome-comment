@@ -2,6 +2,20 @@ import pkg from './package.json' assert { type: 'json' };
 import acPkg from '../awesome-comment/package.json' assert { type: 'json' };
 
 const repoUrl = 'https://unpkg.com/@roudanio/awesome-comment@latest/dist'; // use online ver for now
+const modules = [
+  '@nuxt/content',
+  [
+    '@pinia/nuxt',
+    {
+      autoImports: ['defineStore'],
+    },
+  ],
+  '@nuxt/ui',
+  'dayjs-nuxt',
+];
+if (process.env.CLOUDFLARE) {
+  modules.push('nitro-cloudflare-dev');
+}
 
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
@@ -31,18 +45,7 @@ export default defineNuxtConfig({
     '~/assets/css/main.css',
   ],
   devtools: { enabled: true },
-  modules: [
-    '@nuxt/content',
-    [
-      '@pinia/nuxt',
-      {
-        autoImports: ['defineStore'],
-      },
-    ],
-    '@nuxt/ui',
-    'dayjs-nuxt',
-    'nitro-cloudflare-dev'
-  ],
+  modules,
   nitro: {
     preset: 'cloudflare-pages',
   },
