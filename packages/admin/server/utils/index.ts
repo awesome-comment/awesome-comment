@@ -1,16 +1,16 @@
 import { H3Event } from 'h3';
 import type { AcConfig, Comment, ResponseComment, User } from '@awesome-comment/core/types';
 import { CommentStatus, MarkdownLinkRegex } from '@awesome-comment/core/data';
-import { KVNamespace } from '@cloudflare/workers-types';
+import createStorage, { AcStorage } from '~/server/utils/storage';
 
-export async function getConfig(KV: KVNamespace): Promise<AcConfig> {
+export async function getConfig(storage: AcStorage): Promise<AcConfig> {
   const key = getConfigKey();
-  return (await KV.get(key, { type: 'json' })) as AcConfig;
+  return (await storage.get(key)) as AcConfig;
 }
 
 export async function checkUserPermission(event: H3Event): Promise<[User, AcConfig] | void> {
-  const KV = event.context.cloudflare.env.KV;
-  const config = await getConfig(KV);
+  const storage = createStorage(event);
+  const config = await getConfig(storage);
   // not configured, it's a new site
   if (!config) {
     return;
@@ -26,7 +26,7 @@ export async function checkUserPermission(event: H3Event): Promise<[User, AcConf
 
   let user: User | null = null;
   try {
-    user = await getUser(KV, authorization);
+    user = await getUser(storage, authorization);
   } catch (e) {
     const message =  (e as Error).message || e;
     throw createError({
@@ -52,10 +52,10 @@ export async function checkUserPermission(event: H3Event): Promise<[User, AcConf
   return [user, config];
 }
 
-export async function getUser(KV: KVNamespace, accessToken: string, domain?: string): Promise<User> {
+export async function getUser(storage: AcStorage, accessToken: string, domain?: string): Promise<User> {
   domain ??= process.env.AUTH0_DOMAIN || '';
   const key = `user-${domain}-${accessToken}`;
-  const cached = await KV.get(key, { type: 'json' });
+  const cached = await storage.get(key);
   if (cached) {
     return cached as User;
   }
@@ -73,7 +73,7 @@ export async function getUser(KV: KVNamespace, accessToken: string, domain?: str
     throw new Error(`${response.status} ${response.statusText}`);
   }
   const user = (await response.json()) as User;
-  await KV.put(key, JSON.stringify(user), {
+  await storage.put(key, user, {
     expirationTtl: 60 * 60,
   });
   return user;
@@ -180,11 +180,9 @@ export function isAutoApprove(
     && history.filter(c => Number(c.status) === CommentStatus.Approved).length >= 2;
 }
 
-export async function clearCache(KV: KVNamespace, key: string): Promise<void> {
-   const keys = await KV.list({
-     prefix: key,
-   });
- for (const k of keys.keys) {
-   await KV.delete(k.name);
- }
+export async function clearCache(storage: AcStorage, key: string): Promise<void> {
+  const keys = await storage.list(key);
+  for (const k of keys) {
+    await storage.delete(k);
+  }
 }

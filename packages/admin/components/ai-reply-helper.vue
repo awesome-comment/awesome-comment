@@ -3,6 +3,7 @@ import usePromptStore from '~/store/prompt';
 
 type Props = {
   comment: Comment;
+  reply: string;
 }
 const props = defineProps<Props>();
 
@@ -86,5 +87,6 @@ onBeforeMount(() => {
     v-model:is-open="isUsingTemplate"
     :prompt-id="templateId"
     :comment="comment"
+    :reply="reply"
   />
 </template>

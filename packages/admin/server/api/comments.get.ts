@@ -1,6 +1,7 @@
 import { Comment, ResponseBody } from '@awesome-comment/core/types';
 import { getCacheKey, getConfig } from '~/server/utils';
 import { H3Event } from 'h3';
+import createStorage from '~/server/utils/storage';
 
 export default defineCachedEventHandler(async function (event: H3Event): Promise<ResponseBody<Comment[]>> {
   const query = getQuery(event);
@@ -13,9 +14,9 @@ export default defineCachedEventHandler(async function (event: H3Event): Promise
     });
   }
 
-  const KV = event.context.cloudflare.env.KV;
+  const storage = createStorage(event);
   const key = getCacheKey(postId + (start ? '-' + start : ''));
-  const stored = await KV.get(key, { type: 'json' }) as Comment[];
+  const stored = await storage.get<Comment[]>(key);
   const encodedCredentials = btoa(`${process.env.TIDB_PUBLIC_KEY}:${process.env.TIDB_PRIVATE_KEY}`);
   if (stored) {
     console.log('[cache] get comments from cache: ', key);
@@ -47,7 +48,7 @@ export default defineCachedEventHandler(async function (event: H3Event): Promise
     const result = await response.json();
     data.push(...result.data.rows);
 
-    const config = await getConfig(KV);
+    const config = await getConfig(storage);
     for (const item of data) {
       if (!item.user) continue;
       item.user = JSON.parse(String(item.user));
@@ -78,7 +79,7 @@ export default defineCachedEventHandler(async function (event: H3Event): Promise
     });
   }
 
-  await KV.put(key, JSON.stringify({ data, total }));
+  await storage.put(key, { data, total });
   return {
     code: 0,
     data,

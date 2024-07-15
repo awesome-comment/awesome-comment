@@ -1,6 +1,7 @@
 import { ResponseBody, User } from '@awesome-comment/core/types';
 import { CommentStatus } from '@awesome-comment/core/data';
 import { getUser, getCacheKey, getConfig, checkCommentStatus, clearCache } from '~/server/utils';
+import createStorage from '~/server/utils/storage';
 
 type PostResponse = ResponseBody<{
   id: number,
@@ -25,10 +26,10 @@ export default defineEventHandler(async function (event): Promise<PostResponse> 
     });
   }
 
-  const KV = event.context.cloudflare.env.KV;
+  const storage = createStorage(event);
   let user: User | null = null;
   try {
-    user = await getUser(KV, authorization, body.domain);
+    user = await getUser(storage, authorization, body.domain);
   } catch (e) {
     const message = (e as Error).message || e;
     throw createError({
@@ -54,7 +55,7 @@ export default defineEventHandler(async function (event): Promise<PostResponse> 
   let status: CommentStatus;
 
   // check if user is admin
-  const config = await getConfig(KV);
+  const config = await getConfig(storage);
   if (config.adminEmails.includes(email)) {
     status = CommentStatus.Approved;
   } else {
@@ -105,7 +106,6 @@ export default defineEventHandler(async function (event): Promise<PostResponse> 
   // if admin reply, update parent_id to be approved
   if (config.adminEmails.includes(email) && body.parentId && body.status === CommentStatus.Pending) {
     const url = process.env.TIDB_END_POINT + '/v1/moderator/review';
-    const kv = await getTidbKey();
     await fetch(url, {
       method: 'POST',
       headers: {
@@ -122,7 +122,7 @@ export default defineEventHandler(async function (event): Promise<PostResponse> 
   // if comment directly approved, clear cache
   if (status === CommentStatus.Approved) {
     const key = getCacheKey(body.postId);
-    await clearCache(KV, key);
+    await clearCache(storage, key);
   }
 
   return {

@@ -7,6 +7,7 @@ import { replaceTemplate, writeToClipboard } from '~/utils';
 
 type Props = {
   comment: Comment;
+  reply: string;
 }
 const props = defineProps<Props>();
 
@@ -36,7 +37,7 @@ async function doUse(id: string): Promise<void> {
     const res = await $fetch<ResponseBody<{ title: string }>>('/api/fetch-url?url=' + props.comment.postId);
     title = res.data.title;
   }
-  const replaced = replaceTemplate(item.template, props.comment, title);
+  const replaced = replaceTemplate(item.template, props.comment, title, props.reply);
   await writeToClipboard(replaced);
   isLoading.value = '';
   isCopied.value = id;
@@ -49,6 +50,9 @@ onMounted(async () => {
     await nextTick();
     doUse(promptId);
   }
+});
+onBeforeUnmount(() => {
+  isCopied.value = '';
 });
 </script>
 
@@ -83,5 +87,6 @@ onMounted(async () => {
     v-model:is-open="isUsingTemplate"
     :prompt-id="templateId"
     :comment="comment"
+    :reply="reply"
   />
 </template>

@@ -2,7 +2,12 @@ import type { Comment } from '@awesome-comment/core/types';
 import { LocalLanguageName, LanguageName } from '~/data/lang';
 import type { UserAgentInfo } from '~/types';
 
-export function replaceTemplate(template: string, comment: Comment, title: string): string {
+export function replaceTemplate(
+  template: string,
+  comment: Comment,
+  title: string,
+  reply: string,
+): string {
   const lang = comment?.postId.replace(/\/$/, '').split('/').pop();
   return template.replace(/%(\w+)%/ig, (match, key) => {
     switch (key) {
@@ -16,6 +21,8 @@ export function replaceTemplate(template: string, comment: Comment, title: strin
         return comment.user?.name || comment.user?.email || '';
       case 'COMMENT':
         return comment.content ?? '';
+      case 'CURRENT_COMMENT':
+        return reply;
       default:
         return match;
     }

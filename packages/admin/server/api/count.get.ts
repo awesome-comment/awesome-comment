@@ -1,5 +1,4 @@
 import { ResponseBody } from '@awesome-comment/core/types';
-import { getTidbKey } from '~/server/utils/tidb';
 
 export default defineCachedEventHandler(async function (event): Promise<ResponseBody<number>> {
   const query = getQuery(event);
