@@ -12,7 +12,7 @@ const usePromptStore = defineStore('prompt', () => {
   const _isAutoCopy = ref<boolean>(true);
   const length = computed(() => Object.keys(prompts.value).length);
   const isAutoCopy = computed<boolean>(() => {
-    if (process.client && isSafari()) return false;
+    if (import.meta.client && isSafari()) return false;
 
     return _isAutoCopy.value;
   });

@@ -204,7 +204,7 @@ function onKeydown(event: KeyboardEvent): void {
     case 'R':
       if (currentItem.value === -1) return;
 
-      replyComment.value?.[ currentItem.value ].doOpenModal();
+      replyComments.value?.[ currentItem.value ].doOpenModal();
       event.preventDefault();
       break;
   }
