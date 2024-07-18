@@ -1,6 +1,7 @@
 import { ResponseBody } from '@awesome-comment/core/types';
 import { clearCache, getCacheKey } from '~/server/utils';
 import { CommentStatus } from '@awesome-comment/core/data';
+import createStorage from '~/server/utils/storage';
 
 export default defineEventHandler(async function (event): Promise<ResponseBody<string>> {
   const id = event.context.params?.id;
@@ -43,8 +44,9 @@ export default defineEventHandler(async function (event): Promise<ResponseBody<s
   // clear cache
   const body = await readBody(event);
   if (body.status === CommentStatus.Approved && body.postId) {
+    const storage = createStorage(event);
     const key = getCacheKey(body.postId);
-    await clearCache(event.context.cloudflare.env.KV, key);
+    await clearCache(storage, key);
   }
 
   return {

@@ -1,6 +1,7 @@
 import { CommentStatus } from '@awesome-comment/core/data';
 import { ResponseBody, User } from '@awesome-comment/core/types';
 import { clearCache, getCacheKey, getUser } from '~/server/utils';
+import createStorage from '~/server/utils/storage';
 
 type PatchRequest = {
   status: CommentStatus;
@@ -29,9 +30,10 @@ export default defineEventHandler(async function (event): Promise<ResponseBody<s
     });
   }
 
+  const storage = createStorage(event);
   let user: User | null = null;
   try {
-    user = await getUser(event.context.cloudflare.env.KV, authorization, body.domain);
+    user = await getUser(storage, authorization, body.domain);
   } catch (e) {
     const message = (e as Error).message || e;
     throw createError({
@@ -74,7 +76,7 @@ export default defineEventHandler(async function (event): Promise<ResponseBody<s
   // clear cache if the comment has been approved
   if (body.status === CommentStatus.Approved) {
     const key = getCacheKey(body.postId);
-    await clearCache(event.context.cloudflare.env.KV, key);
+    await clearCache(storage, key);
   }
 
   return {

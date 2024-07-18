@@ -1,6 +1,7 @@
 import { CommentStatus } from '@awesome-comment/core/data';
 import { ResponseBody } from '@awesome-comment/core/types';
 import { clearCache, getCacheKey } from '~/server/utils';
+import createStorage from '~/server/utils/storage';
 
 type PatchRequest = {
   status?: CommentStatus;
@@ -52,8 +53,9 @@ export default defineEventHandler(async function (event): Promise<ResponseBody<s
 
   // clear cache
   if (body.status === CommentStatus.Approved && body.postId) {
+    const storage = createStorage(event);
     const key = getCacheKey(body.postId);
-    await clearCache(event.context.cloudflare.env.KV, key);
+    await clearCache(storage, key);
   }
 
   return {
