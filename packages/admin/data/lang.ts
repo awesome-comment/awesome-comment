@@ -1,6 +1,7 @@
 export const LocalLanguageName = {
   'en': 'English',
   'zh-CN': '中文（简体）',
+  'cn': '中文（简体）',
   'zh': '中文（正體）',
   'vi': 'Tiếng Việt',
   'es': 'Español',
@@ -38,6 +39,7 @@ export const LocalLanguageName = {
 export const LanguageName = {
   'en': 'English',
   'zh-CN': 'Chinese (Simplified)',
+  'cn': 'Chinese (Simplified)',
   'zh': 'Chinese (Traditional)',
   'vi': 'Vietnamese',
   'es': 'Spanish',
