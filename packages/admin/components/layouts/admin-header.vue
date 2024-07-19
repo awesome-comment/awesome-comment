@@ -24,6 +24,11 @@ const items = computed(() => {
         },
       },
     ],
+    [
+      {
+        label: `Version: ${__VERSION__}`,
+      },
+    ],
   ];
 });
 </script>
