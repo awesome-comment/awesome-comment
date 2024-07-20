@@ -20,6 +20,7 @@ const Variables = [
   '%LANG_EN%',
   '%USERNAME%',
   '%COMMENT%',
+  '%CURRENT_COMMENT%',
 ];
 const root = ref<UiModal>();
 const promptTitle = ref<HTMLInputElement>();

@@ -1,8 +1,7 @@
-import digestFetch, { FetchError } from '@meathill/digest-fetch';
 import { ResponseBody } from '@awesome-comment/core/types';
-import { getTidbKey } from '~/server/utils/tidb';
 import { clearCache, getCacheKey } from '~/server/utils';
 import { CommentStatus } from '@awesome-comment/core/data';
+import createStorage from '~/server/utils/storage';
 
 export default defineEventHandler(async function (event): Promise<ResponseBody<string>> {
   const id = event.context.params?.id;
@@ -15,17 +14,17 @@ export default defineEventHandler(async function (event): Promise<ResponseBody<s
 
   try {
     const url = process.env.TIDB_END_POINT + '/v1/moderator/delete';
-    const kv = await getTidbKey();
-    const response = await digestFetch(url,
-      {
+    const encodedCredentials = btoa(`${process.env.TIDB_PUBLIC_KEY}:${process.env.TIDB_PRIVATE_KEY}`);
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Basic ${encodedCredentials}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
         id,
-      },
-      {
-        method: 'POST',
-        realm: 'tidb.cloud',
-        ...kv,
-      },
-    );
+      }),
+    });
     const json = await response.json();
     const isSuccess = json.data.result.row_affect === 1;
     if (!isSuccess) {
@@ -37,7 +36,7 @@ export default defineEventHandler(async function (event): Promise<ResponseBody<s
   } catch (e) {
     const message = (e as Error).message || String(e);
     throw createError({
-      statusCode: (e as FetchError).status,
+      statusCode: 400,
       message,
     });
   }
@@ -45,7 +44,7 @@ export default defineEventHandler(async function (event): Promise<ResponseBody<s
   // clear cache
   const body = await readBody(event);
   if (body.status === CommentStatus.Approved && body.postId) {
-    const storage = useStorage('data');
+    const storage = createStorage(event);
     const key = getCacheKey(body.postId);
     await clearCache(storage, key);
   }

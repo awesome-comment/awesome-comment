@@ -2,6 +2,20 @@ import pkg from './package.json' assert { type: 'json' };
 import acPkg from '../awesome-comment/package.json' assert { type: 'json' };
 
 const repoUrl = 'https://unpkg.com/@roudanio/awesome-comment@latest/dist'; // use online ver for now
+const modules = [
+  '@nuxt/content',
+  [
+    '@pinia/nuxt',
+    {
+      autoImports: ['defineStore'],
+    },
+  ],
+  '@nuxt/ui',
+  'dayjs-nuxt',
+];
+if (process.env.CLOUDFLARE) {
+  modules.push('nitro-cloudflare-dev');
+}
 
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
@@ -11,7 +25,7 @@ export default defineNuxtConfig({
       link: [
         {
           rel: 'stylesheet',
-          href: 'https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css',
+          href: 'https://unpkg.com/bootstrap-icons@1.11.3/font/bootstrap-icons.css',
         },
         {
           rel: 'stylesheet',
@@ -26,31 +40,14 @@ export default defineNuxtConfig({
       ],
     },
   },
+  compatibilityDate: '2024-07-06',
   css: [
     '~/assets/css/main.css',
   ],
   devtools: { enabled: true },
-  modules: [
-    '@nuxt/content',
-    [
-      '@pinia/nuxt',
-      {
-        autoImports: ['defineStore'],
-      },
-    ],
-    '@nuxt/ui',
-    'dayjs-nuxt',
-  ],
+  modules,
   nitro: {
-    storage: {
-      data: {
-        driver: 'redis',
-        host: process.env.UPSTASH_REDIS_HOST,
-        tls: !!process.env.UPSATSH_REDIS_TLS,
-        port: process.env.UPSTASH_REDIS_PORT,
-        password: process.env.UPSTASH_REDIS_PASSWORD,
-      },
-    },
+    preset: 'cloudflare-pages',
   },
   postcss: {
     plugins: {

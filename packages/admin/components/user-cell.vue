@@ -22,15 +22,14 @@ type Emits = {
 }
 const emit = defineEmits<Emits>();
 
+const route = useRoute();
 const from = computed(() => {
   if (props.from.includes('google')) return 'google';
   return props.from;
 });
-const toLink = computed<string>(() => {
-  const params = new URLSearchParams(props.filter);
-  params.set('user', props.userId);
-  return `${props.prefix}?${params.toString()}`;
-});
+const prefix = computed<string>(() => {
+  return props.prefix || route.path;
+})
 const userLink = computed<string>(() => {
   const params = new URLSearchParams();
   params.set('user', props.userId);
@@ -68,7 +67,7 @@ const agentInfo = computed<UserAgentInfo>(() => {
     <div class="flex flex-col gap-1 w-40">
       <context-menu-dropdown>
         <nuxt-link
-          :to="toLink"
+          :to="userLink"
           class="truncate underline font-semibold leading-none mb-1 hover:no-underline"
         >
           {{ user.name }}
@@ -77,8 +76,12 @@ const agentInfo = computed<UserAgentInfo>(() => {
         <template #menu>
           <li>
             <nuxt-link
+              target="_blank"
               :to="userLink"
-            >Filter by user</nuxt-link>
+            >
+              <i class="bi bi-box-arrow-up-right me-2" />
+              Filter by user
+            </nuxt-link>
           </li>
         </template>
       </context-menu-dropdown>

@@ -1,6 +1,4 @@
-import digestFetch, { FetchError } from '@meathill/digest-fetch';
 import { ResponseBody } from '@awesome-comment/core/types';
-import { getTidbKey } from '~/server/utils/tidb';
 
 export default defineCachedEventHandler(async function (event): Promise<ResponseBody<number>> {
   const query = getQuery(event);
@@ -17,18 +15,19 @@ export default defineCachedEventHandler(async function (event): Promise<Response
     const url = process.env.TIDB_END_POINT + '/v1/count';
     const params = new URLSearchParams();
     params.set('post_id', postId as string);
-    const kv = await getTidbKey();
-    const response = await digestFetch(`${url}?${params}`, null, {
+    const encodedCredentials = btoa(`${process.env.TIDB_PUBLIC_KEY}:${process.env.TIDB_PRIVATE_KEY}`);
+    const response = await fetch(`${url}?${params}`, {
       method: 'GET',
-      realm: 'tidb.cloud',
-      ...kv,
+      headers: {
+        'Authorization': `Basic ${encodedCredentials}`,
+      },
     });
     const result = await response.json();
     num = result.data.rows[ 0 ].num;
   } catch (e) {
     const message = (e as Error).message || String(e);
     throw createError({
-      statusCode: (e as FetchError).status,
+      statusCode: 400,
       message,
     });
   }

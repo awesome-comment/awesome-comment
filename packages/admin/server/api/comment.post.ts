@@ -1,8 +1,7 @@
 import { ResponseBody, User } from '@awesome-comment/core/types';
 import { CommentStatus } from '@awesome-comment/core/data';
-import digestFetch, { FetchError } from '@meathill/digest-fetch';
 import { getUser, getCacheKey, getConfig, checkCommentStatus, clearCache } from '~/server/utils';
-import { getTidbKey } from '~/server/utils/tidb';
+import createStorage from '~/server/utils/storage';
 
 type PostResponse = ResponseBody<{
   id: number,
@@ -27,9 +26,10 @@ export default defineEventHandler(async function (event): Promise<PostResponse> 
     });
   }
 
+  const storage = createStorage(event);
   let user: User | null = null;
   try {
-    user = await getUser(authorization, body.domain);
+    user = await getUser(storage, authorization, body.domain);
   } catch (e) {
     const message = (e as Error).message || e;
     throw createError({
@@ -55,7 +55,7 @@ export default defineEventHandler(async function (event): Promise<PostResponse> 
   let status: CommentStatus;
 
   // check if user is admin
-  const config = await getConfig();
+  const config = await getConfig(storage);
   if (config.adminEmails.includes(email)) {
     status = CommentStatus.Approved;
   } else {
@@ -67,12 +67,16 @@ export default defineEventHandler(async function (event): Promise<PostResponse> 
     || headers[ 'x-client-ip' ]
     || '';
   let id: number | null = null;
+  const encodedCredentials = btoa(`${process.env.TIDB_PUBLIC_KEY}:${process.env.TIDB_PRIVATE_KEY}`);
   try {
     const url = process.env.TIDB_END_POINT + '/v1/post';
-    const kv = await getTidbKey();
-    const response = await digestFetch(
-      url,
-      {
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Basic ${encodedCredentials}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
         content: body.comment,
         post_id: body.postId,
         ancestor_id: body.ancestorId || 0,
@@ -87,19 +91,14 @@ export default defineEventHandler(async function (event): Promise<PostResponse> 
           window: body.window || '',
         }),
         status,
-      },
-      {
-        method: 'POST',
-        realm: 'tidb.cloud',
-        ...kv,
-      },
-    );
+      }),
+    });
     const json = await response.json();
     id = Number(json.data.rows[ 0 ].last_insert_id);
   } catch (e) {
     const message = (e as Error).message || String(e);
     throw createError({
-      statusCode: (e as FetchError).status,
+      statusCode: 400,
       message,
     });
   }
@@ -107,23 +106,21 @@ export default defineEventHandler(async function (event): Promise<PostResponse> 
   // if admin reply, update parent_id to be approved
   if (config.adminEmails.includes(email) && body.parentId && body.status === CommentStatus.Pending) {
     const url = process.env.TIDB_END_POINT + '/v1/moderator/review';
-    const kv = await getTidbKey();
-    await digestFetch(url,
-      {
+    await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Basic ${encodedCredentials}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
         status: CommentStatus.Approved,
         id: body.parentId,
-      },
-      {
-        method: 'POST',
-        realm: 'tidb.cloud',
-        ...kv,
-      },
-    );
+      }),
+    });
   }
 
   // if comment directly approved, clear cache
   if (status === CommentStatus.Approved) {
-    const storage = useStorage('data');
     const key = getCacheKey(body.postId);
     await clearCache(storage, key);
   }

@@ -1,0 +1,6 @@
+name = 'awesome-comment'
+account_id = "bcde86cbc071c7d619bf11d706b50251"
+
+[[kv_namespaces]]
+binding = "KV"
+id = "7de74e683fcc4472ae2bf144d0b588e3"

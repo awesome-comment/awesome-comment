@@ -1,18 +1,16 @@
 import { H3Event } from 'h3';
-import type { Storage } from 'unstorage';
 import type { AcConfig, Comment, ResponseComment, User } from '@awesome-comment/core/types';
 import { CommentStatus, MarkdownLinkRegex } from '@awesome-comment/core/data';
-import digestFetch from '@meathill/digest-fetch';
-import { getTidbKey } from './tidb';
+import createStorage, { AcStorage } from '~/server/utils/storage';
 
-export async function getConfig(): Promise<AcConfig> {
-  const storage = useStorage('data');
+export async function getConfig(storage: AcStorage): Promise<AcConfig> {
   const key = getConfigKey();
-  return (await storage.getItem(key)) as AcConfig;
+  return (await storage.get(key)) as AcConfig;
 }
 
 export async function checkUserPermission(event: H3Event): Promise<[User, AcConfig] | void> {
-  const config = await getConfig();
+  const storage = createStorage(event);
+  const config = await getConfig(storage);
   // not configured, it's a new site
   if (!config) {
     return;
@@ -28,7 +26,7 @@ export async function checkUserPermission(event: H3Event): Promise<[User, AcConf
 
   let user: User | null = null;
   try {
-    user = await getUser(authorization);
+    user = await getUser(storage, authorization);
   } catch (e) {
     const message =  (e as Error).message || e;
     throw createError({
@@ -54,11 +52,10 @@ export async function checkUserPermission(event: H3Event): Promise<[User, AcConf
   return [user, config];
 }
 
-export async function getUser(accessToken: string, domain?: string): Promise<User> {
+export async function getUser(storage: AcStorage, accessToken: string, domain?: string): Promise<User> {
   domain ??= process.env.AUTH0_DOMAIN || '';
-  const store = useStorage('data');
   const key = `user-${domain}-${accessToken}`;
-  const cached = await store.getItem(key);
+  const cached = await storage.get(key);
   if (cached) {
     return cached as User;
   }
@@ -76,8 +73,8 @@ export async function getUser(accessToken: string, domain?: string): Promise<Use
     throw new Error(`${response.status} ${response.statusText}`);
   }
   const user = (await response.json()) as User;
-  await store.setItem(key, user, {
-    ttl: 60 * 60,
+  await storage.put(key, user, {
+    expirationTtl: 60 * 60,
   });
   return user;
 }
@@ -97,11 +94,12 @@ export async function getUserComments(userId: string): Promise<ResponseComment[]
   params.set('user_id', userId as string);
   params.set('start', '0');
   // params.set('status', status.toString());
-  const kv = await getTidbKey();
-  const response = await digestFetch(`${url}?${params}`, null, {
+  const encodedCredentials = btoa(`${process.env.TIDB_PUBLIC_KEY}:${process.env.TIDB_PRIVATE_KEY}`);
+  const response = await fetch(`${url}?${params}`, {
     method: 'GET',
-    realm: 'tidb.cloud',
-    ...kv,
+    headers: {
+      'Authorization': `Basic ${encodedCredentials}`,
+    },
   });
   const result = await response.json();
   data.push(...result.data.rows);
@@ -182,10 +180,9 @@ export function isAutoApprove(
     && history.filter(c => Number(c.status) === CommentStatus.Approved).length >= 2;
 }
 
-export async function clearCache(storage: Storage, key: string): Promise<void> {
-  const keys = await storage.getKeys(key);
-  await storage.removeItem(key);
-  for (const key of keys) {
-    await storage.removeItem(key);
+export async function clearCache(storage: AcStorage, key: string): Promise<void> {
+  const keys = await storage.list(key);
+  for (const k of keys) {
+    await storage.delete(k);
   }
 }
