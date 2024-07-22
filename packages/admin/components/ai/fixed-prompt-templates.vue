@@ -51,16 +51,20 @@ async function doUse(id: string, event?: MouseEvent): Promise<void> {
   if (isUsingAI) {
     isLoading.value = id;
     const accessToken = await auth0.getAccessTokenSilently();
-    const stream = new StreamFetch([
-      {
-        role: 'user',
-        content: replaced,
+    const res = await $fetch<ResponseBody<string>>('/api/admin/chat', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${accessToken}`,
       },
-    ], accessToken);
-    stream.on(StreamFetchEvent.CHANGE, (value: string) => {
-      emit('ai', value);
+      body: {
+        messages: [{
+          role: 'user',
+          content: replaced,
+        }],
+      },
     });
-    await stream.promise;
+    emit('ai', res.data);
     isLoading.value = '';
     return;
   }
