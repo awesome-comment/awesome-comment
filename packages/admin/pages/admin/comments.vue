@@ -258,7 +258,7 @@ onMounted(() => {
 });
 onBeforeUnmount(() => {
   comments.value = {};
-  commentsList.value.length = 0;
+  commentsList.value && (commentsList.value.length = 0);
   document.body.removeEventListener('keydown', onKeydown);
 });
 

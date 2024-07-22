@@ -27,7 +27,7 @@ export default defineEventHandler(async function (event: H3Event) {
     if (Array.isArray(content)) {
       outputStream.push(content.join(''));
     } else {
-      outputStream.push(content);
+      outputStream.push(JSON.stringify(content));
     }
   }
   outputStream.push(null);
