@@ -20,12 +20,12 @@ export default defineEventHandler(async function (event: H3Event) {
   const outputStream = new Readable({
     read(size) {},
   });
+  setHeader(event, 'Content-Type', 'text/event-stream');
   sendStream(event, outputStream);
 
   for await (const part of gptStream) {
     const content = part.choices[ 0 ]?.delta?.content || '';
-    console.log('xxx', part);
-    outputStream.push(JSON.stringify(part));
+    outputStream.push(JSON.stringify(part.choices[ 0 ]?.delta));
   }
   outputStream.push(null);
 });
