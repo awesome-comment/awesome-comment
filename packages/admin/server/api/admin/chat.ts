@@ -24,6 +24,7 @@ export default defineEventHandler(async function (event: H3Event) {
 
   for await (const part of gptStream) {
     const content = part.choices[ 0 ]?.delta?.content || '';
+    console.log('xxx', part);
     outputStream.push(JSON.stringify(part));
   }
   outputStream.push(null);
