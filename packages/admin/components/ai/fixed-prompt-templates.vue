@@ -1,16 +1,24 @@
 <script setup lang="ts">
 import type { Comment, ResponseBody } from '@awesome-comment/core/types';
+import { clickWithModifier } from '@awesome-comment/core/utils';
 import pickBy from 'lodash/pickBy';
 import usePromptStore from '~/store/prompt';
 import type { AiPromptTemplate } from '~/types';
 import { replaceTemplate, writeToClipboard } from '~/utils';
+import StreamFetch, { StreamFetchEvent } from '~/services/stream-fetch';
+import { useAuth0 } from '@auth0/auth0-vue';
 
 type Props = {
   comment: Comment;
   reply: string;
 }
 const props = defineProps<Props>();
+type Emits = {
+  (event: 'ai', text: string): void;
+}
+const emit = defineEmits<Emits>();
 
+const auth0 = useAuth0();
 const promptStore = usePromptStore();
 
 const templateId = ref<string>('');
@@ -22,22 +30,41 @@ const fixed = computed<Record<string, AiPromptTemplate>>(() => {
 });
 const length = computed<number>(() => Object.keys(fixed.value).length);
 
-async function doUse(id: string): Promise<void> {
+async function doUse(id: string, event?: MouseEvent): Promise<void> {
   templateId.value = id;
-  if (!promptStore.isAutoCopy) {
+  const isUsingAI = clickWithModifier(event);
+  if (!isUsingAI && !promptStore.isAutoCopy) {
     isUsingTemplate.value = true;
     return;
   }
 
-  isLoading.value = id;
   const item = promptStore.prompts[ id ];
   if (!item) return;
+  isLoading.value = id;
   let title = '';
   if (item.template.includes('%TITLE%')) {
     const res = await $fetch<ResponseBody<{ title: string }>>('/api/fetch-url?url=' + props.comment.postId);
     title = res.data.title;
   }
   const replaced = replaceTemplate(item.template, props.comment, title, props.reply);
+
+  if (isUsingAI) {
+    isLoading.value = id;
+    const accessToken = await auth0.getAccessTokenSilently();
+    const stream = new StreamFetch([
+      {
+        role: 'user',
+        content: replaced,
+      },
+    ], accessToken);
+    stream.on(StreamFetchEvent.CHANGE, (value: string) => {
+      emit('ai', value);
+    });
+    await stream.promise;
+    isLoading.value = '';
+    return;
+  }
+
   await writeToClipboard(replaced);
   isLoading.value = '';
   isCopied.value = id;
@@ -68,7 +95,7 @@ onBeforeUnmount(() => {
       class="btn btn-xs btn-outline text-white"
       :class="isCopied === id ? 'btn-success' : 'btn-info'"
       :disabled="!!isLoading"
-      @click="doUse(id)"
+      @click="doUse(id, $event)"
     >
       <span
         v-if="isLoading === id"

@@ -106,6 +106,9 @@ function onKeydown(event: KeyboardEvent): void {
     doReply(event);
   }
 }
+function onAiOutput(text: string): void {
+  reply.value += text;
+}
 
 defineExpose({
   doOpenModal,
@@ -160,6 +163,7 @@ ui-modal(
     ai-fixed-prompt-templates(
       :comment="comment"
       :reply="reply"
+      @ai="onAiOutput"
     )
     footer.flex.justify-end
       button.btn.btn-primary.btn-sm.text-white.min-w-64(
