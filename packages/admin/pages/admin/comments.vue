@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import type { Comment } from '@awesome-comment/core/types';
 import { CommentStatus, Languages } from '@awesome-comment/core/data';
-import { isMac } from '@awesome-comment/core/utils';
 import { useAuth0 } from '@auth0/auth0-vue';
 import dayjs from 'dayjs';
 import keyBy from 'lodash-es/keyBy';
@@ -381,6 +380,10 @@ header.flex.flex-col.mb-4.gap-4(class="sm:flex-row sm:items-center")
               .chat-footer.mt-1
                 i.bi.bi-patch-check-fill.me-1
                 | {{child.user.email}}
+          emoji-shortcuts(
+            :comment="comment"
+            @reply="onReply($event, comment)"
+          )
         td.align-top
           user-cell(
             :filter="filter"

@@ -76,6 +76,8 @@ async function doUse(id: string, event?: MouseEvent): Promise<void> {
 }
 
 onMounted(async () => {
+  if (!promptStore.isAutoCopy) return;
+
   const promptId = promptStore.recentUsage[ props.comment.postId ];
   if (promptId && fixed.value[ promptId ]) {
     await nextTick();

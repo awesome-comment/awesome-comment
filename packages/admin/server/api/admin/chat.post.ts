@@ -18,6 +18,6 @@ export default defineEventHandler(async function (event: H3Event) {
 
   return {
     code: 0,
-    data: res.choices[0].message.content,
+    data: res.choices[ 0 ].message.content,
   };
 });

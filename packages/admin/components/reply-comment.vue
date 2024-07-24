@@ -4,6 +4,7 @@ import type { Comment } from '@awesome-comment/core/types';
 import { CommentStatus } from '@awesome-comment/core/data';
 import { withCommandModifier } from '@awesome-comment/core/utils';
 import { useAuth0 } from '@auth0/auth0-vue';
+import { ShortcutEmojis } from '~/data';
 
 type Props = {
   comment: Comment,
@@ -16,7 +17,6 @@ type Emits = {
 }
 const emit = defineEmits<Emits>();
 const auth0 = useAuth0();
-const Emojis = ['❤️', '👍', '😂'];
 
 const modal = ref<UiModal>();
 const textarea = ref<HTMLTextAreaElement>();
@@ -145,7 +145,7 @@ ui-modal(
             @click="doInsertUsername"
           ) [Name]
           button.btn.btn-xs.btn-ghost.btn-square(
-            v-for="item in Emojis"
+            v-for="item in ShortcutEmojis"
             :key="item"
             type="button"
             @click="doInsertEmoji(item)"
