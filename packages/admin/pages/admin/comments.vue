@@ -381,6 +381,7 @@ header.flex.flex-col.mb-4.gap-4(class="sm:flex-row sm:items-center")
                 i.bi.bi-patch-check-fill.me-1
                 | {{child.user.email}}
           emoji-shortcuts(
+            v-if="comment.status === CommentStatus.Pending"
             :comment="comment"
             @reply="onReply($event, comment)"
           )
