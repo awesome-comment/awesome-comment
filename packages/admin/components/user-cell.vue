@@ -27,14 +27,14 @@ const from = computed(() => {
   if (props.from.includes('google')) return 'google';
   return props.from;
 });
-const prefix = computed<string>(() => {
+const localPrefix = computed<string>(() => {
   return props.prefix || route.path;
 })
 const userLink = computed<string>(() => {
   const params = new URLSearchParams();
   params.set('user', props.userId);
   params.set('status', 'all');
-  return `${props.prefix}?${params.toString()}`;
+  return `${localPrefix.value}?${params.toString()}`;
 });
 const agentInfo = computed<UserAgentInfo>(() => {
   return parseUserAgent(props.user.agent);
