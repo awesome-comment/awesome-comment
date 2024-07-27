@@ -373,13 +373,15 @@ header.flex.flex-col.mb-4.gap-4(class="sm:flex-row sm:items-center")
               :key="child.id"
             )
               .chat-header
-                edit-comment(
+                reply-comment(
                   button-class=""
-                  :comment="child"
+                  :comment="comment"
+                  :reply="child.content"
                   @save="child.content = $event"
                   @open="hasReplyModal = true"
                   @close="hasReplyModal = false"
                 )
+                  template(#button-label) Edit
               .chat-bubble(v-html="child.content")
               .chat-footer.mt-1
                 i.bi.bi-patch-check-fill.me-1

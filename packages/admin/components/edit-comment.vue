@@ -31,7 +31,7 @@ async function doOpenModal(): Promise<void> {
   modal.value?.showModal();
   emit('open');
 }
-async function doReply(event: Event): Promise<void> {
+async function doEdit(event: Event): Promise<void> {
   if (isSaving.value || (event.target as HTMLFormElement).matches(':invalid')) return;
 
   isSaving.value = true;
@@ -81,7 +81,7 @@ teleport(
     @close="onModalClose"
   )
     form.modal-box(
-      @submit.prevent="doReply"
+      @submit.prevent="doEdit"
     )
       .mb-2 Edit
       blockquote.mb-2.border-l-2.border-gray-200.bg-base-200.ps-2.py-2 {{comment.content}}

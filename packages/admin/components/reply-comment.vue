@@ -7,11 +7,13 @@ import { useAuth0 } from '@auth0/auth0-vue';
 import { ShortcutEmojis } from '~/data';
 
 type Props = {
-  comment: Comment,
+  comment: Comment;
+  reply?: string;
 }
 const props = defineProps<Props>();
 type Emits = {
   (event: 'reply', reply: Comment): void;
+  (event: 'save', content: string): void;
   (event: 'open'): void;
   (event: 'close'): void;
 }
@@ -24,7 +26,7 @@ const textarea = ref<HTMLTextAreaElement>();
 const hasModal = ref<boolean>(false);
 const isReplying = ref<boolean>(false);
 const message = ref<string>('');
-const reply = ref<string>('');
+const reply = ref<string>(props.reply || '');
 
 async function doOpenModal(): Promise<void> {
   hasModal.value = true;
@@ -41,34 +43,41 @@ async function doReply(event: Event): Promise<void> {
 
   try {
     const accessToken = await auth0.getAccessTokenSilently();
-    const { data } = await $fetch('/api/comment', {
-      method: 'POST',
+    const method = props.reply ? 'PATCH' : 'POST';
+    const url = props.reply ? '/api/admin/comment/' + props.comment.id : '/api/comment';
+    const body = props.reply ? { content } : {
+      comment: content,
+      postId: props.comment.postId,
+      ancestorId: props.comment.ancestorId || props.comment.id,
+      parentId: props.comment.id,
+      status: props.comment.status,
+    };
+    const { data } = await $fetch(url, {
+      method,
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${accessToken}`,
       },
-      body: {
-        comment: content,
-        postId: props.comment.postId,
-        ancestorId: props.comment.ancestorId || props.comment.id,
-        parentId: props.comment.id,
-        status: props.comment.status,
-      },
+      body,
     });
-    emit('reply', {
-      id: data.id,
-      content: content,
-      postId: props.comment.postId,
-      parentId: props.comment.id,
-      ancestorId: props.comment.ancestorId || props.comment.id,
-      status: CommentStatus.Approved,
-      createdAt: new Date(),
-      user: {
-        email: auth0.user.value?.email,
-        name: auth0.user.value?.name,
-      },
-    } as Comment);
-    reply.value = '';
+    if (props.reply) {
+      emit('save', content);
+    } else {
+      emit('reply', {
+        id: data.id,
+        content: content,
+        postId: props.comment.postId,
+        parentId: props.comment.id,
+        ancestorId: props.comment.ancestorId || props.comment.id,
+        status: CommentStatus.Approved,
+        createdAt: new Date(),
+        user: {
+          email: auth0.user.value?.email,
+          name: auth0.user.value?.name,
+        },
+      } as Comment);
+      reply.value = '';
+    }
     modal.value.close();
   } catch (e) {
     message.value = (e as Error).message || String(e);
@@ -126,7 +135,7 @@ ui-modal(
 )
   template(#button)
     span.loading.loading-xs.loading-spinner(v-if="isReplying")
-    | Reply
+    slot(name="button-label") Reply
 
   form(
     @submit.prevent="doReply"
