@@ -19,7 +19,7 @@ const items = computed(() => {
       {
         label: 'Logout',
         icon: 'bi-box-arrow-left',
-        onClick: async () => {
+        async click() {
           await auth0?.logout();
         },
       },

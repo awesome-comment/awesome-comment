@@ -68,7 +68,7 @@ const agentInfo = computed<UserAgentInfo>(() => {
       <context-menu-dropdown>
         <nuxt-link
           :to="userLink"
-          class="truncate underline font-semibold leading-none mb-1 hover:no-underline"
+          class="block truncate underline font-semibold leading-none mb-1 hover:no-underline"
         >
           {{ user.name }}
         </nuxt-link>
