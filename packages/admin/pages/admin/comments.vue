@@ -254,6 +254,9 @@ function getUrl(postId: string, only = false): string {
   url.searchParams.set('post_id', postId);
   return url.toString();
 }
+function notEnglish(postId: string): boolean {
+  return !/\/en\/$/i.test(postId);
+}
 
 onMounted(() => {
   comments.value = keyBy(commentsList.value, 'id');
@@ -351,7 +354,7 @@ header.flex.flex-col.mb-4.gap-4(class="sm:flex-row sm:items-center")
         v-for="(comment, index) in commentsList"
         ref="tr"
         :key="comment.id"
-        :class="{'ring-4 ring-inset': index === currentItem}"
+        :class="{'ring-4 ring-inset': index === currentItem, 'bg-base-200': notEnglish(comment.postId)}"
       )
         td.align-top {{ comment.id }}
         td.align-top

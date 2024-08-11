@@ -91,7 +91,7 @@ const agentInfo = computed<UserAgentInfo>(() => {
       </div>
       <div
         v-if="user.ip"
-        class="text-xs"
+        class="text-xs truncate"
       >
         <nuxt-link
           :to="`https://clients1.google.co.in/url?sa=i&url=https://www.ipshudi.com/${user.ip}.htm`"
