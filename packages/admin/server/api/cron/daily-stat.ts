@@ -26,5 +26,8 @@ export default defineEventHandler(async function (event: H3Event) {
   });
   const result = await Promise.all(requests);
   console.log('[Cron] ', result);
-  return 'ok';
+  return {
+    code: 0,
+    data: 'ok',
+  };
 });
