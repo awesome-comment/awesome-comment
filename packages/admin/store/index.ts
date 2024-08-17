@@ -1,9 +1,11 @@
 import { useAuth0 } from '@auth0/auth0-vue';
-import { ResponseBody, AcConfig } from '@awesome-comment/core/types';
+import type { ResponseBody, AcConfig } from '@awesome-comment/core/types';
 
 const useConfigStore = defineStore('config', () => {
   const config = ref<AcConfig>({
     adminEmails: [],
+    adminDisplayName: '',
+    adminDisplayAvatar: '',
     autoApprove: {
       enabled: true,
     },

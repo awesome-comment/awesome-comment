@@ -1,4 +1,4 @@
-import { Comment, ResponseBody } from '@awesome-comment/core/types';
+import type { AcConfig, Comment, ResponseBody } from '@awesome-comment/core/types';
 import { getCacheKey, getConfig } from '~/server/utils';
 import { H3Event } from 'h3';
 import createStorage from '~/server/utils/storage';
@@ -48,11 +48,20 @@ export default defineCachedEventHandler(async function (event: H3Event): Promise
     const result = await response.json();
     data.push(...result.data.rows);
 
-    const config = await getConfig(storage);
+    const config = await getConfig(storage) as AcConfig;
+    const {
+      adminEmails = [],
+      adminDisplayName = '',
+      adminDisplayAvatar = '',
+    } = config || {};
     for (const item of data) {
       if (!item.user) continue;
       item.user = JSON.parse(String(item.user));
-      item.isAdmin = config?.adminEmails?.includes(item.user?.email || '');
+      item.isAdmin = adminEmails.includes(item.user?.email || '');
+      if (item.isAdmin && item.user) {
+        item.user.avatar = adminDisplayAvatar || item.user.avatar;
+        item.user.name = adminDisplayName || item.user.name;
+      }
     }
   } catch (e) {
     const message = (e as Error).message || String(e);

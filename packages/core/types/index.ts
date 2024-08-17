@@ -7,6 +7,8 @@ export type ToggleableRule = {
 }
 export type AcConfig = {
   adminEmails: string[];
+  adminDisplayName: string;
+  adminDisplayAvatar: string;
   autoApprove: ToggleableRule;
 }
 

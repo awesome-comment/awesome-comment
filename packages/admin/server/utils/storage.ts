@@ -33,9 +33,10 @@ export class AcStorage {
     if (this.kv) {
       await this.kv.put(key, JSON.stringify(value), options);
     } else {
-      await this.redis?.set(key, value, {
-        ex: options?.expirationTtl || 0,
-      });
+      const setOptions = options?.expirationTtl ? {
+        ex: options.expirationTtl,
+      } : undefined;
+      await this.redis?.set(key, value, setOptions);
     }
   }
 
