@@ -1,4 +1,25 @@
 {
+  "de": {
+    "admin": "Admin",
+    "anonymous": "Anonym",
+    "approve_hint": "Wir werden innerhalb von 24 Stunden auf deinen Kommentar antworten, ohne deine E-Mail zu spammen. Schau also bald wieder vorbei :)",
+    "discussion": "Diskussion",
+    "load_more": "Mehr laden",
+    "login": "ANMELDEN",
+    "logout": "Abmelden",
+    "placeholder": "Schreibe einen Kommentar...",
+    "post_comment": "KOMMENTAR POSTEN",
+    "post_reply": "ANTWORT POSTEN",
+    "reply": "Antworten",
+    "reply_to": "antworten auf",
+    "ui_texts": [
+      "Sei der Erste, der die Diskussion startet!",
+      "Nimm an der Unterhaltung teil (#)",
+      "Lädt...",
+      "Kommentare laden"
+    ],
+    "your_comment": "Dein Kommentar"
+  },
   "en": {
     "admin": "Admin",
     "anonymous": "Anonymous",
@@ -42,6 +63,27 @@
       "Cargar Comentarios"
     ],
     "your_comment": "Tu comentario"
+  },
+  "fr": {
+    "admin": "Admin",
+    "anonymous": "Anonyme",
+    "approve_hint": "Nous répondrons à votre commentaire dans les 24 heures sans vous spammer par e-mail, alors revenez bientôt :)",
+    "discussion": "Discussion",
+    "load_more": "Charger plus",
+    "login": "CONNEXION",
+    "logout": "Déconnexion",
+    "placeholder": "Écrivez un commentaire...",
+    "post_comment": "POSTER UN COMMENTAIRE",
+    "post_reply": "POSTER UNE RÉPONSE",
+    "reply": "Répondre",
+    "reply_to": "répondre à",
+    "ui_texts": [
+      "Soyez le premier à lancer la discussion !",
+      "Rejoignez la conversation (#)",
+      "Chargement...",
+      "Charger les commentaires"
+    ],
+    "your_comment": "Votre commentaire"
   },
   "id": {
     "admin": "Admin",
