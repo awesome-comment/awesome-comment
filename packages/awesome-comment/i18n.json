@@ -4,6 +4,7 @@
     "anonymous": "Anonym",
     "approve_hint": "Wir werden innerhalb von 24 Stunden auf deinen Kommentar antworten, ohne deine E-Mail zu spammen. Schau also bald wieder vorbei :)",
     "discussion": "Diskussion",
+    "edit": "Bearbeiten",
     "load_more": "Mehr laden",
     "login": "ANMELDEN",
     "logout": "Abmelden",
@@ -12,6 +13,7 @@
     "post_reply": "ANTWORT POSTEN",
     "reply": "Antworten",
     "reply_to": "antworten auf",
+    "save_editing": "Speichern",
     "ui_texts": [
       "Sei der Erste, der die Diskussion startet!",
       "Nimm an der Unterhaltung teil (#)",
@@ -25,6 +27,7 @@
     "anonymous": "Anonymous",
     "approve_hint": "We’ll reply to your comment within 24 hours without spamming your email, so please check back soon :)",
     "discussion": "Discussion",
+    "edit": "Edit",
     "load_more": "Load More",
     "login": "LOGIN",
     "logout": "Logout",
@@ -33,21 +36,21 @@
     "post_reply": "POST REPLY",
     "reply": "Reply",
     "reply_to": "reply to",
+    "save_editing": "Save",
     "ui_texts": [
       "Be the first to start the discussion!",
       "Join the Conversation (#)",
       "Loading...",
       "Load Comments"
     ],
-    "your_comment": "Your comment",
-    "edit": "Edit",
-    "save_editing": "Save"
+    "your_comment": "Your comment"
   },
   "es": {
     "admin": "Administrador",
     "anonymous": "Anónimo",
     "approve_hint": "los comentarios son normalmente aprobados dentro de 24 horas",
     "discussion": "Discusión",
+    "edit": "Editar",
     "load_more": "Cargar Más",
     "login": "INICIAR SESIÓN",
     "logout": "Cerrar Sesión",
@@ -56,6 +59,7 @@
     "post_reply": "PUBLICAR RESPUESTA",
     "reply": "Responder",
     "reply_to": "Responder a",
+    "save_editing": "Guardar",
     "ui_texts": [
       "¡Sé el primero en iniciar la discusión!",
       "Únete a la Conversación (#)",
@@ -69,6 +73,7 @@
     "anonymous": "Anonyme",
     "approve_hint": "Nous répondrons à votre commentaire dans les 24 heures sans vous spammer par e-mail, alors revenez bientôt :)",
     "discussion": "Discussion",
+    "edit": "Modifier",
     "load_more": "Charger plus",
     "login": "CONNEXION",
     "logout": "Déconnexion",
@@ -77,6 +82,7 @@
     "post_reply": "POSTER UNE RÉPONSE",
     "reply": "Répondre",
     "reply_to": "répondre à",
+    "save_editing": "Enregistrer",
     "ui_texts": [
       "Soyez le premier à lancer la discussion !",
       "Rejoignez la conversation (#)",
@@ -90,6 +96,7 @@
     "anonymous": "Anonim",
     "approve_hint": "komentar biasanya disetujui dalam waktu 24 jam",
     "discussion": "Diskusi",
+    "edit": "Edit",
     "load_more": "Muat Lebih Banyak",
     "login": "MASUK",
     "logout": "Keluar",
@@ -98,6 +105,7 @@
     "post_reply": "KIRIM BALASAN",
     "reply": "Balas",
     "reply_to": "balas ke",
+    "save_editing": "Simpan",
     "your_comment": "Komentar Anda"
   },
   "it": {
@@ -105,6 +113,7 @@
     "anonymous": "Anonimo",
     "approve_hint": "i commenti vengono normalmente approvati entro 24 ore",
     "discussion": "Discussione",
+    "edit": "Modifica",
     "load_more": "Carica Altri",
     "login": "ACCEDI",
     "logout": "Esci",
@@ -113,6 +122,7 @@
     "post_reply": "INVIA RISPOSTA",
     "reply": "Risposta",
     "reply_to": "rispondi a",
+    "save_editing": "Salva",
     "your_comment": "Il tuo commento"
   },
   "ja": {
@@ -120,6 +130,7 @@
     "anonymous": "匿名",
     "approve_hint": "コメントは通常24時間以内に承認されます",
     "discussion": "ディスカッション",
+    "edit": "編集",
     "load_more": "もっと読み込む",
     "login": "ログイン",
     "logout": "ログアウト",
@@ -128,6 +139,7 @@
     "post_reply": "返信を投稿",
     "reply": "返信",
     "reply_to": "返信先",
+    "save_editing": "保存",
     "your_comment": "あなたのコメント"
   },
   "ko": {
@@ -135,6 +147,7 @@
     "anonymous": "익명",
     "approve_hint": "댓글은 보통 24시간 내에 승인됩니다",
     "discussion": "토론",
+    "edit": "편집",
     "load_more": "더 보기",
     "login": "로그인",
     "logout": "로그아웃",
@@ -143,6 +156,7 @@
     "post_reply": "답글 게시",
     "reply": "답장",
     "reply_to": "답장 대상",
+    "save_editing": "저장",
     "your_comment": "당신의 댓글"
   },
   "pt": {
@@ -150,6 +164,7 @@
     "anonymous": "Anônimo",
     "approve_hint": "os comentários são normalmente aprovados dentro de 24 horas",
     "discussion": "Discussão",
+    "edit": "Editar",
     "load_more": "Carregar Mais",
     "login": "ENTRAR",
     "logout": "Sair",
@@ -158,6 +173,7 @@
     "post_reply": "PUBLICAR RESPOSTA",
     "reply": "Responder",
     "reply_to": "responder a",
+    "save_editing": "Salvar",
     "your_comment": "Seu comentário"
   },
   "th": {
@@ -165,6 +181,7 @@
     "anonymous": "นิรนาม",
     "approve_hint": "โดยปกติความคิดเห็นจะได้รับการอนุมัติภายใน 24 ชั่วโมง",
     "discussion": "การอภิปราย",
+    "edit": "แก้ไข",
     "load_more": "โหลดเพิ่ม",
     "login": "ลงชื่อเข้าใช้",
     "logout": "ลงชื่อออก",
@@ -173,6 +190,7 @@
     "post_reply": "โพสต์การตอบกลับ",
     "reply": "ตอบกลับ",
     "reply_to": "ตอบกลับถึง",
+    "save_editing": "บันทึก",
     "ui_texts": [
       "เป็นคนแรกที่เริ่มการอภิปราย",
       "เข้าร่วมการสนทนา (#)",
@@ -186,6 +204,7 @@
     "anonymous": "匿名",
     "approve_hint": "評論通常在24小時內獲得批準，並且每壹條評論都會獲得回復",
     "discussion": "討論",
+    "edit": "修改",
     "load_more": "加載更多",
     "login": "登錄",
     "logout": "登出",
@@ -194,6 +213,7 @@
     "post_reply": "發表回複",
     "reply": "回複",
     "reply_to": "回複給",
+    "save_editing": "保存",
     "your_comment": "您的評論"
   },
   "zh-CN": {
@@ -201,6 +221,7 @@
     "anonymous": "匿名",
     "approve_hint": "评论通常在24小时内公开（我们也会回复您）",
     "discussion": "讨论",
+    "edit": "编辑",
     "load_more": "加载更多",
     "login": "登录",
     "logout": "登出",
@@ -209,6 +230,7 @@
     "post_reply": "发表回复",
     "reply": "回复",
     "reply_to": "回复给",
+    "save_editing": "保存",
     "your_comment": "您的评论"
   }
 }
