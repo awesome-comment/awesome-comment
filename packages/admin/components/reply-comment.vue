@@ -9,6 +9,7 @@ import { ShortcutEmojis } from '~/data';
 type Props = {
   comment: Comment;
   reply?: string;
+  target?: Comment;
 }
 const props = defineProps<Props>();
 type Emits = {
@@ -44,7 +45,7 @@ async function doReply(event: Event): Promise<void> {
   try {
     const accessToken = await auth0.getAccessTokenSilently();
     const method = props.reply ? 'PATCH' : 'POST';
-    const url = props.reply ? '/api/admin/comment/' + props.comment.id : '/api/comment';
+    const url = props.reply ? '/api/admin/comment/' + props.target.id : '/api/comment';
     const body = props.reply ? { content } : {
       comment: content,
       postId: props.comment.postId,

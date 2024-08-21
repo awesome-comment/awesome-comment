@@ -380,6 +380,7 @@ header.flex.flex-col.mb-4.gap-4(class="sm:flex-row sm:items-center")
                   button-class=""
                   :comment="comment"
                   :reply="child.content"
+                  :target="child"
                   @save="child.content = $event"
                   @open="hasReplyModal = true"
                   @close="hasReplyModal = false"
