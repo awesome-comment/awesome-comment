@@ -1,5 +1,5 @@
 export enum Model {
-  CHAT_GPT4o = 'gpt-4o',
+  CHAT_GPT4o = 'gpt-4o-2024-08-06',
   CHAT_GPT4o_MINI = 'gpt-4o-mini',
 
   TTS_1 = 'tts-1',

@@ -88,6 +88,7 @@ async function doReplyWithCommon(): Promise<void> {
       Authorization: `Bearer ${accessToken}`,
     },
     body: {
+      postId: props.comment.postId,
       messages: [{
         role: 'user',
         content: replaced,

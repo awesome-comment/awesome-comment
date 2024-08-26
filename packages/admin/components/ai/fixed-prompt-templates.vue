@@ -58,6 +58,7 @@ async function doUse(id: string, event?: MouseEvent): Promise<void> {
         Authorization: `Bearer ${accessToken}`,
       },
       body: {
+        postId: props.comment.postId,
         messages: [{
           role: 'user',
           content: replaced,
