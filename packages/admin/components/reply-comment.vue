@@ -98,6 +98,25 @@ async function doInsertEmoji(emoji: string): Promise<void> {
   await nextTick();
   textarea.value.selectionStart = textarea.value.selectionEnd = selectionStart + emoji.length;
 }
+async function doInsertLink(): Promise<void> {
+  // insert emoji at cursor position
+  if (!textarea.value) return;
+
+  const url = prompt('Please enter the link:');
+  if (!url) return;
+  const title = prompt('Please enter the title:');
+
+  textarea.value.focus();
+  const { selectionStart, selectionEnd } = textarea.value;
+  const selected = reply.value.substring(selectionStart, selectionEnd);
+  const link = `[${selected || title || url}](${url}${title ? ` "${title}"` : ''})`;
+  const text = reply.value;
+  const before = text.substring(0, selectionStart);
+  const after = text.substring(selectionEnd);
+  reply.value = before + link + after;
+  await nextTick();
+  textarea.value.selectionStart = textarea.value.selectionEnd = selectionStart + link.length;
+}
 function doInsertUsername(): void {
   let username = props.comment.user.name || props.comment.user.email;
   username = username.split(' ')[ 0 ];
@@ -125,61 +144,96 @@ defineExpose({
 });
 </script>
 
-<template lang="pug">
-ui-modal(
-  ref="modal"
-  button-class="btn-info btn-sm sm:btn-xs text-white hover:text-white"
-  modal-class="w-11/12 max-w-3xl"
-  :disabled="isReplying"
-  :title="comment.postId"
-  @close="onClose"
-)
-  template(#button)
-    span.loading.loading-xs.loading-spinner(v-if="isReplying")
-    slot(name="button-label") Reply
+<template>
+  <ui-modal
+    ref="modal"
+    :disabled="isReplying"
+    :title="comment.postId"
+    button-class="btn-info btn-sm sm:btn-xs text-white hover:text-white"
+    modal-class="w-11/12 max-w-3xl"
+    @close="onClose"
+  >
+    <template #button>
+      <span
+        v-if="isReplying"
+        class="loading loading-xs loading-spinner"
+      />
+      <slot name="button-label">
+        Reply
+      </slot>
+    </template>
+    <form @submit.prevent="doReply">
+      <blockquote class="mb-2 border-l-2 border-gray-200 bg-base-200 ps-2 py-2 max-h-64 overflow-auto rounded-r-box">
+        {{ comment.content }}
+      </blockquote>
+      <div class="form-control mb-4">
+        <div class="label">
+          <label class="label-text">Your reply
+            <ai-reply-helper
+              :comment="comment"
+              :reply="reply"
+            />
+          </label>
+          <div class="label-text-alt">
+            <button
+              class="btn btn-xs btn-ghost text-success"
+              type="button"
+              @click="doInsertUsername"
+            >
+              [Name]
+            </button>
+            <button
+              v-for="item in ShortcutEmojis"
+              :key="item"
+              class="btn btn-xs btn-ghost btn-square"
+              type="button"
+              @click="doInsertEmoji(item)"
+            >
+              {{ item }}
+            </button>
+          </div>
+        </div>
+        <context-menu-wrapper>
+          <textarea
+            ref="textarea"
+            v-model="reply"
+            class="textarea textarea-bordered w-full"
+            required="required"
+            rows="16"
+            @keydown="onKeydown"
+          />
 
-  form(
-    @submit.prevent="doReply"
-  )
-    blockquote.mb-2.border-l-2.border-gray-200.bg-base-200.ps-2.py-2.max-h-64.overflow-auto.rounded-r-box {{comment.content}}
-    .form-control.mb-4
-      .label
-        label.label-text Your replyment
-          ai-reply-helper(
-            :comment="comment"
-            :reply="reply"
-          )
-        .label-text-alt
-          button.btn.btn-xs.btn-ghost.text-success(
-            type="button"
-            @click="doInsertUsername"
-          ) [Name]
-          button.btn.btn-xs.btn-ghost.btn-square(
-            v-for="item in ShortcutEmojis"
-            :key="item"
-            type="button"
-            @click="doInsertEmoji(item)"
-          ) {{item}}
-
-      textarea.textarea.textarea-bordered(
-        ref="textarea"
-        rows="16"
-        v-model="reply"
-        required
-        @keydown="onKeydown"
-      )
-    .alert.alert-error.mb-4(v-if="message")
-      p {{message}}
-    ai-fixed-prompt-templates(
-      :comment="comment"
-      :reply="reply"
-      @ai="onAiOutput"
-    )
-    footer.flex.justify-end
-      button.btn.btn-primary.btn-sm.text-white.min-w-64(
-        class="hover:text-white"
-        :disabled="isReplying"
-      )
-        span.loading.loading-spinner(v-if="isReplying")
-        | Reply
+          <template #menu>
+            <button
+              class="btn btn-ghost rounded-md"
+              type="button"
+              @click="doInsertLink"
+            >Insert link</button>
+          </template>
+        </context-menu-wrapper>
+      </div>
+      <div
+        v-if="message"
+        class="alert alert-error mb-4"
+      >
+        <p>{{ message }}</p>
+      </div>
+      <ai-fixed-prompt-templates
+        :comment="comment"
+        :reply="reply"
+        @ai="onAiOutput"
+      />
+      <footer class="flex justify-end">
+        <button
+          :disabled="isReplying"
+          class="btn btn-primary btn-sm text-white min-w-64 hover:text-white"
+        >
+          <span
+            v-if="isReplying"
+            class="loading loading-spinner"
+          />Reply
+        </button>
+      </footer>
+    </form>
+  </ui-modal>
 </template>

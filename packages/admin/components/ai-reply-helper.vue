@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { Comment } from '@awesome-comment/core/types';
 import usePromptStore from '~/store/prompt';
 
 type Props = {
