@@ -47,7 +47,11 @@ onBeforeMount(async () => {
   if (!needTitle) return;
 
   isLoadingTitle.value = true;
-  const res = await $fetch<ResponseBody<{ title: string }>>('/api/fetch-url?url=' + props.comment?.postId);
+  const res = await $fetch<ResponseBody<{ title: string }>>('/api/fetch-url', {
+    params: {
+      url: props.comment?.postId,
+    },
+  });
   title.value = res.data.title;
   isLoadingTitle.value = false;
 

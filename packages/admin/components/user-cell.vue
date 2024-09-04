@@ -67,8 +67,9 @@ const agentInfo = computed<UserAgentInfo>(() => {
     <div class="flex flex-col gap-1 w-40">
       <context-menu-dropdown>
         <nuxt-link
-          :to="userLink"
           class="block truncate underline font-semibold leading-none mb-1 hover:no-underline"
+          target="_blank"
+          :to="userLink"
         >
           {{ user.name }}
         </nuxt-link>

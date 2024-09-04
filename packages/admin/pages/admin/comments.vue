@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { parse } from 'marked';
 import type { Comment } from '@awesome-comment/core/types';
 import { CommentStatus, Languages } from '@awesome-comment/core/data';
 import { useAuth0 } from '@auth0/auth0-vue';
@@ -257,6 +258,9 @@ function getUrl(postId: string, only = false): string {
 function notEnglish(postId: string): boolean {
   return !/\/en\/$/i.test(postId);
 }
+function parseMarkdown(md: string): string {
+  return parse(md) as string;
+}
 
 onMounted(() => {
   comments.value = keyBy(commentsList.value, 'id');
@@ -386,7 +390,7 @@ header.flex.flex-col.mb-4.gap-4(class="sm:flex-row sm:items-center")
                   @close="hasReplyModal = false"
                 )
                   template(#button-label) Edit
-              .chat-bubble(v-html="child.content")
+              .chat-bubble(v-html="parseMarkdown(child.content)")
               .chat-footer.mt-1
                 i.bi.bi-patch-check-fill.me-1
                 | {{child.user.email}}

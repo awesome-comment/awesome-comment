@@ -2,7 +2,8 @@ import { createApp } from 'vue'
 import { createPinia } from 'pinia';
 import { Auth0Plugin, createAuth0 } from '@auth0/auth0-vue';
 import { createI18n } from 'vue-i18n';
-import messages from '../i18n.json' assert { type: 'json' };
+import omit from 'lodash-es/omit';
+import messages from '@awesome-comment/core/i18n.json' assert { type: 'json' };
 import './styles/tw-daisy.css';
 import './styles/main.css';
 import './styles/icon.css'
@@ -36,7 +37,10 @@ function init(domain: string, clientId: string, locale: string = navigator.langu
     legacy: false,
     locale,
     fallbackLocale: 'en',
-    messages,
+    messages: {
+      ...omit(messages, 'cn'),
+      'zh-CN': messages.cn,
+    },
   });
   app.use(auth0);
   app.use(pinia);

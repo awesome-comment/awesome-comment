@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { UiModal } from '#components';
-import type { Comment } from '@awesome-comment/core/types';
+import type { Comment, ResponseBody } from '@awesome-comment/core/types';
 import { CommentStatus } from '@awesome-comment/core/data';
 import { withCommandModifier } from '@awesome-comment/core/utils';
 import { useAuth0 } from '@auth0/auth0-vue';
@@ -102,9 +102,26 @@ async function doInsertLink(): Promise<void> {
   // insert emoji at cursor position
   if (!textarea.value) return;
 
-  const url = prompt('Please enter the link:');
+  const url = prompt('Please enter the link:', 'https://');
   if (!url) return;
-  const title = prompt('Please enter the title:');
+
+  let title = '';
+  try {
+    // validate input url
+    new URL(url);
+    const res = await $fetch<ResponseBody<{ title: string }>>('/api/fetch-url', {
+      params: {
+        url,
+      },
+    });
+    title = res.data.title;
+  } catch (e) {
+    console.error(e);
+    alert('Failed to fetch the title of the URL.');
+    return;
+  }
+
+  title = prompt('Please enter the title:', title) as string;
 
   textarea.value.focus();
   const { selectionStart, selectionEnd } = textarea.value;
@@ -136,7 +153,7 @@ function onKeydown(event: KeyboardEvent): void {
   }
 }
 function onAiOutput(text: string): void {
-  reply.value += text;
+  reply.value = text;
 }
 
 defineExpose({
@@ -208,7 +225,9 @@ defineExpose({
               class="btn btn-ghost rounded-md"
               type="button"
               @click="doInsertLink"
-            >Insert link</button>
+            >
+              Insert link
+            </button>
           </template>
         </context-menu-wrapper>
       </div>

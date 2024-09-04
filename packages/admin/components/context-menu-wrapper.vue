@@ -23,7 +23,10 @@ function onContextMenu () {
 </script>
 
 <template>
-  <div class="w-full" @contextmenu.prevent="onContextMenu">
+  <div
+    class="w-full"
+    @contextmenu.prevent="onContextMenu"
+  >
     <slot />
 
     <U-Context-Menu

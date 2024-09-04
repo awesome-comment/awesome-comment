@@ -1,3 +1,5 @@
+import i18n from '@awesome-comment/core/i18n.json' assert { type: 'json' };
+
 export enum CommentStatus {
   Pending,
   Approved,
@@ -10,13 +12,4 @@ export const MarkdownLinkRegex = /(?<!!)\[([^\]]+)]\(([^\s)]+)(?:\s+"[^"]*")?\)/
 
 export const EmailAppendixRegex = /@([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}$/;
 
-export const Languages: string[] = [
-  'en',
-  'zh',
-  'es',
-  'cn',
-  'ko',
-  'pt',
-  'ja',
-  'id',
-];
+export const Languages: string[] = Object.keys(i18n);

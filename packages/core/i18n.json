@@ -216,7 +216,7 @@
     "save_editing": "保存",
     "your_comment": "您的評論"
   },
-  "zh-CN": {
+  "cn": {
     "admin": "管理员",
     "anonymous": "匿名",
     "approve_hint": "评论通常在24小时内公开（我们也会回复您）",

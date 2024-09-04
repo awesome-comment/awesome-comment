@@ -43,7 +43,11 @@ async function doUse(id: string, event?: MouseEvent): Promise<void> {
   isLoading.value = id;
   let title = '';
   if (item.template.includes('%TITLE%')) {
-    const res = await $fetch<ResponseBody<{ title: string }>>('/api/fetch-url?url=' + props.comment.postId);
+    const res = await $fetch<ResponseBody<{ title: string }>>('/api/fetch-url', {
+      params: {
+        url: props.comment.postId,
+      },
+    });
     title = res.data.title;
   }
   const replaced = replaceTemplate(item.template, props.comment, title, props.reply);
