@@ -248,7 +248,8 @@ function getUrl(postId: string, only = false): string {
   if (only) {
     const params = new URLSearchParams();
     params.set('post_id', postId);
-    return `?${params.toString()}`;
+    params.set('status', 'all');
+    return `${location.pathname}?${params.toString()}`;
   }
 
   const url = new URL(location.href);
@@ -411,9 +412,9 @@ header.flex.flex-col.mb-4.gap-4(class="sm:flex-row sm:items-center")
         td.align-top {{ comment.postId.replace(postIdPrefix, '') }}
           .flex.gap-2.mt-2
             context-menu-dropdown
-              nuxt-link.btn.btn-xs.btn-ghost(
-                target="_blank"
-                :to="getUrl(comment.postId)"
+              button.btn.btn-xs.btn-ghost(
+                type="button"
+                @click="doFilter(comment.postId)"
               )
                 i.bi.bi-funnel-fill
 
@@ -421,6 +422,7 @@ header.flex.flex-col.mb-4.gap-4(class="sm:flex-row sm:items-center")
                 li
                   nuxt-link(
                     :to="getUrl(comment.postId, true)"
+                    target="_blank"
                   ) Filter by post
             nuxt-link.btn.btn-xs.btn-ghost(
               target="_blank"
