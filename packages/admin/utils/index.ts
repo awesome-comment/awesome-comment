@@ -9,7 +9,7 @@ export function replaceTemplate(
   reply: string,
 ): string {
   const lang = comment?.postId.replace(/\/$/, '').split('/').pop();
-  return template.replace(/%(\w+)%/ig, (match, key) => {
+  return template.replace(/\$(\w+)\$/ig, (match, key) => {
     switch (key) {
       case 'TITLE':
         return title;

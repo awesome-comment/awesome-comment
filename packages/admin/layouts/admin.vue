@@ -1,5 +1,18 @@
 <script setup lang="ts">
+import { useAuth0 } from '@auth0/auth0-vue';
+import useConfigStore from '~/store';
+import usePromptStore from '~/store/prompt';
 
+const auth0 = useAuth0();
+const configStore = useConfigStore();
+const promptStore = usePromptStore();
+
+onBeforeMount(() => {
+  if (!auth0.isAuthenticated.value) return;
+
+  configStore.initMyConfig();
+  promptStore.refreshPrompts();
+});
 </script>
 
 <template>

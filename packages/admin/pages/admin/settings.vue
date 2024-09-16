@@ -2,7 +2,7 @@
 import { useAuth0 } from '@auth0/auth0-vue';
 import { sleep } from '@awesome-comment/core/utils';
 import type { AcConfig } from '@awesome-comment/core/types';
-import { useConfigStore } from '~/store';
+import useConfigStore from '~/store';
 
 const auth0 = process.client ? useAuth0() : undefined;
 const store = useConfigStore();

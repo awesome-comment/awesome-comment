@@ -21,6 +21,11 @@ const links = [
     path: 'daily-stat-by-user',
   },
   {
+    label: 'AI Prompt Management',
+    icon: 'ui-checks-grid',
+    path: 'ai-templates',
+  },
+  {
     label: 'Settings',
     icon: 'gear-fill',
     path: 'settings',

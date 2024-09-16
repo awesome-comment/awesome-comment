@@ -3,6 +3,7 @@ import type { Comment, ResponseBody } from '@awesome-comment/core/types';
 import { CommentStatus } from '@awesome-comment/core/data';
 import { ShortcutEmojis } from '~/data';
 import { useAuth0 } from '@auth0/auth0-vue';
+import useConfigStore from '~/store';
 import usePromptStore from '~/store/prompt';
 import { replaceTemplate } from '~/utils';
 
@@ -16,13 +17,11 @@ type Emits = {
 const emit = defineEmits<Emits>();
 
 const auth0 = useAuth0();
+const configStore = useConfigStore();
 const promptStore = usePromptStore();
 
 const isReplying = ref<string>('');
 const message = ref<string>('');
-const hasCommon = computed<boolean>(() => {
-  return Object.values(promptStore.prompts).some(item => /^common$/i.test(item.title.trim()));
-});
 
 async function doReplyEmoji(emoji: string, isCommon = false): Promise<void> {
   if (isReplying.value && (isReplying.value !== 'common' || !isCommon)) return;
@@ -66,16 +65,13 @@ async function doReplyEmoji(emoji: string, isCommon = false): Promise<void> {
   }
   isReplying.value = '';
 }
-async function doReplyWithCommon(): Promise<void> {
+async function doReplyWithCommon(id: string): Promise<void> {
   if (isReplying.value) return;
 
-  const item = Object.values(promptStore.prompts)
-    .find(item => /^common$/i.test(item.title.trim()));
-  if (!item) return;
-
   isReplying.value = 'common';
+  const template = promptStore.prompts[ id ].content;
   let title = '';
-  if (item.template.includes('%TITLE%')) {
+  if (template.includes('$TITLE$')) {
     const res = await $fetch<ResponseBody<{ title: string }>>('/api/fetch-url', {
       params: {
         url: props.comment.postId,
@@ -83,9 +79,9 @@ async function doReplyWithCommon(): Promise<void> {
     });
     title = res.data.title;
   }
-  const replaced = replaceTemplate(item.template, props.comment, title, '');
+  const replaced = replaceTemplate(template, props.comment, title, '');
   const accessToken = await auth0.getAccessTokenSilently();
-  const res = await $fetch<ResponseBody<string>>('/api/admin/chat', {
+  const reqOptions = {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -98,13 +94,10 @@ async function doReplyWithCommon(): Promise<void> {
         content: replaced,
       }],
     },
-  });
+  };
+  const res = await $fetch<ResponseBody<string>>('/api/admin/chat', reqOptions);
   return doReplyEmoji(res.data, true);
 }
-
-onMounted(() => {
-  promptStore.init();
-});
 </script>
 
 <template>
@@ -124,17 +117,18 @@ onMounted(() => {
       <span v-else>{{ item }}</span>
     </button>
     <button
-      v-if="hasCommon"
+      v-for="(id, key) in configStore.myConfig.aiTemplateShortcuts"
+      :key="key"
       type="button"
       class="btn btn-sm btn-circle btn-ghost"
-      :disabled="!!isReplying"
-      @click="doReplyWithCommon"
+      :disabled="isReplying === id"
+      @click="doReplyWithCommon(id)"
     >
       <span
         v-if="isReplying === 'common'"
         class="loading loading-spinner"
       />
-      <span v-else>Go!</span>
+      <span v-else>{{ key }}</span>
     </button>
   </div>
 </template>

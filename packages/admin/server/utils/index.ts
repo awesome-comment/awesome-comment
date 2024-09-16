@@ -87,6 +87,11 @@ export function getConfigKey(): string {
   return `${process.env.ADMIN_SITE}_ac_config`;
 }
 
+export function getMyConfigKey(email: string): string {
+  // generate a encrypted id by combining email and salt
+  return `${process.env.ADMIN_SITE}_ac_config_${email}`;
+}
+
 export async function getUserComments(userId: string): Promise<ResponseComment[]> {
   const data: ResponseComment[] = [];
   const url = process.env.TIDB_END_POINT + '/v1/user';

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 type Props = {
   buttonClass?: string;
+  buttonIcon?: string;
   buttonLabel?: string;
   modalClass?: string;
   disabled?: boolean;
@@ -11,6 +12,7 @@ type Props = {
 }
 const props = withDefaults(defineProps<Props>(), {
   buttonClass: 'btn-info btn-sm',
+  buttonIcon: '',
   buttonLabel: 'Open Modal',
   modalClass: '',
   disabled: false,
@@ -72,6 +74,10 @@ defineExpose({
       <span
         v-if="isLoading"
         class="loading loading-spinner"
+      />
+      <i
+        v-else-if="buttonIcon"
+        :class="buttonIcon"
       />
       {{ buttonLabel }}
     </slot>

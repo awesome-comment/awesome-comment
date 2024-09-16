@@ -19,8 +19,9 @@ type Emits = {
   (event: 'close'): void;
 }
 const emit = defineEmits<Emits>();
-const auth0 = useAuth0();
 
+const auth0 = useAuth0();
+const hasAiHelper = !!__AI_ADMIN_ENDPOINT__;
 const modal = ref<UiModal>();
 const textarea = ref<HTMLTextAreaElement>();
 
@@ -183,14 +184,9 @@ defineExpose({
       <blockquote class="mb-2 border-l-2 border-gray-200 bg-base-200 ps-2 py-2 max-h-64 overflow-auto rounded-r-box">
         {{ comment.content }}
       </blockquote>
-      <div class="form-control mb-4">
+      <div class="form-control mb-2">
         <div class="label">
-          <label class="label-text">Your reply
-            <ai-reply-helper
-              :comment="comment"
-              :reply="reply"
-            />
-          </label>
+          <label class="label-text">Your reply</label>
           <div class="label-text-alt">
             <button
               class="btn btn-xs btn-ghost text-success"
@@ -214,7 +210,7 @@ defineExpose({
           <textarea
             ref="textarea"
             v-model="reply"
-            class="textarea textarea-bordered w-full"
+            class="textarea textarea-bordered block w-full"
             required="required"
             rows="16"
             @keydown="onKeydown"
@@ -237,7 +233,9 @@ defineExpose({
       >
         <p>{{ message }}</p>
       </div>
+
       <ai-fixed-prompt-templates
+        v-if="hasAiHelper"
         :comment="comment"
         :reply="reply"
         @ai="onAiOutput"

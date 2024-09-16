@@ -5,8 +5,8 @@ import pickBy from 'lodash/pickBy';
 import usePromptStore from '~/store/prompt';
 import type { AiPromptTemplate } from '~/types';
 import { replaceTemplate, writeToClipboard } from '~/utils';
-import StreamFetch, { StreamFetchEvent } from '~/services/stream-fetch';
 import { useAuth0 } from '@auth0/auth0-vue';
+import useConfigStore from '~/store';
 
 type Props = {
   comment: Comment;
@@ -19,6 +19,7 @@ type Emits = {
 const emit = defineEmits<Emits>();
 
 const auth0 = useAuth0();
+const configStore = useConfigStore();
 const promptStore = usePromptStore();
 
 const templateId = ref<string>('');
@@ -26,14 +27,17 @@ const isUsingTemplate = ref<boolean>(false);
 const isLoading = ref<string>('');
 const isCopied = ref<string>('');
 const fixed = computed<Record<string, AiPromptTemplate>>(() => {
-  return pickBy(promptStore.prompts, item => item.isFix);
+  return pickBy(
+    promptStore.prompts,
+    item => configStore.myConfig.fixedAiTemplates.includes(item.id)
+  );
 });
 const length = computed<number>(() => Object.keys(fixed.value).length);
 
 async function doUse(id: string, event?: MouseEvent): Promise<void> {
   templateId.value = id;
   const isUsingAI = clickWithModifier(event);
-  if (!isUsingAI && !promptStore.isAutoCopy) {
+  if (!isUsingAI) {
     isUsingTemplate.value = true;
     return;
   }
@@ -42,7 +46,7 @@ async function doUse(id: string, event?: MouseEvent): Promise<void> {
   if (!item) return;
   isLoading.value = id;
   let title = '';
-  if (item.template.includes('%TITLE%')) {
+  if (item.content.includes('$TITLE$')) {
     const res = await $fetch<ResponseBody<{ title: string }>>('/api/fetch-url', {
       params: {
         url: props.comment.postId,
@@ -50,12 +54,12 @@ async function doUse(id: string, event?: MouseEvent): Promise<void> {
     });
     title = res.data.title;
   }
-  const replaced = replaceTemplate(item.template, props.comment, title, props.reply);
+  const replaced = replaceTemplate(item.content, props.comment, title, props.reply);
 
   if (isUsingAI) {
     isLoading.value = id;
     const accessToken = await auth0.getAccessTokenSilently();
-    const res = await $fetch<ResponseBody<string>>('/api/admin/chat', {
+    const reqOptions = {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -68,7 +72,8 @@ async function doUse(id: string, event?: MouseEvent): Promise<void> {
           content: replaced,
         }],
       },
-    });
+    };
+    const res = await $fetch<ResponseBody<string>>('/api/admin/chat', reqOptions);
     emit('ai', res.data);
     isLoading.value = '';
     return;
@@ -77,18 +82,8 @@ async function doUse(id: string, event?: MouseEvent): Promise<void> {
   await writeToClipboard(replaced);
   isLoading.value = '';
   isCopied.value = id;
-  promptStore.setRecentUsage(props.comment.postId, id);
 }
 
-onMounted(async () => {
-  if (!promptStore.isAutoCopy) return;
-
-  const promptId = promptStore.recentUsage[ props.comment.postId ];
-  if (promptId && fixed.value[ promptId ]) {
-    await nextTick();
-    doUse(promptId);
-  }
-});
 onBeforeUnmount(() => {
   isCopied.value = '';
 });
@@ -97,7 +92,7 @@ onBeforeUnmount(() => {
 <template>
   <div
     v-if="length"
-    class="flex flex-wrap gap-1 items-center mb-4"
+    class="flex flex-wrap gap-1 items-center"
   >
     <button
       v-for="(template, id) in fixed"
@@ -119,12 +114,4 @@ onBeforeUnmount(() => {
       {{ template.title }}
     </button>
   </div>
-
-  <ai-use-template
-    v-if="isUsingTemplate"
-    v-model:is-open="isUsingTemplate"
-    :prompt-id="templateId"
-    :comment="comment"
-    :reply="reply"
-  />
 </template>

@@ -78,6 +78,8 @@ export default defineNuxtConfig({
       __AUTH0_CLIENT_ID__: JSON.stringify(process.env.AUTH0_CLIENT_ID),
       __REPO_URL__: JSON.stringify(repoUrl),
       __POST_ID_PREFIX__: JSON.stringify(process.env.POST_ID_PREFIX || ''),
+      __AI_ADMIN_ENDPOINT__: JSON.stringify(process.env.AI_ADMIN_ENDPOINT || ''),
+      __AI_ADMIN_AUTH_TOKEN__: JSON.stringify(process.env.AI_ADMIN_AUTH_TOKEN || ''),
     },
   },
   dayjs: {

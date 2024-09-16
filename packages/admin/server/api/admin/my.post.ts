@@ -1,0 +1,25 @@
+import { ResponseBody } from '@awesome-comment/core/types';
+import { H3Event } from 'h3';
+import { getMyConfigKey } from '~/server/utils';
+import createStorage from '~/server/utils/storage';
+import { MyAdminConfig } from '~/types';
+
+export default defineEventHandler(async function (event: H3Event): Promise<ResponseBody<string>> {
+  const body = (await readBody(event)) as MyAdminConfig;
+
+  const storage = createStorage(event);
+  const key = getMyConfigKey(event.context.user.email);
+  const {
+    fixedAiTemplates,
+    aiTemplateShortcuts,
+  } = body;
+  await storage.put(key, {
+    fixedAiTemplates,
+    aiTemplateShortcuts,
+  });
+
+  return {
+    code: 0,
+    data: 'ok',
+  };
+});
