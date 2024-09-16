@@ -1,7 +1,11 @@
 <script lang="ts" setup>
 import { useAuth0, User } from '@auth0/auth0-vue';
+import useConfigStore from '~/store';
+import usePromptStore from '~/store/prompt';
 
-const auth0 = process.client ? useAuth0() : undefined;
+const auth0 = import.meta.client ? useAuth0() : undefined;
+const configStore = useConfigStore();
+const promptStore = usePromptStore();
 
 const isAuthenticated = computed<boolean>(() => {
   return !!auth0?.isAuthenticated.value;
@@ -23,6 +27,13 @@ function doLogin() {
 async function doLogout(): Promise<void> {
   await auth0?.logout();
 }
+
+watch(isAuthenticated, (value) => {
+  if (value) {
+    configStore.initMyConfig();
+    promptStore.refreshPrompts();
+  }
+});
 
 useHead({
   title: 'Admin Login',
