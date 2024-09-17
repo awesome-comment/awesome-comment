@@ -10,8 +10,9 @@ const isSaving = ref<boolean>(false);
 const isSaved = ref<boolean>(false);
 const fixed = ref<number[]>([]);
 const shortcuts = ref<Record<string, string>>({});
+const errors = ref<Record<string, string>>({});
 
-const { data, status } = useAsyncData(
+const { data, refresh, status } = useAsyncData(
   'prompts',
   async function () {
     await promptStore.refreshPrompts();
@@ -32,14 +33,19 @@ const { data, status } = useAsyncData(
 );
 
 async function doSave(): Promise<void> {
+  const aiTemplateShortcuts = {};
+  errors.value = {};
+  for (const [key, value] of Object.entries(shortcuts.value)) {
+    if (value in aiTemplateShortcuts) {
+      errors.value[ key ] = 'Duplicate shortcut';
+      return;
+    }
+    aiTemplateShortcuts[ value ] = key;
+  }
   isSaving.value = true;
   const toUpdate = {
     fixedAiTemplates: fixed.value,
-    aiTemplateShortcuts: Object.entries(shortcuts.value)
-      .reduce((acc, [key, value]) => {
-        acc[ value ] = key;
-        return acc;
-      }, {} as Record<string, string>),
+    aiTemplateShortcuts,
   }
   await store.updateMyConfig(toUpdate);
   isSaving.value = false;
@@ -59,19 +65,30 @@ async function doSave(): Promise<void> {
       class="loading loading-spinner"
     />
     <button
+      class="btn btn-success btn-sm text-white ms-auto"
+      type="button"
+      :disabled="status === 'pending'"
+      @click="refresh"
+    >
+      <i class="bi bi-arrow-clockwise" />
+      Refresh
+    </button>
+    <button
       :class="isSaved ? 'btn-success' : 'btn-primary'"
       :disabled="isSaving"
       type="button"
-      class="btn ms-auto text-white"
+      class="btn btn-sm text-white"
       @click="doSave"
     >
       <span
         v-if="isSaving"
         class="loading loading-spinner"
-      /><i
+      />
+      <i
         v-else
         class="bi bi-check-lg"
-      />Save
+      />
+      {{ isSaved ? 'Saved' : 'Save' }}
     </button>
   </header>
   <table class="table">
@@ -110,9 +127,15 @@ async function doSave(): Promise<void> {
         <td>
           <input
             v-model.lazy="shortcuts[prompt.id]"
-            class="input input-bordered input-sm"
+            class="input input-bordered input-sm block"
             placeholder="Shortcut"
           >
+          <div
+            v-if="errors[prompt.id]"
+            class="text-error text-xs ps-2 mt-1"
+          >
+            {{ errors[prompt.id] }}
+          </div>
         </td>
       </tr>
     </tbody>

@@ -8,7 +8,7 @@ import usePromptStore from '~/store/prompt';
 import { replaceTemplate } from '~/utils';
 
 type Props = {
-  comment: Comment,
+  comment?: Comment,
 }
 const props = defineProps<Props>();
 type Emits = {
@@ -22,6 +22,15 @@ const promptStore = usePromptStore();
 
 const isReplying = ref<string>('');
 const message = ref<string>('');
+const shortcuts = computed<{key: string, id: string}[]>(() => {
+  return Object.entries(configStore.myConfig.aiTemplateShortcuts)
+    .reduce((acc, [key, id]) => {
+      if (!(id in promptStore.prompts)) return acc;
+
+      acc.push({ key, id });
+      return acc;
+    }, [] as { key: string, id: string }[]);
+});
 
 async function doReplyEmoji(emoji: string, isCommon = false): Promise<void> {
   if (isReplying.value && (isReplying.value !== 'common' || !isCommon)) return;
@@ -101,7 +110,7 @@ async function doReplyWithCommon(id: string): Promise<void> {
 </script>
 
 <template>
-  <div class="flex items-center gap-2 pt-4">
+  <div class="flex items-center gap-2">
     <button
       v-for="item in ShortcutEmojis"
       :key="item"
@@ -117,18 +126,18 @@ async function doReplyWithCommon(id: string): Promise<void> {
       <span v-else>{{ item }}</span>
     </button>
     <button
-      v-for="(id, key) in configStore.myConfig.aiTemplateShortcuts"
-      :key="key"
+      v-for="item in shortcuts"
+      :key="item.key"
       type="button"
       class="btn btn-sm btn-circle btn-ghost"
-      :disabled="isReplying === id"
-      @click="doReplyWithCommon(id)"
+      :disabled="isReplying === item.id"
+      @click="doReplyWithCommon(item.id)"
     >
       <span
-        v-if="isReplying === 'common'"
+        v-if="isReplying === item.id"
         class="loading loading-spinner"
       />
-      <span v-else>{{ key }}</span>
+      <span v-else>{{ item.key }}</span>
     </button>
   </div>
 </template>

@@ -18,7 +18,11 @@ const usePromptStore = defineStore('prompt', () => {
       },
     });
     (data || []).forEach((prompt) => {
-      prompts.value[ prompt.id ] = prompt;
+      const title = prompt.title.replace(/^ac-/i, '');
+      prompts.value[ prompt.id ] = {
+        ...prompt,
+        title,
+      };
     });
     isLoading.value = false;
   }

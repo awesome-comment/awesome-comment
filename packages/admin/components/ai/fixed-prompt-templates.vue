@@ -27,10 +27,13 @@ const isUsingTemplate = ref<boolean>(false);
 const isLoading = ref<string>('');
 const isCopied = ref<string>('');
 const fixed = computed<Record<string, AiPromptTemplate>>(() => {
-  return pickBy(
-    promptStore.prompts,
-    item => configStore.myConfig.fixedAiTemplates.includes(item.id)
-  );
+  return configStore.myConfig.fixedAiTemplates.reduce((acc, id) => {
+    const template = promptStore.prompts[ id ];
+    if (template) {
+      acc[ id ] = template as AiPromptTemplate;
+    }
+    return acc;
+  }, {} as Record<string, AiPromptTemplate>);
 });
 const length = computed<number>(() => Object.keys(fixed.value).length);
 
