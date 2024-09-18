@@ -23,6 +23,7 @@ const replyComments = shallowRef<ReplyComment[]>();
 const tr = ref<HTMLTableRowElement[]>([]);
 
 const start = ref<number>(0);
+const isBatching = ref<boolean>(false);
 const hasMore = ref<boolean>(false);
 const loadingMore = ref<boolean>(false);
 const message = ref<string>('');
@@ -37,6 +38,7 @@ const filterLanguage = ref<string>(route.query.language || '');
 const comments = ref<Record<number, RowItem>>({});
 const currentItem = ref<number>(-1);
 const hasReplyModal = ref<boolean>(false);
+const selected = ref<number[]>([]);
 const filter = computed<URLSearchParams>(() => {
   const params = new URLSearchParams();
   if (filterStatus.value !== 'all') {
@@ -227,7 +229,7 @@ function onKeydown(event: KeyboardEvent): void {
     case 'R':
       if (currentItem.value === -1) return;
 
-      replyComments.value?.[ currentItem.value ].doOpenModal();
+      (replyComments.value?.[ currentItem.value ] as ReplyComment).doOpenModal();
       event.preventDefault();
       break;
   }
@@ -360,6 +362,12 @@ header.flex.flex-col.mb-4.gap-4(class="sm:flex-row sm:items-center")
     | {{filterUser}}
     i.bi.bi-x-lg
 
+ui-batch-actions(
+  v-model="selected"
+  v-model:isWorking="isBatching"
+  :comments="commentsList"
+)
+
 .overflow-x-auto
   table.table.table-pin-rows.table-pin-cols.table-sm(
     class="sm:table-md"
@@ -378,9 +386,17 @@ header.flex.flex-col.mb-4.gap-4(class="sm:flex-row sm:items-center")
         v-for="(comment, index) in commentsList"
         ref="tr"
         :key="comment.id"
-        :class="{'ring-4 ring-inset': index === currentItem, 'bg-base-200': notEnglish(comment.postId)}"
+        :class="{'ring-4 ring-inset': index === currentItem, 'bg-base-200': notEnglish(comment.postId), 'bg-sky-100': selected.includes(comment.id)}"
       )
-        td.align-top {{ comment.id }}
+        td.align-top
+          label.block.h-full.w-full.cursor-pointer
+            input.hidden(
+              type="checkbox"
+              v-model="selected"
+              name="selected"
+              :value="comment.id"
+            )
+            | {{ comment.id }}
         td.align-top
           blockquote.ps-3.border-s-4.mb-2(
             v-if="comment.toContent"
@@ -421,7 +437,7 @@ header.flex.flex-col.mb-4.gap-4(class="sm:flex-row sm:items-center")
               .chat-footer.mt-1
                 i.bi.bi-patch-check-fill.me-1
                 | {{child.user.email}}
-          emoji-shortcuts(
+          emoji-shortcuts.pt-4(
             v-if="comment.status === CommentStatus.Pending || filterStatus === CommentStatus.UnReplied"
             :comment="comment"
             @reply="onReply($event, comment)"
@@ -463,7 +479,7 @@ header.flex.flex-col.mb-4.gap-4(class="sm:flex-row sm:items-center")
               v-if="comment.status === CommentStatus.Pending || comment.status === CommentStatus.Rejected"
               type="button"
               class="sm:btn-xs hover:text-white"
-              :disabled="comment.isApproving || comment.isRejecting || comment.isDeleting || loadingMore",
+              :disabled="isBatching || comment.isApproving || comment.isRejecting || comment.isDeleting || loadingMore",
               @click="doReview(comment, CommentStatus.Approved)"
             )
               span.loading.loading-xs.loading-spinner(v-if="comment.isApproving")
@@ -497,7 +513,7 @@ header.flex.flex-col.mb-4.gap-4(class="sm:flex-row sm:items-center")
                   v-if="comment.status === CommentStatus.Pending || comment.status === CommentStatus.Approved"
                   type="button",
                   class="sm:btn-xs"
-                  :disabled="comment.isApproving || comment.isRejecting || comment.isDeleting || loadingMore",
+                  :disabled="isBatching || comment.isApproving || comment.isRejecting || comment.isDeleting || loadingMore",
                   @click="doReview(comment, CommentStatus.Rejected)"
                 )
                   span.loading.loading-xs.loading-spinner(v-if="comment.isRejecting")
@@ -505,7 +521,7 @@ header.flex.flex-col.mb-4.gap-4(class="sm:flex-row sm:items-center")
                 button.btn.btn-outline.btn-error.btn-sm(
                   type="button",
                   class="sm:btn-xs"
-                  :disabled="comment.isApproving || comment.isRejecting || comment.isDeleting || loadingMore",
+                  :disabled="isBatching || comment.isApproving || comment.isRejecting || comment.isDeleting || loadingMore",
                   @click="doDelete(comment)"
                 )
                   span.loading.loading-xs.loading-spinner(v-if="comment.isDeleting")
