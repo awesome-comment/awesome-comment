@@ -36,7 +36,7 @@ const shortcuts = computed<{key: string, id: string}[]>(() => {
 });
 
 async function doReplyEmoji(emoji: string, isCommon = false): Promise<void> {
-  if (isReplying.value && (isReplying.value !== 'common' || !isCommon)) return;
+  if (isReplying.value && !isCommon) return;
 
   if (!isCommon) {
     isReplying.value = emoji;
