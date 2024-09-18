@@ -56,40 +56,44 @@ async function doSave(): Promise<void> {
 </script>
 
 <template>
-  <header class="flex items-center mb-4 gap-4">
-    <h1 class="text-2xl font-bold">
-      AI Prompts Template Management
-    </h1>
-    <span
-      v-if="status === 'pending'"
-      class="loading loading-spinner"
-    />
-    <button
-      class="btn btn-success btn-sm text-white ms-auto"
-      type="button"
-      :disabled="status === 'pending'"
-      @click="refresh"
-    >
-      <i class="bi bi-arrow-clockwise" />
-      Refresh
-    </button>
-    <button
-      :class="isSaved ? 'btn-success' : 'btn-primary'"
-      :disabled="isSaving"
-      type="button"
-      class="btn btn-sm text-white"
-      @click="doSave"
-    >
+  <header class="sm:flex items-center mb-4 gap-4">
+    <div class="flex items-center gap-4 mb-2 sm:mb-0">
+      <h1 class="text-2xl font-bold">
+        AI Prompts Template Management
+      </h1>
+      <span
+        v-if="status === 'pending'"
+        class="loading loading-spinner"
+      />
+    </div>
+    <div class="flex items-center ms-auto gap-4">
+      <button
+        class="btn btn-success btn-sm text-white"
+        type="button"
+        :disabled="status === 'pending'"
+        @click="refresh"
+      >
+        <i class="bi bi-arrow-clockwise" />
+        Refresh
+      </button>
+      <button
+        :class="isSaved ? 'btn-success' : 'btn-primary'"
+        :disabled="isSaving"
+        type="button"
+        class="btn btn-sm text-white"
+        @click="doSave"
+      >
       <span
         v-if="isSaving"
         class="loading loading-spinner"
       />
-      <i
-        v-else
-        class="bi bi-check-lg"
-      />
-      {{ isSaved ? 'Saved' : 'Save' }}
-    </button>
+        <i
+          v-else
+          class="bi bi-check-lg"
+        />
+        {{ isSaved ? 'Saved' : 'Save' }}
+      </button>
+    </div>
   </header>
   <table class="table">
     <thead>
