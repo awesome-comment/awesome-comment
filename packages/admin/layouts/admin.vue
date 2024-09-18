@@ -7,6 +7,17 @@ const auth0 = useAuth0();
 const configStore = useConfigStore();
 const promptStore = usePromptStore();
 
+const {
+  isAuthenticated
+} = auth0;
+
+watch(isAuthenticated, (value) => {
+  if (value) {
+    configStore.initMyConfig();
+    promptStore.refreshPrompts();
+  }
+});
+
 onBeforeMount(() => {
   if (!auth0.isAuthenticated.value) return;
 
