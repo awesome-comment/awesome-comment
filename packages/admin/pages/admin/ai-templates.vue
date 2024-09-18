@@ -97,11 +97,12 @@ async function doSave(): Promise<void> {
         <th>Template Title</th>
         <th>Fix to Reply Modal</th>
         <th>Shortcuts</th>
+        <th />
       </tr>
     </thead>
     <tbody v-if="promptStore.isLoading">
       <tr>
-        <td colspan="3">
+        <td colspan="4">
           <div class="h-32 flex justify-center items-center gap-2">
             <span class="loading loading-spinner" />
             Loading...
@@ -136,6 +137,19 @@ async function doSave(): Promise<void> {
           >
             {{ errors[prompt.id] }}
           </div>
+        </td>
+        <td>
+          <ui-modal
+            button-class="btn btn-info btn-sm text-white"
+            button-label="View template"
+            title="View template"
+          >
+            <div class="bg-base-200 p-4 max-h-80 overflow-auto">
+              <p class="whitespace-pre-wrap font-mono">
+                {{ prompt.content }}
+              </p>
+            </div>
+          </ui-modal>
         </td>
       </tr>
     </tbody>

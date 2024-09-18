@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import type { Comment, ResponseBody } from '@awesome-comment/core/types';
 import { clickWithModifier } from '@awesome-comment/core/utils';
-import pickBy from 'lodash/pickBy';
 import usePromptStore from '~/store/prompt';
 import type { AiPromptTemplate } from '~/types';
 import { replaceTemplate, writeToClipboard } from '~/utils';
@@ -23,9 +22,10 @@ const configStore = useConfigStore();
 const promptStore = usePromptStore();
 
 const templateId = ref<string>('');
-const isUsingTemplate = ref<boolean>(false);
+const isPreviewPrompt = ref<boolean>(false);
 const isLoading = ref<string>('');
 const isCopied = ref<string>('');
+const promptResult = ref<string>('');
 const fixed = computed<Record<string, AiPromptTemplate>>(() => {
   return configStore.myConfig.fixedAiTemplates.reduce((acc, id) => {
     const template = promptStore.prompts[ id ];
@@ -39,11 +39,7 @@ const length = computed<number>(() => Object.keys(fixed.value).length);
 
 async function doUse(id: string, event?: MouseEvent): Promise<void> {
   templateId.value = id;
-  const isUsingAI = clickWithModifier(event);
-  if (!isUsingAI) {
-    isUsingTemplate.value = true;
-    return;
-  }
+  const hasPreviewPrompt = clickWithModifier(event);
 
   const item = promptStore.prompts[ id ];
   if (!item) return;
@@ -57,34 +53,42 @@ async function doUse(id: string, event?: MouseEvent): Promise<void> {
     });
     title = res.data.title;
   }
-  const replaced = replaceTemplate(item.content, props.comment, title, props.reply);
+  promptResult.value = replaceTemplate(item.content, props.comment, title, props.reply);
 
-  if (isUsingAI) {
-    isLoading.value = id;
-    const accessToken = await auth0.getAccessTokenSilently();
-    const reqOptions = {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${accessToken}`,
-      },
-      body: {
-        postId: props.comment.postId,
-        messages: [{
-          role: 'user',
-          content: replaced,
-        }],
-      },
-    };
-    const res = await $fetch<ResponseBody<string>>('/api/admin/chat', reqOptions);
-    emit('ai', res.data);
-    isLoading.value = '';
+  if (hasPreviewPrompt) {
+    isPreviewPrompt.value = true;
     return;
   }
 
-  await writeToClipboard(replaced);
+  return doSubmitChat()
+}
+async function doSubmitChat(): Promise<void> {
+  isLoading.value = templateId.value;
+  const accessToken = await auth0.getAccessTokenSilently();
+  const reqOptions = {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${accessToken}`,
+    },
+    body: {
+      postId: props.comment.postId,
+      messages: [{
+        role: 'user',
+        content: promptResult.value,
+      }],
+    },
+  };
+  const res = await $fetch<ResponseBody<string>>('/api/admin/chat', reqOptions);
+  emit('ai', res.data);
   isLoading.value = '';
-  isCopied.value = id;
+}
+
+function onModalClose(isSubmit: boolean): void {
+  isPreviewPrompt.value = false;
+  if (!isSubmit) {
+    isLoading.value = '';
+  }
 }
 
 onBeforeUnmount(() => {
@@ -116,5 +120,12 @@ onBeforeUnmount(() => {
       />
       {{ template.title }}
     </button>
+
+    <ui-preview-prompt-modal
+      v-if="isPreviewPrompt"
+      :prompt="promptResult"
+      @close="onModalClose"
+      @submit="doSubmitChat"
+    />
   </div>
 </template>

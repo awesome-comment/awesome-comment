@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import type { Comment, ResponseBody } from '@awesome-comment/core/types';
 import { CommentStatus } from '@awesome-comment/core/data';
-import { ShortcutEmojis } from '~/data';
+import { clickWithModifier } from '@awesome-comment/core/utils';
 import { useAuth0 } from '@auth0/auth0-vue';
+import { ShortcutEmojis } from '~/data';
 import useConfigStore from '~/store';
 import usePromptStore from '~/store/prompt';
 import { replaceTemplate } from '~/utils';
@@ -21,6 +22,8 @@ const configStore = useConfigStore();
 const promptStore = usePromptStore();
 
 const isReplying = ref<string>('');
+const isPreviewPrompt = ref<boolean>(false);
+const promptResult = ref<string>('');
 const message = ref<string>('');
 const shortcuts = computed<{key: string, id: string}[]>(() => {
   return Object.entries(configStore.myConfig.aiTemplateShortcuts)
@@ -74,10 +77,12 @@ async function doReplyEmoji(emoji: string, isCommon = false): Promise<void> {
   }
   isReplying.value = '';
 }
-async function doReplyWithCommon(id: string): Promise<void> {
+async function doReplyWithCommon(id: string, event: MouseEvent): Promise<void> {
   if (isReplying.value) return;
 
-  isReplying.value = 'common';
+  const hasPreviewPrompt = clickWithModifier(event);
+
+  isReplying.value = id;
   const template = promptStore.prompts[ id ].content;
   let title = '';
   if (template.includes('$TITLE$')) {
@@ -88,7 +93,16 @@ async function doReplyWithCommon(id: string): Promise<void> {
     });
     title = res.data.title;
   }
-  const replaced = replaceTemplate(template, props.comment, title, '');
+  promptResult.value = replaceTemplate(template, props.comment, title, '');
+
+  if (hasPreviewPrompt) {
+    isPreviewPrompt.value = true;
+    return;
+  }
+
+  return doSubmitChat();
+}
+async function doSubmitChat(): Promise<void> {
   const accessToken = await auth0.getAccessTokenSilently();
   const reqOptions = {
     method: 'POST',
@@ -100,12 +114,19 @@ async function doReplyWithCommon(id: string): Promise<void> {
       postId: props.comment.postId,
       messages: [{
         role: 'user',
-        content: replaced,
+        content: promptResult.value,
       }],
     },
   };
   const res = await $fetch<ResponseBody<string>>('/api/admin/chat', reqOptions);
   return doReplyEmoji(res.data, true);
+}
+
+function onModalClose(isSubmit: boolean): void {
+  isPreviewPrompt.value = false;
+  if (!isSubmit) {
+    isReplying.value = '';
+  }
 }
 </script>
 
@@ -131,7 +152,7 @@ async function doReplyWithCommon(id: string): Promise<void> {
       type="button"
       class="btn btn-sm btn-circle btn-ghost"
       :disabled="isReplying === item.id"
-      @click="doReplyWithCommon(item.id)"
+      @click="doReplyWithCommon(item.id, $event)"
     >
       <span
         v-if="isReplying === item.id"
@@ -139,5 +160,12 @@ async function doReplyWithCommon(id: string): Promise<void> {
       />
       <span v-else>{{ item.key }}</span>
     </button>
+
+    <ui-preview-prompt-modal
+      v-if="isPreviewPrompt"
+      :prompt="promptResult"
+      @close="onModalClose"
+      @submit="doSubmitChat"
+    />
   </div>
 </template>
