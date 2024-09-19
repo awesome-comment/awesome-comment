@@ -179,6 +179,25 @@ function doReset(shouldRefresh?: MouseEvent | boolean): void {
   hasMore.value = false;
   if (shouldRefresh) refresh();
 }
+async function doRemoveReply(child: RowItem, comment: RowItem, index: number): Promise<void> {
+  if (!auth0) return;
+  if (!confirm('Are you sure to delete this reply?')) return;
+
+  child.isDeleting = true;
+  const token = await auth0.getAccessTokenSilently();
+  await $fetch('/api/admin/comment/' + child.id, {
+    method: 'DELETE',
+    body: {
+      isReply: true,
+      postId: comment.postId,
+      status: comment.status,
+    },
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  comment.children.splice(index, 1);
+}
 function onKeydown(event: KeyboardEvent): void {
   if (event.ctrlKey || event.metaKey || event.altKey || event.shiftKey) return;
   if (event.target instanceof HTMLInputElement || event.target instanceof HTMLTextAreaElement) return;
@@ -377,12 +396,19 @@ header.flex.flex-col.mb-4.gap-4(class="sm:flex-row sm:items-center")
             v-if="comment.children?.length"
           )
             .mt-4.chat.chat-end(
-              v-for="child in comment.children"
+              v-for="(child, childIndex) in comment.children"
               :key="child.id"
             )
-              .chat-header
+              .chat-header.mb-1.flex.gap-2
+                button.btn.btn-circle.btn-ghost.btn-sm(
+                  type="button"
+                  :disabled="child.isDeleting"
+                  @click="doRemoveReply(child, comment, childIndex)"
+                )
+                  span.loading.loading-spinner(v-if="child.isDeleting")
+                  i.bi.bi-trash3.text-error(v-else)
                 reply-comment(
-                  button-class=""
+                  button-class="btn-sm"
                   :comment="comment"
                   :reply="child.content"
                   :target="child"
