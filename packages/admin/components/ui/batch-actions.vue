@@ -8,21 +8,20 @@ const comments = defineModel<Comment[]>('comments', []);
 const modelValue = defineModel<number[]>('modelValue', []);
 const isWorking = defineModel<boolean>('isWorking', false);
 
-const isReplying = ref<boolean>(false);
+const isReplying = ref<string>('');
 const isApproving = ref<boolean>(false);
 const isRejecting = ref<boolean>(false);
 const isDeleting = ref<boolean>(false);
 
-async function doReply(): Promise<void> {
-  isReplying.value = true;
-  isWorking.value = true;
+async function doReply(content: string): Promise<void> {
+  if (isWorking.value) return;
 
-  isReplying.value = false;
-  isWorking.value = false;
+  isReplying.value = '';
 }
 async function doApprove(): Promise<void> {
-  isReplying.value = true;
-  isWorking.value = true;
+  if (isWorking.value) return;
+
+  isApproving.value = true;
   const newComments = [];
   const token = await auth0.getAccessTokenSilently();
   for (const comment of comments.value) {
@@ -43,13 +42,12 @@ async function doApprove(): Promise<void> {
     });
   }
   comments.value = newComments;
-  isReplying.value = false;
-  isWorking.value = false;
+  isApproving.value = false;
 }
 async function doReject(): Promise<void> {
-  isReplying.value = true;
-  isWorking.value = true;
+  if (isWorking.value) return;
 
+  isRejecting.value = true;
   const newComments = [];
   const token = await auth0.getAccessTokenSilently();
   for (const comment of comments.value) {
@@ -70,12 +68,11 @@ async function doReject(): Promise<void> {
     });
   }
   comments.value = newComments;
-  isReplying.value = false;
-  isWorking.value = false;
+  isRejecting.value = false;
 }
 async function doDelete(): Promise<void> {
-  isReplying.value = true;
-  isWorking.value = true;
+  if (isWorking.value) return;
+  isDeleting.value = true;
 
   const newComments = [];
   const token = await auth0.getAccessTokenSilently();
@@ -97,26 +94,25 @@ async function doDelete(): Promise<void> {
     });
   }
   comments.value = newComments;
-  isReplying.value = false;
-  isWorking.value = false;
+  isDeleting.value = false;
 }
-
 </script>
 
 <template>
   <div
     v-if="modelValue.length"
-    class="flex items-center mb-4 gap-4border"
+    class="flex items-center gap-4 border"
   >
     <div class="border-r px-4 self-stretch flex items-center">
-      Selected {{ modelValue.length }} comments:
+      Selected <strong class="mx-2 text-primary">{{ modelValue.length }}</strong> comments:
     </div>
     <emoji-shortcuts
       class="py-2"
+
       @reply="doReply"
     />
     <button
-      class="btn btn-success btn-sm text-white sm:btn-xs hover:text-white"
+      class="btn btn-success btn-sm text-white sm:btn-xs hover:text-white ms-8"
       :disabled="isReplying || isApproving || isRejecting || isDeleting"
       type="button"
       @click="doApprove"

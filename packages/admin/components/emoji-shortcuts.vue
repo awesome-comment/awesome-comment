@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import type { Comment, ResponseBody } from '@awesome-comment/core/types';
-import { CommentStatus } from '@awesome-comment/core/data';
 import { clickWithModifier } from '@awesome-comment/core/utils';
 import { useAuth0 } from '@auth0/auth0-vue';
 import { ShortcutEmojis } from '~/data';
@@ -9,11 +8,12 @@ import usePromptStore from '~/store/prompt';
 import { replaceTemplate } from '~/utils';
 
 type Props = {
-  comment?: Comment,
+  comment?: Comment;
 }
 const props = defineProps<Props>();
+const isReplying = defineModel<string>('isReplying', '');
 type Emits = {
-  (event: 'reply', reply: Comment): void;
+  (event: 'reply', content: string): void;
 }
 const emit = defineEmits<Emits>();
 
@@ -21,10 +21,8 @@ const auth0 = useAuth0();
 const configStore = useConfigStore();
 const promptStore = usePromptStore();
 
-const isReplying = ref<string>('');
 const isPreviewPrompt = ref<boolean>(false);
 const promptResult = ref<string>('');
-const message = ref<string>('');
 const shortcuts = computed<{key: string, id: string}[]>(() => {
   return Object.entries(configStore.myConfig.aiTemplateShortcuts)
     .reduce((acc, [key, id]) => {
@@ -35,49 +33,16 @@ const shortcuts = computed<{key: string, id: string}[]>(() => {
     }, [] as { key: string, id: string }[]);
 });
 
-async function doReplyEmoji(emoji: string, isCommon = false): Promise<void> {
-  if (isReplying.value && !isCommon) return;
+async function doReplyEmoji(emoji: string, isAi = false): Promise<void> {
+  if (isReplying.value && !isAi) return;
 
-  if (!isCommon) {
+  if (!isAi) {
     isReplying.value = emoji;
   }
-  message.value = '';
 
-  try {
-    const accessToken = await auth0.getAccessTokenSilently();
-    const { data } = await $fetch('/api/comment', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${accessToken}`,
-      },
-      body: {
-        comment: emoji,
-        postId: props.comment.postId,
-        ancestorId: props.comment.ancestorId || props.comment.id,
-        parentId: props.comment.id,
-        status: props.comment.status,
-      },
-    });
-    emit('reply', {
-      id: data.id,
-      content: emoji,
-      postId: props.comment.postId,
-      parentId: props.comment.id,
-      ancestorId: props.comment.ancestorId || props.comment.id,
-      status: CommentStatus.Approved,
-      createdAt: new Date(),
-      user: {
-        email: auth0.user.value?.email,
-        name: auth0.user.value?.name,
-      },
-    } as Comment);
-  } catch (e) {
-    message.value = (e as Error).message || String(e);
-  }
-  isReplying.value = '';
+  emit('reply', emoji);
 }
-async function doReplyWithCommon(id: string, event: MouseEvent): Promise<void> {
+async function doReplyWithAi(id: string, event: MouseEvent): Promise<void> {
   if (isReplying.value) return;
 
   const hasPreviewPrompt = clickWithModifier(event);
@@ -152,7 +117,7 @@ function onModalClose(isSubmit: boolean): void {
       type="button"
       class="btn btn-sm btn-circle btn-ghost"
       :disabled="isReplying !== ''"
-      @click="doReplyWithCommon(item.id, $event)"
+      @click="doReplyWithAi(item.id, $event)"
     >
       <span
         v-if="isReplying === item.id"

@@ -83,10 +83,10 @@ async function doSave(): Promise<void> {
         class="btn btn-sm text-white"
         @click="doSave"
       >
-      <span
-        v-if="isSaving"
-        class="loading loading-spinner"
-      />
+        <span
+          v-if="isSaving"
+          class="loading loading-spinner"
+        />
         <i
           v-else
           class="bi bi-check-lg"
