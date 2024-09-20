@@ -151,7 +151,7 @@ function onModalClose(isSubmit: boolean): void {
       :key="item.key"
       type="button"
       class="btn btn-sm btn-circle btn-ghost"
-      :disabled="isReplying === item.id"
+      :disabled="isReplying !== ''"
       @click="doReplyWithCommon(item.id, $event)"
     >
       <span

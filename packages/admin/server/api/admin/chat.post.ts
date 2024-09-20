@@ -12,14 +12,33 @@ export default defineEventHandler(async function (event: H3Event) {
     apiKey: process.env.OPENAI_API_KEY,
   });
   const isEnCn = /\/(en|cn|zh)(\/|$)/i.test(postId);
-  const res = await openai.chat.completions.create({
-    model: isEnCn ? Model.CHAT_GPT4o_MINI : Model.CHAT_GPT4o,
-    messages,
-    stream: false,
-  });
+  let result = '';
+  if (process.env.AI_ADMIN_ENDPOINT) {
+    const message = messages.map((m) => m.content).join('\n');
+    result = await $fetch(`${process.env.AI_ADMIN_ENDPOINT}/chat`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        AC_REQUEST_AUTH: process.env.AI_ADMIN_AUTH_TOKEN || '',
+      },
+      body: {
+        message,
+        model: isEnCn ? Model.CHAT_GPT4o_MINI : Model.CHAT_GPT4o,
+      },
+    });
+  } else {
+    const res = await openai.chat.completions.create({
+      model: isEnCn ? Model.CHAT_GPT4o_MINI : Model.CHAT_GPT4o,
+      messages,
+      stream: false,
+    });
+    const { content } = res.choices[ 0 ].message;
+    result = content || '';
+  }
+
 
   return {
     code: 0,
-    data: res.choices[ 0 ].message.content,
+    data: result,
   };
 });

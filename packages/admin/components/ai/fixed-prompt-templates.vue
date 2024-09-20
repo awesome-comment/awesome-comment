@@ -20,6 +20,7 @@ const emit = defineEmits<Emits>();
 const auth0 = useAuth0();
 const configStore = useConfigStore();
 const promptStore = usePromptStore();
+const toast = useToast();
 
 const templateId = ref<string>('');
 const isPreviewPrompt = ref<boolean>(false);
@@ -79,8 +80,16 @@ async function doSubmitChat(): Promise<void> {
       }],
     },
   };
-  const res = await $fetch<ResponseBody<string>>('/api/admin/chat', reqOptions);
-  emit('ai', res.data);
+  try {
+    const res = await $fetch<ResponseBody<string>>('/api/admin/chat', reqOptions);
+    emit('ai', res.data);
+  } catch (e) {
+    toast.add({
+      title: 'Error',
+      color: 'red',
+      description: 'Failed to fetch AI response',
+    });
+  }
   isLoading.value = '';
 }
 

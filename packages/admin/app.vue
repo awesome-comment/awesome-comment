@@ -4,8 +4,10 @@ useHead({
 });
 </script>
 
-<template lang="pug">
-nuxt-loading-indicator
-nuxt-layout
-  nuxt-page
+<template>
+<nuxt-loading-indicator />
+<nuxt-layout>
+  <nuxt-page />
+</nuxt-layout>
+<u-notification />
 </template>
