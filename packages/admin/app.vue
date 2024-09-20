@@ -5,9 +5,12 @@ useHead({
 </script>
 
 <template>
-<nuxt-loading-indicator />
-<nuxt-layout>
-  <nuxt-page />
-</nuxt-layout>
-<u-notification />
+  <div>
+    <nuxt-loading-indicator />
+    <nuxt-layout>
+      <nuxt-page />
+    </nuxt-layout>
+    
+    <u-notifications />
+  </div>
 </template>
