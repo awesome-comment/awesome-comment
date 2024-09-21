@@ -8,9 +8,9 @@ import usePromptStore from '~/store/prompt';
 
 const auth0 = useAuth0();
 const promptStore = usePromptStore();
-const comments = defineModel<Comment[]>('comments', []);
-const modelValue = defineModel<number[]>('modelValue', []);
-const isWorking = defineModel<boolean>('isWorking', false);
+const comments = defineModel<Comment[]>('comments');
+const modelValue = defineModel<number[]>('modelValue');
+const isWorking = defineModel<boolean>('isWorking');
 
 const isReplying = ref<string>('');
 const isApproving = ref<boolean>(false);
@@ -20,6 +20,7 @@ const isDeleting = ref<boolean>(false);
 async function doReply(content: string): Promise<void> {
   if (isWorking.value) return;
 
+  isReplying.value = content;
   const newComments = [];
   for (const comment of comments.value) {
     newComments.push(comment);
@@ -35,6 +36,7 @@ async function doReply(content: string): Promise<void> {
     await replyToComment(aiReply, comment);
   }
   isReplying.value = '';
+  comments.value = newComments;
 }
 async function doApprove(): Promise<void> {
   if (isWorking.value) return;
@@ -149,7 +151,6 @@ async function replyToComment(content: string, comment: Comment): Promise<void> 
   } catch (e) {
     console.log((e as Error).message || String(e));
   }
-  isReplying.value = '';
 }
 async function getPrompt(id: string, comment: Comment): Promise<string> {
   const template = promptStore.prompts[ id ].content;

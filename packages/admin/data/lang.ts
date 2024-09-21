@@ -1,4 +1,4 @@
-export const LocalLanguageName = {
+export const LocalLanguageName: Record<string, string> = {
   'en': 'English',
   'zh-CN': '中文（简体）',
   'cn': '中文（简体）',
@@ -36,7 +36,7 @@ export const LocalLanguageName = {
   'sr': 'српски',
 };
 
-export const LanguageName = {
+export const LanguageName: Record<string, string> = {
   'en': 'English',
   'zh-CN': 'Chinese (Simplified)',
   'cn': 'Chinese (Simplified)',
