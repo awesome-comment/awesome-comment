@@ -200,6 +200,13 @@ async function doRemoveReply(child: RowItem, comment: RowItem, index: number): P
   });
   comment.children.splice(index, 1);
 }
+function doSelectAll(): void {
+  if (selected.value.length === commentsList.value.length) {
+    selected.value = [];
+  } else {
+    selected.value = commentsList.value.map((c) => c.id);
+  }
+}
 function onKeydown(event: KeyboardEvent): void {
   if (event.ctrlKey || event.metaKey || event.altKey || event.shiftKey) return;
   if (event.target instanceof HTMLInputElement || event.target instanceof HTMLTextAreaElement) return;
@@ -365,7 +372,7 @@ header.flex.flex-col.mb-4.gap-4(class="sm:flex-row sm:items-center")
 ui-batch-actions(
   v-model="selected"
   v-model:isWorking="isBatching"
-  :comments="commentsList"
+  v-model:comments="commentsList"
 )
 
 .overflow-x-auto
@@ -374,7 +381,11 @@ ui-batch-actions(
   )
     thead
       tr
-        th ID
+        th(
+          class="hover:bg-base-200 cursor-pointer"
+          title="Select all"
+          @click="doSelectAll"
+        ) ID
         th(class="sm:min-w-60") Content
         th User
         th Time
@@ -389,7 +400,9 @@ ui-batch-actions(
         :class="{'ring-4 ring-inset': index === currentItem, 'bg-base-200': notEnglish(comment.postId), 'bg-sky-100': selected.includes(comment.id)}"
       )
         td.align-top
-          label.block.h-full.w-full.cursor-pointer
+          label.block.w-full.cursor-pointer(
+            class="hover:bg-base-200"
+          )
             input.hidden(
               type="checkbox"
               v-model="selected"
@@ -437,8 +450,9 @@ ui-batch-actions(
               .chat-footer.mt-1
                 i.bi.bi-patch-check-fill.me-1
                 | {{child.user.email}}
-          emoji-shortcuts.pt-4(
+          emoji-shortcuts-operator(
             v-if="comment.status === CommentStatus.Pending || filterStatus === CommentStatus.UnReplied"
+            class-name="pt-4"
             :comment="comment"
             @reply="onReply($event, comment)"
           )
