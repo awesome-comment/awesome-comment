@@ -2,13 +2,15 @@ import type { Comment } from '@awesome-comment/core/types';
 import { LocalLanguageName, LanguageName } from '~/data/lang';
 import type { UserAgentInfo } from '~/types';
 
+type LanguageKey = keyof typeof LocalLanguageName | keyof typeof LanguageName;
+
 export function replaceTemplate(
   template: string,
   comment: Comment,
   title: string,
   reply: string,
 ): string {
-  const lang = comment?.postId.replace(/\/$/, '').split('/').pop();
+  const lang: LanguageKey = comment?.postId.replace(/\/$/, '').split('/').pop() ?? 'en';
   return template.replace(/\$(\w+)\$/ig, (match, key) => {
     switch (key) {
       case 'TITLE':
