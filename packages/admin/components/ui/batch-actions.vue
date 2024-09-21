@@ -134,6 +134,7 @@ async function replyToComment(content: string, comment: Comment): Promise<void> 
         status: comment.status,
       },
     });
+    if (!comment.children) comment.children = [];
     comment.children.push({
       id: data.id,
       content: content,
@@ -186,16 +187,16 @@ async function getAiReply(postId:string, content: string): Promise<string> {
 }
 
 watch([isApproving, isRejecting, isDeleting, isReplying], () => {
-  isWorking.value = isApproving.value || isRejecting.value || isDeleting.value || isReplying.value;
+  isWorking.value = isApproving.value || isRejecting.value || isDeleting.value || !!isReplying.value;
 });
 </script>
 
 <template>
   <div
     v-if="modelValue.length"
-    class="flex items-center gap-4 border rounded-full"
+    class="flex items-center gap-4 border rounded-full dark:border-gray-700"
   >
-    <div class="border-r px-4 self-stretch flex items-center">
+    <div class="border-r px-4 self-stretch flex items-center dark:border-gray-700">
       Selected <strong class="mx-2 text-primary">{{ modelValue.length }}</strong> comments:
     </div>
     <emoji-shortcuts
@@ -239,7 +240,7 @@ watch([isApproving, isRejecting, isDeleting, isReplying], () => {
       />
       Delete
     </button>
-    <div class="border-l px-2 flex items-center ms-auto self-stretch">
+    <div class="border-l px-2 flex items-center ms-auto self-stretch dark:border-gray-700">
       <button
         class="btn btn-ghost btn-sm btn-circle"
         type="button"

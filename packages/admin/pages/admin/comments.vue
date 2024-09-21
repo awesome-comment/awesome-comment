@@ -397,7 +397,7 @@ ui-batch-actions(
         v-for="(comment, index) in commentsList"
         ref="tr"
         :key="comment.id"
-        :class="{'ring-4 ring-inset': index === currentItem, 'bg-base-200': notEnglish(comment.postId), 'bg-sky-100': selected.includes(comment.id)}"
+        :class="{'ring-4 ring-inset': index === currentItem, 'bg-base-200': notEnglish(comment.postId), 'bg-sky-100 dark:bg-sky-900': selected.includes(comment.id)}"
       )
         td.align-top
           label.block.w-full.cursor-pointer(
