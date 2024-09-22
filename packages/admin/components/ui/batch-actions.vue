@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { FetchError } from 'ofetch';
 import { CommentStatus } from '@awesome-comment/core/data';
 import type { Comment, ResponseBody } from '@awesome-comment/core/types';
 import { useAuth0 } from '@auth0/auth0-vue';
@@ -7,6 +8,7 @@ import { replaceTemplate } from '~/utils';
 import usePromptStore from '~/store/prompt';
 
 const auth0 = useAuth0();
+const toast = useToast();
 const promptStore = usePromptStore();
 const comments = defineModel<Comment[]>('comments');
 const modelValue = defineModel<number[]>('modelValue');
@@ -21,7 +23,7 @@ async function doReply(content: string): Promise<void> {
   if (isWorking.value) return;
 
   isReplying.value = content;
-  const newComments = [];
+  const newComments: Comment[] = [];
   for (const comment of comments.value) {
     newComments.push(comment);
     if (!modelValue.value.includes(comment.id)) continue;
@@ -42,7 +44,7 @@ async function doApprove(): Promise<void> {
   if (isWorking.value) return;
 
   isApproving.value = true;
-  const newComments = [];
+  const newComments: Comment[] = [];
   const token = await auth0.getAccessTokenSilently();
   for (const comment of comments.value) {
     newComments.push(comment);
@@ -68,7 +70,7 @@ async function doReject(): Promise<void> {
   if (isWorking.value) return;
 
   isRejecting.value = true;
-  const newComments = [];
+  const newComments: Comment[] = [];
   const token = await auth0.getAccessTokenSilently();
   for (const comment of comments.value) {
     newComments.push(comment);
@@ -94,7 +96,7 @@ async function doDelete(): Promise<void> {
   if (isWorking.value) return;
   isDeleting.value = true;
 
-  const newComments = [];
+  const newComments: Comment[] = [];
   const token = await auth0.getAccessTokenSilently();
   for (const comment of comments.value) {
     if (!modelValue.value.includes(comment.id)) {
@@ -102,16 +104,31 @@ async function doDelete(): Promise<void> {
       continue;
     }
 
-    await $fetch('/api/admin/comment/' + comment.id, {
-      method: 'DELETE',
-      body: {
-        postId: comment.postId,
-        status: comment.status,
-      },
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+    try {
+      await $fetch('/api/admin/comment/' + comment.id, {
+        method: 'DELETE',
+        body: {
+          postId: comment.postId,
+          status: comment.status,
+        },
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+    } catch (e) {
+      // temporary ignore 500 error
+      if ((e as FetchError).status === 500) {
+        console.log((e as Error).message || String(e));
+        continue;
+      }
+      newComments.push(comment);
+      toast.add({
+        title: 'Error',
+        color: 'red',
+        description: 'Failed to delete comment. ' + ((e as Error).message || String(e)),
+      });
+      break;
+    }
   }
   comments.value = newComments;
   isDeleting.value = false;
@@ -193,7 +210,6 @@ watch([isApproving, isRejecting, isDeleting, isReplying], () => {
 
 <template>
   <div
-    v-if="modelValue.length"
     class="flex items-center gap-4 border rounded-full dark:border-gray-700"
   >
     <div class="border-r px-4 self-stretch flex items-center dark:border-gray-700">
@@ -202,11 +218,12 @@ watch([isApproving, isRejecting, isDeleting, isReplying], () => {
     <emoji-shortcuts
       v-model:is-replying="isReplying"
       class="py-2"
+      :disabled="modelValue.length === 0"
       @reply="doReply"
     />
     <button
       class="btn btn-success btn-sm text-white sm:btn-xs hover:text-white ms-8"
-      :disabled="isReplying || isApproving || isRejecting || isDeleting"
+      :disabled="modelValue.length === 0 || isReplying || isApproving || isRejecting || isDeleting"
       type="button"
       @click="doApprove"
     >
@@ -218,7 +235,7 @@ watch([isApproving, isRejecting, isDeleting, isReplying], () => {
     </button>
     <button
       class="btn btn-warning btn-sm text-white sm:btn-xs hover:text-white"
-      :disabled="isReplying || isApproving || isRejecting || isDeleting"
+      :disabled="modelValue.length === 0 || isReplying || isApproving || isRejecting || isDeleting"
       type="button"
       @click="doReject"
     >
@@ -230,7 +247,7 @@ watch([isApproving, isRejecting, isDeleting, isReplying], () => {
     </button>
     <button
       class="btn btn-error text-white btn-sm  sm:btn-xs hover:text-white"
-      :disabled="isReplying || isApproving || isRejecting || isDeleting"
+      :disabled="modelValue.length === 0 || isReplying || isApproving || isRejecting || isDeleting"
       type="button"
       @click="doDelete"
     >
@@ -240,15 +257,5 @@ watch([isApproving, isRejecting, isDeleting, isReplying], () => {
       />
       Delete
     </button>
-    <div class="border-l px-2 flex items-center ms-auto self-stretch dark:border-gray-700">
-      <button
-        class="btn btn-ghost btn-sm btn-circle"
-        type="button"
-        @click="modelValue.length = 0"
-      >
-        <i class="bi bi-x-lg" />
-        <span class="sr-only">Clear</span>
-      </button>
-    </div>
   </div>
 </template>

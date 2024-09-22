@@ -5,6 +5,10 @@ import { ShortcutEmojis } from '~/data';
 import useConfigStore from '~/store';
 import usePromptStore from '~/store/prompt';
 
+type Props = {
+  disabled?: boolean;
+}
+defineProps<Props>();
 const isReplying = defineModel<string>('isReplying', {
   default: '',
 });
@@ -42,7 +46,7 @@ async function doReply(emoji: string, event?: MouseEvent): Promise<void> {
       :key="item"
       type="button"
       class="btn btn-sm btn-square btn-ghost"
-      :disabled="!!isReplying"
+      :disabled="disabled || !!isReplying"
       @click="doReply(item)"
     >
       <span
@@ -56,7 +60,7 @@ async function doReply(emoji: string, event?: MouseEvent): Promise<void> {
       :key="item.key"
       type="button"
       class="btn btn-sm btn-circle btn-ghost"
-      :disabled="!!isReplying"
+      :disabled="disabled || !!isReplying"
       @click="doReply(item.id, $event)"
     >
       <span

@@ -24,6 +24,9 @@ export default {
       lineHeight: {
         16: '4rem',
       },
+      padding: {
+        full: '100%',
+      },
       spacing: {
         '60svh': '60svh',
       },

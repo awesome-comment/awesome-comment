@@ -139,20 +139,30 @@ async function doReview(comment: RowItem, status: CommentStatus) {
 async function doDelete(comment: RowItem): Promise<void> {
   if (!auth0) return;
   if (comment.isApproving || comment.isRejecting || comment.isDeleting) return;
-  if (!confirm('Are you sure to delete this comment?')) { return }
 
+  message.value = '';
   comment.isDeleting = true;
   const token = await auth0.getAccessTokenSilently();
-  await $fetch('/api/admin/comment/' + comment.id, {
-    method: 'DELETE',
-    body: {
-      postId: comment.postId,
-      status: comment.status,
-    },
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
+  try {
+    await $fetch('/api/admin/comment/' + comment.id, {
+      method: 'DELETE',
+      body: {
+        postId: comment.postId,
+        status: comment.status,
+      },
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+  } catch (e) {
+    // temporary ignore 500 error
+    if (e.status !== 500) {
+      message.value = 'Failed to delete comment.' + e.message;
+      comment.isDeleting = false;
+      return;
+    }
+  }
+
   const index = commentsList.value.findIndex((c) => c.id === comment.id);
   if (index > -1) {
     commentsList.value.splice(index, 1);
@@ -399,9 +409,12 @@ ui-batch-actions(
         :key="comment.id"
         :class="{'ring-4 ring-inset': index === currentItem, 'bg-base-200': notEnglish(comment.postId), 'bg-sky-100 dark:bg-sky-900': selected.includes(comment.id)}"
       )
-        td.align-top
-          label.block.w-full.cursor-pointer(
-            class="hover:bg-base-200"
+        td(
+          class="!p-0"
+          height="1"
+        )
+          label.block.w-full.h-full.cursor-pointer.py-3.px-4(
+            class="hover:bg-base-200/50"
           )
             input.hidden(
               type="checkbox"
@@ -488,7 +501,7 @@ ui-batch-actions(
               i.bi.bi-box-arrow-up-right
         td.align-top {{ CommentStatus[comment.status] }}
         td.align-top
-          .grid.grid-cols-2.gap-2.w-40(class="sm:flex sm:w-auto")
+          .grid.grid-cols-2.gap-2.w-40
             button.btn.btn-success.btn-sm.text-white(
               v-if="comment.status === CommentStatus.Pending || comment.status === CommentStatus.Rejected"
               type="button"
@@ -504,6 +517,11 @@ ui-batch-actions(
               @reply="onReply($event, comment)"
               @open="hasReplyModal = true"
               @close="hasReplyModal = false"
+            )
+            ui-delete-button(
+              :disabled="isBatching || comment.isApproving || comment.isRejecting || comment.isDeleting || loadingMore",
+              :is-loading="comment.isDeleting",
+              @delete="doDelete(comment)"
             )
             details.dropdown.dropdown-end
               summary.btn.btn-outline.btn-sm.btn-square(
@@ -532,14 +550,7 @@ ui-batch-actions(
                 )
                   span.loading.loading-xs.loading-spinner(v-if="comment.isRejecting")
                   template(v-else) Reject
-                button.btn.btn-outline.btn-error.btn-sm(
-                  type="button",
-                  class="sm:btn-xs"
-                  :disabled="isBatching || comment.isApproving || comment.isRejecting || comment.isDeleting || loadingMore",
-                  @click="doDelete(comment)"
-                )
-                  span.loading.loading-xs.loading-spinner(v-if="comment.isDeleting")
-                  template(v-else) Delete
+
   button.mt-2.btn.btn-neutral.btn-sm.btn-block(
     v-if="hasMore",
     type="button",
