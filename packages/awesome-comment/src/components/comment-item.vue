@@ -40,6 +40,10 @@ const username = computed<string>(() => {
 function getCommentLink(id: number): string {
   return `${location.origin}${location.pathname}#awcm-${id}`;
 }
+function getHtml(content: string): string {
+  return (marked(content) as string)
+    .replace(/<a/g, '<a target="_blank"');
+}
 function getParentUserName(id: number): string {
   if (props.ancestorId) {
     const ancestor = store.comments[ props.ancestorId ];
@@ -128,7 +132,7 @@ onBeforeUnmount(() => {
       ) @{{getParentUserName(comment.parentId)}}
       article.text-gray-500.break-words.overflow-x-auto(
         class="dark:text-gray-400"
-        v-html="marked(comment.content)"
+        v-html="getHtml(comment.content)"
       )
     p.text-gray-500.break-words.overflow-x-auto.whitespace-pre-line.pb-3.mb-0(
       v-else

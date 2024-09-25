@@ -42,6 +42,7 @@ function init(domain: string, clientId: string, locale: string = navigator.langu
       'zh-CN': messages.cn,
     },
   });
+  // @ts-ignore
   app.use(auth0);
   app.use(pinia);
   app.use(i18n);
