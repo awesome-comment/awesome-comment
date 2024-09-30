@@ -42,8 +42,15 @@ async function onClick(): Promise<void> {
     :disabled="disabled"
     @click="onClick"
   >
-    <template v-if="isPending">Cancel ({{MaxWaiting - count}})</template>
-    <span v-else-if="isLoading" class="loading loading-xs loading-spinner" />
-    <template v-else>Delete</template>
+    <template v-if="isPending">
+      Cancel ({{ MaxWaiting - count }})
+    </template>
+    <span
+      v-else-if="isLoading"
+      class="loading loading-xs loading-spinner"
+    />
+    <template v-else>
+      Delete
+    </template>
   </button>
 </template>

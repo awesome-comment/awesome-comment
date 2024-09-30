@@ -107,12 +107,10 @@ async function doDelete(): Promise<void> {
     try {
       await $fetch('/api/admin/comment/' + comment.id, {
         method: 'DELETE',
-        body: {
-          postId: comment.postId,
-          status: comment.status,
-        },
         headers: {
           Authorization: `Bearer ${token}`,
+          'X-AC-STATUS': comment.status,
+          'X-AC-POST-id': comment.postId,
         },
       });
     } catch (e) {

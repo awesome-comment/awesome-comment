@@ -146,12 +146,10 @@ async function doDelete(comment: RowItem): Promise<void> {
   try {
     await $fetch('/api/admin/comment/' + comment.id, {
       method: 'DELETE',
-      body: {
-        postId: comment.postId,
-        status: comment.status,
-      },
       headers: {
         Authorization: `Bearer ${token}`,
+        'X-AC-STATUS': comment.status,
+        'X-AC-POST-id': comment.postId,
       },
     });
   } catch (e) {
@@ -199,13 +197,10 @@ async function doRemoveReply(child: RowItem, comment: RowItem, index: number): P
   const token = await auth0.getAccessTokenSilently();
   await $fetch('/api/admin/comment/' + child.id, {
     method: 'DELETE',
-    body: {
-      isReply: true,
-      postId: comment.postId,
-      status: comment.status,
-    },
     headers: {
       Authorization: `Bearer ${token}`,
+      'X-AC-STATUS': comment.status,
+      'X-AC-POST-id': comment.postId,
     },
   });
   comment.children.splice(index, 1);

@@ -42,10 +42,11 @@ export default defineEventHandler(async function (event): Promise<ResponseBody<s
   }
 
   // clear cache
-  const body = await readBody(event);
-  if (body.status === CommentStatus.Approved && body.postId) {
+  const status = Number(getHeader(event, 'X-AC-STATUS'));
+  const postId = getHeader(event, 'X-AC-POST-ID');
+  if (status === CommentStatus.Approved && postId) {
     const storage = createStorage(event);
-    const key = getCacheKey(body.postId);
+    const key = getCacheKey(postId);
     await clearCache(storage, key);
   }
 
