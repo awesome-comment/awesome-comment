@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { useAuth0 } from '@auth0/auth0-vue';
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import type { Comment } from '@awesome-comment/core/types';
@@ -9,6 +8,7 @@ import useStore from '../store';
 import CommentActions from './comment-actions.vue';
 import CommentContent from './comment-content.vue';
 import CommentHeader from './comment-header.vue';
+import useAuthStore from '../store/auth.ts';
 
 type Props = {
   comment: Comment;
@@ -19,14 +19,14 @@ const props = defineProps<Props>();
 
 const { t } = useI18n();
 const store = useStore();
-const { user } = useAuth0();
+const authStore = useAuthStore();
 let interval: ReturnType<typeof setInterval>;
 
 const now = ref<number>(Date.now());
 const isEditing = ref<boolean>(false);
 const isReplying = ref<boolean>(false);
 const isEditable = computed<boolean>(() => {
-  return props.comment.userId === user.value?.sub
+  return props.comment.userId === authStore.user?.sub
     && now.value - props.comment.createdAt.getTime() < 36E5;
 });
 

@@ -1,7 +1,7 @@
 import { ResponseBody } from '@awesome-comment/core/types';
 import { H3Event } from 'h3';
 import { getMyConfigKey } from '~/server/utils';
-import createStorage from '~/server/utils/storage';
+import createStorage from '@awesome-comment/core/utils/storage';
 import { MyAdminConfig } from '~/types';
 
 export default defineEventHandler(async function (event: H3Event): Promise<ResponseBody<string>> {

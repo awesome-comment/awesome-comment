@@ -1,7 +1,7 @@
 import { CommentStatus } from '@awesome-comment/core/data';
 import { ResponseBody, User } from '@awesome-comment/core/types';
 import { clearCache, getCacheKey, getUser } from '~/server/utils';
-import createStorage from '~/server/utils/storage';
+import createStorage from '@awesome-comment/core/utils/storage';
 
 type PatchRequest = {
   status: CommentStatus;

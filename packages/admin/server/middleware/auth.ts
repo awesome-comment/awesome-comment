@@ -7,7 +7,8 @@ export default defineEventHandler(async function (event) {
     return;
   }
 
-  const check = await checkUserPermission(event);
+  const authEndpoint = getHeader(event, 'Auth-Endpoint');
+  const check = await checkUserPermission(event, authEndpoint);
   if (!check) return;
 
   const [user, config] = check;

@@ -20,29 +20,35 @@ So, here are something we will provide:
 Usage
 --------
 
-1. Integrate Awesome Auth into your site
+1. Deploy the backend API
+   1. Fork this repo
+   2. Deploy `/auth-admin` on Serverless / Self-hosted servers
+   3. Set up the environment variables
+2. Integrate Awesome Auth into your site
     ```js
-    import AwesomeAuth from '@roudanio/awesome-auth';
+    import { getInstance } from '@roudanio/awesome-auth';
    
-    const auth = Auth.init({
-      clientId: 'YOUR-GOOGLE-CLIENT-ID'
+    const auth = getInstance({
+      googleId: 'YOUR-GOOGLE-CLIENT-ID',
+      root: 'https://your-backend-api.com',
     });
+    // register events to handle user state
+    awesomeAuth.on(AwesomeAuthEvent.VERIFIED, handleVerified);
+    awesomeAuth.on(AwesomeAuthEvent.VERIFYING, handleUnverified);
     ``` 
-2. Deploy the backend API
-    1. Clone this repo 
-    2. Install dependencies
-    3. Set up your Cloudflare account, create an worker
-    4. Add your Google Client ID and Cloudflare Account ID to the wrangler.toml file
-    5. then publish the worker
-        ```bash
-        wrangler publish
-        ```
 3. Add your own code for your own features
     ```js
-    // in your backend API, maybe some middleware
-    import { verifyUser } from '@roudanio/awesome-auth';
+    // in your frontend code, attach access token to requests
+    const token = auth.accessToken;
+    fetch('https://your-backend-api.com/your-endpoint', {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
    
-    const user = await verifyUser(token);
+    // in your backend API, validate the token by JWT.verify or with http request   
+    const token = getHeader('Authorization');
+    const user = jwt.verify(token, process.env.JWT_SECRET);
     if (!user) {
       // not valid user, return 401 or something else
       return;
@@ -66,14 +72,16 @@ auth.retrieve(key);
 Of course it's very simple to use Awesome Auth with Awesome Comment:
 
 ```js
-import { Auth } from '@roudanio/awesome-auth';
+import { getInstance } from '@roudanio/awesome-auth';
    
-Auth.init({
-  clientId: 'YOUR-GOOGLE-CLIENT-ID'
+const auth = getInstance({
+  googleId: 'YOUR-GOOGLE-CLIENT-ID',
+  root: 'https://your-backend-api.com',
 });
 
 AwesomeComment.init({
-  auth: Auth,
+  awesomeAuth: auth,
+  // other options
 });
 ```
 
@@ -84,3 +92,10 @@ Support SSO
 - [x] Google Identity
 - [ ] GitHub SSO
 - [ ] Sign in with Apple 
+
+
+LICENSE
+------
+
+[MIT](./LICENSE.md)
+```

@@ -44,6 +44,7 @@ export default defineNuxtConfig({
   },
   routeRules: {
     // Add cors headers on API routes
+    '/comment/**': { cors: true },
     '/api/**': { cors: true },
   },
   dayjs: {
