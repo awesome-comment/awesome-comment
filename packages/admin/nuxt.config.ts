@@ -47,8 +47,10 @@ export default defineNuxtConfig({
   ],
   devtools: { enabled: true },
   modules,
-  nitro: {
-    preset: 'cloudflare-pages',
+  ...process.env.CLOUDFLARE && {
+    nitro: {
+      preset: 'cloudflare-pages',
+    },
   },
   postcss: {
     plugins: {
@@ -62,9 +64,6 @@ export default defineNuxtConfig({
   routeRules: {
     // pre-rendered at build time
     '/': { prerender: true },
-    // '/about': { prerender: true },
-    // '/contact': { prerender: true },
-    // pages generated on-demand, revalidates in background
     // Admin dashboard renders only on client-side
     '/admin/**': { ssr: false },
     '/admin': { redirect: '/admin/login' },
