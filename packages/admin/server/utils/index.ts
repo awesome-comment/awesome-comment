@@ -1,14 +1,14 @@
 import { H3Event } from 'h3';
-import type { AcConfig, Comment, ResponseComment, User } from '@awesome-comment/core/types';
+import type { AcConfig, Comment, ResponseBody, ResponseComment, User } from '@awesome-comment/core/types';
 import { CommentStatus, MarkdownLinkRegex } from '@awesome-comment/core/data';
-import createStorage, { AcStorage } from '~/server/utils/storage';
+import createStorage, { AcStorage } from '@awesome-comment/core/utils/storage';
 
 export async function getConfig(storage: AcStorage): Promise<AcConfig> {
   const key = getConfigKey();
   return (await storage.get(key)) as AcConfig;
 }
 
-export async function checkUserPermission(event: H3Event): Promise<[User, AcConfig] | void> {
+export async function checkUserPermission(event: H3Event, endpoint?: string): Promise<[User, AcConfig] | void> {
   const storage = createStorage(event);
   const config = await getConfig(storage);
   // not configured, it's a new site
@@ -26,7 +26,11 @@ export async function checkUserPermission(event: H3Event): Promise<[User, AcConf
 
   let user: User | null = null;
   try {
-    user = await getUser(storage, authorization);
+    if (endpoint) {
+      user = await getUser(storage, authorization, endpoint);
+    } else {
+      user = await getAuth0User(storage, authorization);
+    }
   } catch (e) {
     const message =  (e as Error).message || e;
     throw createError({
@@ -52,7 +56,34 @@ export async function checkUserPermission(event: H3Event): Promise<[User, AcConf
   return [user, config];
 }
 
-export async function getUser(storage: AcStorage, accessToken: string, domain?: string): Promise<User> {
+export async function getUser(storage: AcStorage, accessToken: string, endpoint: string): Promise<User> {
+  const key = `user-${accessToken}`;
+  const cached = await storage.get(key);
+  if (cached) {
+    return cached as User;
+  }
+
+  const response = await fetch(`${endpoint}/verify-auth`, {
+    method: 'POST',
+    headers: {
+      Authorization: accessToken,
+      'Content-Type': 'application/json',
+    },
+  });
+  if (!response.ok) {
+    throw new Error(`${response.status} ${response.statusText}`);
+  }
+  const json = (await response.json()) as ResponseBody<User>;
+  const { data: user } = json;
+  if (user) {
+    await storage.put(key, user, {
+      expirationTtl: 60 * 60,
+    });
+  }
+  return user as User;
+}
+
+export async function getAuth0User(storage: AcStorage, accessToken: string, domain?: string): Promise<User> {
   domain ??= process.env.AUTH0_DOMAIN || '';
   const key = `user-${domain}-${accessToken}`;
   const cached = await storage.get(key);

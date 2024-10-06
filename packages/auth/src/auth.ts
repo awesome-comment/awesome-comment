@@ -1,6 +1,7 @@
 import EventEmitter3 from 'eventemitter3';
 import { ResponseBody } from '@awesome-comment/core/types';
 import { jwtDecode, JwtPayload } from 'jwt-decode';
+import isString from 'lodash-es/isString';
 
 export interface AwesomeAuthProps {
   googleId: string;
@@ -73,6 +74,9 @@ export class AwesomeAuth extends EventEmitter3 {
   get localKey(): string {
     return `${this.#prefix}-token`
   }
+  get root(): string {
+    return this.#root;
+  }
   get user(): JwtPayload {
     return this.#decoded;
   }
@@ -80,11 +84,45 @@ export class AwesomeAuth extends EventEmitter3 {
   doSignIn(): void {
     this.initGoogleIdentity();
   }
+  doSignOut(): void {
+    this.#accessToken = '';
+    google.accounts.id.revoke(this.#decoded.sub || '');
+    this.#decoded = {};
+  }
+  async store(key: string, value: unknown): Promise<void> {
+    value = isString(value) ? value : JSON.stringify(value);
+    await fetch(`${this.#root}/store`, {
+      method: 'POST',
+      headers: {
+        'Content-type': 'application/json',
+        'Authorization': `Bearer ${this.#accessToken}`,
+      },
+      body: JSON.stringify({
+        key,
+        value,
+      }),
+    });
+  }
+  async retrieve(key: string): Promise<unknown> {
+    const response = await fetch(`${this.#root}/retrieve`, {
+      method: 'POST',
+      headers: {
+        'Content-type': 'application/json',
+        'Authorization': `Bearer ${this.#accessToken}`,
+      },
+      body: JSON.stringify({
+        key,
+      }),
+    });
+    const { data } = (await response.json()) as ResponseBody<{ value: unknown }>;
+    return data?.value;
+  }
 
   private initGoogleIdentity() {
     if (!('google' in globalThis)) {
       addGoogleIdentityScript();
       globalThis.onGoogleLibraryLoad = () => this.initGoogleIdentity();
+      return;
     }
     if (this.#isSigningIn) return;
 
@@ -111,10 +149,8 @@ export class AwesomeAuth extends EventEmitter3 {
       method: 'POST',
       headers: {
         'Content-type': 'application/json',
+        Authorization: `Bearer ${this.#accessToken}`,
       },
-      body: JSON.stringify({
-        token: this.#accessToken,
-      }),
     });
     const { data } = (await response.json()) as ResponseBody<{ token: string }>;
     const { token } = data as { token: string };
@@ -144,23 +180,27 @@ export class AwesomeAuth extends EventEmitter3 {
   private async verifyToken(): Promise<boolean> {
     this.emit(AwesomeAuthEvent.VERIFYING, true);
     this.#isVerifying = true;
-    const response = await fetch(`${this.#root}/verify-auth`, {
-      method: 'POST',
-      headers: {
-        'Content-type': 'application/json',
-      },
-      body: JSON.stringify({
-        token: this.#accessToken,
-      }),
-    });
-    const { data } = (await response.json()) as ResponseBody<{ verified: boolean, message: string }>;
-    const { verified, message = '' } = data as { verified: boolean, message: string };
-    this.emit(AwesomeAuthEvent.VERIFIED, verified);
-    this.#isVerified = verified;
-    if (message) this.emit(AwesomeAuthEvent.ERROR, message);
+    try {
+      const response = await fetch(`${this.#root}/verify-auth`, {
+        method: 'POST',
+        headers: {
+          'Content-type': 'application/json',
+          'Authorization': `Bearer ${this.#accessToken}`,
+        },
+      });
+      const { data } = (await response.json()) as ResponseBody<JwtPayload>;
+      if (data) {
+        this.#decoded = data;
+        this.#isVerified = true;
+        this.emit(AwesomeAuthEvent.VERIFIED, true);
+      }
+    } catch (e) {
+      this.#isVerified = false;
+      this.emit(AwesomeAuthEvent.ERROR, (e as Error).message || String(e));
+    }
     this.emit(AwesomeAuthEvent.VERIFYING, false);
     this.#isVerifying = false;
-    return verified;
+    return this.#isVerified;
   }
   private async onGoogleIdentityCallback(res: {credential: string}) {
     this.emit(AwesomeAuthEvent.INIT, false);

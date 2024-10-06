@@ -1,7 +1,7 @@
 import { ResponseBody, User } from '@awesome-comment/core/types';
 import { CommentStatus } from '@awesome-comment/core/data';
 import { getUser, getCacheKey, getConfig, checkCommentStatus, clearCache } from '~/server/utils';
-import createStorage from '~/server/utils/storage';
+import createStorage from '@awesome-comment/core/utils/storage';
 
 type PostResponse = ResponseBody<{
   id: number,
@@ -27,9 +27,13 @@ export default defineEventHandler(async function (event): Promise<PostResponse> 
   }
 
   const storage = createStorage(event);
+  const authEndpoint = headers[ 'auth-endpoint' ];
   let user: User | null = null;
   try {
-    user = await getUser(storage, authorization, body.domain);
+    user = await (authEndpoint
+      ? getUser(storage, authorization, authEndpoint)
+      : getAuth0User(storage, authorization, body.domain)
+    );
   } catch (e) {
     const message = (e as Error).message || e;
     throw createError({

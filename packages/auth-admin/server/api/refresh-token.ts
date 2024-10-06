@@ -1,5 +1,5 @@
 import { H3Event } from 'h3';
-import jwt, { JwtPayload } from 'jsonwebtoken';
+import jwt from 'jsonwebtoken';
 import omit from 'lodash-es/omit';
 
 export default defineEventHandler(async function (event: H3Event){
@@ -15,30 +15,7 @@ export default defineEventHandler(async function (event: H3Event){
     });
   }
 
-  const body = await readBody(event);
-  try {
-    const isVerified = jwt.verify(body.token, process.env.JWT_SECRET as string);
-    if (!isVerified) {
-      return {
-        code: 1,
-        data: {
-          verified: false,
-          message: 'Invalid token',
-        },
-      };
-    }
-
-  } catch (e) {
-    return {
-      code: 1,
-      data: {
-        verified: false,
-        message: (e as Error).message || String(e),
-      },
-    };
-  }
-
-  const payload = jwt.decode(body.token) as JwtPayload;
+  const payload = event.context.payload;
   const token = jwt.sign(omit(payload, 'iat', 'exp'), process.env.JWT_SECRET as string, {
     expiresIn: process.env.JWT_EXPIRATION || '1h',
   });

@@ -1,8 +1,10 @@
 import { serve } from '@hono/node-server'
 import { serveStatic } from '@hono/node-server/serve-static';
 import { Hono } from 'hono'
+import { cors } from 'hono/cors';
 
 const app = new Hono()
+app.use('/comment/*', cors());
 
 app.get('/', (c) => {
   return c.text('Hello Hono!')

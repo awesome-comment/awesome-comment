@@ -1,7 +1,7 @@
 import type { AcConfig, Comment, ResponseBody, VoteItem } from '@awesome-comment/core/types';
 import { getCacheKey, getConfig, getVoteCacheKey } from '~/server/utils';
 import { H3Event } from 'h3';
-import createStorage from '~/server/utils/storage';
+import createStorage from '@awesome-comment/core/utils/storage';
 
 function mergeVote(vote: Record<number, VoteItem>, comments: Comment[]): Comment[] {
   return comments.map(item => {

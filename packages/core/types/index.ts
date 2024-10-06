@@ -94,3 +94,12 @@ export type VoteItem = {
   dislike: number;
   ip: Record<string, number[]>;
 }
+
+export type AwesomeUser = {
+  sub: string;
+  email: string;
+  picture: string;
+  name: string;
+  given_name: string;
+  family_name: string;
+}
