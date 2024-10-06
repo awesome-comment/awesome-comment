@@ -8,6 +8,10 @@
     "build": "vue-tsc -b && vite build",
     "preview": "vite preview"
   },
+  "main": "dist/awesome-auth.umd.js",
+  "module": "dist/awesome-auth.js",
+  "browser": "dist/awesome-auth.iife.ts",
+  "types": "dist/auth.d.ts",
   "dependencies": {
     "@awesome-comment/core": "workspace:*",
     "eventemitter3": "^5.0.1",
@@ -22,8 +26,12 @@
     "@types/google.accounts": "^0.0.15",
     "@types/jsonwebtoken": "^9.0.7",
     "@vitejs/plugin-vue": "^5.1.4",
+    "autoprefixer": "^10.4.20",
+    "postcss": "^8.4.47",
+    "tailwindcss": "^3.4.13",
     "typescript": "^5.5.3",
     "vite": "^5.4.8",
+    "vite-plugin-dts": "^4.2.3",
     "vue-tsc": "^2.1.6"
   }
 }
