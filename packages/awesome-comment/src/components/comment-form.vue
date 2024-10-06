@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { inject, onMounted, ref } from 'vue';
-import { useAuth0 } from '@auth0/auth0-vue';
 import { useI18n } from 'vue-i18n';
 import type { CommentStatus } from '@awesome-comment/core/data';
 import type { ResponseBody } from '@awesome-comment/core/types';
 import { withCommandModifier } from '@awesome-comment/core/utils';
 import useStore from '../store';
+import useAuthStore from '../store/auth.ts';
 
 type PostResponse = {
   id: number,
@@ -27,7 +27,7 @@ type Emits = {
 }
 const emit = defineEmits<Emits>();
 
-const auth0 = useAuth0();
+const authStore = useAuthStore();
 const store = useStore();
 const { t } = useI18n();
 const baseUrl = inject('ApiBaseUrl');
@@ -40,7 +40,7 @@ const comment = ref<string>(props.content || '');
 const message = ref<string>('');
 
 async function doSubmit(event: Event): Promise<void> {
-  if (!auth0.user.value) {
+  if (!authStore.user) {
     return doLogin();
   }
   if ((event.target as HTMLFormElement).matches(':invalid')) return;
@@ -56,12 +56,14 @@ async function doSubmit(event: Event): Promise<void> {
     method = 'PATCH';
   }
   try {
-    const accessToken = await auth0.getAccessTokenSilently();
+    const accessToken = await authStore.getAccessToken();
+    const authEndpoint = authStore.authEndpoint;
     const response = await fetch(url, {
       method,
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${accessToken}`,
+        'Auth-Endpoint': authEndpoint,
       },
       body: JSON.stringify({
         comment: commentContent,
@@ -87,7 +89,7 @@ async function doSubmit(event: Event): Promise<void> {
       store.addComment(
         id,
         commentContent,
-        auth0.user.value,
+        authStore.user,
         status,
         props.ancestorId,
         props.parentId,
@@ -95,7 +97,7 @@ async function doSubmit(event: Event): Promise<void> {
     } else if (props.currentId) {
       emit('update', commentContent);
     } else {
-      store.addComment(id, commentContent, auth0.user.value, status);
+      store.addComment(id, commentContent, authStore.user, status);
     }
     comment.value = '';
     emit('close');
@@ -106,7 +108,7 @@ async function doSubmit(event: Event): Promise<void> {
   isSending.value = false;
 }
 function doLogin(): void {
-  auth0.loginWithPopup();
+  authStore.login();
 }
 function onKeydown(event: KeyboardEvent): void {
   if (withCommandModifier(event, 'Enter')) {

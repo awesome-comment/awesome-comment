@@ -87,3 +87,12 @@ export type StatDailyByUser = {
     name: string;
   };
 }
+
+export type AwesomeUser = {
+  sub: string;
+  email: string;
+  picture: string;
+  name: string;
+  given_name: string;
+  family_name: string;
+}

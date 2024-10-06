@@ -1,7 +1,7 @@
 import type { AcConfig, Comment, ResponseBody } from '@awesome-comment/core/types';
 import { getCacheKey, getConfig } from '~/server/utils';
 import { H3Event } from 'h3';
-import createStorage from '~/server/utils/storage';
+import createStorage from '@awesome-comment/core/utils/storage';
 
 export default defineCachedEventHandler(async function (event: H3Event): Promise<ResponseBody<Comment[]>> {
   const query = getQuery(event);

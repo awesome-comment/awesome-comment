@@ -1,5 +1,4 @@
 import { H3Event } from 'h3';
-import jwt from 'jsonwebtoken';
 
 export default defineEventHandler(async function (event: H3Event){
   const method = event.node.req.method;
@@ -14,22 +13,8 @@ export default defineEventHandler(async function (event: H3Event){
     });
   }
 
-  const body = await readBody(event);
-  try {
-    const isVerified = jwt.verify(body.token, process.env.JWT_SECRET as string);
-    return {
-      code: 0,
-      data: {
-        verified: isVerified,
-      },
-    };
-  } catch (e) {
-    return {
-      code: 1,
-      data: {
-        verified: false,
-        message: (e as Error).message || String(e),
-      },
-    };
-  }
+  return {
+    code: 0,
+    data: event.context.payload,
+  };
 });

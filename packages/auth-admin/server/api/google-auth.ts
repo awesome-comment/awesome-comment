@@ -28,9 +28,9 @@ export default defineEventHandler(async function (event: H3Event){
       message: 'Failed to verify ID token',
     });
   }
-  const { sub: userId, email, picture, name, given_name, family_name } = payload;
+  const { sub, email, picture, name, given_name, family_name } = payload;
   const token = jwt.sign({
-    userId,
+    sub,
     email,
     picture,
     name,
