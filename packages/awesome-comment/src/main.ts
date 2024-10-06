@@ -9,6 +9,7 @@ import './styles/main.css';
 import './styles/animate.css';
 import App from './App.vue';
 import { ResponseBody, ResponseComment } from '@awesome-comment/core/types';
+import { AwesomeAuth } from "@roudanio/awesome-auth";
 
 export type InitOptions = {
   postId?: string;
@@ -16,6 +17,7 @@ export type InitOptions = {
   domain?: string;
   clientId?: string;
   locale?: string;
+  awesomeAuth?: AwesomeAuth;
 };
 
 const comments: ResponseComment[] = [];
@@ -41,7 +43,6 @@ function init(domain: string, clientId: string, locale: string = navigator.langu
       'zh-CN': messages.cn,
     },
   });
-  // @ts-expect-error wrong report
   app.use(auth0);
   app.use(pinia);
   app.use(i18n);
@@ -69,6 +70,7 @@ const AwesomeComment = {
       apiUrl,
       domain,
       clientId,
+      awesomeAuth,
       locale = navigator.language,
     }: InitOptions = {}
   ) {

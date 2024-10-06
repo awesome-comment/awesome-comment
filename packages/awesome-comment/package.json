@@ -9,6 +9,7 @@
   "dependencies": {
     "@auth0/auth0-vue": "^2.3.3",
     "@awesome-comment/core": "workspace:*",
+    "@roudanio/awesome-auth": "workspace:*",
     "animate.css": "^4.1.1",
     "lucide-vue-next": "^0.452.0",
     "marked": "^14.1.2",
