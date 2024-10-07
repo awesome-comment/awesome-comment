@@ -1,7 +1,7 @@
 import { ResponseBody } from '@awesome-comment/core/types';
 import { clearCache, getCacheKey } from '~/server/utils';
 import { CommentStatus } from '@awesome-comment/core/data';
-import createStorage from '~/server/utils/storage';
+import createStorage from '@awesome-comment/core/utils/storage';
 
 export default defineEventHandler(async function (event): Promise<ResponseBody<string>> {
   const id = event.context.params?.id;

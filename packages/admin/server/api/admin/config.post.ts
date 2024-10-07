@@ -1,7 +1,7 @@
 import type { AcConfig, ResponseBody } from '@awesome-comment/core/types';
 import { H3Event } from 'h3';
 import { getConfigKey } from '~/server/utils';
-import createStorage from '~/server/utils/storage';
+import createStorage from '@awesome-comment/core/utils/storage';
 
 export default defineEventHandler(async function (event: H3Event): Promise<ResponseBody<string>> {
   const body = (await readBody(event)) as AcConfig;

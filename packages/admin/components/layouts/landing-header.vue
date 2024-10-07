@@ -2,24 +2,48 @@
 
 </script>
 
-<template lang="pug">
-header.navbar.bg-base-200
-  .container.mx-auto.flex
-    .flex-1
-      nuxt-link.btn.btn-ghost.normal-case.text-xl(to="/") Awesome Comment
-    .flex-none
-      ul.menu.menu-horizontal
-        li
-          nuxt-link(
-            external
-            to="https://github.com/awesome-comment/awesome-comment"
-          )
-            i.bi.bi-github
-            | GitHub
-        li
-          nuxt-link(
-            to="/admin"
-          )
-            i.bi.bi-list-check
-            | Admin
+<template>
+  <header class="navbar bg-base-200">
+    <div class="container mx-auto flex">
+      <div class="flex-none">
+        <nuxt-link
+          class="btn btn-ghost normal-case text-xl"
+          to="/"
+        >
+          Awesome Comment
+        </nuxt-link>
+      </div>
+      <div class="flex-1">
+        <ul class="menu menu-horizontal">
+          <li>
+            <nuxt-link
+              to="/examples"
+            >
+              Examples
+            </nuxt-link>
+          </li>
+        </ul>
+      </div>
+
+      <div class="flex-none">
+        <ul class="menu menu-horizontal">
+          <li>
+            <nuxt-link
+              external="external"
+              to="https://github.com/awesome-comment/awesome-comment"
+            >
+              <i
+                class="bi bi-github"
+              />GitHub
+            </nuxt-link>
+          </li>
+          <li>
+            <nuxt-link to="/admin">
+              <i class="bi bi-list-check" />Admin
+            </nuxt-link>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </header>
 </template>

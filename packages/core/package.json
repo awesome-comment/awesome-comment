@@ -9,5 +9,10 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "type": "module"
+  "type": "module",
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20241004.0",
+    "@upstash/redis": "^1.34.2",
+    "h3": "^1.13.0"
+  }
 }
