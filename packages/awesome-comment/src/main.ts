@@ -6,7 +6,6 @@ import omit from 'lodash-es/omit';
 import messages from '@awesome-comment/core/i18n.json' assert { type: 'json' };
 import './styles/tw-daisy.css';
 import './styles/main.css';
-import './styles/icon.css'
 import './styles/animate.css';
 import App from './App.vue';
 import { ResponseBody, ResponseComment } from '@awesome-comment/core/types';
@@ -42,7 +41,6 @@ function init(domain: string, clientId: string, locale: string = navigator.langu
       'zh-CN': messages.cn,
     },
   });
-  // @ts-expect-error wrong report
   app.use(auth0);
   app.use(pinia);
   app.use(i18n);

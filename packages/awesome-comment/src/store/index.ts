@@ -185,6 +185,11 @@ const useStore = defineStore('store', () => {
     delete localComments[ postId ];
     localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(localComments));
   }
+  function updateComment(id: number, obj: Partial<Comment>) {
+    const comment = comments.value[ id ];
+    if (!comment) return;
+    Object.assign(comment, obj);
+  }
 
   return {
     isLoaded,
@@ -198,6 +203,7 @@ const useStore = defineStore('store', () => {
 
     loadComments,
     addComment,
+    updateComment,
   };
 });
 export default useStore;
