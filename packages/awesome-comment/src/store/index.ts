@@ -11,6 +11,7 @@ function formatHelper(item: ResponseComment): Comment {
     created_at: createdAt,
     parent_id: parentId,
     ancestor_id: ancestorId,
+    post_id: postId,
     user_id: userId,
     ...rest
   } = item;
@@ -19,6 +20,7 @@ function formatHelper(item: ResponseComment): Comment {
     id: Number(id),
     userId,
     parentId: Number(parentId),
+    postId,
     ancestorId: Number(ancestorId),
     status: Number(item.status),
     createdAt: createUTCDate(createdAt),

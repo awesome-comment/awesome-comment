@@ -48,7 +48,10 @@ async function doLike(isLike = true) {
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ like: isLike }),
+    body: JSON.stringify({
+      like: isLike,
+      postId: props.comment.postId,
+    }),
   });
   const json = (await response.json()) as ResponseBody<{ like: number }>;
   store.updateComment(props.comment.id as number, {
