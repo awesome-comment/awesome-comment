@@ -49,6 +49,7 @@ type BaseComment = {
   status: CommentStatus;
   children?: Comment[];
   created_at?: string;
+  like?: number;
 }
 export type Comment = BaseComment & {
   createdAt: Date;
@@ -86,4 +87,10 @@ export type StatDailyByUser = {
     email: string;
     name: string;
   };
+}
+
+export type VoteItem = {
+  like: number;
+  dislike: number;
+  ip: Record<string, number[]>;
 }

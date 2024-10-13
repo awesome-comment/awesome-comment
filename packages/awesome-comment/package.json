@@ -1,17 +1,16 @@
 {
   "name": "@roudanio/awesome-comment",
-  "version": "0.7.21",
+  "version": "0.8.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vue-tsc && vite build",
-    "preview": "vite preview",
-    "get-i18n": "node build/i18n.js"
+    "build": "vue-tsc && vite build"
   },
   "dependencies": {
     "@auth0/auth0-vue": "^2.3.3",
     "@awesome-comment/core": "workspace:*",
     "animate.css": "^4.1.1",
+    "lucide-vue-next": "^0.452.0",
     "marked": "^14.1.2",
     "pinia": "^2.2.2",
     "vue": "^3.5.8",

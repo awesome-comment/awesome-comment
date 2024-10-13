@@ -83,6 +83,10 @@ export function getCacheKey(postId: string): string {
   return `comments-${postId}`;
 }
 
+export function getVoteCacheKey(postId: string): string {
+  return `vote-comment-${postId}`;
+}
+
 export function getConfigKey(): string {
   return `${process.env.ADMIN_SITE}_ac_config`;
 }
@@ -190,4 +194,23 @@ export async function clearCache(storage: AcStorage, key: string): Promise<void>
   for (const k of keys) {
     await storage.delete(k);
   }
+}
+
+export async function requestTiDB(
+  url: string,
+  method: string,
+  body?: Record<string, unknown>,
+  headers?: Record<string, string>,
+): Promise<unknown> {
+  const encodedCredentials = btoa(`${process.env.TIDB_PUBLIC_KEY}:${process.env.TIDB_PRIVATE_KEY}`);
+  const response = await fetch(process.env.TIDB_END_POINT + url, {
+    method,
+    headers: {
+      'Authorization': `Basic ${encodedCredentials}`,
+      'Content-Type': 'application/json',
+      ...headers,
+    },
+    ...body && { body: JSON.stringify(body) },
+  });
+  return await response.json();
 }

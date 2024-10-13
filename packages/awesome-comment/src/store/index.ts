@@ -11,6 +11,7 @@ function formatHelper(item: ResponseComment): Comment {
     created_at: createdAt,
     parent_id: parentId,
     ancestor_id: ancestorId,
+    post_id: postId,
     user_id: userId,
     ...rest
   } = item;
@@ -19,6 +20,7 @@ function formatHelper(item: ResponseComment): Comment {
     id: Number(id),
     userId,
     parentId: Number(parentId),
+    postId,
     ancestorId: Number(ancestorId),
     status: Number(item.status),
     createdAt: createUTCDate(createdAt),
@@ -185,6 +187,11 @@ const useStore = defineStore('store', () => {
     delete localComments[ postId ];
     localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(localComments));
   }
+  function updateComment(id: number, obj: Partial<Comment>) {
+    const comment = comments.value[ id ];
+    if (!comment) return;
+    Object.assign(comment, obj);
+  }
 
   return {
     isLoaded,
@@ -198,6 +205,7 @@ const useStore = defineStore('store', () => {
 
     loadComments,
     addComment,
+    updateComment,
   };
 });
 export default useStore;
