@@ -49,8 +49,8 @@ export default defineEventHandler(async function(event: H3Event): Promise<PostRe
       },
     };
     await storage.put(key, vote);
-    await requestTiDB('/v1/like_comment', 'POST', {
-      comment_id: id,
+    await requestTiDB('/v1/like_comment', 'PUT', {
+      id,
       like: num,
     });
     return {
@@ -79,8 +79,8 @@ export default defineEventHandler(async function(event: H3Event): Promise<PostRe
   voteItem.like = Math.max(voteItem.like + (like ? 1 : -1), 0);
   ips.push(now);
   await storage.put(key, vote);
-  await requestTiDB('/v1/like_comment', 'POST', {
-    comment_id: id,
+  await requestTiDB('/v1/like_comment', 'PUT', {
+    id: Number(id),
     like: voteItem.like,
   });
   return {

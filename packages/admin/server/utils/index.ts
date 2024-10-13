@@ -201,12 +201,13 @@ export async function requestTiDB(
   method: string,
   body?: Record<string, unknown>,
   headers?: Record<string, string>,
-): Promise<Response> {
+): Promise<unknown> {
   const encodedCredentials = btoa(`${process.env.TIDB_PUBLIC_KEY}:${process.env.TIDB_PRIVATE_KEY}`);
   const response = await fetch(process.env.TIDB_END_POINT + url, {
     method,
     headers: {
       'Authorization': `Basic ${encodedCredentials}`,
+      'Content-Type': 'application/json',
       ...headers,
     },
     ...body && { body: JSON.stringify(body) },
