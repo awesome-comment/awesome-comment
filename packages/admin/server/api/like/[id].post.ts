@@ -50,7 +50,7 @@ export default defineEventHandler(async function(event: H3Event): Promise<PostRe
     };
     await storage.put(key, vote);
     await requestTiDB('/v1/like_comment', 'PUT', {
-      id,
+      id: Number(id),
       like: num,
     });
     return {
