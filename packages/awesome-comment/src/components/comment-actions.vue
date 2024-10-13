@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { useAuth0 } from '@auth0/auth0-vue';
 import type { Comment, ResponseBody } from '@awesome-comment/core/types';
 import { Reply, ThumbsUp, ThumbsDown } from 'lucide-vue-next';
+import { ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import useStore from '../store';
 
@@ -14,24 +14,27 @@ type Emits = {
 }
 const emit = defineEmits<Emits>();
 
-const auth0 = useAuth0();
 const { t } = useI18n();
 const store = useStore();
 
+const isSending = ref<number>(0);
+
 async function doLike(isLike = true) {
-  const accessToken = await auth0.getAccessTokenSilently();
+  if (isSending.value) return;
+
+  isSending.value = isLike ? 1 : -1;
   const response = await fetch(`/api/like/${props.comment.id}`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      Authorization: `Bearer ${accessToken}`,
     },
-    body: JSON.stringify({ isLike }),
+    body: JSON.stringify({ like: isLike }),
   });
   const json = (await response.json()) as ResponseBody<{ like: number }>;
   store.updateComment(props.comment.id as number, {
     like: json.data.like,
   });
+  isSending.value = 0;
 }
 </script>
 
@@ -41,20 +44,24 @@ async function doLike(isLike = true) {
       :aria-label="t('like')"
       :title="t('like')"
       class="ac-btn ac-btn-sm ac-btn-circle border-0 shadow-none"
+      :disabled="isSending"
       type="button"
       @click="doLike()"
     >
-      <thumbs-up size="16" />
+      <span v-if="isSending > 0" class="ac-loading ac-loading-spinner" />
+      <thumbs-up v-else size="16" />
     </button>
     <span class="text-sm">0</span>
     <button
       :aria-label="t('like')"
       :title="t('like')"
       class="ac-btn ac-btn-sm ac-btn-circle border-0 shadow-none"
+      :disabled="isSending"
       type="button"
       @click="doLike(false)"
     >
-      <thumbs-down size="16" />
+      <span v-if="isSending < 0" class="ac-loading ac-loading-spinner" />
+      <thumbs-down v-else size="16" />
     </button>
 
     <button

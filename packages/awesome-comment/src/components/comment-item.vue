@@ -60,7 +60,10 @@ onBeforeUnmount(() => {
           :is-editing="isEditing"
           @edit="isEditing = !isEditing"
         />
-        <comment-actions @reply="isReplying = !isReplying" />
+        <comment-actions
+          :comment="comment"
+          @reply="isReplying = !isReplying"
+        />
       </header>
       <comment-content
         :ancestor-id="ancestorId as number"

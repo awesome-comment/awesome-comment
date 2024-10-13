@@ -4,9 +4,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vue-tsc && vite build",
-    "preview": "vite preview",
-    "get-i18n": "node build/i18n.js"
+    "build": "vue-tsc && vite build"
   },
   "dependencies": {
     "@auth0/auth0-vue": "^2.3.3",

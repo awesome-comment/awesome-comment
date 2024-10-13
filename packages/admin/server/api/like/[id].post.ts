@@ -13,14 +13,6 @@ type LikeRequest = {
 
 export default defineEventHandler(async function(event: H3Event): Promise<PostResponse> {
   const headers = getHeaders(event);
-  const authorization = headers[ 'authorization' ];
-  if (!authorization) {
-    throw createError({
-      statusCode: 401,
-      message: 'Unauthorized',
-    });
-  }
-
   const ip = headers[ 'x-real-ip' ]
     || headers[ 'x-forwarded-for' ]
     || headers[ 'x-client-ip' ]
@@ -31,6 +23,7 @@ export default defineEventHandler(async function(event: H3Event): Promise<PostRe
       message: 'Invalid request',
     });
   }
+
   const id = event.context.params?.id;
   if (!id) {
     throw createError({
