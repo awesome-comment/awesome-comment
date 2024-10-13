@@ -711,7 +711,7 @@
     "name": "v1 vote comment",
     "description": "",
     "method": "PUT",
-    "endpoint": "/v1/like_commnet",
+    "endpoint": "/v1/like_comment",
     "data_source": {
       "cluster_id": 1379661944646254419
     },
@@ -740,7 +740,7 @@
     },
     "tag": "Default",
     "batch_operation": 0,
-    "sql_file": "sql/PUT-v1-like_commnet.sql",
+    "sql_file": "sql/PUT-v1-like_comment.sql",
     "type": "sql_endpoint",
     "return_type": "json"
   }
