@@ -82,7 +82,7 @@ onBeforeUnmount(() => {
       :current-id="comment.id"
       :status="comment.status"
       class="mt-3"
-      no-version="no-version"
+      no-version
       @close="isEditing = false"
       @update="store.updateComment(comment.id as number, { content: $event})"
     />
@@ -91,7 +91,7 @@ onBeforeUnmount(() => {
       :ancestor-id="ancestorId"
       :parent-id="Number(comment.id)"
       class="mt-3 ms-7"
-      no-version="no-version"
+      no-version
       @close="isReplying = false"
     />
     <template v-if="comment.children?.length">
@@ -109,7 +109,7 @@ onBeforeUnmount(() => {
       :ancestor-id="ancestorId"
       :parent-id="comment.id"
       class="mt-3 ms-7"
-      no-version="no-version"
+      no-version
       @close="isReplying = false"
     />
   </div>

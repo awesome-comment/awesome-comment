@@ -32,7 +32,7 @@ async function doLike(isLike = true) {
       liked[ props.comment.id as number ] = now;
       localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(liked));
       store.updateComment(props.comment.id as number, {
-        like: Math.max(props.comment.like + (isLike ? 1 : -1), 0),
+        like: Math.max((props.comment.like || 0) + (isLike ? 1 : -1), 0),
       });
       return;
     }
@@ -55,7 +55,7 @@ async function doLike(isLike = true) {
   });
   const json = (await response.json()) as ResponseBody<{ like: number }>;
   store.updateComment(props.comment.id as number, {
-    like: json.data.like,
+    like: json.data?.like || 0,
   });
   isSending.value = 0;
 }
@@ -67,7 +67,7 @@ async function doLike(isLike = true) {
       :aria-label="t('like')"
       :title="t('like')"
       class="ac-btn ac-btn-sm ac-btn-circle border-0 shadow-none"
-      :disabled="isSending"
+      :disabled="isSending !== 0"
       type="button"
       @click="doLike()"
     >
@@ -77,7 +77,7 @@ async function doLike(isLike = true) {
       />
       <thumbs-up
         v-else
-        size="16"
+        :size="16"
       />
     </button>
     <span class="text-sm">{{ comment.like || 0 }}</span>
@@ -85,7 +85,7 @@ async function doLike(isLike = true) {
       :aria-label="t('dislike')"
       :title="t('dislike')"
       class="ac-btn ac-btn-sm ac-btn-circle border-0 shadow-none"
-      :disabled="isSending"
+      :disabled="isSending !== 0"
       type="button"
       @click="doLike(false)"
     >
@@ -95,7 +95,7 @@ async function doLike(isLike = true) {
       />
       <thumbs-down
         v-else
-        size="16"
+        :size="16"
       />
     </button>
 
@@ -106,7 +106,7 @@ async function doLike(isLike = true) {
       type="button"
       @click="emit('reply')"
     >
-      <Reply size="16" />
+      <Reply :size="16" />
     </button>
   </div>
 </template>

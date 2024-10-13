@@ -40,12 +40,12 @@ function getCommentLink(id: number): string {
   <div class="flex items-center gap-2 text-sm text-base-content dark:text-white">
     <div class="ac-avatar">
       <div
-        v-if="comment.user.avatar"
+        v-if="comment.user?.avatar"
         class="w-6 h-6"
       >
         <img
           :alt="username"
-          :src="comment.user.avatar"
+          :src="comment.user?.avatar"
           class="rounded-full max-w-full max-h-full"
         >
       </div>
@@ -67,7 +67,7 @@ function getCommentLink(id: number): string {
     >
       <badge-check
         class="block"
-        size="18"
+        :size="18"
       />
     </div>
     <a
@@ -75,7 +75,7 @@ function getCommentLink(id: number): string {
       class="no-underline hover:underline hover:decoration-green-middle"
     >
       <time
-        :datetime="comment.createdAt"
+        :datetime="comment.createdAt.toISOString()"
         :title="formatTime(comment.createdAt)"
         class="text-xs text-gray-600 dark:text-gray-400"
       >{{ formatTime(comment.createdAt) }}
