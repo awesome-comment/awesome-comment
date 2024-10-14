@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { Comment, ResponseBody } from '@awesome-comment/core/types';
 import { Reply, ThumbsUp, ThumbsDown } from 'lucide-vue-next';
-import { ref } from 'vue';
+import { inject, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import useStore from '../store';
 
@@ -14,8 +14,9 @@ type Emits = {
 }
 const emit = defineEmits<Emits>();
 
-const { t } = useI18n();
 const store = useStore();
+const { t } = useI18n();
+const baseUrl = inject('ApiBaseUrl');
 const LOCAL_STORAGE_KEY = 'awesome-comment-likes';
 
 const isSending = ref<number>(0);
@@ -43,7 +44,7 @@ async function doLike(isLike = true) {
   }
 
   isSending.value = isLike ? 1 : -1;
-  const response = await fetch(`/api/like/${props.comment.id}`, {
+  const response = await fetch(`${baseUrl}/api/like/${props.comment.id}`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
