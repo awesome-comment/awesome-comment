@@ -1,6 +1,6 @@
 import { ResponseBody } from '@awesome-comment/core/types';
 import { H3Event } from 'h3';
-import createStorage from '~/server/utils/storage';
+import createStorage from '@awesome-comment/core/utils/storage';
 import { getMyConfigKey } from '~/server/utils';
 import { MyAdminConfig } from '~/types';
 
