@@ -1,6 +1,6 @@
 import type { ResponseBody, VoteItem } from '@awesome-comment/core/types';
 import { H3Event } from 'h3';
-import createStorage from '~/server/utils/storage';
+import createStorage from '@awesome-comment/core/utils/storage';
 import { getVoteCacheKey, requestTiDB } from '~/server/utils';
 
 type PostResponse = ResponseBody<{
