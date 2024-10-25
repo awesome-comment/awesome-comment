@@ -11,6 +11,7 @@ type RowItem = Comment & {
   isApproving: boolean;
   isRejecting: boolean;
   isDeleting: boolean;
+  isDeleted: boolean;
   isReplying: boolean;
   from: string;
 }
@@ -95,7 +96,7 @@ const { data: commentsList, status, refresh, error } = useLazyAsyncData(
     }, [{}, []]);
     hasMore.value = Object.values(cms).length >= 20;
     for (const reply of replies) {
-      const parent = cms[ reply.parent_id ];
+      const parent = cms[ reply.parentId ];
       if (!parent) continue;
       parent.children = parent.children ?? [];
       parent.children.push(reply);
@@ -148,7 +149,7 @@ async function doDelete(comment: RowItem): Promise<void> {
       method: 'DELETE',
       headers: {
         Authorization: `Bearer ${token}`,
-        'X-AC-STATUS': comment.status,
+        'X-AC-STATUS': comment.status.toString(),
         'X-AC-POST-id': comment.postId,
       },
     });
@@ -161,10 +162,7 @@ async function doDelete(comment: RowItem): Promise<void> {
     }
   }
 
-  const index = commentsList.value.findIndex((c) => c.id === comment.id);
-  if (index > -1) {
-    commentsList.value.splice(index, 1);
-  }
+  comment.isDeleted = true;
   delete comments.value[ comment.id ];
   comment.isDeleting = false;
 }
@@ -199,7 +197,7 @@ async function doRemoveReply(child: RowItem, comment: RowItem, index: number): P
     method: 'DELETE',
     headers: {
       Authorization: `Bearer ${token}`,
-      'X-AC-STATUS': comment.status,
+      'X-AC-STATUS': comment.status.toString(),
       'X-AC-POST-id': comment.postId,
     },
   });
@@ -313,252 +311,354 @@ definePageMeta({
 });
 </script>
 
-<template lang="pug">
-header.flex.flex-col.mb-4.gap-4(class="sm:flex-row sm:items-center")
-  h1.text-2xl.font-bold(class="sm:me-auto") Comments Management
-  span.loading.loading-spinner(
-    v-if="status === 'pending' && filterStatus < CommentStatus.UnReplied"
-  )
-  button.btn.btn-sm.me-2(
-    v-if="filterStatus >= CommentStatus.UnReplied"
-    type="button"
-    :disabled="status === 'pending'"
-    @click="doReset"
-  )
-    span.loading.loading-spinner(v-if="status === 'pending'")
-    i.bi.bi-arrow-clockwise(v-else)
-    | Refresh
-  .form-control.flex-row.gap-2.me-2
-    label.label(for="language")
-      span.text-xs Language
-    select.select.select-bordered.select-sm(
-      id="language"
-      v-model="filterLanguage"
-      @change="onStatusChange"
-    )
-      option(value="") All
-      option(
-        v-for="lang in Languages",
-        :value="lang",
-        :key="lang"
-      ) {{ lang }}
-  .form-control.flex-row.gap-2
-    label.label(for="status")
-      span.text-xs Status
-    select.select.select-bordered.select-sm(
-      id="status"
-      v-model="filterStatus"
-      @change="onStatusChange"
-    )
-      option(value="all") All
-      option(v-for="key in CSKeys", :value="key", :key="key") {{ CommentStatus[key] }}
-
-.alert.alert-error.mb-4(v-if="message || error")
-  i.bi.bi-exclamation-triangle-fill.me-2
-  span {{ message || error.message }}
-.flex.gap-4.mb-4(v-if="filterPostId || filterUser")
-  button.btn.btn-outline.btn-sm.normal-case(
-    v-if="filterPostId"
-    type="button"
-    @click="doFilter('')"
-  )
-    i.bi.bi-funnel-fill
-    | {{filterPostId}}
-    i.bi.bi-x-lg
-  button.btn.btn-outline.btn-sm.normal-case(
-    v-if="filterUser"
-    type="button"
-    @click="doFilterByUser('')"
-  )
-    i.bi.bi-funnel-fill
-    | {{filterUser}}
-    i.bi.bi-x-lg
-
-ui-batch-actions(
-  v-model="selected"
-  v-model:isWorking="isBatching"
-  v-model:comments="commentsList"
-)
-
-.overflow-x-auto
-  table.table.table-pin-rows.table-pin-cols.table-sm(
-    class="sm:table-md"
-  )
-    thead
-      tr
-        th(
-          class="hover:bg-base-200 cursor-pointer"
-          title="Select all"
-          @click="doSelectAll"
-        ) ID
-        th(class="sm:min-w-60") Content
-        th User
-        th Time
-        th Post
-        th Status
-        th
-    tbody(v-if="commentsList?.length")
-      tr(
-        v-for="(comment, index) in commentsList"
-        ref="tr"
-        :key="comment.id"
-        :class="{'ring-4 ring-inset': index === currentItem, 'bg-base-200': notEnglish(comment.postId), 'bg-sky-100 dark:bg-sky-900': selected.includes(comment.id)}"
-      )
-        td(
-          class="!p-0"
-          height="1"
-        )
-          label.block.w-full.h-full.cursor-pointer.py-3.px-4(
-            class="hover:bg-base-200/50"
-          )
-            input.hidden(
-              type="checkbox"
-              v-model="selected"
-              name="selected"
-              :value="comment.id"
-            )
-            | {{ comment.id }}
-        td.align-top
-          blockquote.ps-3.border-s-4.mb-2(
-            v-if="comment.toContent"
-            class="bg-base-300/50 border-base-content"
-          )
-            p.py-1.mb-2 {{comment.toContent}}
-            p.text-xs(
-              v-if="comment.toUser"
-              class="text-base-content/50"
-            ) - {{comment.toUser.name || comment.toUser.email}}
-          p.break-words.max-w-sm.overflow-hidden {{ comment.content }}
-          template(
-            v-if="comment.children?.length"
-          )
-            .mt-4.chat.chat-end(
-              v-for="(child, childIndex) in comment.children"
-              :key="child.id"
-            )
-              .chat-header.mb-1.flex.gap-2
-                button.btn.btn-circle.btn-ghost.btn-sm(
-                  type="button"
-                  :disabled="child.isDeleting"
-                  @click="doRemoveReply(child, comment, childIndex)"
-                )
-                  span.loading.loading-spinner(v-if="child.isDeleting")
-                  i.bi.bi-trash3.text-error(v-else)
-                reply-comment(
-                  button-class="btn-sm"
-                  :comment="comment"
-                  :reply="child.content"
-                  :target="child"
-                  @save="child.content = $event"
-                  @open="hasReplyModal = true"
-                  @close="hasReplyModal = false"
-                )
-                  template(#button-label) Edit
-              .chat-bubble(v-html="parseMarkdown(child.content)")
-              .chat-footer.mt-1
-                i.bi.bi-patch-check-fill.me-1
-                | {{child.user.email}}
-          emoji-shortcuts-operator(
-            v-if="comment.status === CommentStatus.Pending || filterStatus === CommentStatus.UnReplied"
-            class-name="pt-4"
-            :comment="comment"
-            @reply="onReply($event, comment)"
-          )
-        td.align-top
-          user-cell(
-            :filter="filter"
-            :user="comment.user"
-            :user-id="comment.user_id"
-            :from="comment.from"
-          )
-        td.align-top
-          time.text-xs(:datetime="comment.created_at") {{ formatTime(comment.created_at) }}
-        td.align-top {{ comment.postId.replace(postIdPrefix, '') }}
-          .flex.gap-2.mt-2
-            context-menu-dropdown
-              button.btn.btn-xs.btn-ghost(
-                type="button"
-                @click="doFilter(comment.postId)"
-              )
-                i.bi.bi-funnel-fill
-
-              template(#menu)
-                li
-                  nuxt-link(
-                    :to="getUrl(comment.postId, true)"
-                    target="_blank"
-                  ) Filter by post
-            nuxt-link.btn.btn-xs.btn-ghost(
-              target="_blank"
-              external
-              :to="comment.post_id"
-            )
-              i.bi.bi-box-arrow-up-right
-        td.align-top {{ CommentStatus[comment.status] }}
-        td.align-top
-          .grid.grid-cols-2.gap-2.w-40
-            button.btn.btn-success.btn-sm.text-white(
-              v-if="comment.status === CommentStatus.Pending || comment.status === CommentStatus.Rejected"
-              type="button"
-              class="sm:btn-xs hover:text-white"
-              :disabled="isBatching || comment.isApproving || comment.isRejecting || comment.isDeleting || loadingMore",
-              @click="doReview(comment, CommentStatus.Approved)"
-            )
-              span.loading.loading-xs.loading-spinner(v-if="comment.isApproving")
-              template(v-else) Approve
-            reply-comment(
-              ref="replyComments"
+<template>
+  <header class="flex flex-col mb-4 gap-4 sm:flex-row sm:items-center">
+    <h1 class="text-2xl font-bold sm:me-auto">
+      Comments Management
+    </h1>
+    <span
+      v-if="status === 'pending' && filterStatus < CommentStatus.UnReplied"
+      class="loading loading-spinner"
+    />
+    <button
+      v-if="filterStatus &gt;= CommentStatus.UnReplied"
+      class="btn btn-sm me-2"
+      type="button"
+      :disabled="status === 'pending'"
+      @click="doReset"
+    >
+      <span
+        v-if="status === 'pending'"
+        class="loading loading-spinner"
+      />
+      <i
+        v-else
+        class="bi bi-arrow-clockwise"
+      />
+      Refresh
+    </button>
+    <div class="form-control flex-row gap-2 me-2">
+      <label class="label" for="language">
+        <span class="text-xs">Language</span>
+      </label>
+      <select
+        id="language"
+        v-model="filterLanguage"
+        class="select select-bordered select-sm"
+        @change="onStatusChange"
+      >
+        <option value="">All</option>
+        <option
+          v-for="lang in Languages"
+          :key="lang"
+          :value="lang"
+        >{{ lang }}</option>
+      </select>
+    </div>
+    <div class="form-control flex-row gap-2">
+      <label class="label" for="status">
+        <span class="text-xs">Status</span>
+      </label>
+      <select
+        id="status"
+        v-model="filterStatus"
+        class="select select-bordered select-sm"
+        @change="onStatusChange"
+      >
+        <option value="all">All</option>
+        <option
+          v-for="key in CSKeys"
+          :key="key"
+          :value="key"
+        >{{ CommentStatus[key] }}</option>
+      </select>
+    </div>
+  </header>
+  <div
+    v-if="message || error"
+    class="alert alert-error mb-4"
+  >
+    <i class="bi bi-exclamation-triangle-fill me-2" />
+    <span>{{ message || error.message }}</span>
+  </div>
+  <div
+    v-if="filterPostId || filterUser"
+    class="flex gap-4 mb-4"
+  >
+    <button
+      v-if="filterPostId"
+      class="btn btn-outline btn-sm normal-case"
+      type="button"
+      @click="doFilter('')"
+    >
+      <i class="bi bi-funnel-fill" />
+      {{ filterPostId }}
+      <i class="bi bi-x-lg" />
+    </button>
+    <button
+      v-if="filterUser"
+      class="btn btn-outline btn-sm normal-case"
+      type="button"
+      @click="doFilterByUser('')"
+    >
+      <i class="bi bi-funnel-fill" />
+      {{ filterUser }}
+      <i class="bi bi-x-lg" />
+    </button>
+  </div>
+  <ui-batch-actions
+    v-model="selected"
+    v-model:is-working="isBatching"
+    v-model:comments="commentsList"
+  />
+  <div class="overflow-x-auto">
+    <table class="table table-pin-rows table-pin-cols table-sm sm:table-md">
+      <thead>
+        <tr>
+          <th
+            class="hover:bg-base-200 cursor-pointer"
+            title="Select all"
+            @click="doSelectAll"
+          >ID</th>
+          <th class="sm:min-w-60">Content</th>
+          <th>User</th>
+          <th>Time</th>
+          <th>Post</th>
+          <th>Status</th>
+          <th />
+        </tr>
+      </thead>
+      <tbody v-if="commentsList?.length">
+        <tr
+          v-for="(comment, index) in commentsList"
+          ref="tr"
+          :key="comment.id"
+          :class="{'ring-4 ring-inset': index === currentItem, 'bg-base-200': notEnglish(comment.postId), 'bg-sky-100 dark:bg-sky-900': selected.includes(comment.id), 'opacity-10 pointer-events-none': comment.isDeleted}"
+        >
+          <td class="!p-0" height="1">
+            <label class="block w-full h-full cursor-pointer py-3 px-4 hover:bg-base-200/50">
+              <input
+                v-model="selected"
+                class="hidden"
+                type="checkbox"
+                name="selected"
+                :value="comment.id"
+              >
+              {{ comment.id }}
+            </label>
+          </td>
+          <td class="align-top">
+            <blockquote
+              v-if="comment.toContent"
+              class="ps-3 border-s-4 mb-2 bg-base-300/50 border-base-content"
+            >
+              <p class="py-1 mb-2">
+                {{ comment.toContent }}
+              </p>
+              <p
+                v-if="comment.toUser"
+                class="text-xs text-base-content/50"
+              >
+                - {{ comment.toUser.name || comment.toUser.email }}
+              </p>
+            </blockquote>
+            <p class="break-words max-w-sm overflow-hidden">
+              {{ comment.content }}
+            </p>
+            <template v-if="comment.children?.length">
+              <div
+                v-for="(child, childIndex) in comment.children"
+                :key="child.id"
+                class="mt-4 chat chat-end"
+              >
+                <div class="chat-header mb-1 flex gap-2">
+                  <button
+                    class="btn btn-circle btn-ghost btn-sm"
+                    type="button"
+                    :disabled="child.isDeleting"
+                    @click="doRemoveReply(child, comment, childIndex)"
+                  >
+                    <span
+                      v-if="child.isDeleting"
+                      class="loading loading-spinner"
+                    />
+                    <i
+                      v-else
+                      class="bi bi-trash3 text-error"
+                    />
+                  </button>
+                  <reply-comment
+                    button-class="btn-sm"
+                    :comment="comment"
+                    :reply="child.content"
+                    :target="child"
+                    @save="child.content = $event"
+                    @open="hasReplyModal = true"
+                    @close="hasReplyModal = false"
+                  >
+                    <template #button-label>Edit</template>
+                  </reply-comment>
+                </div>
+                <div
+                  class="chat-bubble"
+                  v-html="parseMarkdown(child.content)"
+                />
+                <div class="chat-footer mt-1">
+                  <i class="bi bi-patch-check-fill me-1" />{{ child.user.email }}
+                </div>
+              </div>
+            </template>
+            <emoji-shortcuts-operator
+              v-if="comment.status === CommentStatus.Pending || filterStatus === CommentStatus.UnReplied"
+              class-name="pt-4"
               :comment="comment"
               @reply="onReply($event, comment)"
-              @open="hasReplyModal = true"
-              @close="hasReplyModal = false"
-            )
-            ui-delete-button(
-              :disabled="isBatching || comment.isApproving || comment.isRejecting || comment.isDeleting || loadingMore",
-              :is-loading="comment.isDeleting",
-              @delete="doDelete(comment)"
-            )
-            details.dropdown.dropdown-end
-              summary.btn.btn-outline.btn-sm.btn-square(
-                class="sm:btn-xs"
-                role="button"
-                aria-label="More actions"
-              )
-                i.bi.bi-three-dots-vertical
-                span.sr-only More actions
-              .p-2.shadow.dropdown-content.z-1.bg-base-100.rounded-box.w-36.flex.flex-col.gap-1.border(
-                class="border-base-content/25"
-              )
-                edit-comment(
-                  button-class="btn btn-sm sm:btn-xs btn-outline btn-warning"
-                  :comment="comment"
-                  @save="comment.content = $event"
-                  @open="hasReplyModal = true"
-                  @close="hasReplyModal = false"
-                )
-                button.btn.btn-outline.btn-warning.btn-sm(
-                  v-if="comment.status === CommentStatus.Pending || comment.status === CommentStatus.Approved"
-                  type="button",
-                  class="sm:btn-xs"
-                  :disabled="isBatching || comment.isApproving || comment.isRejecting || comment.isDeleting || loadingMore",
-                  @click="doReview(comment, CommentStatus.Rejected)"
-                )
-                  span.loading.loading-xs.loading-spinner(v-if="comment.isRejecting")
-                  template(v-else) Reject
-
-  button.mt-2.btn.btn-neutral.btn-sm.btn-block(
-    v-if="hasMore",
-    type="button",
-    :disabled="loadingMore",
-    @click="doLoadMore",
-  )
-    span.loading.loading-xs.loading-spinner(v-if="loadingMore")
-    | Load More
-
-  .w-full.h-32.flex.items-center.justify-center(v-if="!commentsList?.length && status === 'pending'")
-    span.loading.loading-spinner
-  .w-full.h-32.flex.items-center.justify-center(v-else-if="!commentsList?.length")
-    .text-lg.text-center.text-neutral-content No Data to display
+            />
+          </td>
+          <td class="align-top">
+            <user-cell
+              :filter="filter"
+              :user="comment.user"
+              :user-id="comment.user_id"
+              :from="comment.from"
+            />
+          </td>
+          <td class="align-top">
+            <time
+              class="text-xs"
+              :datetime="comment.created_at"
+            >{{ formatTime(comment.created_at) }}</time>
+          </td>
+          <td class="align-top">
+            {{ comment.postId.replace(postIdPrefix, '') }}
+            <div class="flex gap-2 mt-2">
+              <context-menu-dropdown>
+                <button
+                  class="btn btn-xs btn-ghost"
+                  type="button"
+                  @click="doFilter(comment.postId)"
+                >
+                  <i class="bi bi-funnel-fill" />
+                </button>
+                <template #menu>
+                  <li>
+                    <nuxt-link
+                      :to="getUrl(comment.postId, true)"
+                      target="_blank"
+                    >
+                      Filter by post
+                    </nuxt-link>
+                  </li>
+                </template>
+              </context-menu-dropdown>
+              <nuxt-link
+                class="btn btn-xs btn-ghost"
+                target="_blank"
+                external="external"
+                :to="comment.post_id"
+              >
+                <i class="bi bi-box-arrow-up-right" />
+              </nuxt-link>
+            </div>
+          </td>
+          <td class="align-top">
+            {{ CommentStatus[comment.status] }}
+          </td>
+          <td class="align-top">
+            <div class="grid grid-cols-2 gap-2 w-40">
+              <button
+                v-if="comment.status === CommentStatus.Pending || comment.status === CommentStatus.Rejected"
+                class="btn btn-success btn-sm text-white sm:btn-xs hover:text-white"
+                type="button"
+                :disabled="isBatching || comment.isApproving || comment.isRejecting || comment.isDeleting || loadingMore"
+                @click="doReview(comment, CommentStatus.Approved)"
+              >
+                <span
+                  v-if="comment.isApproving"
+                  class="loading loading-xs loading-spinner"
+                />
+                <template v-else>
+                  Approve
+                </template>
+              </button>
+              <reply-comment
+                ref="replyComments"
+                :comment="comment"
+                @reply="onReply($event, comment)"
+                @open="hasReplyModal = true"
+                @close="hasReplyModal = false"
+              />
+              <ui-delete-button
+                :disabled="isBatching || comment.isApproving || comment.isRejecting || comment.isDeleting || loadingMore"
+                :is-loading="comment.isDeleting"
+                @delete="doDelete(comment)"
+              />
+              <details class="dropdown dropdown-end">
+                <summary
+                  class="btn btn-outline btn-sm btn-square sm:btn-xs"
+                  role="button"
+                  aria-label="More actions"
+                >
+                  <i class="bi bi-three-dots-vertical" />
+                  <span class="sr-only">More actions</span>
+                </summary>
+                <div class="p-2 shadow dropdown-content z-1 bg-base-100 rounded-box w-36 flex flex-col gap-1 border border-base-content/25">
+                  <edit-comment
+                    button-class="btn btn-sm sm:btn-xs btn-outline btn-warning"
+                    :comment="comment"
+                    @save="comment.content = $event"
+                    @open="hasReplyModal = true"
+                    @close="hasReplyModal = false"
+                  />
+                  <button
+                    v-if="comment.status === CommentStatus.Pending || comment.status === CommentStatus.Approved"
+                    class="btn btn-outline btn-warning btn-sm sm:btn-xs"
+                    type="button"
+                    :disabled="isBatching || comment.isApproving || comment.isRejecting || comment.isDeleting || loadingMore"
+                    @click="doReview(comment, CommentStatus.Rejected)"
+                  >
+                    <span
+                      v-if="comment.isRejecting"
+                      class="loading loading-xs loading-spinner"
+                    />
+                    <template v-else>
+                      Reject
+                    </template>
+                  </button>
+                </div>
+              </details>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <button
+      v-if="hasMore"
+      class="mt-2 btn btn-neutral btn-sm btn-block"
+      type="button"
+      :disabled="loadingMore"
+      @click="doLoadMore"
+    >
+      <span
+        v-if="loadingMore"
+        class="loading loading-xs loading-spinner"
+      />Load More
+    </button>
+    <div
+      v-if="!commentsList?.length && status === 'pending'"
+      class="w-full h-32 flex items-center justify-center"
+    >
+      <span class="loading loading-spinner" />
+    </div>
+    <div
+      v-else-if="!commentsList?.length"
+      class="w-full h-32 flex items-center justify-center"
+    >
+      <div class="text-lg text-center text-neutral-content">
+        No Data to display
+      </div>
+    </div>
+  </div>
 </template>
 
 <script lang="ts">
