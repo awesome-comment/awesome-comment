@@ -29,7 +29,7 @@ export default defineNuxtConfig({
       ],
     },
   },
-  compatibilityDate: '2024-04-03',
+  compatibilityDate: '2024-10-27',
   css: [
     '~/assets/css/main.css',
   ],
@@ -40,7 +40,6 @@ export default defineNuxtConfig({
   },
   routeRules: {
     // Add cors headers on API routes
-    '/comment/**': { cors: true },
     '/api/**': { cors: true },
   },
   dayjs: {
