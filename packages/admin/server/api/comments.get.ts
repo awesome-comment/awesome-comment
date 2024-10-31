@@ -13,7 +13,7 @@ function mergeVote(vote: Record<number, VoteItem>, comments: Comment[]): Comment
   });
 }
 
-export default defineCachedEventHandler(async function (event: H3Event): Promise<ResponseBody<Comment[]>> {
+export default defineEventHandler(async function (event: H3Event): Promise<ResponseBody<Comment[]>> {
   const query = getQuery(event);
   const { postId } = query;
   const start = Number(query.start || 0);
@@ -108,4 +108,4 @@ export default defineCachedEventHandler(async function (event: H3Event): Promise
       total,
     },
   };
-}, { maxAge: 60 * 20 });
+});
