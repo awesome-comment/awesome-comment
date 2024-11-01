@@ -62,7 +62,7 @@ export default defineEventHandler(async function(event: H3Event): Promise<PostRe
   }
 
   // check ip
-  const ips = voteItem.ip[ ip ];
+  const ips = voteItem.ip[ ip ] || [];
   // find ip records in last 60s
   const index = ips.findIndex(t => now - t < 60 * 1000); // 60s
   if (index > -1) {
