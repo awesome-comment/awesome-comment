@@ -79,7 +79,7 @@ async function doLike(isLike = true) {
         :size="16"
       />
     </button>
-    <span class="text-sm">{{ comment.like || 0 }}</span>
+    <span class="text-sm text-gray-500 dark:text-gray-400">{{ comment.like || 0 }}</span>
     <button
       :aria-label="t('dislike')"
       :title="t('dislike')"

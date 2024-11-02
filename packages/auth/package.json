@@ -4,8 +4,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vue-tsc -b && vite build",
-    "preview": "vite preview"
+    "build": "vue-tsc -b && vite build"
   },
   "main": "dist/awesome-auth.umd.js",
   "module": "dist/awesome-auth.js",
