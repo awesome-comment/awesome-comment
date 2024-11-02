@@ -338,7 +338,10 @@ definePageMeta({
       Refresh
     </button>
     <div class="form-control flex-row gap-2 me-2">
-      <label class="label" for="language">
+      <label
+        class="label"
+        for="language"
+      >
         <span class="text-xs">Language</span>
       </label>
       <select
@@ -347,16 +350,23 @@ definePageMeta({
         class="select select-bordered select-sm"
         @change="onStatusChange"
       >
-        <option value="">All</option>
+        <option value="">
+          All
+        </option>
         <option
           v-for="lang in Languages"
           :key="lang"
           :value="lang"
-        >{{ lang }}</option>
+        >
+          {{ lang }}
+        </option>
       </select>
     </div>
     <div class="form-control flex-row gap-2">
-      <label class="label" for="status">
+      <label
+        class="label"
+        for="status"
+      >
         <span class="text-xs">Status</span>
       </label>
       <select
@@ -365,12 +375,16 @@ definePageMeta({
         class="select select-bordered select-sm"
         @change="onStatusChange"
       >
-        <option value="all">All</option>
+        <option value="all">
+          All
+        </option>
         <option
           v-for="key in CSKeys"
           :key="key"
           :value="key"
-        >{{ CommentStatus[key] }}</option>
+        >
+          {{ CommentStatus[key] }}
+        </option>
       </select>
     </div>
   </header>
@@ -419,8 +433,12 @@ definePageMeta({
             class="hover:bg-base-200 cursor-pointer"
             title="Select all"
             @click="doSelectAll"
-          >ID</th>
-          <th class="sm:min-w-60">Content</th>
+          >
+            ID
+          </th>
+          <th class="sm:min-w-60">
+            Content
+          </th>
           <th>User</th>
           <th>Time</th>
           <th>Post</th>
@@ -435,7 +453,10 @@ definePageMeta({
           :key="comment.id"
           :class="{'ring-4 ring-inset': index === currentItem, 'bg-base-200': notEnglish(comment.postId), 'bg-sky-100 dark:bg-sky-900': selected.includes(comment.id), 'opacity-10 pointer-events-none': comment.isDeleted}"
         >
-          <td class="!p-0" height="1">
+          <td
+            class="!p-0"
+            height="1"
+          >
             <label class="block w-full h-full cursor-pointer py-3 px-4 hover:bg-base-200/50">
               <input
                 v-model="selected"
@@ -496,7 +517,9 @@ definePageMeta({
                     @open="hasReplyModal = true"
                     @close="hasReplyModal = false"
                   >
-                    <template #button-label>Edit</template>
+                    <template #button-label>
+                      Edit
+                    </template>
                   </reply-comment>
                 </div>
                 <div

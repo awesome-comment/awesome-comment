@@ -28,17 +28,15 @@ async function doLike(isLike = true) {
     const liked: Record<number, number> = JSON.parse(local);
     const now = Date.now();
     const lastTime = liked[ props.comment.id as number ];
+    liked[ props.comment.id as number ] = now;
+    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(liked));
     if (lastTime && now - lastTime < 6E4) {
       // fake vote, cheat the user
-      liked[ props.comment.id as number ] = now;
-      localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(liked));
       store.updateComment(props.comment.id as number, {
         like: Math.max((props.comment.like || 0) + (isLike ? 1 : -1), 0),
       });
       return;
     }
-    liked[ props.comment.id as number ] = now;
-    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(liked));
   } else {
     localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify({ [ props.comment.id as number ]: Date.now() }));
   }

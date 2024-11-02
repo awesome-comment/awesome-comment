@@ -3,6 +3,7 @@ import type { User } from '@awesome-comment/core/types';
 import { isMac } from '@awesome-comment/core/utils';
 import type { UserAgentInfo } from '~/types';
 import { parseUserAgent } from '~/utils';
+import { sleep } from '@antfu/utils';
 
 type Props = {
   from: string;
@@ -23,6 +24,10 @@ type Emits = {
 const emit = defineEmits<Emits>();
 
 const route = useRoute();
+
+const isNameCopied = ref<boolean>(false);
+const isEmailCopied = ref<boolean>(false);
+
 const from = computed(() => {
   if (props.from.includes('google')) return 'google';
   return props.from;
@@ -39,6 +44,19 @@ const userLink = computed<string>(() => {
 const agentInfo = computed<UserAgentInfo>(() => {
   return parseUserAgent(props.user.agent);
 });
+
+async function copyUserName() {
+  await navigator.clipboard.writeText(props.user.name);
+  isNameCopied.value = true;
+  await sleep(1500);
+  isNameCopied.value = false;
+}
+async function copyUserEmail() {
+  await navigator.clipboard.writeText(props.user.email);
+  isEmailCopied.value = true;
+  await sleep(1500);
+  isEmailCopied.value = false;
+}
 </script>
 
 <template>
@@ -80,9 +98,43 @@ const agentInfo = computed<UserAgentInfo>(() => {
               target="_blank"
               :to="userLink"
             >
-              <i class="bi bi-box-arrow-up-right me-2" />
+              <i class="bi bi-box-arrow-up-right" />
               Filter by user
             </nuxt-link>
+          </li>
+          <li>
+            <button
+              :class="isNameCopied ? 'bg-success' : ''"
+              type="button"
+              @click="copyUserName"
+            >
+              <i
+                v-if="isNameCopied"
+                class="bi bi-check-lg"
+              />
+              <i
+                v-else
+                class="bt bi-copy"
+              />
+              {{ isNameCopied ? 'Copied' : 'Copy Name' }}
+            </button>
+          </li>
+          <li>
+            <button
+              :class="isEmailCopied ? 'bg-success' : ''"
+              type="button"
+              @click="copyUserEmail"
+            >
+              <i
+                v-if="isEmailCopied"
+                class="bi bi-check-lg"
+              />
+              <i
+                v-else
+                class="bt bi-copy"
+              />
+              {{ isEmailCopied ? 'Copied' : 'Copy Email' }}
+            </button>
           </li>
         </template>
       </context-menu-dropdown>
