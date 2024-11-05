@@ -188,9 +188,16 @@ const useStore = defineStore('store', () => {
     localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(localComments));
   }
   function updateComment(id: number, obj: Partial<Comment>) {
-    const comment = comments.value[ id ];
-    if (!comment) return;
-    Object.assign(comment, obj);
+    let comment: Comment | void = comments.value[ id ];
+    if (!comment) {
+      for (const ancestor of Object.values(comments.value)) {
+        if (ancestor.children) {
+          comment = ancestor.children.find(i => Number(i.id) === id);
+          if (comment) break;
+        }
+      }
+    }
+    comment && Object.assign(comment, obj);
   }
 
   return {
