@@ -13,7 +13,7 @@ export default defineEventHandler(async function (event: H3Event): Promise<Respo
   const res = await fetch(url as string);
   const text = await res.text();
   const title = text.match(/<title>(.*?)<\/title>/)?.[ 1 ] || 'No title';
-  setHeader(event, 'cache-control', 'public, max-age=' + 60 * 60 * 24 * 30);
+  setHeader(event, 'cache-control', 'public, max-age=' + 60 * 30);
   return {
     code: 0,
     data: {
