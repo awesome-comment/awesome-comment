@@ -35,8 +35,10 @@ async function doOpenModal(): Promise<void> {
   await nextTick();
   emit('open');
 }
-async function doReply(event: Event): Promise<void> {
-  if (isReplying.value || (event.target as HTMLFormElement).matches(':invalid')) return;
+async function doReply(event?: Event): Promise<void> {
+  if (event
+    && (isReplying.value || (event.target as HTMLFormElement).matches(':invalid'))
+  ) return;
 
   isReplying.value = true;
   message.value = '';
@@ -153,8 +155,16 @@ function onKeydown(event: KeyboardEvent): void {
     doReply(event);
   }
 }
-function onAiOutput(text: string): void {
+function onAiOutput(text: string, autoSubmit = false): void {
   reply.value = text;
+  if (autoSubmit) {
+    modal.value?.close();
+    doReply();
+  }
+}
+function onAiStart(): void {
+  isReplying.value = true;
+  modal.value?.close(true);
 }
 
 defineExpose({
@@ -239,6 +249,7 @@ defineExpose({
         :comment="comment"
         :reply="reply"
         @ai="onAiOutput"
+        @ai:start="onAiStart"
       />
       <footer class="flex justify-end">
         <button

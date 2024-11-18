@@ -12,10 +12,12 @@ export default defineEventHandler(async function (event: H3Event): Promise<Respo
   const {
     fixedAiTemplates,
     aiTemplateShortcuts,
+    autoSubmit,
   } = body;
   await storage.put(key, {
     fixedAiTemplates,
     aiTemplateShortcuts,
+    autoSubmit,
   });
 
   return {

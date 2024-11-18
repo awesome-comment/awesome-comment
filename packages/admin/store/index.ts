@@ -15,6 +15,7 @@ const useConfigStore = defineStore('config', () => {
   const myConfig = ref<MyAdminConfig>({
     fixedAiTemplates: [],
     aiTemplateShortcuts: {},
+    autoSubmit: [],
   });
 
   function setConfig(value: Partial<AcConfig>): void {

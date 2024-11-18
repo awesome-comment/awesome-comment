@@ -13,7 +13,8 @@ type Props = {
 }
 const props = defineProps<Props>();
 type Emits = {
-  (event: 'ai', text: string): void;
+  (event: 'ai', text: string, autoSubmit: boolean): void;
+  (event: 'ai:start');
 }
 const emit = defineEmits<Emits>();
 
@@ -45,6 +46,9 @@ async function doUse(id: string, event?: MouseEvent): Promise<void> {
   const item = promptStore.prompts[ id ];
   if (!item) return;
   isLoading.value = id;
+  if (configStore.myConfig.autoSubmit.includes(Number(id))) {
+    emit('ai:start');
+  }
   let title = '';
   if (item.content.includes('$TITLE$')) {
     const res = await $fetch<ResponseBody<{ title: string }>>('/api/fetch-url', {
@@ -82,7 +86,7 @@ async function doSubmitChat(): Promise<void> {
   };
   try {
     const res = await $fetch<ResponseBody<string>>('/api/admin/chat', reqOptions);
-    emit('ai', res.data);
+    emit('ai', res.data, configStore.myConfig.autoSubmit.includes(Number(templateId.value)));
   } catch (e) {
     toast.add({
       title: 'Error',

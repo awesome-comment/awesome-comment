@@ -10,6 +10,7 @@ const isSaving = ref<boolean>(false);
 const isSaved = ref<boolean>(false);
 const fixed = ref<number[]>([]);
 const shortcuts = ref<Record<string, string>>({});
+const autoSubmit = ref<number[]>([]);
 const errors = ref<Record<string, string>>({});
 
 const { data, refresh, status } = useAsyncData(
@@ -17,7 +18,8 @@ const { data, refresh, status } = useAsyncData(
   async function () {
     await promptStore.refreshPrompts();
     await store.initMyConfig();
-    fixed.value = store.myConfig.fixedAiTemplates;
+    fixed.value = store.myConfig.fixedAiTemplates || [];
+    autoSubmit.value = store.myConfig.autoSubmit || [];
     shortcuts.value = Object.entries(store.myConfig.aiTemplateShortcuts)
       .reduce((acc, [key, value]) => {
         acc[ value ] = key;
@@ -46,6 +48,7 @@ async function doSave(): Promise<void> {
   const toUpdate = {
     fixedAiTemplates: fixed.value,
     aiTemplateShortcuts,
+    autoSubmit: autoSubmit.value,
   }
   await store.updateMyConfig(toUpdate);
   isSaving.value = false;
@@ -101,6 +104,7 @@ async function doSave(): Promise<void> {
         <th>Template Title</th>
         <th>Fix to Reply Modal</th>
         <th>Shortcuts</th>
+        <th>Auto submit</th>
         <th />
       </tr>
     </thead>
@@ -141,6 +145,15 @@ async function doSave(): Promise<void> {
           >
             {{ errors[prompt.id] }}
           </div>
+        </td>
+        <td>
+          <input
+            v-model="autoSubmit"
+            type="checkbox"
+            class="checkbox"
+            name="auto-submit"
+            :value="prompt.id"
+          >
         </td>
         <td>
           <ui-modal

@@ -19,4 +19,5 @@ export type AiPromptTemplate = {
 export type MyAdminConfig = {
   fixedAiTemplates: number[];
   aiTemplateShortcuts: Record<string, string>;
+  autoSubmit: number[];
 }

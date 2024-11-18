@@ -30,6 +30,7 @@ const emit = defineEmits<Emits>();
 
 const modal = ref<HTMLDialogElement>();
 
+const isKeepModal = ref<boolean>(false);
 const isOpenModal = ref<boolean>(false);
 
 async function doOpenModal(): Promise<void> {
@@ -38,11 +39,19 @@ async function doOpenModal(): Promise<void> {
   modal.value?.showModal();
   emit('open');
 }
-function close(): void {
-  modal.value?.close();
+function close(keepModal = false): void {
+  if (!modal.value) return;
+  isKeepModal.value = keepModal;
+  if (modal.value.open) {
+    modal.value?.close();
+  } else {
+    isOpenModal.value = false;
+  }
 }
 function onClose(): void {
-  isOpenModal.value = false;
+  if (!isKeepModal.value) {
+    isOpenModal.value = false;
+  }
   emit('update:modelValue', false);
   emit('close');
 }
