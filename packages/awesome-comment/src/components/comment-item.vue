@@ -13,6 +13,7 @@ import useAuthStore from '../store/auth.ts';
 type Props = {
   comment: Comment;
   isFirstLevel: boolean;
+  isLast?: boolean;
   ancestorId?: number;
 };
 const props = defineProps<Props>();
@@ -48,11 +49,14 @@ onBeforeUnmount(() => {
 <template>
   <div
     :id="'awcm-' + comment.id"
-    :class="{'animated flash': comment.isNew}"
-    class="comment-item rounded-lg my-4 target:outline target:outline-green-500 target:outline-2 dark:target:outline-1"
+    :class="[{'animated flash': comment.isNew}, isFirstLevel ? 'mb-4' : 'mt-1']"
+    class="comment-item target:outline target:outline-green-500 target:outline-2 dark:target:outline-1"
     @animationend="store.updateComment(comment.id as number, { isNew: false })"
   >
-    <div class="pt-2 pb-3 px-4 text-base bg-base-200 rounded-lg dark:bg-gray-900">
+    <div
+      class="pt-2 pb-3 px-4 text-base bg-base-200 dark:bg-gray-900"
+      :class="{'rounded-lg': isFirstLevel, 'rounded-ee-none': isFirstLevel && comment.children?.length, 'rounded-b-lg': isLast}"
+    >
       <header class="flex justify-between items-center font-sans">
         <comment-header
           :comment="comment"
@@ -69,6 +73,7 @@ onBeforeUnmount(() => {
         :ancestor-id="ancestorId as number"
         :comment="comment"
       />
+
       <p
         v-if="comment.status === CommentStatus.Pending"
         class="italic mt-4 text-emerald-600 mb-0 text-sm dark:text-emerald-300"
@@ -90,25 +95,26 @@ onBeforeUnmount(() => {
       v-if="isReplying && isFirstLevel"
       :ancestor-id="ancestorId"
       :parent-id="Number(comment.id)"
-      class="mt-3 ms-7"
+      class="mt-2 ms-7"
       no-version
       @close="isReplying = false"
     />
     <template v-if="comment.children?.length">
       <comment-item
-        v-for="child in comment.children"
+        v-for="(child, index) in comment.children"
         :key="child.id"
         :ancestor-id="ancestorId"
         :comment="child"
         :is-first-level="false"
-        class="ms-7 mt-2"
+        :is-last="index === comment.children.length - 1"
+        class="ms-7"
       />
     </template>
     <comment-form
       v-if="isReplying && !isFirstLevel"
       :ancestor-id="ancestorId"
       :parent-id="comment.id"
-      class="mt-3 ms-7"
+      class="mt-2 ms-7"
       no-version
       @close="isReplying = false"
     />
