@@ -8,6 +8,9 @@ export default {
   ],
   theme: {
     extend: {
+      boxShadow: {
+        'outline-md': '0 0 0 4px oklch(var(--b1))',
+      },
       colors: {
         green: {
           middle: '#090',

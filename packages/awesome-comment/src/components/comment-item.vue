@@ -12,6 +12,7 @@ import useAuthStore from '../store/auth.ts';
 
 type Props = {
   comment: Comment;
+  isFirst?: boolean;
   isFirstLevel: boolean;
   isLast?: boolean;
   ancestorId?: number;
@@ -49,13 +50,13 @@ onBeforeUnmount(() => {
 <template>
   <div
     :id="'awcm-' + comment.id"
-    :class="[{'animated flash': comment.isNew}, isFirstLevel ? 'mb-4' : 'mt-1']"
+    :class="[{'animated flash': comment.isNew}, isFirstLevel ? 'mb-4' : (isFirst ? '-mt-4' : 'mt-1')]"
     class="comment-item target:outline target:outline-green-500 target:outline-2 dark:target:outline-1"
     @animationend="store.updateComment(comment.id as number, { isNew: false })"
   >
     <div
-      class="pt-2 pb-3 px-4 text-base bg-base-200 dark:bg-gray-900"
-      :class="{'rounded-lg': isFirstLevel, 'rounded-ee-none': isFirstLevel && comment.children?.length, 'rounded-b-lg': isLast}"
+      class="pt-2 px-4 text-base bg-base-200 dark:bg-gray-900"
+      :class="[{'rounded-lg': isFirstLevel, 'rounded-b-lg': isLast, 'rounded-t-lg shadow-outline-md': isFirst}, comment.children?.length ? 'pb-6' : 'pb-3']"
     >
       <header class="flex justify-between items-center font-sans">
         <comment-header
@@ -105,6 +106,7 @@ onBeforeUnmount(() => {
         :key="child.id"
         :ancestor-id="ancestorId"
         :comment="child"
+        :is-first="index === 0"
         :is-first-level="false"
         :is-last="index === comment.children.length - 1"
         class="ms-7"
