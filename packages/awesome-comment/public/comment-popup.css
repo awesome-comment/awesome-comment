@@ -1,0 +1,71 @@
+#acPopupOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.75);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+#acPopupContent {
+  position: relative;
+  width: 88%;
+  max-width: 800px;
+}
+#acClosePopupButton {
+  display:block;
+  position: absolute;
+  top: -33px;
+  right: 0px;
+  color: #fff;
+  font-family:system-ui;
+  padding: 5px 10px;
+  cursor: pointer;
+}
+#acClosePopupButton path {
+  pointer-events:none;
+}
+#acClosePopupButton:hover path {
+  fill:#6f6;
+}
+#acMain {
+  background: var(--common-bg-color);
+  padding: 9px 9px 9px 19px;
+  box-sizing: border-box;
+  height: 80vh;
+  overflow: hidden;
+  border-radius: 13px;
+}
+#acInner {
+  overflow-y: auto;
+  height: 100%;
+  padding: 9px;
+  box-sizing: border-box;
+  overscroll-behavior: contain;
+}
+.acLoading {
+  display:flex;
+  justify-content: center;
+  align-items: center;
+}
+#acInner.acLoading::after {
+  content:"Loading...";
+  color:#090;
+}
+#acInner::-webkit-scrollbar {
+  width: 10px;
+}
+#acInner::-webkit-scrollbar-track {
+  background: #9993;
+  border-radius: 10px;
+}
+#acInner::-webkit-scrollbar-thumb {
+  background: #090;
+  border-radius: 10px;
+}
+#acInner::-webkit-scrollbar-thumb:hover {
+  background: #0f0;
+}
