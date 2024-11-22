@@ -32,39 +32,79 @@ function doLogout(): void {
 }
 </script>
 
-<template lang="pug">
-.awesome-comment
-  .ac-alert.ac-alert-error.mb-4(v-if="store.message")
-    p {{ store.message }}
-
-  header.flex.justify-between.items-center.py-2
-    h2.text-lg.font-bold.text-base-content.my-0 {{t('discussion')}} ({{ total }})
-    span.ac-loading.ac-loading-spinner(v-if="authStore.isLoading")
-    .ac-dropdown.ac-dropdown-end(v-else)
-      template(v-if="authStore.isAuthenticated && authStore.user")
-        label.ac-avatar.flex(v-if="authStore.user.picture" tabindex="0")
-          .w-6.h-6.rounded-full
-            img.w-full.h-full.block(
-              :alt="authStore.user.name || authStore.user.email"
-              :src="authStore.user.picture"
-            )
-        label.ac-btn.ac-btn-ghost(v-else tabindex="0") {{authStore.user.email}}
-        ul.ac-dropdown-content.z-10.ac-menu.p-2.shadow.bg-base-100.rounded-box.w-52(tabindex="0")
-          li.border-b.border-neutral.pb-2.mb-2.pointer-events-none(v-if="authStore.user.picture")
-            span.text-base-content {{authStore.user.email}}
-          li
-            button.border-0.bg-base-100(
-              type="button"
-              :disabled="authStore.isLoading"
-              @click="doLogout"
-            ) {{t('logout')}}
-      button.ac-btn.ac-btn-secondary.ac-btn-xs(
+<template>
+  <div class="awesome-comment">
+    <div
+      v-if="store.message"
+      class="ac-alert ac-alert-error mb-4"
+    >
+      <p>{{ store.message }}</p>
+    </div>
+    <header class="flex justify-between items-center py-2">
+      <h2 class="text-lg font-bold text-base-content my-0">
+        {{ t('discussion') }} ({{ total }})
+      </h2>
+      <span
+        v-if="authStore.isLoading"
+        class="ac-loading ac-loading-spinner"
+      />
+      <div
         v-else
-        type="button"
-        :disabled="authStore.isLoading"
-        @click="doLogin"
-      ) {{t('login')}}
-
-  comment-form
-  comment-section
+        class="ac-dropdown ac-dropdown-end"
+      >
+        <template v-if="authStore.isAuthenticated && authStore.user">
+          <label
+            v-if="authStore.user.picture"
+            class="ac-avatar flex"
+            tabindex="0"
+          >
+            <span class="block w-6 h-6 rounded-full">
+              <img
+                :alt="authStore.user.name || authStore.user.email"
+                :src="authStore.user.picture"
+                class="w-full h-full block"
+              >
+            </span>
+          </label>
+          <label
+            v-else
+            class="ac-btn ac-btn-ghost"
+            tabindex="0"
+          >{{ authStore.user.email }}</label>
+          <ul
+            class="ac-dropdown-content z-10 ac-menu p-2 shadow bg-base-100 rounded-box w-52"
+            tabindex="0"
+          >
+            <li
+              v-if="authStore.user.picture"
+              class="border-b border-neutral pb-2 mb-2 pointer-events-none"
+            >
+              <span class="text-base-content">{{ authStore.user.email }}</span>
+            </li>
+            <li>
+              <button
+                :disabled="authStore.isLoading"
+                class="border-0 bg-base-100"
+                type="button"
+                @click="doLogout"
+              >
+                {{ t('logout') }}
+              </button>
+            </li>
+          </ul>
+        </template>
+        <button
+          v-else
+          :disabled="authStore.isLoading"
+          class="ac-btn ac-btn-secondary ac-btn-xs"
+          type="button"
+          @click="doLogin"
+        >
+          {{ t('login') }}
+        </button>
+      </div>
+    </header>
+    <comment-form />
+    <comment-section />
+  </div>
 </template>
