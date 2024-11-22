@@ -69,3 +69,8 @@
 #acInner::-webkit-scrollbar-thumb:hover {
   background: #0f0;
 }
+@media (prefers-color-scheme: dark) {
+  #acInner .shadow-outline-md {
+    --b1: 0% 0 0;
+  }
+}
