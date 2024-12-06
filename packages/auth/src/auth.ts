@@ -119,7 +119,7 @@ export class AwesomeAuth extends EventEmitter3 {
   }
 
   private initGoogleIdentity() {
-    if (!('google' in globalThis)) {
+    if (!('google' in globalThis) || !('accounts' in globalThis.google)) {
       addGoogleIdentityScript();
       globalThis.onGoogleLibraryLoad = () => this.initGoogleIdentity();
       return;
