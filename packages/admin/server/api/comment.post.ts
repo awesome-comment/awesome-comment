@@ -141,7 +141,7 @@ export default defineEventHandler(async function (event): Promise<PostResponse> 
     await clearCache(storage, key);
   }
   // update user posts
-  await updateUserPostHistory(storage, authorization, user);
+  await updateUserPostHistory(storage, authorization, user, authEndpoint ? '' : body.domain);
 
   return {
     code: 0,

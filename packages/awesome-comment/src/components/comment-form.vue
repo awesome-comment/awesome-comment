@@ -158,7 +158,7 @@ onMounted(() => {
         </div>
         <div
           v-if="message"
-          class="ac-alert ac-alert-error mx-4 py-1"
+          class="ac-alert ac-alert-error text-white mx-4 py-2"
         >
           {{ message }}
         </div>

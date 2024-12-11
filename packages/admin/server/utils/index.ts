@@ -246,8 +246,13 @@ export async function requestTiDB(
   return await response.json();
 }
 
-export async function updateUserPostHistory(storage: AcStorage, accessToken: string, user: User): Promise<void> {
-  const key = `user-${accessToken}`;
+export async function updateUserPostHistory(
+  storage: AcStorage,
+  accessToken: string,
+  user: User,
+  domain: string
+): Promise<void> {
+  const key = ['user', domain, accessToken].filter(Boolean).join('-');
   const now = Date.now();
   const posts = (user.posts || []).filter(t => now - t < POST_INTERVAL);
   posts.push(now);
