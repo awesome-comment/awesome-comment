@@ -49,7 +49,7 @@ export default defineEventHandler(async function (event): Promise<PostResponse> 
       message: 'User not found.',
     });
   }
-  // check if user has posted comment in the last 1 minutes
+  // check if user has posted comment in the last 15 minutes
   if (user.posts) {
     const lastPost = user.posts[ user.posts.length - 1 ];
     const now = Date.now();
