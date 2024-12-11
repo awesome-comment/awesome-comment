@@ -1,6 +1,6 @@
 import { H3Event } from 'h3';
-import type { AcConfig, Comment, ResponseBody, ResponseComment, User } from '@awesome-comment/core/types';
-import { CommentStatus, MarkdownLinkRegex } from '@awesome-comment/core/data';
+import { AcConfig, Comment, PostCommentRequest, ResponseBody, ResponseComment, User } from '@awesome-comment/core/types';
+import { CommentStatus, MarkdownLinkRegex, POST_INTERVAL } from '@awesome-comment/core/data';
 import createStorage, { AcStorage } from '@awesome-comment/core/utils/storage';
 
 export async function getConfig(storage: AcStorage): Promise<AcConfig> {
@@ -146,7 +146,7 @@ export async function getUserComments(userId: string): Promise<ResponseComment[]
   return data;
 }
 
-export async function checkCommentStatus(userId: string, comment: Comment, config: AcConfig): Promise<CommentStatus> {
+export async function checkCommentStatus(userId: string, comment: PostCommentRequest, config: AcConfig): Promise<CommentStatus> {
   const history = await getUserComments(userId);
   if (!history.length) return CommentStatus.Pending;
 
@@ -160,7 +160,7 @@ export async function checkCommentStatus(userId: string, comment: Comment, confi
   }
 
   // check if the comment should be auto approved
-  if (isAutoApprove(config, comment.postId, history, comment.content)) {
+  if (isAutoApprove(config, comment.postId, history, comment.comment)) {
     console.log(`user_id: ${userId} can post comment freely.`);
     return CommentStatus.Approved;
   }
@@ -244,4 +244,17 @@ export async function requestTiDB(
     ...body && { body: JSON.stringify(body) },
   });
   return await response.json();
+}
+
+export async function updateUserPostHistory(storage: AcStorage, accessToken: string, user: User): Promise<void> {
+  const key = `user-${accessToken}`;
+  const now = Date.now();
+  const posts = (user.posts || []).filter(t => now - t < POST_INTERVAL);
+  posts.push(now);
+  await storage.put(key, {
+    ...user,
+    posts,
+  }, {
+    expirationTtl: 60 * 60,
+  });
 }

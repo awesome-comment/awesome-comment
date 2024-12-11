@@ -1,6 +1,6 @@
 {
   "name": "@roudanio/awesome-auth",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -13,23 +13,23 @@
   "dependencies": {
     "@awesome-comment/core": "workspace:*",
     "eventemitter3": "^5.0.1",
-    "google-auth-library": "^9.14.2",
+    "google-auth-library": "^9.15.0",
     "jsonwebtoken": "^9.0.2",
     "jwt-decode": "^4.0.0",
     "lodash-es": "^4.17.21",
-    "vue": "^3.5.12"
+    "vue": "^3.5.13"
   },
   "devDependencies": {
     "@types/gapi": "^0.0.47",
     "@types/gapi.auth2": "^0.0.61",
     "@types/google.accounts": "^0.0.15",
     "@types/jsonwebtoken": "^9.0.7",
-    "@vitejs/plugin-vue": "^5.1.4",
+    "@vitejs/plugin-vue": "^5.2.1",
     "autoprefixer": "^10.4.20",
-    "postcss": "^8.4.47",
-    "tailwindcss": "^3.4.14",
-    "typescript": "^5.6.3",
-    "vite": "^5.4.10",
+    "postcss": "^8.4.49",
+    "tailwindcss": "^3.4.16",
+    "typescript": "^5.7.2",
+    "vite": "^6.0.3",
     "vite-plugin-dts": "^4.3.0",
     "vue-tsc": "^2.1.10"
   }

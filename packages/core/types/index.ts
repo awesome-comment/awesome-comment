@@ -32,6 +32,7 @@ export type User = {
   avatar: string;
   agent?: string;
   window?: string;
+  posts?: number[];
 }
 export type CommentUser = {
   avatar: string;
@@ -102,4 +103,14 @@ export type AwesomeUser = {
   name: string;
   given_name: string;
   family_name: string;
+}
+
+export type PostCommentRequest = {
+  postId: string;
+  ancestorId?: number;
+  parentId?: number;
+  comment: string;
+  domain: string;
+  status?: CommentStatus;
+  window?: string;
 }
