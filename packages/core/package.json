@@ -11,9 +11,9 @@
   "license": "ISC",
   "type": "module",
   "devDependencies": {
-    "@cloudflare/workers-types": "^4.20241022.0",
+    "@cloudflare/workers-types": "^4.20241205.0",
     "@upstash/redis": "^1.34.3",
-    "dotenv": "^16.4.5",
+    "dotenv": "^16.4.7",
     "h3": "^1.13.0"
   }
 }

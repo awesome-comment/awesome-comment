@@ -46,6 +46,10 @@ async function doSubmit(event: Event): Promise<void> {
   if ((event.target as HTMLFormElement).matches(':invalid')) return;
   const commentContent = comment.value.trim();
   if (!commentContent) return;
+  if (commentContent.length < 5 || /^\w{35,}$/.test(commentContent)) {
+    message.value = 'We encourage meaningful contributions to foster a positive community. Thank you for your understanding!';
+    return;
+  }
 
   isSending.value = true;
   message.value = '';
@@ -124,37 +128,61 @@ onMounted(() => {
 });
 </script>
 
-<template lang="pug">
-form.mb-6(
-  @submit.prevent="doSubmit"
-)
-  .ac-form-control.bg-base-200.rounded-lg
-    label.sr-only(
-      for="ac-comment"
-    ) {{t('your_comment')}}
-    textarea#ac-comment.ac-textarea.ac-textarea-bordered.bg-base-200.rounded-b-none(
-      ref="textarea"
-      class="focus:outline-none"
-      rows="3"
-      :placeholder="t('placeholder')"
-      required
-      @keydown.enter="onKeydown"
-      @keydown.esc="onCancel"
-      v-model="comment"
-    )
-    .p-2.rounded-b-lg.bg-base-300.flex.items-center
-      .text-xs(
-        v-if="!noVersion"
-        class="text-neutral-400/40"
-      ) v{{version}}
-      .ac-alert.ac-alert-error.mx-4.py-1(v-if="message") {{message}}
-      button.ac-btn.ac-btn-primary.ac-btn-sm.ms-auto(
-        :disabled="isSending"
-      )
-        span.ac-loading.ac-loading-spinner(v-if="isSending")
-        template(v-if="currentId") {{t('save_editing')}}
-        template(v-else-if="parentId") {{ t('post_reply')}}
-        template(v-else) {{t('post_comment')}}
+<template>
+  <form
+    class="mb-6"
+    @submit.prevent="doSubmit"
+  >
+    <div class="ac-form-control bg-base-200 rounded-lg">
+      <label
+        class="sr-only"
+        for="ac-comment"
+      >{{ t('your_comment') }}</label>
+      <textarea
+        id="ac-comment"
+        ref="textarea"
+        v-model="comment"
+        :placeholder="t('placeholder')"
+        class="ac-textarea ac-textarea-bordered bg-base-200 rounded-b-none focus:outline-none"
+        required="required"
+        rows="3"
+        @keydown.enter="onKeydown"
+        @keydown.esc="onCancel"
+      />
+      <div class="p-2 rounded-b-lg bg-base-300 flex items-center">
+        <div
+          v-if="!noVersion"
+          class="text-xs text-neutral-400/40"
+        >
+          v{{ version }}
+        </div>
+        <div
+          v-if="message"
+          class="ac-alert ac-alert-error mx-4 py-1"
+        >
+          {{ message }}
+        </div>
+        <button
+          :disabled="isSending"
+          class="ac-btn ac-btn-primary ac-btn-sm ms-auto"
+        >
+          <span
+            v-if="isSending"
+            class="ac-loading ac-loading-spinner"
+          />
+          <template v-if="currentId">
+            {{ t('save_editing') }}
+          </template>
+          <template v-else-if="parentId">
+            {{ t('post_reply') }}
+          </template>
+          <template v-else>
+            {{ t('post_comment') }}
+          </template>
+        </button>
+      </div>
+    </div>
+  </form>
 </template>
 
 <script lang="ts">

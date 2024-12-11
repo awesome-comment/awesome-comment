@@ -1,6 +1,6 @@
-import { ResponseBody, User } from '@awesome-comment/core/types';
-import { CommentStatus } from '@awesome-comment/core/data';
-import { getUser, getCacheKey, getConfig, checkCommentStatus, clearCache } from '~/server/utils';
+import type { PostCommentRequest, ResponseBody, User } from '@awesome-comment/core/types';
+import { CommentStatus, POST_INTERVAL } from '@awesome-comment/core/data';
+import { getUser, getCacheKey, getConfig, checkCommentStatus, clearCache, updateUserPostHistory } from '~/server/utils';
 import createStorage from '@awesome-comment/core/utils/storage';
 
 type PostResponse = ResponseBody<{
@@ -18,11 +18,12 @@ export default defineEventHandler(async function (event): Promise<PostResponse> 
     });
   }
 
-  const body = await readBody(event);
-  if (!body.comment) {
+  const body: PostCommentRequest = await readBody(event);
+  const comment = body.comment?.replaceAll('\u200b', '').trim();
+  if (!comment || comment.length < 5 || /^\w{35,}$/.test(comment)) {
     throw createError({
       statusCode: 400,
-      message: 'Comment content is required',
+      message: 'We encourage meaningful contributions to foster a positive community. Thank you for your understanding!',
     });
   }
 
@@ -47,6 +48,17 @@ export default defineEventHandler(async function (event): Promise<PostResponse> 
       statusCode: 401,
       message: 'User not found.',
     });
+  }
+  // check if user has posted comment in the last 15 minutes
+  if (user.posts) {
+    const lastPost = user.posts[ user.posts.length - 1 ];
+    const now = Date.now();
+    if (now - lastPost < POST_INTERVAL) {
+      throw createError({
+        statusCode: 429,
+        message: 'You just posted a comment less than 15 minutes ago. Please edit your previous comment to contribute to a better community.',
+      });
+    }
   }
 
   const {
@@ -128,6 +140,8 @@ export default defineEventHandler(async function (event): Promise<PostResponse> 
     const key = getCacheKey(body.postId);
     await clearCache(storage, key);
   }
+  // update user posts
+  await updateUserPostHistory(storage, authorization, user);
 
   return {
     code: 0,
