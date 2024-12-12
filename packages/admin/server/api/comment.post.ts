@@ -141,7 +141,9 @@ export default defineEventHandler(async function (event): Promise<PostResponse> 
     await clearCache(storage, key);
   }
   // update user posts
-  await updateUserPostHistory(storage, authorization, user);
+  if (!config.adminEmails.includes(email)) {
+    await updateUserPostHistory(storage, authorization, user);
+  }
 
   return {
     code: 0,
