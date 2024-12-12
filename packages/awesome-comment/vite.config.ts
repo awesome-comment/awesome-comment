@@ -21,6 +21,7 @@ export default defineConfig(function ({ command }) {
         fileName: (format) =>
           format === 'es' ? 'awesome-comment.js' : `awesome-comment.${format}.js`,
         formats: ['es', 'umd', 'iife'],
+        cssFileName: 'style',
       },
       rollupOptions: {
         output: {
