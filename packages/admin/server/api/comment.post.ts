@@ -20,12 +20,6 @@ export default defineEventHandler(async function (event): Promise<PostResponse> 
 
   const body: PostCommentRequest = await readBody(event);
   const comment = body.comment?.replaceAll('\u200b', '').trim();
-  if (!comment || comment.length < 5 || /^\w{35,}$/.test(comment)) {
-    throw createError({
-      statusCode: 400,
-      message: 'We encourage meaningful contributions to foster a positive community. Thank you for your understanding!',
-    });
-  }
 
   const storage = createStorage(event);
   const authEndpoint = headers[ 'auth-endpoint' ];
@@ -68,14 +62,16 @@ export default defineEventHandler(async function (event): Promise<PostResponse> 
     email,
     sub,
   } = user;
-  let status: CommentStatus;
-
   // check if user is admin
   const config = await getConfig(storage);
-  if (config.adminEmails.includes(email)) {
-    status = CommentStatus.Approved;
-  } else {
-    status = await checkCommentStatus(sub, body, config);
+  const isAdmin = config.adminEmails.includes(email);
+  const status = isAdmin ? CommentStatus.Approved
+    : (await checkCommentStatus(sub, body, config));
+  if (!isAdmin && (!comment || comment.length < 5 || /^\w{35,}$/.test(comment))) {
+    throw createError({
+      statusCode: 400,
+      message: 'We encourage meaningful contributions to foster a positive community. Thank you for your understanding!',
+    });
   }
 
   const ip = headers[ 'x-real-ip' ]
@@ -120,7 +116,7 @@ export default defineEventHandler(async function (event): Promise<PostResponse> 
   }
 
   // if admin reply, update parent_id to be approved
-  if (config.adminEmails.includes(email) && body.parentId && body.status === CommentStatus.Pending) {
+  if (isAdmin && body.parentId && body.status === CommentStatus.Pending) {
     const url = process.env.TIDB_END_POINT + '/v1/moderator/review';
     await fetch(url, {
       method: 'POST',
@@ -141,7 +137,7 @@ export default defineEventHandler(async function (event): Promise<PostResponse> 
     await clearCache(storage, key);
   }
   // update user posts
-  if (!config.adminEmails.includes(email)) {
+  if (!isAdmin) {
     await updateUserPostHistory(storage, authorization, user);
   }
 
