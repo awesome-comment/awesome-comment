@@ -106,7 +106,7 @@ defineExpose({
         :class="modalClass"
       >
         <header class="mb-4 flex items-center">
-          <h3 class="text-lg font-medium">
+          <h3 class="text-lg font-medium truncate">
             {{ title }}
           </h3>
           <slot name="header" />

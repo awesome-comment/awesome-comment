@@ -35,7 +35,7 @@ const links = [
 const route = useRoute();
 const path = computed<string>(() => {
   return route.path;
-})
+});
 
 useHead({
   title: 'Admin | Awesome comment',
@@ -47,23 +47,30 @@ definePageMeta({
 });
 </script>
 
-<template lang="pug">
-.container.mx-auto.flex.flex-col.p-4.gap-4(class="xl:flex-row sm:py-8")
-  aside.w-auto.flex-none(class="xl:w-64")
-    ul.menu.menu-horizontal.bg-base-200.rounded-box(class="xl:menu-vertical")
-      li(
-        v-for="item in links"
-        :key="item.path"
-      )
-        nuxt-link(
-          active-class="active"
-          :to="'/admin/' + item.path"
-        )
-          i.bi(:class="'bi-' + item.icon")
-          | {{item.label}}
-
-  .flex-1
-    nuxt-page
+<template>
+  <div class="container mx-auto flex flex-col p-4 gap-4 xl:flex-row sm:py-8">
+    <aside class="w-auto flex-none xl:w-64">
+      <ul class="menu menu-horizontal bg-base-200 rounded-box xl:menu-vertical">
+        <li
+          v-for="item in links"
+          :key="item.path"
+        >
+          <nuxt-link
+            active-class="active"
+            :to="'/admin/' + item.path"
+          >
+            <i
+              class="bi"
+              :class="'bi-' + item.icon"
+            />{{ item.label }}
+          </nuxt-link>
+        </li>
+      </ul>
+    </aside>
+    <div class="flex-1">
+      <nuxt-page />
+    </div>
+  </div>
 </template>
 
 <script lang="ts">

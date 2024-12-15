@@ -112,13 +112,13 @@ onBeforeUnmount(() => {
 <template>
   <div
     v-if="length"
-    class="flex flex-wrap gap-1 items-center"
+    class="grid grid-cols-2 sm:flex flex-wrap gap-2 items-center"
   >
     <button
       v-for="(template, id) in fixed"
       :key="id"
       type="button"
-      class="btn btn-xs btn-outline text-white"
+      class="btn btn-sm sm:btn-xs btn-outline text-white"
       :class="isCopied === id ? 'btn-success' : 'btn-info'"
       :disabled="!!isLoading"
       @click="doUse(id, $event)"

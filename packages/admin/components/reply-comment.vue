@@ -220,7 +220,7 @@ defineExpose({
           <textarea
             ref="textarea"
             v-model="reply"
-            class="textarea textarea-bordered block w-full"
+            class="textarea textarea-bordered block w-full h-48 sm:h-auto"
             required="required"
             rows="16"
             @keydown="onKeydown"
@@ -243,18 +243,17 @@ defineExpose({
       >
         <p>{{ message }}</p>
       </div>
-
-      <ai-fixed-prompt-templates
-        v-if="hasAiHelper"
-        :comment="comment"
-        :reply="reply"
-        @ai="onAiOutput"
-        @ai:start="onAiStart"
-      />
-      <footer class="flex justify-end">
+      <footer class="flex flex-col sm:flex-row justify-between gap-4">
+        <ai-fixed-prompt-templates
+          v-if="hasAiHelper"
+          :comment="comment"
+          :reply="reply"
+          @ai="onAiOutput"
+          @ai:start="onAiStart"
+        />
         <button
           :disabled="isReplying"
-          class="btn btn-primary btn-sm text-white min-w-64 hover:text-white"
+          class="btn btn-primary btn-sm btn-block text-white sm:w-1/3 min-w-64 hover:text-white"
         >
           <span
             v-if="isReplying"
