@@ -321,7 +321,6 @@ definePageMeta({
       class="loading loading-spinner"
     />
     <button
-      v-if="filterStatus &gt;= CommentStatus.UnReplied"
       class="btn btn-sm me-2"
       type="button"
       :disabled="status === 'pending'"
