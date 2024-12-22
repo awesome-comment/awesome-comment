@@ -33,6 +33,8 @@ export type User = {
   agent?: string;
   window?: string;
   posts?: number[];
+  ip?: string;
+  custom?: unknown;
 }
 export type CommentUser = {
   avatar: string;
@@ -113,4 +115,5 @@ export type PostCommentRequest = {
   domain: string;
   status?: CommentStatus;
   window?: string;
+  customData?: unknown;
 }

@@ -101,6 +101,7 @@ export default defineEventHandler(async function (event): Promise<PostResponse> 
           ip,
           agent: headers[ 'user-agent' ],
           window: body.window || '',
+          custom: body.customData || '',
         }),
         status,
       }),

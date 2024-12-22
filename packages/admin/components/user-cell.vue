@@ -42,7 +42,7 @@ const userLink = computed<string>(() => {
   return `${localPrefix.value}?${params.toString()}`;
 });
 const agentInfo = computed<UserAgentInfo>(() => {
-  return parseUserAgent(props.user.agent);
+  return parseUserAgent(props.user.agent || '');
 });
 
 async function copyUserName() {
@@ -175,6 +175,12 @@ async function copyUserEmail() {
       >
         Resolution:
         {{ user.window }}
+      </div>
+      <div
+        v-if="user.custom"
+        class="text-xs bg-base-200 px-2 py-1 border-l-2 border-neutral"
+      >
+        {{ user.custom }}
       </div>
     </div>
   </div>

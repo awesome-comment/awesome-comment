@@ -77,6 +77,7 @@ async function doSubmit(event: Event): Promise<void> {
         parentId: props.parentId ? Number(props.parentId) : undefined,
         status: props.status,
         window: `${window.innerWidth}x${window.innerHeight} / ${screen.width, screen.height}`,
+        customData: window.custom_comment_data,
       }),
     });
 
