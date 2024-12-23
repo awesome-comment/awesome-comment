@@ -316,10 +316,6 @@ definePageMeta({
     <h1 class="text-2xl font-bold sm:me-auto">
       Comments Management
     </h1>
-    <span
-      v-if="status === 'pending' && filterStatus < CommentStatus.UnReplied"
-      class="loading loading-spinner"
-    />
     <button
       class="btn btn-sm me-2"
       type="button"

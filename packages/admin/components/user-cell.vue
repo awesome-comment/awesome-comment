@@ -27,6 +27,7 @@ const route = useRoute();
 
 const isNameCopied = ref<boolean>(false);
 const isEmailCopied = ref<boolean>(false);
+const isCustomCopied = ref<boolean>(false);
 
 const from = computed(() => {
   if (props.from.includes('google')) return 'google';
@@ -45,6 +46,12 @@ const agentInfo = computed<UserAgentInfo>(() => {
   return parseUserAgent(props.user.agent || '');
 });
 
+async function doCopyCustomData() {
+  await navigator.clipboard.writeText(JSON.stringify(props.user.custom));
+  isCustomCopied.value = true;
+  await sleep(1500);
+  isCustomCopied.value = false;
+}
 async function copyUserName() {
   await navigator.clipboard.writeText(props.user.name);
   isNameCopied.value = true;
@@ -176,12 +183,21 @@ async function copyUserEmail() {
         Resolution:
         {{ user.window }}
       </div>
-      <div
+      <button
         v-if="user.custom"
-        class="text-xs bg-base-200 px-2 py-1 border-l-2 border-neutral"
+        class="btn btn-xs text-white mt-1"
+        :class="isCustomCopied ? 'btn-success' : 'btn-neutral'"
+        type="button"
+        @click="doCopyCustomData"
       >
-        {{ user.custom }}
-      </div>
+        <i
+          v-if="isCustomCopied"
+          class="bi bi-check-lg"
+        />
+        <template v-else>
+          Copy custom data
+        </template>
+      </button>
     </div>
   </div>
 </template>
