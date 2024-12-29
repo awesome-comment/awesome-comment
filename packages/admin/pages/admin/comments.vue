@@ -14,6 +14,7 @@ type RowItem = Comment & {
   isDeleted: boolean;
   isReplying: boolean;
   from: string;
+  toContent?: string;
 }
 
 const postIdPrefix = __POST_ID_PREFIX__;
@@ -54,7 +55,7 @@ const filter = computed<URLSearchParams>(() => {
   return params;
 });
 
-const { data: commentsList, status, refresh, error } = useLazyAsyncData(
+const { data: commentsList, status, refresh, error } = useLazyAsyncData<RowItem[]>(
   'comments',
   async function () {
     if (!auth0) return;
@@ -78,28 +79,39 @@ const { data: commentsList, status, refresh, error } = useLazyAsyncData(
     });
 
     const { adminEmails = [] } = meta.config;
-    const [cms, replies]: [Record<number, Comment>, Comment[]] = (data || []).reduce(([map, replies], c) => {
-      c.user = JSON.parse((c.user || '{}') as string);
-      c.toUser = c.toUser ? JSON.parse(c.toUser) : null,
-      c.status = Number(c.status);
-      c.id = Number(c.id);
-      c.from = c.user_id.split('|')[ 0 ];
-      c.postId = c.post_id;
-      c.parentId = Number(c.parent_id);
-      c.ancestorId = Number(c.ancestor_id);
-      if (adminEmails.includes(c.user.email) && c.parentId) {
-        replies.push(c);
-      } else {
-        map[ c.id ] = c;
-      }
-      return [map, replies];
-    }, [{}, []]);
+    const [cms, replies, replyTo]: [Record<number, RowItem>, Comment[], Record<string, Comment>] = (data || [])
+      .reduce(([map, replies, replyTo], c) => {
+        c.user = JSON.parse((c.user || '{}') as string);
+        c.status = Number(c.status);
+        c.id = Number(c.id);
+        c.from = c.user_id.split('|')[ 0 ];
+        c.postId = c.post_id;
+        c.parentId = Number(c.parent_id);
+        c.ancestorId = Number(c.ancestor_id);
+        if (adminEmails.includes(c.user.email) && c.parentId) {
+          replies.push(c);
+        } else if (c.status === status.value) {
+          replyTo[ c.id ] = c;
+        } else {
+          map[ c.id ] = c;
+        }
+        return [map, replies, replyTo];
+      }, [{}, [], {}]);
     hasMore.value = Object.values(cms).length >= 20;
     for (const reply of replies) {
       const parent = cms[ reply.parentId ];
       if (!parent) continue;
       parent.children = parent.children ?? [];
       parent.children.push(reply);
+    }
+    for (const item of Object.values(cms)) {
+      if (item.parentId) {
+        const parent = replyTo[ item.parentId ] || cms[ item.parentId ];
+        if (parent) {
+          item.toContent = parent.content;
+          item.toUser = parent.user;
+        }
+      }
     }
     Object.assign(comments.value, cms);
     loadingMore.value = false;
