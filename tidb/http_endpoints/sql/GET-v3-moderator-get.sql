@@ -1,7 +1,7 @@
 USE arealme;
 
 WITH CTE AS (
-  SELECT id
+  SELECT id, parent_id
   FROM ac_comment
   WHERE deleted_at is NULL
     AND COALESCE(JSON_UNQUOTE(JSON_EXTRACT(user, '$.email')), '') NOT IN (${emails})
@@ -15,10 +15,14 @@ WITH CTE AS (
 SELECT *
 FROM ac_comment
 WHERE
-  id IN (SELECT * FROM CTE)
+  id IN (SELECT id FROM CTE)
   OR (
-    parent_id IN (SELECT * FROM CTE)
+    parent_id IN (SELECT id FROM CTE)
     AND deleted_at IS NULL
     AND JSON_EXTRACT(user, '$.email') IN (${emails})
+  )
+  OR (
+    id IN (SELECT parent_id FROM CTE)
+    AND deleted_at IS NULL
   )
 ORDER BY id DESC;
