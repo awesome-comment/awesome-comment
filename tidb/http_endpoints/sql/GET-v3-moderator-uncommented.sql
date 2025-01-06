@@ -2,7 +2,7 @@ USE arealme;
 
 SELECT a.*
 FROM ac_comment a
-WHERE (a.parent_id = 0 OR a.parent_id IS NULL)
+WHERE a.parent_id = 0
   AND COALESCE(JSON_UNQUOTE(JSON_EXTRACT(a.user, '$.email')), '') NOT IN (${emails})
   AND a.status IN (0, 1)
   AND a.deleted_at IS NULL
