@@ -35,6 +35,7 @@ export type User = {
   posts?: number[];
   ip?: string;
   custom?: unknown;
+  extra?: unknown;
 }
 export type CommentUser = {
   avatar: string;
@@ -116,4 +117,5 @@ export type PostCommentRequest = {
   status?: CommentStatus;
   window?: string;
   customData?: unknown;
+  extraData?: unknown;
 }

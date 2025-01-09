@@ -102,6 +102,7 @@ export default defineEventHandler(async function (event): Promise<PostResponse> 
           agent: headers[ 'user-agent' ],
           window: body.window || '',
           custom: body.customData || '',
+          extra: body.extraData || '',
         }),
         status,
       }),

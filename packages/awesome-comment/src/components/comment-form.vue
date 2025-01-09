@@ -78,6 +78,7 @@ async function doSubmit(event: Event): Promise<void> {
         status: props.status,
         window: `${window.innerWidth}x${window.innerHeight} / ${screen.width, screen.height}`,
         customData: window.custom_comment_data,
+        extraData: `${window.BM_LEVEL}:${window.BM_VALUE}`,
       }),
     });
 

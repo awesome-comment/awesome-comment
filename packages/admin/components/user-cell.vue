@@ -180,8 +180,13 @@ async function copyUserEmail() {
         v-if="user.window"
         class="text-xs bg-base-200 px-2 py-1 border-l-2 border-neutral"
       >
-        Resolution:
         {{ user.window }}
+      </div>
+      <div
+        v-if="user.extra"
+        class="text-xs bg-base-200 px-2 py-1 border-l-2 border-neutral"
+      >
+        {{ user.extra }}
       </div>
       <button
         v-if="user.custom"
