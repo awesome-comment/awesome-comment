@@ -48,7 +48,7 @@ definePageMeta({
 </script>
 
 <template>
-  <div class="container mx-auto flex flex-col p-4 gap-4 xl:flex-row sm:py-8">
+  <div class="container mx-auto flex flex-col p-4 gap-4 xl:flex-row">
     <aside class="w-auto flex-none xl:w-64">
       <ul class="menu menu-horizontal bg-base-200 rounded-box xl:menu-vertical">
         <li
