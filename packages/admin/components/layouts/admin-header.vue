@@ -34,7 +34,7 @@ const items = computed(() => {
 </script>
 
 <template>
-  <header class="bg-base-200 mb-4">
+  <header class="bg-base-200">
     <div class="navbar container mx-auto">
       <div class="flex-1">
         <nuxt-link
