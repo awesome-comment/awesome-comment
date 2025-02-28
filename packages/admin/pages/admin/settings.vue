@@ -43,6 +43,14 @@ const adminDisplayAvatar = computed<string>({
     store.setConfig({ adminDisplayAvatar: value });
   },
 });
+const shortcutEmojis = computed<string>({
+  get(): string {
+    return store.config.shortcutEmojis.join('\n');
+  },
+  set(value: string) {
+    store.setConfig({ shortcutEmojis: value.split('\n') });
+  },
+});
 
 async function doSave(event: Event): Promise<void> {
   if (
@@ -113,14 +121,15 @@ definePageMeta({
   <header class="flex items-center pb-4 mb-4 border-b">
     <h1 class="text-xl font-bold">
       Settings
-    </h1><span
+    </h1>
+    <span
       v-if="isLoading"
       class="loading loading-spinner ms-4"
     />
     <button
+      class="btn btn-sm ms-auto"
       :class="isSaved ? 'btn-success' : 'btn-primary'"
       :disabled="isSaving || !auth0?.isAuthenticated"
-      class="btn ms-auto"
       form="config-form"
     >
       <span
@@ -180,7 +189,7 @@ definePageMeta({
         type="text"
       >
     </div>
-    <div class="form-control mb-4">
+    <div class="form-control mb-6">
       <label
         class="label"
         for="admin-display-avatar"
@@ -194,7 +203,21 @@ definePageMeta({
         type="url"
       >
     </div>
-    <h3 class="pb-2 mb-4 border-b">
+    <label
+      class="block mb-2"
+      for="shortcut-emojis"
+    >
+      Preset content
+    </label>
+    <div class="form-control mb-6">
+      <textarea
+        class="textarea textarea-bordered"
+        id="shortcut-emojis"
+        rows="4"
+        v-model="shortcutEmojis"
+      />
+    </div>
+    <h3 class="pb-2 mb-2 border-b">
       Auto approve
     </h3>
     <div class="form-control">

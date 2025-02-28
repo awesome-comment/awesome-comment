@@ -3,8 +3,8 @@ import type { Comment, ResponseBody } from '@awesome-comment/core/types';
 import { CommentStatus } from '@awesome-comment/core/data';
 import { useAuth0 } from '@auth0/auth0-vue';
 import { replaceTemplate } from '~/utils';
-import { ShortcutEmojis } from '~/data';
 import usePromptStore from '~/store/prompt';
+import useConfigStore from "~/store";
 
 type Props = {
   className: string;
@@ -17,6 +17,7 @@ type Emits = {
 const emit = defineEmits<Emits>();
 
 const auth0 = useAuth0();
+const configStore = useConfigStore();
 const promptStore = usePromptStore();
 
 const isReplying = ref<string>('');
@@ -32,7 +33,7 @@ async function onReply(content: string, isPreview: boolean): Promise<void> {
   if (isReplying.value) return;
 
   isReplying.value = content;
-  if (ShortcutEmojis.includes(content)) {
+  if (configStore.config.shortcutEmojis.includes(content)) {
     return replyToComment(content);
   }
 

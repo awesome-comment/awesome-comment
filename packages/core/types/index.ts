@@ -10,6 +10,7 @@ export type AcConfig = {
   adminDisplayName: string;
   adminDisplayAvatar: string;
   autoApprove: ToggleableRule;
+  shortcutEmojis: string[];
 }
 
 export type ResponseBody<T> = {
