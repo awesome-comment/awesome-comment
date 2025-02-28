@@ -17,13 +17,14 @@ const usePromptStore = defineStore('prompt', () => {
         Authorization: `Bearer ${token}`,
       },
     });
-    (data || []).forEach((prompt) => {
-      const title = prompt.title.replace(/^ac-/i, '');
-      prompts.value[ prompt.id ] = {
-        ...prompt,
-        title,
-      };
-    });
+    (data || [])
+      .forEach((prompt) => {
+        const title = prompt.title.replace(/^ac-/i, '');
+        prompts.value[ prompt.id ] = {
+          ...prompt,
+          title,
+        };
+      });
     isLoading.value = false;
   }
 

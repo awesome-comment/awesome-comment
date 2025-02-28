@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { clickWithModifier } from '@awesome-comment/core/utils';
 import { useAuth0 } from '@auth0/auth0-vue';
-import { ShortcutEmojis } from '~/data';
 import useConfigStore from '~/store';
 import usePromptStore from '~/store/prompt';
 
@@ -42,7 +41,7 @@ async function doReply(emoji: string, event?: MouseEvent): Promise<void> {
 <template>
   <div class="flex items-center gap-2">
     <button
-      v-for="item in ShortcutEmojis"
+      v-for="item in configStore.config.shortcutEmojis"
       :key="item"
       type="button"
       class="btn btn-sm btn-square btn-ghost"

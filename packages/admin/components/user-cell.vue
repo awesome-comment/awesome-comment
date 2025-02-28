@@ -151,7 +151,7 @@ async function copyUserEmail() {
       </div>
       <div
         v-if="user.ip"
-        class="text-xs truncate"
+        class="text-xs truncate hidden sm:block"
       >
         <nuxt-link
           :to="`https://clients1.google.co.in/url?sa=i&url=https://www.ipshudi.com/${user.ip}.htm`"
@@ -162,35 +162,36 @@ async function copyUserEmail() {
           {{ user.ip }}
         </nuxt-link>
       </div>
-      <div class="text-xs capitalize">
+      <div class="text-xs capitalize hidden sm:block">
         <i
           v-if="from !== 'auth0'"
           :class="'bi-' + from"
           class="bi me-1"
-        />{{ from }}
+        />
+        {{ from }}
       </div>
       <div
         v-if="user.agent"
-        class="text-xs bg-base-200 px-2 py-1 border-l-2 border-neutral"
+        class="text-xs bg-base-200 px-2 py-1 border-l-2 border-neutral hidden sm:block"
       >
         {{ agentInfo.deviceType }}<br>{{ agentInfo.os }} {{ agentInfo.osVersion }}<br>{{ agentInfo.browser }}
         {{ agentInfo.browserVersion }}
       </div>
       <div
         v-if="user.window"
-        class="text-xs bg-base-200 px-2 py-1 border-l-2 border-neutral"
+        class="text-xs bg-base-200 px-2 py-1 border-l-2 border-neutral hidden sm:block"
       >
         {{ user.window }}
       </div>
       <div
         v-if="user.extra"
-        class="text-xs bg-base-200 px-2 py-1 border-l-2 border-neutral"
+        class="text-xs bg-base-200 px-2 py-1 border-l-2 border-neutral hidden sm:block"
       >
         {{ user.extra }}
       </div>
       <button
         v-if="user.custom"
-        class="btn btn-xs text-white mt-1"
+        class="btn btn-xs text-white mt-1 hidden sm:block"
         :class="isCustomCopied ? 'btn-success' : 'btn-neutral'"
         type="button"
         @click="doCopyCustomData"

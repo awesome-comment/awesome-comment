@@ -437,7 +437,7 @@ definePageMeta({
       <thead>
         <tr>
           <th
-            class="hover:bg-base-200 cursor-pointer"
+            class="hover:bg-base-200 cursor-pointer hidden sm:table-cell"
             title="Select all"
             @click="doSelectAll"
           >
@@ -449,8 +449,8 @@ definePageMeta({
           <th>User</th>
           <th>Time</th>
           <th>Post</th>
-          <th>Status</th>
-          <th />
+          <th class="hidden sm:table-cell">Status</th>
+          <th class="hidden sm:table-cell" />
         </tr>
       </thead>
       <tbody v-if="commentsList?.length">
@@ -468,7 +468,7 @@ definePageMeta({
           ]"
         >
           <td
-            class="!p-0"
+            class="!p-0 hidden sm:table-cell"
             height="1"
           >
             <label class="block w-full h-full cursor-pointer py-3 px-4 hover:bg-base-200/50">
@@ -511,7 +511,7 @@ definePageMeta({
                     class="btn btn-circle btn-ghost btn-sm"
                     type="button"
                     :disabled="child.isDeleting"
-                    @click="doRemoveReply(child, comment, childIndex)"
+                    @click="doRemoveReply(child, comment, childIndex as number)"
                   >
                     <span
                       v-if="child.isDeleting"
@@ -550,6 +550,15 @@ definePageMeta({
               class-name="pt-4"
               :comment="comment"
               @reply="onReply($event, comment)"
+            />
+            <ui-comment-actions class="grid-cols-4 py-2 sm:hidden"
+              :comment="comment"
+              :is-batching="isBatching"
+              :loading-more="loadingMore"
+              @delete="doDelete"
+              @modal="hasReplyModal = $event"
+              @reply="onReply"
+              @review="doReview"
             />
           </td>
           <td class="align-top">
@@ -598,73 +607,19 @@ definePageMeta({
               </nuxt-link>
             </div>
           </td>
-          <td class="align-top">
+          <td class="align-top hidden sm:table-cell">
             {{ CommentStatus[comment.status] }}
           </td>
-          <td class="align-top">
-            <div class="grid grid-cols-2 gap-2 w-40">
-              <button
-                v-if="comment.status === CommentStatus.Pending || comment.status === CommentStatus.Rejected"
-                class="btn btn-success btn-sm text-white sm:btn-xs hover:text-white"
-                type="button"
-                :disabled="isBatching || comment.isApproving || comment.isRejecting || comment.isDeleting || loadingMore"
-                @click="doReview(comment, CommentStatus.Approved)"
-              >
-                <span
-                  v-if="comment.isApproving"
-                  class="loading loading-xs loading-spinner"
-                />
-                <template v-else>
-                  Approve
-                </template>
-              </button>
-              <reply-comment
-                ref="replyComments"
-                :comment="comment"
-                @reply="onReply($event, comment)"
-                @open="hasReplyModal = true"
-                @close="hasReplyModal = false"
-              />
-              <ui-delete-button
-                :disabled="isBatching || comment.isApproving || comment.isRejecting || comment.isDeleting || loadingMore"
-                :is-loading="comment.isDeleting"
-                @delete="doDelete(comment)"
-              />
-              <details class="dropdown dropdown-end">
-                <summary
-                  class="btn btn-outline btn-sm btn-square sm:btn-xs"
-                  role="button"
-                  aria-label="More actions"
-                >
-                  <i class="bi bi-three-dots-vertical" />
-                  <span class="sr-only">More actions</span>
-                </summary>
-                <div class="p-2 shadow dropdown-content z-1 bg-base-100 rounded-box w-36 flex flex-col gap-1 border border-base-content/25">
-                  <edit-comment
-                    button-class="btn btn-sm sm:btn-xs btn-outline btn-warning"
-                    :comment="comment"
-                    @save="comment.content = $event"
-                    @open="hasReplyModal = true"
-                    @close="hasReplyModal = false"
-                  />
-                  <button
-                    v-if="comment.status === CommentStatus.Pending || comment.status === CommentStatus.Approved"
-                    class="btn btn-outline btn-warning btn-sm sm:btn-xs"
-                    type="button"
-                    :disabled="isBatching || comment.isApproving || comment.isRejecting || comment.isDeleting || loadingMore"
-                    @click="doReview(comment, CommentStatus.Rejected)"
-                  >
-                    <span
-                      v-if="comment.isRejecting"
-                      class="loading loading-xs loading-spinner"
-                    />
-                    <template v-else>
-                      Reject
-                    </template>
-                  </button>
-                </div>
-              </details>
-            </div>
+          <td class="align-top hidden sm:table-cell">
+            <ui-comment-actions class="grid-cols-2 w-40"
+              :comment="comment"
+              :is-batching="isBatching"
+              :loading-more="loadingMore"
+              @delete="doDelete"
+              @modal="hasReplyModal = $event"
+              @reply="onReply"
+              @review="doReview"
+            />
           </td>
         </tr>
       </tbody>

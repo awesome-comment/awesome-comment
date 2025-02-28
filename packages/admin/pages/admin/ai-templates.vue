@@ -12,7 +12,6 @@ const fixed = ref<number[]>([]);
 const shortcuts = ref<Record<string, string>>({});
 const autoSubmit = ref<number[]>([]);
 const errors = ref<Record<string, string>>({});
-
 const { data, refresh, status } = useAsyncData(
   'prompts',
   async function () {
@@ -33,6 +32,9 @@ const { data, refresh, status } = useAsyncData(
     },
   },
 );
+const sortedPrompts = computed(() => {
+  return Object.values(data.value).sort((a, b) => a.title.localeCompare(b.title));
+});
 
 async function doSave(): Promise<void> {
   const aiTemplateShortcuts = {};
@@ -120,8 +122,8 @@ async function doSave(): Promise<void> {
     </tbody>
     <tbody v-else>
       <tr
-        v-for="(prompt, id) in promptStore.prompts"
-        :key="id"
+        v-for="(prompt, index) in sortedPrompts"
+        :key="index"
       >
         <td>{{ prompt.title }}</td>
         <td>
