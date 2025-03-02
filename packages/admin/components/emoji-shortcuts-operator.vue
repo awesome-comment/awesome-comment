@@ -4,7 +4,7 @@ import { CommentStatus } from '@awesome-comment/core/data';
 import { useAuth0 } from '@auth0/auth0-vue';
 import { replaceTemplate } from '~/utils';
 import usePromptStore from '~/store/prompt';
-import useConfigStore from "~/store";
+import useConfigStore from '~/store';
 
 type Props = {
   className: string;

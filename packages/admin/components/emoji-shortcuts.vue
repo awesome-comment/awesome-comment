@@ -27,7 +27,12 @@ const shortcuts = computed<{key: string, id: string}[]>(() => {
 
       acc.push({ key, id });
       return acc;
-    }, [] as { key: string, id: string }[]);
+    }, [] as { key: string, id: string }[])
+    .sort(({ id }, { id: id2 }) => {
+      const a = promptStore.prompts[ id ];
+      const b = promptStore.prompts[ id2 ];
+      return a.title.localeCompare(b.title);
+    });
 });
 
 async function doReply(emoji: string, event?: MouseEvent): Promise<void> {

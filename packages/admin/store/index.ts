@@ -1,7 +1,7 @@
 import { useAuth0 } from '@auth0/auth0-vue';
 import type { ResponseBody, AcConfig } from '@awesome-comment/core/types';
 import type { MyAdminConfig } from '~/types';
-import {ShortcutEmojis} from "~/data";
+import { ShortcutEmojis } from '~/data';
 
 const useConfigStore = defineStore('config', () => {
   const auth0 = useAuth0();

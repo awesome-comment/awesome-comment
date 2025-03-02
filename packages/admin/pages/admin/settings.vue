@@ -211,10 +211,10 @@ definePageMeta({
     </label>
     <div class="form-control mb-6">
       <textarea
-        class="textarea textarea-bordered"
         id="shortcut-emojis"
-        rows="4"
         v-model="shortcutEmojis"
+        class="textarea textarea-bordered"
+        rows="4"
       />
     </div>
     <h3 class="pb-2 mb-2 border-b">

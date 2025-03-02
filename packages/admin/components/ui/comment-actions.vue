@@ -18,10 +18,11 @@ type Props = {
 }
 defineProps<Props>();
 type Emits = {
-  (event: 'reply', comment: Comment, parent: Comment): void;
   (event: 'delete', comment: Comment): void;
-  (event: 'review', comment: Comment, status: CommentStatus): void;
+  (event: 'edit', content: string): void;
   (event: 'modal', isOpen: boolean): void;
+  (event: 'reply', comment: Comment, parent: Comment): void;
+  (event: 'review', comment: Comment, status: CommentStatus): void;
 }
 const emit = defineEmits<Emits>();
 </script>
@@ -68,7 +69,7 @@ const emit = defineEmits<Emits>();
         <edit-comment
           button-class="btn btn-sm sm:btn-xs btn-outline btn-warning"
           :comment="comment"
-          @save="comment.content = $event"
+          @save="emit('edit', $event)"
           @open="emit('modal', true)"
           @close="emit('modal', false)"
         />

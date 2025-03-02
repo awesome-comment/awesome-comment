@@ -449,7 +449,9 @@ definePageMeta({
           <th>User</th>
           <th>Time</th>
           <th>Post</th>
-          <th class="hidden sm:table-cell">Status</th>
+          <th class="hidden sm:table-cell">
+            Status
+          </th>
           <th class="hidden sm:table-cell" />
         </tr>
       </thead>
@@ -551,11 +553,13 @@ definePageMeta({
               :comment="comment"
               @reply="onReply($event, comment)"
             />
-            <ui-comment-actions class="grid-cols-4 py-2 sm:hidden"
+            <ui-comment-actions
+              class="grid-cols-4 py-2 sm:hidden"
               :comment="comment"
               :is-batching="isBatching"
               :loading-more="loadingMore"
               @delete="doDelete"
+              @edit="comment.content = $event"
               @modal="hasReplyModal = $event"
               @reply="onReply"
               @review="doReview"
@@ -611,11 +615,13 @@ definePageMeta({
             {{ CommentStatus[comment.status] }}
           </td>
           <td class="align-top hidden sm:table-cell">
-            <ui-comment-actions class="grid-cols-2 w-40"
+            <ui-comment-actions
+              class="grid-cols-2 w-40"
               :comment="comment"
               :is-batching="isBatching"
               :loading-more="loadingMore"
               @delete="doDelete"
+              @edit="comment.content = $event"
               @modal="hasReplyModal = $event"
               @reply="onReply"
               @review="doReview"
