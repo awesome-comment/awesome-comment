@@ -124,7 +124,7 @@ definePageMeta({
     </h1>
     <span
       v-if="isLoading"
-      class="loading loading-spinner ms-4"
+      class="loading loading-spinner size-4 ms-4"
     />
     <button
       class="btn btn-sm ms-auto"
@@ -134,7 +134,7 @@ definePageMeta({
     >
       <span
         v-if="isSaving"
-        class="loading loading-spinner"
+        class="loading loading-spinner size-4"
       /><i
         v-else
         class="bi bi-check-lg"

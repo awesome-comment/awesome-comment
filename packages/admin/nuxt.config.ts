@@ -50,11 +50,6 @@ export default defineNuxtConfig({
   ...process.env.CLOUDFLARE && {
     nitro: {
       preset: 'cloudflare-pages',
-      unenv: {
-        inject: {
-          addAbortListener: ['node:events', 'addAbortListener'],
-        },
-      },
     },
   },
   routeRules: {

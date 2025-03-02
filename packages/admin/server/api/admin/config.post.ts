@@ -13,12 +13,14 @@ export default defineEventHandler(async function (event: H3Event): Promise<Respo
     autoApprove,
     adminDisplayName,
     adminDisplayAvatar,
+    shortcutEmojis,
   } = body;
   await storage.put(key, {
     adminEmails,
     autoApprove,
     adminDisplayName,
     adminDisplayAvatar,
+    shortcutEmojis,
   });
 
   return {
