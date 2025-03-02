@@ -41,7 +41,7 @@ export default defineNuxtConfig({
       ],
     },
   },
-  compatibilityDate: '2024-07-06',
+  compatibilityDate: '2025-03-01',
   css: [
     '~/assets/css/main.css',
   ],
@@ -50,15 +50,11 @@ export default defineNuxtConfig({
   ...process.env.CLOUDFLARE && {
     nitro: {
       preset: 'cloudflare-pages',
-    },
-  },
-  postcss: {
-    plugins: {
-      'postcss-import': {},
-      'tailwindcss/nesting': {},
-      tailwindcss: {},
-      autoprefixer: {},
-      ...(process.env.NODE_ENV === 'production' ? { cssnano: {} } : {})
+      unenv: {
+        inject: {
+          addAbortListener: ['node:events', 'addAbortListener'],
+        },
+      },
     },
   },
   routeRules: {
@@ -70,6 +66,21 @@ export default defineNuxtConfig({
     // Add cors headers on API routes
     '/api/**': { cors: true },
   },
+  dayjs: {
+    plugins: ['utc', 'timezone'],
+  },
+  postcss: {
+    plugins: {
+      'postcss-import': {},
+      'tailwindcss/nesting': {},
+      tailwindcss: {},
+      autoprefixer: {},
+      ...(process.env.NODE_ENV === 'production' ? { cssnano: {} } : {})
+    },
+  },
+  ui: {
+    icons: ['bi'],
+  },
   vite: {
     define: {
       __VERSION__: JSON.stringify(pkg.version),
@@ -80,11 +91,5 @@ export default defineNuxtConfig({
       __POST_ID_PREFIX__: JSON.stringify(process.env.POST_ID_PREFIX || ''),
       __AI_ADMIN_ENDPOINT__: JSON.stringify(process.env.AI_ADMIN_ENDPOINT || ''),
     },
-  },
-  dayjs: {
-    plugins: ['utc', 'timezone'],
-  },
-  ui: {
-    icons: ['bi'],
   },
 });
