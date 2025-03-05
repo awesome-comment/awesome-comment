@@ -5,8 +5,7 @@ export enum Model {
   TTS_1 = 'tts-1',
   TTS_1_HD = 'tts-1-hd',
 
-  EMBEDDING_LARGE = 'text-embedding-3-large',
-  EMBEDDING_SMALL = 'text-embedding-3-small',
+  Gemini_2_Flash = 'gemini-2.0-flash-001',
 
   CLAUDE_3_5_SONNET = 'claude-3-5-sonnet-20240620',
 }

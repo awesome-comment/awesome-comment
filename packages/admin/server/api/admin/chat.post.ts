@@ -8,9 +8,6 @@ export default defineEventHandler(async function (event: H3Event) {
     postId: string;
   };
 
-  const openai = new OpenAI({
-    apiKey: process.env.OPENAI_API_KEY,
-  });
   const isEnCn = /\/(en|cn|zh)(\/|$)/i.test(postId);
   let result = '';
   if (process.env.AI_ADMIN_ENDPOINT) {
@@ -23,10 +20,13 @@ export default defineEventHandler(async function (event: H3Event) {
       },
       body: {
         message,
-        model: isEnCn ? Model.CHAT_GPT4o_MINI : Model.CHAT_GPT4o,
+        model: Model.Gemini_2_Flash,
       },
     });
   } else {
+    const openai = new OpenAI({
+      apiKey: process.env.OPENAI_API_KEY,
+    });
     const res = await openai.chat.completions.create({
       model: isEnCn ? Model.CHAT_GPT4o_MINI : Model.CHAT_GPT4o,
       messages,
