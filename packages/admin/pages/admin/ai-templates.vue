@@ -2,9 +2,11 @@
 import { sleep } from '@antfu/utils';
 import usePromptStore from '~/store/prompt';
 import useConfigStore from '~/store';
+import { useAuth0 } from '@auth0/auth0-vue';
 
 const store = useConfigStore();
 const promptStore = usePromptStore();
+const auth0 = process.client ? useAuth0() : undefined;
 
 const isSaving = ref<boolean>(false);
 const isSaved = ref<boolean>(false);
@@ -15,6 +17,8 @@ const errors = ref<Record<string, string>>({});
 const { data, refresh, status } = useAsyncData(
   'prompts',
   async function () {
+    if (auth0?.isAuthenticated.value) return [];
+
     await promptStore.refreshPrompts();
     await store.initMyConfig();
     fixed.value = store.myConfig.fixedAiTemplates || [];

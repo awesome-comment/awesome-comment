@@ -13,14 +13,16 @@ const {
 
 watch(isAuthenticated, (value) => {
   if (value) {
+    configStore.initStore();
     configStore.initMyConfig();
     promptStore.refreshPrompts();
   }
 });
 
-onBeforeMount(() => {
+onMounted(() => {
   if (!auth0.isAuthenticated.value) return;
 
+  configStore.initStore();
   configStore.initMyConfig();
   promptStore.refreshPrompts();
 });
