@@ -146,8 +146,10 @@ onMounted(() => {
         v-model="comment"
         :placeholder="t('placeholder')"
         class="ac-textarea ac-textarea-bordered bg-base-200 rounded-b-none focus:outline-none"
-        required="required"
+        required
         rows="3"
+        @keydown.stop
+        @keyup.stop
         @keydown.enter="onKeydown"
         @keydown.esc="onCancel"
       />
