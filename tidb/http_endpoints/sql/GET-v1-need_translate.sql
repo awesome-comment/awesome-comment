@@ -1,6 +1,6 @@
 USE `arealme`;
 
-SELECT `id`,`content`
+SELECT `id`,`content`,`post_id`
 FROM `ac_comment`
 WHERE deleted_at IS NULL
   AND `status`!=2
