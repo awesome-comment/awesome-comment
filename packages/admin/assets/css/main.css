@@ -2,9 +2,7 @@
 @import '@nuxt/ui';
 
 @plugin "daisyui" {
-  themes:
-    cupcake --default,
-    dark --prefersdark;
+  themes: corporate --default, dark --prefersdark;
 }
 @plugin "@tailwindcss/typography";
 
@@ -20,11 +18,8 @@
 
 @theme {
   --leading-16: 4rem;
-
   --padding-full: 100%;
-
   --spacing-60svh: 60svh;
-
   --z-index-1: 1;
 }
 

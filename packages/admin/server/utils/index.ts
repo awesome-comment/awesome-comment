@@ -1,20 +1,32 @@
 import { H3Event } from 'h3';
-import { AcConfig, Comment, PostCommentRequest, ResponseBody, ResponseComment, User } from '@awesome-comment/core/types';
+import {
+  AcConfig,
+  Comment,
+  PostCommentRequest,
+  ResponseBody,
+  ResponseComment,
+  ToggleableRule,
+  User
+} from '@awesome-comment/core/types';
 import { CommentStatus, MarkdownLinkRegex, POST_INTERVAL } from '@awesome-comment/core/data';
 import createStorage, { AcStorage } from '@awesome-comment/core/utils/storage';
 
 export async function getConfig(storage: AcStorage): Promise<AcConfig> {
   const key = getConfigKey();
-  return (await storage.get(key)) as AcConfig;
+  return (await storage.get(key)) || {
+    adminDisplayName: 'Admin',
+    adminDisplayAvatar: '',
+    adminEmails: process.env.DEFAULT_ADMIN_EMAILS?.split(',') || [],
+    autoApprove: {
+      enabled: false,
+    },
+    shortcutEmojis: [],
+  } as AcConfig;
 }
 
 export async function checkUserPermission(event: H3Event, endpoint?: string): Promise<[User, AcConfig] | void> {
   const storage = createStorage(event);
   const config = await getConfig(storage);
-  // not configured, it's a new site
-  if (!config) {
-    return;
-  }
 
   const authorization = getHeader(event, 'authorization');
   if (!authorization) {

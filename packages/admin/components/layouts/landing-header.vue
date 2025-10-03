@@ -4,7 +4,7 @@
 
 <template>
   <header class="navbar bg-base-200">
-    <div class="container mx-auto flex">
+    <div class="container mx-auto flex items-center">
       <div class="flex-none">
         <nuxt-link
           class="btn btn-ghost normal-case text-xl"
