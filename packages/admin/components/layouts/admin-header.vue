@@ -29,7 +29,7 @@ const items = computed(() => {
     ],
     [
       {
-        label: `Version: ${runtime.public.version}`,
+        label: `Version: ${runtime.public.VERSION}`,
       },
     ],
   ];

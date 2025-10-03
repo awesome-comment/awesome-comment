@@ -193,7 +193,7 @@ definePageMeta({
         class="block mb-1"
         for="admin-display-avatar"
       >
-        <span class="label-text">Admin Display Name</span>
+        <span class="label-text">Admin Display Avatar</span>
       </label>
       <input
         id="admin-display-avatar"

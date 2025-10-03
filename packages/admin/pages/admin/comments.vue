@@ -400,7 +400,7 @@ definePageMeta({
     class="alert alert-error mb-4"
   >
     <i class="bi bi-exclamation-triangle-fill me-2" />
-    <span>{{ message || error }}</span>
+    <span>{{ message || error?.message || error }}</span>
   </div>
   <div
     v-if="filterPostId || filterUser"
