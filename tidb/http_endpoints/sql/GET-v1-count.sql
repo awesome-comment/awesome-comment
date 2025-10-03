@@ -8,16 +8,16 @@ WITH CTE AS (
         AND ancestor_id=0
         AND deleted_at IS NULL
 )
-SELECT COUNT(1) AS num
-FROM ac_comment AS main_ac
-WHERE
-  EXISTS (
-    SELECT 1 FROM CTE WHERE CTE.id = main_ac.id
-  )
-  OR (
-    EXISTS (
-      SELECT 1 FROM CTE WHERE CTE.id = main_ac.ancestor_id
-    )
-    AND main_ac.status = 1
-    AND main_ac.deleted_at IS NULL
-  );
+SELECT COUNT(*) AS num
+FROM (
+    SELECT main_ac.id
+    FROM ac_comment AS main_ac
+        JOIN CTE ON main_ac.id = CTE.id
+
+    UNION
+
+    SELECT main_ac.id
+    FROM ac_comment AS main_ac
+        JOIN CTE ON main_ac.ancestor_id = CTE.id
+    WHERE main_ac.status = 1 AND main_ac.deleted_at IS NULL
+) AS distinct_comment_ids;
