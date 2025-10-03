@@ -40,3 +40,17 @@
     border-color: var(--color-gray-200, currentcolor);
   }
 }
+
+html, body {
+  height: 100%;
+}
+
+#__nuxt {
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.chat-bubble a {
+  @apply text-info underline hover:no-underline;
+}

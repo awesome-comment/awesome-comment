@@ -122,7 +122,7 @@ const { data: commentsList, status, refresh, error } = useLazyAsyncData<RowItem[
       return Object.values(comments.value).reverse();
     },
     watch: [filterStatus, filterPostId, filterUser, filterLanguage, start],
-  }
+  },
 );
 
 async function doReview(comment: RowItem, status: CommentStatus) {
@@ -329,7 +329,7 @@ definePageMeta({
       Comments Management
     </h1>
     <button
-      class="btn btn-sm me-2"
+      class="btn btn-sm me-2 self-end"
       type="button"
       :disabled="status === 'pending'"
       @click="doReset"
@@ -400,7 +400,7 @@ definePageMeta({
     class="alert alert-error mb-4"
   >
     <i class="bi bi-exclamation-triangle-fill me-2" />
-    <span>{{ message || error.message }}</span>
+    <span>{{ message || error }}</span>
   </div>
   <div
     v-if="filterPostId || filterUser"
@@ -664,9 +664,3 @@ export default {
   name: 'AdminCommentsPage',
 }
 </script>
-
-<style>
-.chat-bubble a {
-  @apply text-info underline hover:no-underline;
-}
-</style>

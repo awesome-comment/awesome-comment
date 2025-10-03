@@ -61,6 +61,11 @@ export default defineNuxtConfig({
     // Add cors headers on API routes
     '/api/**': { cors: true },
   },
+  runtimeConfig: {
+    public: {
+      VERSION: pkg.version,
+    },
+  },
   dayjs: {
     plugins: ['utc', 'timezone'],
   },

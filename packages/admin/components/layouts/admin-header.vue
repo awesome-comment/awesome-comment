@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { useAuth0, User } from '@auth0/auth0-vue';
 
-const auth0 = process.client ? useAuth0() : undefined;
+const auth0 = import.meta.client ? useAuth0() : undefined;
+const runtime = useRuntimeConfig();
 
 const user = computed<User | null>(() => {
   return auth0?.user.value || null;
@@ -11,14 +12,16 @@ const items = computed(() => {
     [
       {
         label: user.value?.name || user.value?.email,
-        slot: 'account',
-        disabled: true
+        avatar: {
+          src: user.value?.picture,
+        },
+        type: 'label',
       },
     ],
     [
       {
         label: 'Logout',
-        icon: 'bi-box-arrow-left',
+        icon: 'i-lucide-arrow-left',
         async click() {
           await auth0?.logout();
         },
@@ -26,7 +29,7 @@ const items = computed(() => {
     ],
     [
       {
-        label: `Version: ${__VERSION__}`,
+        label: `Version: ${runtime.public.version}`,
       },
     ],
   ];
@@ -45,35 +48,21 @@ const items = computed(() => {
         </nuxt-link>
       </div>
       <div class="flex-none">
-        <u-dropdown
+        <u-dropdown-menu
           v-if="user"
+          arrow
           :items="items"
-          :popper="{ placement: 'bottom-end' }"
-          :ui="{ item: { disabled: 'cursor-text select-text' } }"
+          :content="{
+            align: 'end',
+            side: 'bottom',
+          }"
         >
-          <div
-            class="avatar cursor-pointer"
-          >
-            <div class="w-8 rounded-full">
-              <img
-                class="block"
-                :src="user.picture"
-                :alt="user.name"
-              >
-            </div>
-          </div>
-
-          <template #account="{ item }">
-            <div class="text-left">
-              <p>
-                Signed in as
-              </p>
-              <p class="truncate font-medium text-gray-900 dark:text-white">
-                {{ item.label }}
-              </p>
-            </div>
-          </template>
-        </u-dropdown>
+          <u-avatar
+            :alt="user.name || user.email || 'User'"
+            size="md"
+            :src="user.picture || ''"
+          />
+        </u-dropdown-menu>
         <nuxt-link
           v-else
           class="btn btn-sm btn-primary"
