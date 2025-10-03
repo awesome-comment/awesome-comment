@@ -778,7 +778,7 @@
       {
         "name": "translation",
         "type": "string",
-        "required": 1,
+        "required": 0,
         "default": "",
         "description": ""
       },
