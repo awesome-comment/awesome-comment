@@ -502,6 +502,12 @@ definePageMeta({
             <p class="break-words max-w-sm overflow-hidden">
               {{ comment.content }}
             </p>
+            <p
+              v-if="comment.translation"
+              class="max-w-sm text-xs mt-1 text-base-content/90"
+            >
+              (Translation: {{ comment.translation }})
+            </p>
             <template v-if="comment.children?.length">
               <div
                 v-for="(child, childIndex) in comment.children"

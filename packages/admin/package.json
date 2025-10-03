@@ -1,6 +1,6 @@
 {
   "name": "@awesome-comment/admin",
-  "version": "0.16.13",
+  "version": "0.17.0",
   "scripts": {
     "build": "nuxt build",
     "dev": "nuxt dev",
