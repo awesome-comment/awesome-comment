@@ -1,3 +1,15 @@
 packages:
   - packages/*
   - tools/*
+
+ignoredBuiltDependencies:
+  - '@parcel/watcher'
+  - '@tailwindcss/oxide'
+  - browser-tabs-lock
+  - esbuild
+  - sharp
+  - vue-demi
+  - workerd
+
+onlyBuiltDependencies:
+  - better-sqlite3

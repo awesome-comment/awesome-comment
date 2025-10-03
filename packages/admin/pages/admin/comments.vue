@@ -470,7 +470,7 @@ definePageMeta({
           ]"
         >
           <td
-            class="!p-0 hidden sm:table-cell"
+            class="p-0! hidden sm:table-cell"
             height="1"
           >
             <label class="block w-full h-full cursor-pointer py-3 px-4 hover:bg-base-200/50">

@@ -65,7 +65,7 @@ const emit = defineEmits<Emits>();
         <i class="bi bi-three-dots-vertical" />
         <span class="sr-only">More actions</span>
       </summary>
-      <div class="p-2 shadow dropdown-content z-1 bg-base-100 rounded-box w-36 flex flex-col gap-1 border border-base-content/25">
+      <div class="p-2 shadow-sm dropdown-content z-1 bg-base-100 rounded-box w-36 flex flex-col gap-1 border border-base-content/25">
         <edit-comment
           button-class="btn btn-sm sm:btn-xs btn-outline btn-warning"
           :comment="comment"

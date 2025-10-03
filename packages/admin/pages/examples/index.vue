@@ -17,7 +17,7 @@ const route = useRoute();
       <nuxt-link
         v-for="item in examples"
         :key="item.to"
-        class="bg-base-200 flex flex-col justify-center items-center min-h-32 px-8 rounded hover:bg-primary/10 hover:shadow"
+        class="bg-base-200 flex flex-col justify-center items-center min-h-32 px-8 rounded hover:bg-primary/10 hover:shadow-sm"
         :to="item.to"
       >
         <h3 class="text-2xl font-bold mb-4">
