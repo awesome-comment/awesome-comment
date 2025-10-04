@@ -1,4 +1,4 @@
-import i18n from '@awesome-comment/core/i18n.json' assert { type: 'json' };
+import i18n from '@awesome-comment/core/i18n.json' with { type: 'json' };
 
 export enum CommentStatus {
   Pending,

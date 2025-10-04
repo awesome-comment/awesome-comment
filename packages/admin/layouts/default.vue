@@ -4,8 +4,5 @@
   <layouts-landing-footer />
 </template>
 
-<script lang="ts">
-export default {
-  name: 'DefaultLayout',
-}
+<script setup lang="ts">
 </script>
