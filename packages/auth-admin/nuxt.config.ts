@@ -35,11 +35,11 @@ export default defineNuxtConfig({
   ],
   devtools: { enabled: true },
   modules,
-  ...process.env.CLOUDFLARE && {
+  ...(process.env.CLOUDFLARE ? {
     nitro: {
       preset: 'cloudflare-pages',
     },
-  },
+  } : {}),
   routeRules: {
     // Add cors headers on API routes
     '/api/**': { cors: true },

@@ -3,7 +3,7 @@ import { createPinia } from 'pinia';
 import { Auth0Plugin, createAuth0 } from '@auth0/auth0-vue';
 import { createI18n } from 'vue-i18n';
 import omit from 'lodash-es/omit';
-import messages from '@awesome-comment/core/i18n.json' assert { type: 'json' };
+import messages from '@awesome-comment/core/i18n.json' with { type: 'json' };
 import './styles/tw-daisy.css';
 import './styles/main.css';
 import './styles/animate.css';

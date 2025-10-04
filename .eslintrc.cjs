@@ -33,5 +33,13 @@ module.exports = {
     'object-curly-spacing': [ 'error', 'always' ],
     'computed-property-spacing': [ 'error', 'always' ],
     '@typescript-eslint/no-unused-vars': 0,
-  }
+  },
+  overrides: [
+    {
+      files: ['**/layouts/*.vue'],
+      rules: {
+        'vue/multi-word-component-names': 'off',
+      },
+    },
+  ],
 }

@@ -1,5 +1,5 @@
-import pkg from './package.json' assert { type: 'json' };
-import acPkg from '../awesome-comment/package.json' assert { type: 'json' };
+import pkg from './package.json' with { type: 'json' };
+import acPkg from '../awesome-comment/package.json' with { type: 'json' };
 
 const repoUrl = 'https://unpkg.com/@roudanio/awesome-comment@latest/dist'; // use online ver for now
 const modules = [
@@ -41,17 +41,17 @@ export default defineNuxtConfig({
       ],
     },
   },
-  compatibilityDate: '2025-03-01',
+  compatibilityDate: '2024-11-01',
   css: [
     '~/assets/css/main.css',
   ],
   devtools: { enabled: true },
   modules,
-  ...process.env.CLOUDFLARE && {
+  ...(process.env.CLOUDFLARE ? {
     nitro: {
       preset: 'cloudflare-pages',
     },
-  },
+  } : {}),
   routeRules: {
     // pre-rendered at build time
     '/': { prerender: true },

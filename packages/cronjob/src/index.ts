@@ -1,8 +1,8 @@
 import pkg from '../package.json' with { type: 'json' };
-import { fetchTidb } from "./services/fetch-tidb";
-import { CommentItem } from "./types";
-import { GoogleGenAI } from "@google/genai";
-import { checkShouldTranslate } from "./utils";
+import { fetchTidb } from './services/fetch-tidb';
+import { CommentItem } from './types';
+import { GoogleGenAI } from '@google/genai';
+import { checkShouldTranslate } from './utils';
 
 const KV_KEY = 'cronjob-lock';
 
