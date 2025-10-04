@@ -29,7 +29,7 @@ onBeforeUnmount(() => {
 
     <ul
       v-if="isOpen"
-      class="p-1 shadow menu dropdown-content z-1 bg-base-100 rounded-box w-52"
+      class="p-1 shadow-sm menu dropdown-content z-1 bg-base-100 rounded-box w-52"
     >
       <slot name="menu" />
     </ul>

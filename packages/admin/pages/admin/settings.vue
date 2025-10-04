@@ -151,12 +151,12 @@ definePageMeta({
   </div>
   <form
     id="config-form"
-    class="w-1/2"
+    class="w-1/2 space-y-4"
     @submit.prevent="doSave"
   >
     <div class="form-control">
       <label
-        class="label"
+        class="block mb-1"
         for="admin-emails"
       >
         <span class="label-text">Admin Email</span>
@@ -168,16 +168,15 @@ definePageMeta({
         required="required"
         rows="4"
       />
-      <label
-        class="label"
-        for="admin-emails"
+      <p
+        class="text-xs"
       >
-        <span class="label-text-alt">Please use line breaks to split emails.</span>
-      </label>
+        Please use line breaks to split emails.
+      </p>
     </div>
-    <div class="form-control mb-2">
+    <div class="form-control">
       <label
-        class="label"
+        class="block mb-1"
         for="admin-display-name"
       >
         <span class="label-text">Admin Display Name</span>
@@ -189,12 +188,12 @@ definePageMeta({
         type="text"
       >
     </div>
-    <div class="form-control mb-6">
+    <div class="form-control">
       <label
-        class="label"
+        class="block mb-1"
         for="admin-display-avatar"
       >
-        <span class="label-text">Admin Display Name</span>
+        <span class="label-text">Admin Display Avatar</span>
       </label>
       <input
         id="admin-display-avatar"
@@ -203,13 +202,13 @@ definePageMeta({
         type="url"
       >
     </div>
-    <label
-      class="block mb-2"
-      for="shortcut-emojis"
-    >
-      Preset content
-    </label>
-    <div class="form-control mb-6">
+    <div class="form-control">
+      <label
+        class="block mb-1"
+        for="shortcut-emojis"
+      >
+        Preset content
+      </label>
       <textarea
         id="shortcut-emojis"
         v-model="shortcutEmojis"
@@ -217,46 +216,45 @@ definePageMeta({
         rows="4"
       />
     </div>
-    <h3 class="pb-2 mb-2 border-b">
-      Auto approve
-    </h3>
     <div class="form-control">
-      <label
-        class="label"
-        for="auto-approve"
-      >
-        <span class="label-text">Users with 2 approved comments do not need to be moderated for new comments.</span>
-      </label>
-      <div class="flex justify-start">
-        <label class="label cursor-pointer">
-          <span
-            :class="!config.autoApprove.enabled ? '' : 'opacity-50'"
-            class="label-text"
-          >OFF</span>
+      <div class="block pb-2 mb-3 border-b">
+        Auto approve
+      </div>
+      <div class="grid grid-cols-[1fr_6rem] items-start gap-2">
+        <div class="text-sm">
+          Users with 2 approved comments do not need to be moderated for new comments.
+        </div>
+        <div class="flex justify-start">
+          <label class="label cursor-pointer">
+            <span
+              :class="!config.autoApprove.enabled ? '' : 'opacity-50'"
+              class="label-text"
+            >OFF</span>
+            <input
+              id="auto-approve"
+              v-model="config.autoApprove.enabled"
+              :class="config.autoApprove.enabled ? 'toggle-primary' : ''"
+              class="toggle mx-2"
+              type="checkbox"
+            >
+            <span
+              :class="config.autoApprove.enabled ? 'text-primary font-bold' : ''"
+              class="label-text"
+            >ON</span>
+          </label>
           <input
-            id="auto-approve"
-            v-model="config.autoApprove.enabled"
-            :class="config.autoApprove.enabled ? 'toggle-primary' : ''"
-            class="toggle mx-2"
-            type="checkbox"
+            v-if="config.autoApprove.enabled"
+            v-model="config.autoApprove.include"
+            class="input input-bordered font-mono ms-4"
+            placeholder="Include URLs, default all"
           >
-          <span
-            :class="config.autoApprove.enabled ? 'text-primary font-bold' : ''"
-            class="label-text"
-          >ON</span>
-        </label>
-        <input
-          v-if="config.autoApprove.enabled"
-          v-model="config.autoApprove.include"
-          class="input input-bordered font-mono ms-4"
-          placeholder="Include URLs, default all"
-        >
-        <input
-          v-if="config.autoApprove.enabled"
-          v-model="config.autoApprove.exclude"
-          class="input input-bordered font-mono ms-4"
-          placeholder="Exclude URLs"
-        >
+          <input
+            v-if="config.autoApprove.enabled"
+            v-model="config.autoApprove.exclude"
+            class="input input-bordered font-mono ms-4"
+            placeholder="Exclude URLs"
+          >
+        </div>
       </div>
     </div>
   </form>

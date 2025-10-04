@@ -208,9 +208,9 @@ watch([isApproving, isRejecting, isDeleting, isReplying], () => {
 
 <template>
   <div
-    class="flex items-center gap-4 border rounded-full dark:border-gray-700 overflow-auto"
+    class="flex items-center gap-4 border rounded dark:border-gray-700 overflow-auto"
   >
-    <div class="border-r px-4 self-stretch flex items-center bg-base-100 dark:border-gray-700 sticky top-0 left-0">
+    <div class="border-r px-4 py-2 self-stretch flex items-center bg-base-100 dark:border-gray-700 sticky top-0 left-0">
       Selected <strong class="mx-2 text-primary">{{ modelValue.length }}</strong> comments:
     </div>
     <emoji-shortcuts

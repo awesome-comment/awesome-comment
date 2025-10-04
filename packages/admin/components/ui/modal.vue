@@ -114,7 +114,7 @@ defineExpose({
             method="dialog"
             class="ms-auto"
           >
-            <button class="btn btn-sm btn-circle btn-ghost outline-none">
+            <button class="btn btn-sm btn-circle btn-ghost outline-hidden">
               ✕
             </button>
           </form>

@@ -61,20 +61,22 @@ export default defineNuxtConfig({
     // Add cors headers on API routes
     '/api/**': { cors: true },
   },
+  runtimeConfig: {
+    public: {
+      VERSION: pkg.version,
+    },
+  },
   dayjs: {
     plugins: ['utc', 'timezone'],
   },
   postcss: {
     plugins: {
-      'postcss-import': {},
-      'tailwindcss/nesting': {},
-      tailwindcss: {},
-      autoprefixer: {},
+      '@tailwindcss/postcss': {},
       ...(process.env.NODE_ENV === 'production' ? { cssnano: {} } : {})
     },
   },
   ui: {
-    icons: ['bi'],
+    fonts: false,
   },
   vite: {
     define: {

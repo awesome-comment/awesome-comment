@@ -19,7 +19,7 @@ export default defineEventHandler(async function (event): Promise<ResponseBody<P
       },
     });
     const result = await response.json();
-    total = result.data.rows[ 0 ].comment_count;
+    total = Number(result.data.rows[ 0 ].comment_count);
   } catch (e) {
     const message = (e as Error).message || String(e);
     throw createError({

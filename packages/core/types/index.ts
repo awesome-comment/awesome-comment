@@ -52,6 +52,7 @@ type BaseComment = {
   parentId?: number;
   ancestorId?: number;
   status: CommentStatus;
+  translation?: string;
   children?: Comment[];
   created_at?: string;
   like?: number;

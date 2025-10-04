@@ -122,7 +122,7 @@ const { data: commentsList, status, refresh, error } = useLazyAsyncData<RowItem[
       return Object.values(comments.value).reverse();
     },
     watch: [filterStatus, filterPostId, filterUser, filterLanguage, start],
-  }
+  },
 );
 
 async function doReview(comment: RowItem, status: CommentStatus) {
@@ -329,7 +329,7 @@ definePageMeta({
       Comments Management
     </h1>
     <button
-      class="btn btn-sm me-2"
+      class="btn btn-sm me-2 self-end"
       type="button"
       :disabled="status === 'pending'"
       @click="doReset"
@@ -400,7 +400,7 @@ definePageMeta({
     class="alert alert-error mb-4"
   >
     <i class="bi bi-exclamation-triangle-fill me-2" />
-    <span>{{ message || error.message }}</span>
+    <span>{{ message || error?.message || error }}</span>
   </div>
   <div
     v-if="filterPostId || filterUser"
@@ -470,7 +470,7 @@ definePageMeta({
           ]"
         >
           <td
-            class="!p-0 hidden sm:table-cell"
+            class="p-0! hidden sm:table-cell"
             height="1"
           >
             <label class="block w-full h-full cursor-pointer py-3 px-4 hover:bg-base-200/50">
@@ -501,6 +501,12 @@ definePageMeta({
             </blockquote>
             <p class="break-words max-w-sm overflow-hidden">
               {{ comment.content }}
+            </p>
+            <p
+              v-if="comment.translation"
+              class="max-w-sm text-xs mt-1 text-base-content/90"
+            >
+              (Translation: {{ comment.translation }})
             </p>
             <template v-if="comment.children?.length">
               <div
@@ -664,9 +670,3 @@ export default {
   name: 'AdminCommentsPage',
 }
 </script>
-
-<style>
-.chat-bubble a {
-  @apply text-info underline hover:no-underline;
-}
-</style>

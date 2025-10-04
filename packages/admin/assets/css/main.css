@@ -1,6 +1,45 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import 'tailwindcss';
+@import '@nuxt/ui';
+
+@plugin "daisyui" {
+  themes: corporate --default, dark --prefersdark;
+}
+@plugin "@tailwindcss/typography";
+
+@utility container {
+  @media (width >= --theme(--breakpoint-sm)) {
+    max-width: none;
+  }
+  @media (width >= 1880px) {
+    max-width: 1880px;
+    padding-inline: 1rem;
+  }
+}
+
+@theme {
+  --leading-16: 4rem;
+  --padding-full: 100%;
+  --spacing-60svh: 60svh;
+  --z-index-1: 1;
+}
+
+/*
+  The default border color has changed to `currentcolor` in Tailwind CSS v4,
+  so we've added these compatibility styles to make sure everything still
+  looks the same as it did with Tailwind CSS v3.
+
+  If we ever want to remove these styles, we need to add an explicit border
+  color utility to any element that depends on these defaults.
+*/
+@layer base {
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: var(--color-gray-200, currentcolor);
+  }
+}
 
 html, body {
   height: 100%;
@@ -10,4 +49,8 @@ html, body {
   min-height: 100%;
   display: flex;
   flex-direction: column;
+}
+
+.chat-bubble a {
+  @apply text-info underline hover:no-underline;
 }
