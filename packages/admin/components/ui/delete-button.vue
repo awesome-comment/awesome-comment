@@ -37,7 +37,7 @@ async function onClick(): Promise<void> {
 
 <template>
   <button
-    class="btn btn-outline btn-error btn-sm sm:btn-xs hover:text-white"
+    class="btn btn-outline btn-error btn-sm sm:btn-xs"
     type="button"
     :disabled="disabled"
     @click="onClick"
