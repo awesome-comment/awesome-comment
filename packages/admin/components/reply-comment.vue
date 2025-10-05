@@ -228,7 +228,7 @@ defineExpose({
 
           <template #menu>
             <button
-              class="btn btn-ghost rounded-md"
+              class="btn btn-ghost rounded-md btn-sm btn-soft mt-4"
               type="button"
               @click="doInsertLink"
             >

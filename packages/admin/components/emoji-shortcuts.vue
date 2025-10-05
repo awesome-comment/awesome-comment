@@ -63,7 +63,7 @@ async function doReply(emoji: string, event?: MouseEvent): Promise<void> {
       v-for="item in shortcuts"
       :key="item.key"
       type="button"
-      class="btn btn-sm btn-circle btn-ghost"
+      class="btn btn-sm btn-square btn-ghost"
       :disabled="disabled || !!isReplying"
       @click="doReply(item.id, $event)"
     >

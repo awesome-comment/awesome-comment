@@ -118,7 +118,7 @@ onBeforeUnmount(() => {
       v-for="(template, id) in fixed"
       :key="id"
       type="button"
-      class="btn btn-sm sm:btn-xs btn-outline text-white"
+      class="btn btn-sm sm:btn-xs btn-outline"
       :class="isCopied === id ? 'btn-success' : 'btn-info'"
       :disabled="!!isLoading"
       @click="doUse(id, $event)"
