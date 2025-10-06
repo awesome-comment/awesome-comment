@@ -70,7 +70,7 @@ export default {
       try {
         const response = await ai.models.generateContent({
           model: env.DEFAULT_AI_MODEL,
-          contents: `Please translate the following text between \`"""\` to Chinese.
+          contents: `Please translate the following text between \`"""\` to English.
 
 """${comment.content}"""
 
