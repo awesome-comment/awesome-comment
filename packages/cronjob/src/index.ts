@@ -30,7 +30,11 @@ export default {
     // read latest non-translated comments
     const comments = [];
     try {
-      const _ = await fetchTidb<CommentItem>(env, '/v1/need_translate');
+      const queryParams: Record<string, string | number | null | undefined> = {};
+      if (env.AFTER_ID) {
+        queryParams.after_id = env.AFTER_ID;
+      }
+      const _ = await fetchTidb<CommentItem>(env, '/v1/need_translate', 'GET', undefined, undefined, queryParams);
       comments.push(..._);
     } catch (e) {
       console.log('Error fetching comments:', e);
