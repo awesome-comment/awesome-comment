@@ -12,6 +12,7 @@ declare namespace Cloudflare {
 		ENVIRONMENT: string;
 		GOOGLE_GEMINI_API_KEY: string;
 		TIDB_CLOUD_API_KEY: string;
+		AFTER_ID?: string;
 	}
 }
 interface Env extends Cloudflare.Env {}
