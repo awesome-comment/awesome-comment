@@ -15,22 +15,17 @@ export async function fetchTidb<T>(
     TIDB_CLOUD_ENDPOINT,
   } = env || {};
   const credentials = btoa(TIDB_CLOUD_API_KEY || '');
-  
+
   // Build URL with query parameters
-  let fullUrl = `${TIDB_CLOUD_ENDPOINT}${url}`;
+  const fullUrl = new URL(`${TIDB_CLOUD_ENDPOINT}${url}`);
   if (queryParams) {
-    const params = new URLSearchParams();
     Object.entries(queryParams).forEach(([key, value]) => {
       if (value !== null && value !== undefined) {
-        params.set(key, String(value));
+        fullUrl.searchParams.append(key, String(value));
       }
     });
-    const queryString = params.toString();
-    if (queryString) {
-      fullUrl += `?${queryString}`;
-    }
   }
-  
+
   const response = await fetch(fullUrl, {
     headers: {
       Authorization: `Basic ${credentials}`,
@@ -42,7 +37,7 @@ export async function fetchTidb<T>(
   });
 
   if (ENVIRONMENT !== 'production') {
-    console.log('URL', fullUrl);
+    console.log('URL', fullUrl.toString());
     console.log('Body', body ? toJSON(body) : 'N/A');
   }
   if (!response.ok) {

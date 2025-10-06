@@ -32,7 +32,7 @@ export default {
     try {
       const queryParams: Record<string, string | number | null | undefined> = {};
       if (env.AFTER_ID) {
-        queryParams.after_id = env.AFTER_ID;
+          queryParams.after_id = env.AFTER_ID;
       }
       const _ = await fetchTidb<CommentItem>(env, '/v1/need_translate', 'GET', undefined, undefined, queryParams);
       comments.push(..._);
