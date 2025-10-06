@@ -14,6 +14,7 @@ export default [
       '**/.nuxt',
       '**/dist',
       '**/node_modules',
+      '**/.vercel'
     ],
   },
   // Base JavaScript config
