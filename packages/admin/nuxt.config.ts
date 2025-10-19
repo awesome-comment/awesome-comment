@@ -2,6 +2,8 @@ import pkg from './package.json' with { type: 'json' };
 import acPkg from '../awesome-comment/package.json' with { type: 'json' };
 
 const repoUrl = 'https://unpkg.com/@roudanio/awesome-comment@latest/dist'; // use online ver for now
+const siteUrl = process.env.NUXT_PUBLIC_SITE_URL || 'https://awesome-comment.org';
+
 const modules = [
   '@nuxt/content',
   '@nuxt/image',
@@ -13,6 +15,7 @@ const modules = [
   ],
   '@nuxt/ui',
   'dayjs-nuxt',
+  '@nuxtjs/seo',
 ];
 if (process.env.CLOUDFLARE) {
   modules.push('nitro-cloudflare-dev');
@@ -22,7 +25,6 @@ if (process.env.CLOUDFLARE) {
 export default defineNuxtConfig({
   app: {
     head: {
-      title: 'Awesome comment',
       link: [
         {
           rel: 'stylesheet',
@@ -56,10 +58,58 @@ export default defineNuxtConfig({
     // pre-rendered at build time
     '/': { prerender: true },
     // Admin dashboard renders only on client-side
-    '/admin/**': { ssr: false },
+    '/admin/**': { ssr: false, index: false, robots: false },
     '/admin': { redirect: '/admin/login' },
     // Add cors headers on API routes
-    '/api/**': { cors: true },
+    '/api/**': { cors: true, index: false, robots: false },
+  },
+
+  // SEO Configuration
+  site: {
+    url: siteUrl,
+    name: 'Awesome Comment',
+    description: 'AI-powered comment system that breaks language barriers and provides seamless authentication. Free, open source, self-host or use our SaaS.',
+    defaultLocale: 'en',
+  },
+
+  // Sitemap Configuration
+  sitemap: {
+    enabled: true,
+    excludeAppSources: true,
+    exclude: [
+      '/admin/**',
+      '/api/**',
+    ],
+    sources: [
+      '/api/__sitemap__/urls',
+    ],
+  },
+
+  // Robots Configuration
+  robots: {
+    enabled: true,
+    disallow: [
+      '/admin',
+      '/admin/*',
+      '/api',
+      '/api/*',
+    ],
+  },
+
+  // SEO Metadata
+  ogImage: {
+    enabled: false, // Can enable later with custom images
+  },
+
+  // Schema.org structured data
+  schemaOrg: {
+    enabled: true,
+    identity: {
+      type: 'Organization',
+      name: 'Awesome Comment',
+      url: siteUrl,
+      logo: `${siteUrl}/logo.png`,
+    },
   },
   runtimeConfig: {
     public: {

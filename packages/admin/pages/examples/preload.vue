@@ -1,4 +1,10 @@
 <script setup lang="ts">
+useSeoMeta({
+  title: 'Preload Example - Awesome Comment',
+  description: 'Learn how to preload Awesome Comment to avoid Cumulative Layout Shift (CLS) and improve user experience.',
+  robots: 'noindex, follow',
+});
+
 useHead({
   script: [
     {
