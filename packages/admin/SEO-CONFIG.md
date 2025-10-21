@@ -4,6 +4,36 @@
 
 This document describes the SEO configuration for Awesome Comment website using `@nuxtjs/seo` module.
 
+**Important**: By default, the entire site is blocked from search engine indexing. This is intentional for self-hosted instances. Only the official site should enable indexing by setting `AC_SPIDER=1`.
+
+## Spider Control
+
+### Default Behavior
+
+For security and privacy reasons, **all self-hosted instances block search engine crawlers by default**. This prevents duplicate content issues and protects user-deployed instances.
+
+### Enabling Indexing (Official Site Only)
+
+To allow search engine indexing, set the environment variable:
+
+```bash
+AC_SPIDER=1
+```
+
+**Only the official Awesome Comment website should set this variable.**
+
+### How It Works
+
+When `AC_SPIDER` is not set or set to any value other than `"1"`:
+- `robots.txt` will contain `Disallow: /` (blocks all crawlers)
+- Sitemap generation is disabled
+- All routes have `robots: false` in route rules
+
+When `AC_SPIDER=1`:
+- `robots.txt` only blocks `/admin/**` and `/api/**`
+- Sitemap is generated at `/sitemap.xml`
+- Public pages can be indexed
+
 ## Installed Modules
 
 ```bash
@@ -23,8 +53,16 @@ This meta-package includes:
 
 Add to `.env`:
 ```bash
+# Your site URL
 NUXT_PUBLIC_SITE_URL=https://awesome-comment.pages.dev
+
+# Spider Control (ONLY for official site)
+# Set to "1" to allow search engine indexing
+# Default: disabled (recommended for self-hosted instances)
+AC_SPIDER=1
 ```
+
+**Warning**: Do not set `AC_SPIDER=1` on self-hosted instances to avoid duplicate content penalties.
 
 ### Nuxt Config (`nuxt.config.ts`)
 
@@ -41,7 +79,7 @@ site: {
 #### 2. Sitemap Configuration
 ```typescript
 sitemap: {
-  enabled: true,
+  enabled: enableSpider,  // Only when AC_SPIDER=1
   excludeAppSources: true,
   exclude: [
     '/admin/**',
@@ -53,22 +91,39 @@ sitemap: {
 }
 ```
 
-**Access sitemap at**: `/sitemap.xml`
+**Access sitemap at**: `/sitemap.xml` (only when `AC_SPIDER=1`)
 
 #### 3. Robots Configuration
 ```typescript
 robots: {
   enabled: true,
-  disallow: [
+  // If AC_SPIDER is not set, disallow all crawlers
+  disallow: enableSpider ? [
     '/admin',
     '/admin/*',
     '/api',
     '/api/*',
-  ],
+  ] : ['/'],  // Block everything by default
 }
 ```
 
 **Access robots.txt at**: `/robots.txt`
+
+**Default behavior** (without `AC_SPIDER=1`):
+```
+User-agent: *
+Disallow: /
+```
+
+**With `AC_SPIDER=1`**:
+```
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /admin/*
+Disallow: /api
+Disallow: /api/*
+```
 
 #### 4. Route Rules
 ```typescript
@@ -76,6 +131,8 @@ routeRules: {
   '/': { prerender: true },
   '/admin/**': { ssr: false, index: false, robots: false },
   '/api/**': { cors: true, index: false, robots: false },
+  // Block all routes when spider not enabled
+  ...(enableSpider ? {} : { '/**': { robots: false } }),
 }
 ```
 
@@ -193,12 +250,23 @@ Added to homepage for better search engine understanding:
 
 ## Blocked Paths
 
-The following paths are blocked from indexing:
+### Default (Without AC_SPIDER=1)
 
-- `/admin` - Admin dashboard
-- `/admin/*` - All admin routes
-- `/api` - API endpoints
-- `/api/*` - All API routes
+**All paths are blocked** from search engine indexing:
+- `/` - Homepage blocked
+- `/*` - All pages blocked
+- `/admin` - Admin dashboard blocked
+- `/api` - API endpoints blocked
+
+This is the recommended configuration for self-hosted instances.
+
+### With AC_SPIDER=1 (Official Site Only)
+
+Only sensitive paths are blocked:
+- `/admin` and `/admin/*` - Admin dashboard
+- `/api` and `/api/*` - API endpoints
+
+Public pages like `/`, `/examples`, etc. are allowed to be indexed.
 
 ## Testing SEO
 

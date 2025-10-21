@@ -3,6 +3,7 @@ import acPkg from '../awesome-comment/package.json' with { type: 'json' };
 
 const repoUrl = 'https://unpkg.com/@roudanio/awesome-comment@latest/dist'; // use online ver for now
 const siteUrl = process.env.NUXT_PUBLIC_SITE_URL || 'https://awesome-comment.org';
+const enableSpider = process.env.AC_SPIDER === '1';
 
 const modules = [
   '@nuxt/content',
@@ -62,6 +63,8 @@ export default defineNuxtConfig({
     '/admin': { redirect: '/admin/login' },
     // Add cors headers on API routes
     '/api/**': { cors: true, index: false, robots: false },
+    // If spider not enabled, block all routes from indexing
+    ...(enableSpider ? {} : { '/**': { robots: false } }),
   },
 
   // SEO Configuration
@@ -74,7 +77,7 @@ export default defineNuxtConfig({
 
   // Sitemap Configuration
   sitemap: {
-    enabled: true,
+    enabled: enableSpider,
     excludeAppSources: true,
     exclude: [
       '/admin/**',
@@ -88,12 +91,13 @@ export default defineNuxtConfig({
   // Robots Configuration
   robots: {
     enabled: true,
-    disallow: [
+    // If AC_SPIDER is not set, disallow all crawlers
+    disallow: enableSpider ? [
       '/admin',
       '/admin/*',
       '/api',
       '/api/*',
-    ],
+    ] : ['/'],
   },
 
   // SEO Metadata

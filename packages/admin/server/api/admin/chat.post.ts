@@ -20,7 +20,7 @@ export default defineEventHandler(async function (event: H3Event) {
       },
       body: {
         message,
-        model: Model.Gemini_2_Flash,
+        model: Model.Gemini_2_5_Flash,
       },
     });
   } else {

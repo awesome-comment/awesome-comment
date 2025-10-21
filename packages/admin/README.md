@@ -35,7 +35,14 @@ TIDB_PRIVATE_KEY=your-tidb-private-key
 
 # SEO Configuration
 NUXT_PUBLIC_SITE_URL=https://awesome-comment.pages.dev
+
+# Spider Control (ONLY for official site)
+# Set to "1" to allow search engine indexing
+# Default: disabled (recommended for self-hosted instances)
+# AC_SPIDER=1
 ```
+
+**Important**: By default, all search engine crawlers are blocked. Only set `AC_SPIDER=1` for the official Awesome Comment website. Self-hosted instances should keep this disabled to protect privacy and avoid SEO issues.
 
 ## Development Server
 
