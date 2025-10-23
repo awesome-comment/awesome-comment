@@ -554,7 +554,7 @@ definePageMeta({
               </div>
             </template>
             <emoji-shortcuts-operator
-              v-if="comment.status === CommentStatus.Pending || filterStatus === CommentStatus.UnReplied"
+              v-if="comment.children.length === 0"
               class-name="pt-4"
               :comment="comment"
               @reply="onReply($event, comment)"
