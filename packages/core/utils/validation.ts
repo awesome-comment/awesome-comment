@@ -23,7 +23,7 @@ const DEFAULT_OPTIONS: Required<ValidationOptions> = {
   maxConsecutivePunctuation: 5,
   maxConsecutiveSpaces: 3,
   maxConsecutiveNewlines: 3,
-  minLength: 2,
+  minLength: 5,
   maxLength: 5000,
   minWords: 2,
   allowedPunctuation: [],
@@ -63,6 +63,11 @@ export function validateCommentContent(
   )
   if (!consecutivePunctuationResult.valid) {
     errors.push(...consecutivePunctuationResult.errors)
+  }
+
+  // 不能有连续字母
+  if (/^\w{35,}$/.test(trimmedContent)) {
+    errors.push('Content contains too many consecutive letters')
   }
 
   // 检查连续空格
@@ -111,14 +116,14 @@ function checkConsecutivePunctuation(
   maxConsecutive: number
 ): ValidationResult {
   const errors: string[] = []
-  
+
   // 常见标点符号
   const punctuations = ['!', '?', '.', ',', ';', ':', '！', '？', '。', '，', '；', '：', '…', '~', '～']
-  
+
   for (const punct of punctuations) {
     const regex = new RegExp(`\\${punct}{${maxConsecutive + 1},}`, 'g')
     const matches = content.match(regex)
-    
+
     if (matches) {
       errors.push(
         `Too many consecutive "${punct}" (max ${maxConsecutive}). Found: ${matches[0]}`
@@ -187,7 +192,7 @@ function checkConsecutiveNewlines(
 function checkMinWords(content: string, minWords: number): ValidationResult {
   // 移除多余空格和标点
   const cleaned = content.replace(/[^\p{L}\p{N}\s]/gu, ' ').trim()
-  
+
   // 检测是否为中文为主的内容
   const chineseChars = cleaned.match(/[\u4e00-\u9fa5]/g)
   const isChinese = chineseChars && chineseChars.length > cleaned.length * 0.3

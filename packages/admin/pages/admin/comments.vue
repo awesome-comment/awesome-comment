@@ -81,10 +81,11 @@ const { data: commentsList, status, refresh, error } = useLazyAsyncData<RowItem[
     const { adminEmails = [] } = meta.config;
     const [cms, replies, replyTo]: [Record<number, RowItem>, Comment[], Record<string, Comment>] = (data || [])
       .reduce(([map, replies, replyTo], c) => {
+        const from = c.user_id.split('|');
         c.user = JSON.parse((c.user || '{}') as string);
         c.status = Number(c.status);
         c.id = Number(c.id);
-        c.from = c.user_id.split('|')[ 0 ];
+        c.from = from.length > 1 ? from[ 0 ] : 'google';
         c.postId = c.post_id;
         c.parentId = Number(c.parent_id);
         c.ancestorId = Number(c.ancestor_id);
@@ -504,7 +505,7 @@ definePageMeta({
             </p>
             <p
               v-if="comment.translation"
-              class="max-w-sm text-xs mt-1 text-base-content/90"
+              class="max-w-sm text-xs mt-1 text-base-content/90 break-words overflow-hidden"
             >
               (Translation: {{ comment.translation }})
             </p>

@@ -4,6 +4,7 @@ import { useI18n } from 'vue-i18n';
 import type { CommentStatus } from '@awesome-comment/core/data';
 import type { ResponseBody } from '@awesome-comment/core/types';
 import { withCommandModifier } from '@awesome-comment/core/utils';
+import { validateCommentContent } from '@awesome-comment/core/utils/validation';
 import useStore from '../store';
 import useAuthStore from '../store/auth.ts';
 
@@ -46,7 +47,7 @@ async function doSubmit(event: Event): Promise<void> {
   if ((event.target as HTMLFormElement).matches(':invalid')) return;
   const commentContent = comment.value.trim();
   if (!commentContent) return;
-  if (commentContent.length < 5 || /^\w{35,}$/.test(commentContent)) {
+  if (validateCommentContent(commentContent)){
     message.value = 'We encourage meaningful contributions to foster a positive community. Thank you for your understanding!';
     return;
   }

@@ -1,7 +1,5 @@
 <script setup lang="ts">
 import type { User } from '@awesome-comment/core/types';
-import { isMac } from '@awesome-comment/core/utils';
-import type { UserAgentInfo } from '~/types';
 import { parseUserAgent } from '~/utils';
 import { sleep } from '@antfu/utils';
 
@@ -42,15 +40,20 @@ const userLink = computed<string>(() => {
   params.set('status', 'all');
   return `${localPrefix.value}?${params.toString()}`;
 });
-const agentInfo = computed<UserAgentInfo>(() => {
-  return parseUserAgent(props.user.agent || '');
+const agentInfo = computed<string>(() => {
+  const info = parseUserAgent(props.user.agent || '');
+  return `${ info.deviceType }
+${ info.os } ${ info.osVersion }
+${ info.browser } ${ info.browserVersion }`
+    .split('\n').map(item => item.trim())
+    .join('\n').replace(/\n+/g, '\n').trim();
 });
 
 async function doCopyCustomData() {
   await navigator.clipboard.writeText(JSON.stringify(props.user.custom));
   isCustomCopied.value = true;
   await sleep(1500);
-  isCustomCopied.value = false;
+  isCustomCopied.value = false;1
 }
 async function copyUserName() {
   await navigator.clipboard.writeText(props.user.name);
@@ -172,10 +175,9 @@ async function copyUserEmail() {
       </div>
       <div
         v-if="user.agent"
-        class="text-xs bg-base-200 px-2 py-1 border-l-2 border-neutral hidden sm:block"
+        class="text-xs bg-base-200 px-2 py-1 border-l-2 border-neutral hidden sm:block whitespace-pre-wrap"
       >
-        {{ agentInfo.deviceType }}<br>{{ agentInfo.os }} {{ agentInfo.osVersion }}<br>{{ agentInfo.browser }}
-        {{ agentInfo.browserVersion }}
+        {{ agentInfo }}
       </div>
       <div
         v-if="user.window"
