@@ -13,3 +13,10 @@ export type CommentItem = {
   post_id: string;
   translation?: string;
 }
+
+export type CommentTag = 'Greeting' | 'Bug report' | 'Question' | 'Suggestion' | 'Criticism';
+
+export type TagItem = {
+  id: number;
+  content: string;
+}

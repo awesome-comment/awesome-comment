@@ -17,19 +17,19 @@ describe('Content Validation', () => {
     it('should reject content with too many consecutive exclamation marks', () => {
       const result = validateCommentContent('Wow!!!!!!')
       expect(result.valid).toBe(false)
-      expect(result.errors[0]).toContain('Too many consecutive "!"')
+      expect(result.errors[ 0 ]).toContain('Too many consecutive "!"')
     })
 
     it('should reject content with too many consecutive question marks', () => {
       const result = validateCommentContent('Really??????')
       expect(result.valid).toBe(false)
-      expect(result.errors[0]).toContain('Too many consecutive "?"')
+      expect(result.errors[ 0 ]).toContain('Too many consecutive "?"')
     })
 
     it('should reject content with too many mixed punctuation', () => {
       const result = validateCommentContent('What!?!?!?')
       expect(result.valid).toBe(false)
-      expect(result.errors[0]).toContain('Too many consecutive punctuation')
+      expect(result.errors[ 0 ]).toContain('Too many consecutive punctuation')
     })
 
     it('should accept content with exactly 5 consecutive punctuation', () => {
@@ -40,19 +40,19 @@ describe('Content Validation', () => {
     it('should reject content that is too short', () => {
       const result = validateCommentContent('a')
       expect(result.valid).toBe(false)
-      expect(result.errors[0]).toContain('at least')
+      expect(result.errors[ 0 ]).toContain('at least')
     })
 
     it('should reject content with too many consecutive spaces', () => {
       const result = validateCommentContent('Hello    world')
       expect(result.valid).toBe(false)
-      expect(result.errors[0]).toContain('consecutive spaces')
+      expect(result.errors[ 0 ]).toContain('consecutive spaces')
     })
 
     it('should reject content with too many consecutive newlines', () => {
       const result = validateCommentContent('Line 1\n\n\n\nLine 2')
       expect(result.valid).toBe(false)
-      expect(result.errors[0]).toContain('line breaks')
+      expect(result.errors[ 0 ]).toContain('line breaks')
     })
 
     it('should handle Chinese content correctly', () => {
@@ -73,7 +73,7 @@ describe('Content Validation', () => {
     it('should enforce minimum words for English content', () => {
       const result = validateCommentContent('a', { minWords: 2 })
       expect(result.valid).toBe(false)
-      expect(result.errors[0]).toContain('at least 2')
+      expect(result.errors[ 0 ]).toContain('at least 2')
     })
 
     it('should allow custom options', () => {
@@ -88,7 +88,7 @@ describe('Content Validation', () => {
         blockPatterns: [/https?:\/\//],
       })
       expect(result.valid).toBe(false)
-      expect(result.errors[0]).toContain('blocked pattern')
+      expect(result.errors[ 0 ]).toContain('blocked pattern')
     })
   })
 
@@ -196,7 +196,7 @@ describe('Content Validation', () => {
       const longContent = 'a'.repeat(6000)
       const result = validateCommentContent(longContent)
       expect(result.valid).toBe(false)
-      expect(result.errors[0]).toContain('must not exceed')
+      expect(result.errors[ 0 ]).toContain('must not exceed')
     })
 
     it('should handle content with only punctuation', () => {

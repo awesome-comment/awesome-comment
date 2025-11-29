@@ -2,8 +2,8 @@ import { defineConfig } from 'vitepress'
 
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
-  title: "Awesome Comment",
-  description: "AI-powered comment system with auto-translation and seamless authentication",
+  title: 'Awesome Comment',
+  description: 'AI-powered comment system with auto-translation and seamless authentication',
   
   head: [
     ['link', { rel: 'icon', href: '/favicon.ico' }],

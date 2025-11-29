@@ -89,6 +89,13 @@ const { data: commentsList, status, refresh, error } = useLazyAsyncData<RowItem[
         c.postId = c.post_id;
         c.parentId = Number(c.parent_id);
         c.ancestorId = Number(c.ancestor_id);
+        if (c.tags && typeof c.tags === 'string') {
+          try {
+            c.tags = JSON.parse(c.tags);
+          } catch {
+            c.tags = [];
+          }
+        }
         if (adminEmails.includes(c.user.email) && c.parentId) {
           replies.push(c);
         } else if (c.status === status.value) {
@@ -451,6 +458,9 @@ definePageMeta({
           <th>Time</th>
           <th>Post</th>
           <th class="hidden sm:table-cell">
+            Tags
+          </th>
+          <th class="hidden sm:table-cell">
             Status
           </th>
           <th class="hidden sm:table-cell" />
@@ -616,6 +626,27 @@ definePageMeta({
               >
                 <i class="bi bi-box-arrow-up-right" />
               </nuxt-link>
+            </div>
+          </td>
+          <td class="align-top hidden sm:table-cell">
+            <div
+              v-if="comment.tags?.length"
+              class="flex flex-wrap gap-1"
+            >
+              <span
+                v-for="tag in comment.tags"
+                :key="tag"
+                class="badge badge-sm"
+                :class="{
+                  'badge-info': tag === 'Question',
+                  'badge-error': tag === 'Bug report',
+                  'badge-warning': tag === 'Criticism',
+                  'badge-success': tag === 'Suggestion',
+                  'badge-neutral': tag === 'Greeting',
+                }"
+              >
+                {{ tag }}
+              </span>
             </div>
           </td>
           <td class="align-top hidden sm:table-cell">

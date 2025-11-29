@@ -229,10 +229,17 @@ onMounted(initAwesomeComment);
                   class="p-4 bg-gradient-to-r from-primary/5 to-primary/10 dark:from-primary/10 dark:to-primary/20 rounded-lg border border-primary/20"
                 >
                   <div class="flex items-start gap-3 mb-3">
-                    <u-icon :name="highlight.icon" class="w-7 h-7 text-primary flex-shrink-0 mt-0.5" />
+                    <u-icon
+                      :name="highlight.icon"
+                      class="w-7 h-7 text-primary flex-shrink-0 mt-0.5"
+                    />
                     <div>
-                      <h3 class="font-bold text-lg mb-1">{{ highlight.title }}</h3>
-                      <p class="text-sm text-gray-600 dark:text-gray-400">{{ highlight.description }}</p>
+                      <h3 class="font-bold text-lg mb-1">
+                        {{ highlight.title }}
+                      </h3>
+                      <p class="text-sm text-gray-600 dark:text-gray-400">
+                        {{ highlight.description }}
+                      </p>
                     </div>
                   </div>
                   <ul class="space-y-2 ml-10">
@@ -241,7 +248,10 @@ onMounted(initAwesomeComment);
                       :key="feature"
                       class="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300"
                     >
-                      <u-icon name="i-heroicons-check-circle" class="w-4 h-4 text-primary flex-shrink-0" />
+                      <u-icon
+                        name="i-heroicons-check-circle"
+                        class="w-4 h-4 text-primary flex-shrink-0"
+                      />
                       <span>{{ feature }}</span>
                     </li>
                   </ul>
@@ -271,7 +281,9 @@ onMounted(initAwesomeComment);
 
             <!-- Core Features -->
             <div>
-              <h2 class="text-2xl sm:text-3xl font-bold mb-4">Why Awesome Comment?</h2>
+              <h2 class="text-2xl sm:text-3xl font-bold mb-4">
+                Why Awesome Comment?
+              </h2>
               <p class="text-gray-600 dark:text-gray-400 mb-6">
                 Built for modern websites that value user engagement and global reach
               </p>
@@ -281,10 +293,17 @@ onMounted(initAwesomeComment);
                   :key="feature.title"
                   class="flex items-start gap-3 p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors"
                 >
-                  <u-icon :name="feature.icon" class="w-6 h-6 text-primary flex-shrink-0 mt-0.5" />
+                  <u-icon
+                    :name="feature.icon"
+                    class="w-6 h-6 text-primary flex-shrink-0 mt-0.5"
+                  />
                   <div>
-                    <h3 class="font-semibold mb-1">{{ feature.title }}</h3>
-                    <p class="text-sm text-gray-600 dark:text-gray-400">{{ feature.description }}</p>
+                    <h3 class="font-semibold mb-1">
+                      {{ feature.title }}
+                    </h3>
+                    <p class="text-sm text-gray-600 dark:text-gray-400">
+                      {{ feature.description }}
+                    </p>
                   </div>
                 </div>
               </div>
@@ -292,14 +311,18 @@ onMounted(initAwesomeComment);
 
             <!-- Quick Start -->
             <div>
-              <h2 class="text-2xl sm:text-3xl font-bold mb-6">Quick Start</h2>
+              <h2 class="text-2xl sm:text-3xl font-bold mb-6">
+                Quick Start
+              </h2>
               <div class="space-y-6">
                 <div class="flex items-start gap-3">
                   <div class="flex-shrink-0 w-8 h-8 bg-primary text-white rounded-full flex items-center justify-center font-bold text-sm">
                     1
                   </div>
                   <div class="flex-1 min-w-0">
-                    <h3 class="font-semibold mb-2">Add the script</h3>
+                    <h3 class="font-semibold mb-2">
+                      Add the script
+                    </h3>
                     <u-card class="bg-gray-900 dark:bg-gray-950">
                       <pre class="text-xs text-gray-100 overflow-x-auto"><code>&lt;script src="https://unpkg.com/@roudanio/awesome-comment@latest/dist/awesome-comment.umd.js"&gt;&lt;/script&gt;</code></pre>
                     </u-card>
@@ -311,7 +334,9 @@ onMounted(initAwesomeComment);
                     2
                   </div>
                   <div class="flex-1 min-w-0">
-                    <h3 class="font-semibold mb-2">Initialize</h3>
+                    <h3 class="font-semibold mb-2">
+                      Initialize
+                    </h3>
                     <u-card class="bg-gray-900 dark:bg-gray-950">
                       <pre class="text-xs text-gray-100 overflow-x-auto"><code>AwesomeComment.init('#comment', {
   postId: 'your-post-id',
@@ -328,7 +353,9 @@ onMounted(initAwesomeComment);
                     3
                   </div>
                   <div class="flex-1 min-w-0">
-                    <h3 class="font-semibold mb-2">Add container</h3>
+                    <h3 class="font-semibold mb-2">
+                      Add container
+                    </h3>
                     <u-card class="bg-gray-900 dark:bg-gray-950">
                       <pre class="text-xs text-gray-100 overflow-x-auto"><code>&lt;div id="comment"&gt;&lt;/div&gt;</code></pre>
                     </u-card>
@@ -343,15 +370,23 @@ onMounted(initAwesomeComment);
             <u-card class="shadow-xl">
               <template #header>
                 <div class="flex items-center gap-2">
-                  <u-icon name="i-heroicons-chat-bubble-left-right" class="w-6 h-6 text-primary" />
-                  <h2 class="text-xl font-bold">Try It Live!</h2>
+                  <u-icon
+                    name="i-heroicons-chat-bubble-left-right"
+                    class="w-6 h-6 text-primary"
+                  />
+                  <h2 class="text-xl font-bold">
+                    Try It Live!
+                  </h2>
                 </div>
                 <p class="text-sm text-gray-600 dark:text-gray-400 mt-2">
                   See Awesome Comment in action - leave a comment below
                 </p>
               </template>
 
-              <div id="comment" class="min-h-[400px]"></div>
+              <div
+                id="comment"
+                class="min-h-[400px]"
+              />
             </u-card>
           </div>
         </div>
@@ -364,7 +399,9 @@ onMounted(initAwesomeComment);
     <section class="py-16 sm:py-24 bg-gray-50 dark:bg-gray-900">
       <div class="container mx-auto px-4">
         <div class="text-center mb-12">
-          <h2 class="text-3xl sm:text-4xl font-bold mb-4">Supercharge Your Admin Experience</h2>
+          <h2 class="text-3xl sm:text-4xl font-bold mb-4">
+            Supercharge Your Admin Experience
+          </h2>
           <p class="text-lg text-gray-600 dark:text-gray-400 max-w-3xl mx-auto">
             With AI-powered tools, you can engage with users from anywhere in the world,
             in any language, and respond instantly - all from one intuitive dashboard
@@ -379,10 +416,15 @@ onMounted(initAwesomeComment);
           >
             <div class="flex items-start gap-4">
               <div class="flex-shrink-0">
-                <u-icon :name="feature.icon" class="w-10 h-10 text-primary" />
+                <u-icon
+                  :name="feature.icon"
+                  class="w-10 h-10 text-primary"
+                />
               </div>
               <div>
-                <h3 class="text-lg font-semibold mb-2">{{ feature.title }}</h3>
+                <h3 class="text-lg font-semibold mb-2">
+                  {{ feature.title }}
+                </h3>
                 <p class="text-gray-600 dark:text-gray-400 text-sm">
                   {{ feature.description }}
                 </p>
@@ -409,7 +451,9 @@ onMounted(initAwesomeComment);
     <section class="py-16 sm:py-24">
       <div class="container mx-auto px-4">
         <div class="text-center mb-16">
-          <h2 class="text-3xl sm:text-4xl font-bold mb-4">Built for Scale & Performance</h2>
+          <h2 class="text-3xl sm:text-4xl font-bold mb-4">
+            Built for Scale & Performance
+          </h2>
           <p class="text-lg text-gray-600 dark:text-gray-400">
             Modern infrastructure that grows with your community
           </p>
@@ -423,11 +467,18 @@ onMounted(initAwesomeComment);
           >
             <template #header>
               <div class="flex items-center gap-3">
-                <u-icon :name="tech.icon" class="w-8 h-8 text-primary" />
-                <h3 class="text-xl font-semibold">{{ tech.title }}</h3>
+                <u-icon
+                  :name="tech.icon"
+                  class="w-8 h-8 text-primary"
+                />
+                <h3 class="text-xl font-semibold">
+                  {{ tech.title }}
+                </h3>
               </div>
             </template>
-            <p class="text-gray-600 dark:text-gray-400">{{ tech.description }}</p>
+            <p class="text-gray-600 dark:text-gray-400">
+              {{ tech.description }}
+            </p>
           </u-card>
         </div>
       </div>
@@ -439,7 +490,9 @@ onMounted(initAwesomeComment);
     <section class="py-16 sm:py-24">
       <div class="container mx-auto px-4">
         <div class="text-center mb-12">
-          <h2 class="text-3xl sm:text-4xl font-bold mb-4">Contributors</h2>
+          <h2 class="text-3xl sm:text-4xl font-bold mb-4">
+            Contributors
+          </h2>
           <p class="text-lg text-gray-600 dark:text-gray-400">
             Thanks to the amazing people who make this project possible
           </p>
@@ -465,7 +518,9 @@ onMounted(initAwesomeComment);
               />
 
               <div class="flex-1">
-                <div class="font-bold text-lg mb-2">{{ contributor.name }}</div>
+                <div class="font-bold text-lg mb-2">
+                  {{ contributor.name }}
+                </div>
                 <div class="flex gap-2">
                   <u-button
                     v-if="contributor.github"
@@ -509,7 +564,9 @@ onMounted(initAwesomeComment);
     <section class="py-16 sm:py-24 bg-gray-50 dark:bg-gray-900">
       <div class="container mx-auto px-4">
         <div class="max-w-3xl mx-auto text-center">
-          <h2 class="text-3xl sm:text-4xl font-bold mb-6">Ready to get started?</h2>
+          <h2 class="text-3xl sm:text-4xl font-bold mb-6">
+            Ready to get started?
+          </h2>
           <p class="text-lg text-gray-600 dark:text-gray-400 mb-8">
             Choose between self-hosting or using our managed SaaS service
           </p>
@@ -545,7 +602,6 @@ onMounted(initAwesomeComment);
         </div>
       </div>
     </section>
-
   </div>
 </template>
 

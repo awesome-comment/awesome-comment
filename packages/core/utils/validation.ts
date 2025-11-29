@@ -126,7 +126,7 @@ function checkConsecutivePunctuation(
 
     if (matches) {
       errors.push(
-        `Too many consecutive "${punct}" (max ${maxConsecutive}). Found: ${matches[0]}`
+        `Too many consecutive "${punct}" (max ${maxConsecutive}). Found: ${matches[ 0 ]}`
       )
     }
   }
@@ -136,7 +136,7 @@ function checkConsecutivePunctuation(
   const mixedMatches = content.match(mixedPunctuationRegex)
   if (mixedMatches) {
     errors.push(
-      `Too many consecutive punctuation marks (max ${maxConsecutive}). Found: ${mixedMatches[0]}`
+      `Too many consecutive punctuation marks (max ${maxConsecutive}). Found: ${mixedMatches[ 0 ]}`
     )
   }
 

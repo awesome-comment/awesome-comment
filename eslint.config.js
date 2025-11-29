@@ -1,85 +1,119 @@
 import js from '@eslint/js';
-import typescript from '@typescript-eslint/eslint-plugin';
-import typescriptParser from '@typescript-eslint/parser';
+import typescript from 'typescript-eslint';
 import vue from 'eslint-plugin-vue';
-import vueParser from 'vue-eslint-parser';
-import vueTypeScript from '@vue/eslint-config-typescript';
+import globals from 'globals';
 
-export default [
+export default typescript.config(
   // Ignore patterns
   {
     ignores: [
-      'node_modules',
-      'dist',
-      '**/.nuxt',
-      '**/dist',
-      '**/node_modules',
-      '**/.vercel'
+      '**/node_modules/**',
+      '**/dist/**',
+      '**/.nuxt/**',
+      '**/.vercel/**',
+      '**/.vitepress/**',
+      '**/*.test.ts',
     ],
   },
-  // Base JavaScript config
+
+  // Base configs
   js.configs.recommended,
-  // Vue recommended config for Vue 3
-  ...vue.configs[ 'flat/recommended' ],
-  // Vue TypeScript config
-  ...vueTypeScript(),
-  // Custom configuration for all files
+  ...typescript.configs.recommended,
+  ...vue.configs['flat/recommended'],
+
+  // TypeScript and Vue files
   {
-    files: ['**/*.js', '**/*.vue', '**/*.ts', '**/*.tsx'],
+    files: ['**/*.ts', '**/*.tsx', '**/*.vue'],
     languageOptions: {
       ecmaVersion: 'latest',
       sourceType: 'module',
-      parser: vueParser,
       parserOptions: {
-        parser: typescriptParser,
-        ecmaVersion: 'latest',
-        sourceType: 'module',
+        parser: typescript.parser,
       },
       globals: {
-        // Browser globals
-        window: true,
-        document: true,
-        navigator: true,
-        console: true,
-        // Node.js globals
-        process: true,
-        __dirname: true,
-        __filename: true,
-        module: true,
-        require: true,
-        fetch: true,
-        // ES2022 globals
-        globalThis: true,
-        // Vue globals
-        withDefaults: true,
-        defineProps: true,
-        defineEmits: true,
-        defineExpose: true,
+        ...globals.browser,
+        ...globals.node,
+        // Vue compiler macros
+        defineProps: 'readonly',
+        defineEmits: 'readonly',
+        defineExpose: 'readonly',
+        withDefaults: 'readonly',
+        // Vue reactivity
+        ref: 'readonly',
+        reactive: 'readonly',
+        computed: 'readonly',
+        watch: 'readonly',
+        watchEffect: 'readonly',
+        shallowRef: 'readonly',
+        toRef: 'readonly',
+        toRefs: 'readonly',
+        unref: 'readonly',
+        nextTick: 'readonly',
+        // Vue lifecycle
+        onMounted: 'readonly',
+        onUnmounted: 'readonly',
+        onBeforeMount: 'readonly',
+        onBeforeUnmount: 'readonly',
+        onUpdated: 'readonly',
+        onBeforeUpdate: 'readonly',
+        // Nuxt composables
+        useRoute: 'readonly',
+        useRouter: 'readonly',
+        useHead: 'readonly',
+        useSeoMeta: 'readonly',
+        useAsyncData: 'readonly',
+        useLazyAsyncData: 'readonly',
+        useFetch: 'readonly',
+        useLazyFetch: 'readonly',
+        useNuxtApp: 'readonly',
+        useRuntimeConfig: 'readonly',
+        useState: 'readonly',
+        navigateTo: 'readonly',
+        definePageMeta: 'readonly',
+        defineNuxtConfig: 'readonly',
+        $fetch: 'readonly',
+        useToast: 'readonly',
         // Custom globals
-        __IS_PROD__: true,
-        __API_URL__: true,
-        __VERSION__: true,
+        __IS_PROD__: 'readonly',
+        __API_URL__: 'readonly',
+        __VERSION__: 'readonly',
+        __POST_ID_PREFIX__: 'readonly',
+        __AI_ADMIN_ENDPOINT__: 'readonly',
+        __AC_VERSION__: 'readonly',
+        __REPO_URL__: 'readonly',
+        __AUTH0_DOMAIN__: 'readonly',
+        __AUTH0_CLIENT_ID__: 'readonly',
+        AwesomeComment: 'readonly',
       },
-    },
-    plugins: {
-      '@typescript-eslint': typescript,
-      vue,
     },
     rules: {
       'quotes': ['error', 'single'],
       'object-curly-spacing': ['error', 'always'],
       'computed-property-spacing': ['error', 'always'],
-      '@typescript-eslint/no-unused-vars': 0,
-      '@typescript-eslint/no-empty-object-type': 0,
-      '@typescript-eslint/triple-slash-reference': 0,
-      '@typescript-eslint/no-unused-expressions': 0,
+      '@typescript-eslint/no-unused-vars': 'off',
+      '@typescript-eslint/no-empty-object-type': 'off',
+      '@typescript-eslint/triple-slash-reference': 'off',
+      '@typescript-eslint/no-unused-expressions': 'off',
     },
   },
-  // Override for layout Vue files
+
+  // JavaScript files
+  {
+    files: ['**/*.js'],
+    languageOptions: {
+      ecmaVersion: 'latest',
+      sourceType: 'module',
+      globals: {
+        ...globals.node,
+      },
+    },
+  },
+
+  // Layout Vue files
   {
     files: ['**/layouts/*.vue'],
     rules: {
       'vue/multi-word-component-names': 'off',
     },
   },
-];
+);

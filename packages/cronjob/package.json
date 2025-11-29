@@ -15,7 +15,9 @@
 	},
 	"dependencies": {
 		"@google/genai": "^1.22.0",
-		"lodash-es": "^4.17.21"
+		"lodash-es": "^4.17.21",
+		"zod": "^4.1.13",
+		"zod-to-json-schema": "^3.25.0"
 	},
 	"type": "module"
 }
