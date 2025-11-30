@@ -14,6 +14,7 @@
 		"wrangler": "^4.41.0"
 	},
 	"dependencies": {
+    "@awesome-comment/core": "workspace:*",
 		"@google/genai": "^1.22.0",
 		"lodash-es": "^4.17.21",
 		"zod": "^4.1.13",
