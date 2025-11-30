@@ -1,0 +1,18 @@
+{
+  "name": "db-optimizer",
+  "version": "1.0.0",
+  "description": "Database optimization analyzer",
+  "type": "module",
+  "main": "analyze.js",
+  "scripts": {
+    "start": "node analyze.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "packageManager": "pnpm@10.6.5",
+  "dependencies": {
+    "dotenv": "^17.2.3",
+    "mysql2": "^3.15.3"
+  }
+}
