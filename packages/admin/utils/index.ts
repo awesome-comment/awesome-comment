@@ -84,7 +84,7 @@ export function parseUserAgent(userAgent: string): UserAgentInfo {
     const match = userAgent.match(browser.regex);
     if (match) {
       result.browser = browser.name;
-      result.browserVersion = match[ 1 ];
+      result.browserVersion = match[ 1 ] || '';
       break;
     }
   }
