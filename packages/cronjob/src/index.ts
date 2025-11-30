@@ -2,8 +2,6 @@ import pkg from '../package.json' with { type: 'json' };
 import { translateComments } from './lib/translate-comments';
 import { tagComments } from './lib/tag-comments';
 
-
-
 export default {
   async fetch() {
     return new Response(
@@ -26,6 +24,9 @@ export default {
       case '5,15,25,35,45,55 * * * *':
         ctx.waitUntil(tagComments(env));
         break;
+
+      default:
+        throw new Error(`No handler for this cron: ${event.cron}`);
     }
   },
 } satisfies ExportedHandler<Env>;

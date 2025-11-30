@@ -22,7 +22,7 @@ export async function tagComments(env: Cloudflare.Env): Promise<void> {
 
   let comments: TagItem[] = [];
   try {
-    comments = await fetchTidb<TagItem>(env, '/v1/need_label', 'GET', undefined, undefined, queryParams);
+    comments = await fetchTidb<TagItem>(env, '/v1/untagged_comments', 'GET', undefined, undefined, queryParams);
   } catch (e) {
     console.log('Error fetching comments for tagging:', e);
     await env.KV.delete(KV_KEY);
@@ -64,7 +64,7 @@ Note:
       const tags = tagsSchema.parse(JSON.parse(response.text));
       await fetchTidb(
         env,
-        '/v1/update_label',
+        '/v1/update_tags',
         'PUT',
         {
           id: comment.id,
@@ -77,5 +77,6 @@ Note:
       console.log('Error tagging comment:', comment.id, e);
     }
   }
+  await env.KV.delete(KV_KEY);
   console.log('Tagging job completed.', success, comments.length);
 }
