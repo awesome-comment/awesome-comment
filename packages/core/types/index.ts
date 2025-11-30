@@ -1,4 +1,4 @@
-import { CommentStatus } from '../data';
+import { CommentStatus, CommentTag } from '../data';
 
 export type ToggleableRule = {
   enabled: boolean;
@@ -53,7 +53,7 @@ type BaseComment = {
   ancestorId?: number;
   status: CommentStatus;
   translation?: string;
-  tags?: string[];
+  tags?: CommentTag[];
   children?: Comment[];
   created_at?: string;
   like?: number;

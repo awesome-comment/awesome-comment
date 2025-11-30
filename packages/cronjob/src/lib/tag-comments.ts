@@ -1,10 +1,10 @@
-import { CommentTag, TagItem } from '../types';
+import { TagItem } from '../types';
+import { CommentTags } from '@awesome-comment/core/data';
 import { fetchTidb } from '../services/fetch-tidb';
 import { GoogleGenAI } from '@google/genai';
 import z from 'zod';
 
 const KV_KEY = 'cronjob-tag-lock';
-const VALID_TAGS: CommentTag[] = ['Greeting', 'Bug report', 'Question', 'Suggestion', 'Criticism'];
 
 export async function tagComments(env: Cloudflare.Env): Promise<void> {
   const lock = await env.KV.get(KV_KEY);
@@ -40,12 +40,12 @@ export async function tagComments(env: Cloudflare.Env): Promise<void> {
   });
 
   let success = 0;
-  const tagsSchema = z.array(z.enum(VALID_TAGS));
+  const tagsSchema = z.array(z.enum(CommentTags));
   for (const comment of comments) {
     try {
       const response = await ai.models.generateContent({
         model: env.DEFAULT_AI_MODEL,
-        contents: `Please classify the following comment between \`"""\` into one or more of these categories: ${VALID_TAGS.join(', ')}.
+        contents: `Please classify the following comment between \`"""\` into one or more of these categories: ${CommentTags.join(', ')}.
 
 """${comment.content}"""
 

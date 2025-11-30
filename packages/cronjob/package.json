@@ -1,6 +1,6 @@
 {
 	"name": "@roudanio/awesome-comment-cronjob",
-	"version": "0.1.3",
+	"version": "0.1.4",
 	"private": true,
 	"scripts": {
 		"deploy": "wrangler deploy",

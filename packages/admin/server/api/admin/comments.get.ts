@@ -9,6 +9,7 @@ export default defineEventHandler(async function (event): Promise<ResponseBody<C
     postId = '',
     user = '',
     language = '',
+    tag = '',
   } = query;
 
   const data: Comment[] = [];
@@ -20,6 +21,9 @@ export default defineEventHandler(async function (event): Promise<ResponseBody<C
     params.set('emails', event.context.config.adminEmails);
     if (language) {
       params.set('lang', `%/${language}/%`);
+    }
+    if (tag) {
+      params.set('tag', JSON.stringify(tag));
     }
     if (status) {
       switch (Number(status)) {

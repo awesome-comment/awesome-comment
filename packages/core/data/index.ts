@@ -8,6 +8,16 @@ export enum CommentStatus {
   'Replied to Admin',
 }
 
+export const CommentTags = [
+  'Greeting',
+  'Bug report',
+  'Question',
+  'Suggestion',
+  'Criticism',
+] as const;
+
+export type CommentTag = typeof CommentTags[number];
+
 export const MarkdownLinkRegex = /(?<!!)\[([^\]]+)]\(([^\s)]+)(?:\s+"[^"]*")?\)/;
 
 export const EmailAppendixRegex = /@([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}$/;

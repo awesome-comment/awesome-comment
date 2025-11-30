@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { parse } from 'marked';
 import type { Comment } from '@awesome-comment/core/types';
-import { CommentStatus, Languages } from '@awesome-comment/core/data';
+import { CommentStatus, CommentTags, Languages } from '@awesome-comment/core/data';
 import { useAuth0 } from '@auth0/auth0-vue';
 import dayjs from 'dayjs';
 import keyBy from 'lodash-es/keyBy';
@@ -37,6 +37,7 @@ const filterStatus = ref<CommentStatus | 'all'>(
 const filterPostId = ref<string>(route.query.post_id || '');
 const filterUser = ref<string>(route.query.user || '');
 const filterLanguage = ref<string>(route.query.language || '');
+const filterTag = ref<string>(route.query.tag || '');
 const comments = ref<Record<number, RowItem>>({});
 const currentItem = ref<number>(-1);
 const hasReplyModal = ref<boolean>(false);
@@ -72,6 +73,7 @@ const { data: commentsList, status, refresh, error } = useLazyAsyncData<RowItem[
         start: start.value,
         user: filterUser.value,
         language: filterLanguage.value,
+        tag: filterTag.value,
       },
       headers: {
         Authorization: `Bearer ${token}`,
@@ -129,7 +131,7 @@ const { data: commentsList, status, refresh, error } = useLazyAsyncData<RowItem[
     default() {
       return Object.values(comments.value).reverse();
     },
-    watch: [filterStatus, filterPostId, filterUser, filterLanguage, start],
+    watch: [filterStatus, filterPostId, filterUser, filterLanguage, filterTag, start],
   },
 );
 
@@ -198,6 +200,11 @@ function doFilter(postId: string): void {
 function doFilterByUser(userId: string): void {
   doReset();
   filterUser.value = userId;
+  updateUrl();
+}
+function doFilterByTag(tag: string): void {
+  doReset();
+  filterTag.value = tag;
   updateUrl();
 }
 function doReset(shouldRefresh?: MouseEvent | boolean): void {
@@ -288,6 +295,7 @@ function updateUrl(): void {
       post_id: filterPostId.value,
       user: filterUser.value,
       language: filterLanguage.value,
+      tag: filterTag.value,
     },
   });
 }
@@ -377,6 +385,31 @@ definePageMeta({
         </option>
       </select>
     </div>
+    <div class="form-control flex-row gap-2 me-2">
+      <label
+        class="label"
+        for="tag"
+      >
+        <span class="text-xs">Tag</span>
+      </label>
+      <select
+        id="tag"
+        v-model="filterTag"
+        class="select select-bordered select-sm"
+        @change="onStatusChange"
+      >
+        <option value="">
+          All
+        </option>
+        <option
+          v-for="tag in CommentTags"
+          :key="tag"
+          :value="tag"
+        >
+          {{ tag }}
+        </option>
+      </select>
+    </div>
     <div class="form-control flex-row gap-2">
       <label
         class="label"
@@ -411,7 +444,7 @@ definePageMeta({
     <span>{{ message || error?.message || error }}</span>
   </div>
   <div
-    v-if="filterPostId || filterUser"
+    v-if="filterPostId || filterUser || filterTag"
     class="flex gap-4 mb-4"
   >
     <button
@@ -432,6 +465,16 @@ definePageMeta({
     >
       <i class="bi bi-funnel-fill" />
       {{ filterUser }}
+      <i class="bi bi-x-lg" />
+    </button>
+    <button
+      v-if="filterTag"
+      class="btn btn-outline btn-sm normal-case"
+      type="button"
+      @click="doFilterByTag('')"
+    >
+      <i class="bi bi-tag-fill" />
+      {{ filterTag }}
       <i class="bi bi-x-lg" />
     </button>
   </div>
@@ -633,10 +676,11 @@ definePageMeta({
               v-if="comment.tags?.length"
               class="flex flex-wrap gap-1"
             >
-              <span
+              <button
                 v-for="tag in comment.tags"
                 :key="tag"
-                class="badge badge-sm"
+                type="button"
+                class="badge badge-sm cursor-pointer hover:opacity-80"
                 :class="{
                   'badge-info': tag === 'Question',
                   'badge-error': tag === 'Bug report',
@@ -644,9 +688,10 @@ definePageMeta({
                   'badge-success': tag === 'Suggestion',
                   'badge-neutral': tag === 'Greeting',
                 }"
+                @click="doFilterByTag(tag)"
               >
                 {{ tag }}
-              </span>
+              </button>
             </div>
           </td>
           <td class="align-top hidden sm:table-cell">
