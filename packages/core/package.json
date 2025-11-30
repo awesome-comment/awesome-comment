@@ -4,7 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "get-i18n": "node scripts/i18n.js"
+    "get-i18n": "node scripts/i18n.js",
+    "test": "vitest",
+    "test:run": "vitest run"
   },
   "keywords": [],
   "author": "",
@@ -14,6 +16,7 @@
     "@cloudflare/workers-types": "^4.20251001.0",
     "@upstash/redis": "^1.35.4",
     "dotenv": "^17.2.3",
-    "h3": "^1.15.4"
+    "h3": "^1.15.4",
+    "vitest": "^4.0.14"
   }
 }

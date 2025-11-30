@@ -4,7 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "lint": "eslint . --fix"
+    "lint": "eslint . --fix",
+    "test": "pnpm -r run test:run",
+    "test:watch": "pnpm -r run test"
   },
   "keywords": [],
   "author": {
