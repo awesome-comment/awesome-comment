@@ -73,6 +73,7 @@ export default typescript.config(
         defineNuxtConfig: 'readonly',
         $fetch: 'readonly',
         useToast: 'readonly',
+        useDayjs: 'readonly',
         // Custom globals
         __IS_PROD__: 'readonly',
         __API_URL__: 'readonly',
