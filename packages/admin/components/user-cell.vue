@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { User } from '@awesome-comment/core/types';
+import { sleep } from '@awesome-comment/core/utils';
 import { parseUserAgent } from '~/utils';
-import { sleep } from '@antfu/utils';
 
 type Props = {
   from: string;

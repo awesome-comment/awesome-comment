@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { sleep } from '@antfu/utils';
+import { sleep } from '@awesome-comment/core/utils';
 import usePromptStore from '~/store/prompt';
 import useConfigStore from '~/store';
 import { useAuth0 } from '@auth0/auth0-vue';
