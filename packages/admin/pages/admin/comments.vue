@@ -244,7 +244,7 @@ definePageMeta({
 </script>
 
 <template>
-  <comments-comments-header
+  <comments-header
     v-model:filter-status="filterStatus"
     v-model:filter-language="filterLanguage"
     v-model:filter-tag="filterTag"
