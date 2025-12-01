@@ -15,7 +15,7 @@
   ],
 	"placement": { "mode": "smart" },
 	"vars": {
-    "AFTER_ID": "305190148",
+    "AFTER_ID": "309600037",
     "DEFAULT_AI_MODEL": "gemini-2.5-flash",
     "ENVIRONMENT": "production",
 		"TIDB_CLOUD_ENDPOINT": "https://ap-northeast-1.data.tidbcloud.com/api/v1beta/app/dataapp-NFYbhmOK/endpoint"
