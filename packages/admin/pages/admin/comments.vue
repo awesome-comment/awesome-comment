@@ -251,7 +251,7 @@ definePageMeta({
     :status="status"
     :cs-keys="CSKeys"
     :comment-status-enum="CommentStatus"
-    @reset="doReset"
+    @refresh="refresh"
     @status-change="onStatusChange"
   />
 

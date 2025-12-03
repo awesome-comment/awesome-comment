@@ -11,7 +11,7 @@ const props = defineProps<{
 }>();
 
 const emit = defineEmits<{
-  reset: [];
+  refresh: [];
   statusChange: [];
   'update:filterStatus': [value: number | 'all'];
   'update:filterLanguage': [value: string];
@@ -45,7 +45,7 @@ function onStatusChange() {
       class="btn btn-sm me-2 self-end"
       type="button"
       :disabled="status === 'pending'"
-      @click="$emit('reset')"
+      @click="$emit('refresh')"
     >
       <span
         v-if="status === 'pending'"
