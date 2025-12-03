@@ -73,7 +73,7 @@ describe('Content Validation', () => {
     it('should enforce minimum words for English content', () => {
       const result = validateCommentContent('a', { minWords: 2 })
       expect(result.valid).toBe(false)
-      expect(result.errors[ 0 ]).toContain('at least 2')
+      expect(result.errors[ 1 ]).toContain('at least 2')
     })
 
     it('should allow custom options', () => {
@@ -85,7 +85,7 @@ describe('Content Validation', () => {
 
     it('should block custom patterns', () => {
       const result = validateCommentContent('Visit example.com for more', {
-        blockPatterns: [/https?:\/\//],
+        blockPatterns: [/\w+\.com/],
       })
       expect(result.valid).toBe(false)
       expect(result.errors[ 0 ]).toContain('blocked pattern')

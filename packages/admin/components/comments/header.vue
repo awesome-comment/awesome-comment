@@ -134,3 +134,9 @@ function onStatusChange() {
     </div>
   </header>
 </template>
+
+<script lang="ts">
+export default {
+  name: 'CommentsHeader',
+};
+</script>

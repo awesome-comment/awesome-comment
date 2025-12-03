@@ -25,7 +25,7 @@ const DEFAULT_OPTIONS: Required<ValidationOptions> = {
   maxConsecutiveNewlines: 3,
   minLength: 5,
   maxLength: 5000,
-  minWords: 2,
+  minWords: 1,
   allowedPunctuation: [],
   blockPatterns: [],
 }
@@ -132,7 +132,7 @@ function checkConsecutivePunctuation(
   }
 
   // 检查混合标点符号连续出现
-  const mixedPunctuationRegex = /[!?.,;:！？。，；：…~～]{6,}/g
+  const mixedPunctuationRegex = new RegExp(`[${punctuations.join('')}]{${maxConsecutive + 1},}`, 'g');
   const mixedMatches = content.match(mixedPunctuationRegex)
   if (mixedMatches) {
     errors.push(
