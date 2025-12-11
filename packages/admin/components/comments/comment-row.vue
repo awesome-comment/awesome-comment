@@ -1,17 +1,23 @@
 <script setup lang="ts">
 import { parse } from 'marked';
-import type { Comment } from '@awesome-comment/core/types';
+import type { Comment, CommentUser, User } from '@awesome-comment/core/types';
 import { CommentStatus } from '@awesome-comment/core/data';
 import { useAuth0 } from '@auth0/auth0-vue';
+import type { FetchError } from "ofetch";
 
 export type RowItem = Comment & {
+  children?: RowItem[];
+  created_at: string;
+  from: string;
+  id: number;
   isApproving: boolean;
   isRejecting: boolean;
   isDeleting: boolean;
   isDeleted: boolean;
   isReplying: boolean;
-  from: string;
   toContent?: string;
+  toUser?: CommentUser;
+  user: User;
 }
 
 const props = defineProps<{
@@ -26,6 +32,7 @@ const props = defineProps<{
 }>();
 
 const emit = defineEmits<{
+  approve: [id: number];
   select: [id: number];
   edit: [content: string];
   reply: [reply: Comment, parent: Comment];
@@ -36,11 +43,10 @@ const emit = defineEmits<{
   error: [message: string];
 }>();
 
-const auth0 = process.client ? useAuth0() : undefined;
+const auth0 = import.meta.client ? useAuth0() : undefined;
 
-async function doReview(status: CommentStatus) {
+async function doReview(comment: RowItem, status: CommentStatus) {
   if (!auth0) return;
-  const comment = props.comment;
   if (comment.isApproving || comment.isRejecting || comment.isDeleting) return;
 
   if (status === CommentStatus.Approved) {
@@ -56,6 +62,9 @@ async function doReview(status: CommentStatus) {
   });
   comment.status = status;
   comment.isApproving = comment.isRejecting = false;
+  if (status === CommentStatus.Approved) {
+    emit('approve', comment.id);
+  }
 }
 
 async function doDelete(): Promise<void> {
@@ -75,8 +84,8 @@ async function doDelete(): Promise<void> {
       },
     });
   } catch (e) {
-    if (e.status !== 500) {
-      emit('error', 'Failed to delete comment.' + e.message);
+    if ((e as FetchError).status !== 500) {
+      emit('error', 'Failed to delete comment.' + (e as FetchError).message);
       comment.isDeleting = false;
       return;
     }
@@ -101,7 +110,7 @@ async function doRemoveReply(child: RowItem, index: number): Promise<void> {
       'X-AC-POST-id': comment.postId,
     },
   });
-  comment.children.splice(index, 1);
+  comment.children?.splice(index, 1);
 }
 
 function onReply(reply: Comment) {
@@ -230,7 +239,7 @@ function parseMarkdown(md: string): string {
             v-html="parseMarkdown(child.content)"
           />
           <div class="chat-footer mt-1">
-            <i class="bi bi-patch-check-fill me-1" />{{ child.user.email }}
+            <i class="bi bi-patch-check-fill me-1" />{{ child.user?.email }}
           </div>
         </div>
       </template>
@@ -256,7 +265,7 @@ function parseMarkdown(md: string): string {
       <user-cell
         :filter="filter"
         :user="comment.user"
-        :user-id="comment.user_id"
+        :user-id="comment.userId"
         :from="comment.from"
       />
     </td>
@@ -291,8 +300,8 @@ function parseMarkdown(md: string): string {
         <nuxt-link
           class="btn btn-xs btn-ghost"
           target="_blank"
-          external="external"
-          :to="comment.post_id"
+          external
+          :to="comment.postId"
         >
           <i class="bi bi-box-arrow-up-right" />
         </nuxt-link>

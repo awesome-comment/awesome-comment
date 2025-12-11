@@ -46,11 +46,11 @@ export type CommentUser = {
 
 type BaseComment = {
   id?: number;
-  postId: string;
+  post_id: string;
   content: string;
-  userId: string;
-  parentId?: number;
-  ancestorId?: number;
+  user_id: string;
+  parent_id?: number;
+  ancestor_id?: number;
   status: CommentStatus;
   translation?: string;
   tags?: CommentTag[];
@@ -59,10 +59,14 @@ type BaseComment = {
   like?: number;
 }
 export type Comment = BaseComment & {
+  ancestorId?: number;
   createdAt: Date;
-  user?: CommentUser;
   isNew?: boolean;
   isAdmin?: boolean;
+  parentId?: number;
+  postId: string;
+  user?: CommentUser;
+  userId: string;
 }
 export type ResponseComment = BaseComment & {
   created_at: string;

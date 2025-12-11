@@ -7,7 +7,7 @@ import type { RowItem } from '~/components/comments/comment-row.vue';
 
 const postIdPrefix = __POST_ID_PREFIX__;
 const CSKeys = Object.values(CommentStatus).filter((v) => !isNaN(Number(v)));
-const auth0 = process.client ? useAuth0() : undefined;
+const auth0 = import.meta.client ? useAuth0() : undefined;
 const route = useRoute();
 
 const start = ref<number>(0);
@@ -20,10 +20,10 @@ const filterStatus = ref<CommentStatus | 'all'>(
     ? route.query.status === 'all' ? 'all' : Number(route.query.status)
     : CommentStatus.Pending
 );
-const filterPostId = ref<string>(route.query.post_id || '');
-const filterUser = ref<string>(route.query.user || '');
-const filterLanguage = ref<string>(route.query.language || '');
-const filterTag = ref<string>(route.query.tag || '');
+const filterPostId = ref<string>(route.query.post_id as string || '');
+const filterUser = ref<string>(route.query.user as string || '');
+const filterLanguage = ref<string>(route.query.language as string || '');
+const filterTag = ref<string>(route.query.tag as string || '');
 const comments = ref<Record<number, RowItem>>({});
 const currentItem = ref<number>(-1);
 const hasReplyModal = ref<boolean>(false);
@@ -47,10 +47,10 @@ const filter = computed<URLSearchParams>(() => {
 const { data: commentsList, status, refresh, error } = useLazyAsyncData<RowItem[]>(
   'comments',
   async function () {
-    if (!auth0) return;
+    if (!auth0) return [];
     if (!auth0.isAuthenticated.value) {
       message.value = 'Sorry, you must login first.'
-      return;
+      return [];
     }
 
     const token = await auth0.getAccessTokenSilently();
@@ -68,11 +68,12 @@ const { data: commentsList, status, refresh, error } = useLazyAsyncData<RowItem[
       },
     });
 
-    const { adminEmails = [] } = meta.config;
+    const { adminEmails = [] } = meta?.config || {};
     const [cms, replies, replyTo]: [Record<number, RowItem>, Comment[], Record<string, Comment>] = (data || [])
       .reduce(([map, replies, replyTo], c) => {
         const from = c.user_id.split('|');
         c.user = JSON.parse((c.user || '{}') as string);
+        c.userId = c.user_id;
         c.status = Number(c.status);
         c.id = Number(c.id);
         c.from = from.length > 1 ? from[ 0 ] : 'google';
@@ -123,8 +124,13 @@ const { data: commentsList, status, refresh, error } = useLazyAsyncData<RowItem[
   },
 );
 
+function onApproved(id: number) {
+  if (filterStatus.value === CommentStatus.Pending) {
+    commentsList.value = commentsList.value.filter(item => item.id !== id);
+  }
+}
 function onDeleted(comment: RowItem) {
-  delete comments.value[ comment.id ];
+  commentsList.value = commentsList.value.filter(item => item.id !== comment.id);
 }
 
 function doLoadMore() {
@@ -317,6 +323,7 @@ definePageMeta({
           :is-batching="isBatching"
           :loading-more="loadingMore"
           :filter="filter"
+          @approve="onApproved"
           @select="toggleSelect"
           @edit="comment.content = $event"
           @modal="hasReplyModal = $event"
