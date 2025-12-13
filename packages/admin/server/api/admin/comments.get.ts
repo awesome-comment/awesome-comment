@@ -46,7 +46,7 @@ export default defineEventHandler(async function (event): Promise<ResponseBody<C
     if (user) {
       params.set('user_id', user as string);
     }
-    const response = await fetch(`${url}?${params}`, {
+    const response = await fetch(`${url}?${params.toString()}`, {
       method: 'GET',
       headers: {
         'Authorization': `Basic ${encodedCredentials}`,

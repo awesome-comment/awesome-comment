@@ -3,7 +3,7 @@ import { parse } from 'marked';
 import type { Comment, CommentUser, User } from '@awesome-comment/core/types';
 import { CommentStatus } from '@awesome-comment/core/data';
 import { useAuth0 } from '@auth0/auth0-vue';
-import type { FetchError } from "ofetch";
+import type { FetchError } from 'ofetch';
 
 export type RowItem = Comment & {
   children?: RowItem[];

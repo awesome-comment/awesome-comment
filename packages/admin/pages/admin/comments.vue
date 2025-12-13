@@ -53,6 +53,15 @@ const { data: commentsList, status, refresh, error } = useLazyAsyncData<RowItem[
       return [];
     }
 
+    // removed approved comments if filterStatus is pending
+    if (filterStatus.value === CommentStatus.Pending) {
+      for (const key of Object.keys(comments.value)) {
+        if (comments.value[ Number(key) ]!.status === CommentStatus.Approved) {
+          delete comments.value[ Number(key) ];
+        }
+      }
+    }
+
     const token = await auth0.getAccessTokenSilently();
     const { data, meta } = await $fetch('/api/admin/comments', {
       query: {
@@ -71,6 +80,16 @@ const { data: commentsList, status, refresh, error } = useLazyAsyncData<RowItem[
     const { adminEmails = [] } = meta?.config || {};
     const [cms, replies, replyTo]: [Record<number, RowItem>, Comment[], Record<string, Comment>] = (data || [])
       .reduce(([map, replies, replyTo], c) => {
+        // manually filter status, maybe upstream DB has bug
+        if (filterStatus.value !== 'all'
+          && [CommentStatus.Pending, CommentStatus.Approved, CommentStatus.Rejected].includes(filterStatus.value)
+        ) {
+          c.status = Number(c.status);
+          if (c.status !== filterStatus.value) {
+            return [map, replies, replyTo];
+          }
+        }
+
         const from = c.user_id.split('|');
         c.user = JSON.parse((c.user || '{}') as string);
         c.userId = c.user_id;
@@ -124,11 +143,6 @@ const { data: commentsList, status, refresh, error } = useLazyAsyncData<RowItem[
   },
 );
 
-function onApproved(id: number) {
-  if (filterStatus.value === CommentStatus.Pending) {
-    commentsList.value = commentsList.value.filter(item => item.id !== id);
-  }
-}
 function onDeleted(comment: RowItem) {
   commentsList.value = commentsList.value.filter(item => item.id !== comment.id);
 }
