@@ -1,6 +1,6 @@
 {
   "name": "@awesome-comment/core",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -17,6 +17,6 @@
     "@upstash/redis": "^1.35.4",
     "dotenv": "^17.2.3",
     "h3": "^1.15.4",
-    "vitest": "^4.0.14"
+    "vitest": "^4.0.15"
   }
 }

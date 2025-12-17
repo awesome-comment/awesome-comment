@@ -11,20 +11,24 @@ const {
   isAuthenticated
 } = auth0;
 
+const inited = ref<boolean>(false);
+
+async function initData(): Promise<void> {
+  if (inited.value || !auth0.isAuthenticated.value) return;
+  inited.value = true;
+  await Promise.all([
+    configStore.initStore(),
+    configStore.initMyConfig(),
+    promptStore.refreshPrompts(),
+  ]);
+}
+
 watch(isAuthenticated, (value) => {
-  if (value) {
-    configStore.initStore();
-    configStore.initMyConfig();
-    promptStore.refreshPrompts();
-  }
-});
+  if (value) initData();
+}, { immediate: true });
 
 onMounted(() => {
-  if (!auth0.isAuthenticated.value) return;
-
-  configStore.initStore();
-  configStore.initMyConfig();
-  promptStore.refreshPrompts();
+  initData();
 });
 </script>
 

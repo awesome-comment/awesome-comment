@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { parse } from 'marked';
+import { marked } from 'marked';
 import type { Comment, CommentUser, User } from '@awesome-comment/core/types';
 import { CommentStatus } from '@awesome-comment/core/data';
 import { useAuth0 } from '@auth0/auth0-vue';
@@ -142,8 +142,34 @@ function notEnglish(postId: string): boolean {
   return !/\/en\/$/i.test(postId);
 }
 
+const renderer = new marked.Renderer();
+renderer.html = () => '';
+renderer.link = function (href, title, text) {
+  const safe = /^(https?:|mailto:|tel:)/i;
+  if (!href || !safe.test(href)) {
+    return text as string;
+  }
+  const t = title ? ` title="${title}"` : '';
+  return `<a href="${href}"${t} target="_blank" rel="noopener">${text}</a>`;
+};
+renderer.image = function (href, title, text) {
+  const safe = /^(https?:)/i;
+  if (!href || !safe.test(href)) return text as string;
+  const t = title ? ` title="${title}"` : '';
+  return `<img src="${href}" alt="${text || ''}"${t} loading="lazy" />`;
+};
+
+marked.setOptions({
+  gfm: true,
+  breaks: true,
+  renderer,
+  async: false,
+  mangle: false,
+  headerIds: false,
+});
+
 function parseMarkdown(md: string): string {
-  return parse(md) as string;
+  return marked.parse(md || '') as string;
 }
 </script>
 

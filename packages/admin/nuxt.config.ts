@@ -1,7 +1,7 @@
 import pkg from './package.json' with { type: 'json' };
 import acPkg from '../awesome-comment/package.json' with { type: 'json' };
 
-const repoUrl = 'https://unpkg.com/@roudanio/awesome-comment@latest/dist'; // use online ver for now
+const repoUrl = `https://unpkg.com/@roudanio/awesome-comment@${acPkg.version}/dist`; // 固定版本，降低供应链风险
 const siteUrl = process.env.NUXT_PUBLIC_SITE_URL || 'https://awesome-comment.org';
 const enableSpider = process.env.AC_SPIDER === '1';
 

@@ -17,8 +17,7 @@ const errors = ref<Record<string, string>>({});
 const { data, refresh, status } = useAsyncData(
   'prompts',
   async function () {
-    if (auth0?.isAuthenticated.value) return [];
-
+    if (!auth0?.isAuthenticated.value) return [];
     await promptStore.refreshPrompts();
     await store.initMyConfig();
     fixed.value = store.myConfig.fixedAiTemplates || [];
