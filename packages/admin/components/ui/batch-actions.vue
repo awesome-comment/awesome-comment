@@ -172,7 +172,11 @@ async function getPrompt(id: string, comment: Comment): Promise<string> {
   const template = promptStore.prompts[ id ].content;
   let title = '';
   if (template.includes('$TITLE$')) {
+    const accessToken = await auth0.getAccessTokenSilently();
     const res = await $fetch<ResponseBody<{ title: string }>>('/api/fetch-url', {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
       params: {
         url: comment.postId,
       },

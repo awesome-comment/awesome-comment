@@ -7,7 +7,18 @@ function isPrivateHost(hostname: string): boolean {
   return /^(localhost|0\.0\.0\.0|127\.|10\.|172\.(1[6-9]|2\d|3[0-1])\.|192\.168\.|\[?::1\]?|169\.254\.169\.254)/i.test(hostname);
 }
 
-export default defineEventHandler(async function (event: H3Event): Promise<ResponseBody<{ title: string }>> {
+export default defineEventHandler(async function (event: H3Event): Promise<ResponseBody<{ title: string }> | void> {
+  // 允许 CORS 预检请求通过（OPTIONS 不会携带 Authorization）
+  const didHandleCors = handleCors(event, {
+    origin: '*',
+    methods: ['GET', 'OPTIONS'],
+    allowHeaders: ['Authorization', 'Content-Type'],
+    preflight: {
+      statusCode: 204,
+    },
+  });
+  if (didHandleCors) return;
+
   // 仅限已登录管理员调用，避免被匿名利用探测内网
   await checkUserPermission(event);
 

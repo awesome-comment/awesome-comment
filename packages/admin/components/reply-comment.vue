@@ -112,7 +112,11 @@ async function doInsertLink(): Promise<void> {
   try {
     // validate input url
     new URL(url);
+    const accessToken = await auth0.getAccessTokenSilently();
     const res = await $fetch<ResponseBody<{ title: string }>>('/api/fetch-url', {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
       params: {
         url,
       },

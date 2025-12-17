@@ -51,7 +51,11 @@ async function doUse(id: string, event?: MouseEvent): Promise<void> {
   }
   let title = '';
   if (item.content.includes('$TITLE$')) {
+    const accessToken = await auth0.getAccessTokenSilently();
     const res = await $fetch<ResponseBody<{ title: string }>>('/api/fetch-url', {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
       params: {
         url: props.comment.postId,
       },
