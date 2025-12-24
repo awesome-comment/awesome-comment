@@ -144,15 +144,16 @@ function notEnglish(postId: string): boolean {
 
 const renderer = new marked.Renderer();
 renderer.html = () => '';
-renderer.link = function (href, title, text) {
+renderer.link = function ({ href, title, text }) {
   const safe = /^(https?:|mailto:|tel:)/i;
+  console.log('xxx', href, title, text);
   if (!href || !safe.test(href)) {
     return text as string;
   }
   const t = title ? ` title="${title}"` : '';
   return `<a href="${href}"${t} target="_blank" rel="noopener">${text}</a>`;
 };
-renderer.image = function (href, title, text) {
+renderer.image = function ({ href, title, text }) {
   const safe = /^(https?:)/i;
   if (!href || !safe.test(href)) return text as string;
   const t = title ? ` title="${title}"` : '';
@@ -164,8 +165,6 @@ marked.setOptions({
   breaks: true,
   renderer,
   async: false,
-  mangle: false,
-  headerIds: false,
 });
 
 function parseMarkdown(md: string): string {

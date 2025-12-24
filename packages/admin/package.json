@@ -1,6 +1,6 @@
 {
   "name": "@awesome-comment/admin",
-  "version": "0.17.13",
+  "version": "0.17.14",
   "scripts": {
     "build": "nuxt build",
     "dev": "nuxt dev",
@@ -47,7 +47,7 @@
     "dayjs-nuxt": "^2.1.11",
     "eventemitter3": "^5.0.1",
     "lodash-es": "^4.17.21",
-    "marked": "^16.3.0",
+    "marked": "^17.0.1",
     "nitro-cloudflare-dev": "^0.2.2",
     "nuxt": "^4.1.2",
     "openai": "^6.0.1",
