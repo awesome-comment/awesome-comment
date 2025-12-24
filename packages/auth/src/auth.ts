@@ -134,7 +134,7 @@ export class AwesomeAuth extends EventEmitter3 {
       auto_select: true,
       ux_mode: 'popup',
     });
-    google.accounts.id.prompt();
+    google.accounts.id.prompt(notification => this.onGoogleIdentityPrompt(notification));
   }
   private refreshCountDown(): void {
     this.#now = Date.now() / 1000 >> 0;
@@ -227,6 +227,57 @@ export class AwesomeAuth extends EventEmitter3 {
     this.emit(AwesomeAuthEvent.VERIFIED, true);
     this.#isVerified = true;
   }
+
+  private onGoogleIdentityPrompt(notification: unknown): void {
+    if (!this.#isSigningIn) return;
+
+    const prompt = notification as {
+      isNotDisplayed?: () => boolean;
+      getNotDisplayedReason?: () => string;
+      isSkippedMoment?: () => boolean;
+      getSkippedReason?: () => string;
+      isDismissedMoment?: () => boolean;
+      getDismissedReason?: () => string;
+    };
+
+    if (prompt.isNotDisplayed?.()) {
+      const reason = prompt.getNotDisplayedReason?.() || '';
+      this.abortSigningIn(buildNotDisplayedMessage(reason, this.#googleId));
+      return;
+    }
+
+    if (prompt.isSkippedMoment?.()) {
+      this.abortSigningIn();
+      return;
+    }
+
+    if (prompt.isDismissedMoment?.()) {
+      this.abortSigningIn();
+    }
+  }
+
+  private abortSigningIn(message?: string): void {
+    this.emit(AwesomeAuthEvent.INIT, false);
+    this.#isSigningIn = false;
+    if (message) {
+      this.emit(AwesomeAuthEvent.ERROR, message);
+    }
+  }
+}
+
+function buildNotDisplayedMessage(reason: string, clientId: string): string {
+  const origin = typeof location === 'undefined' ? '' : (location.origin || '');
+  if (reason === 'unregistered_origin') {
+    const originText = origin ? `当前 origin：${origin}。` : '';
+    return `Google 登录不可用：当前站点未授权（unregistered_origin）。${originText}请在 Google Cloud OAuth 客户端的「Authorized JavaScript origins」中加入该 origin，然后刷新重试。`;
+  }
+  if (reason === 'invalid_client' || reason === 'missing_client_id') {
+    return `Google 登录不可用：client_id 配置可能有误（${reason}）。请检查 NUXT_PUBLIC_GOOGLE_CLIENT_ID 是否正确：${clientId}`;
+  }
+  if (reason === 'secure_http_required') {
+    return 'Google 登录不可用：需要 HTTPS（secure_http_required）。本地开发请使用 localhost，或启用 https。';
+  }
+  return `Google 登录不可用：${reason || 'unknown_reason'}。请打开浏览器控制台查看 Google Identity Services 日志。`;
 }
 
 function addGoogleIdentityScript() {

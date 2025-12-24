@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { useAuth0 } from '@auth0/auth0-vue';
 import { sleep } from '@awesome-comment/core/utils';
 import type { AcConfig } from '@awesome-comment/core/types';
-import useConfigStore from '~/store';
+import useConfigStore from '../../store';
+import { useAdminAuth } from '../../composables/use-admin-auth';
 
-const auth0 = process.client ? useAuth0() : undefined;
+const adminAuth = useAdminAuth();
 const store = useConfigStore();
 
 const isLoading = ref<boolean>(false);
@@ -53,14 +53,10 @@ const shortcutEmojis = computed<string>({
 });
 
 async function doSave(event: Event): Promise<void> {
-  if (
-    !auth0
-    || isSaving.value
-    || (event.target as HTMLFormElement).matches(':invalid'))
-  {
+  if (isSaving.value || (event.target as HTMLFormElement).matches(':invalid')) {
     return;
   }
-  if (auth0 && !auth0.isAuthenticated.value) {
+  if (!adminAuth.isAuthenticated.value) {
     message.value = 'Sorry, you must login first.';
     return;
   }
@@ -68,7 +64,6 @@ async function doSave(event: Event): Promise<void> {
   isSaving.value = true;
   message.value = '';
   try {
-    const token = await auth0.getAccessTokenSilently();
     await $fetch('/api/admin/config', {
       method: 'POST',
       body: {
@@ -82,21 +77,22 @@ async function doSave(event: Event): Promise<void> {
         ),
       },
       headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
+        ...(await adminAuth.buildHeaders({
+          'Content-Type': 'application/json',
+        })),
       }
     });
     isSaved.value = true;
     await sleep(1500);
     isSaved.value = false;
   } catch (e) {
-    message.value = e.message;
+    message.value = (e as Error).message || String(e);
   }
   isSaving.value = false;
 }
 
 onMounted(async () => {
-  if (!auth0?.isAuthenticated.value) {
+  if (!adminAuth.isAuthenticated.value) {
     message.value = 'Sorry, you must login first.';
     return;
   }
@@ -129,7 +125,7 @@ definePageMeta({
     <button
       class="btn btn-sm ms-auto"
       :class="isSaved ? 'btn-success' : 'btn-primary'"
-      :disabled="isSaving || !auth0?.isAuthenticated"
+      :disabled="isSaving || !adminAuth.isAuthenticated"
       form="config-form"
     >
       <span

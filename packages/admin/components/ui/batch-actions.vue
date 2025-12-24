@@ -2,12 +2,11 @@
 import { FetchError } from 'ofetch';
 import { CommentStatus } from '@awesome-comment/core/data';
 import type { Comment, ResponseBody } from '@awesome-comment/core/types';
-import { useAuth0 } from '@auth0/auth0-vue';
-import { ShortcutEmojis } from '~/data';
-import { replaceTemplate } from '~/utils';
-import usePromptStore from '~/store/prompt';
+import { ShortcutEmojis } from '../../data';
+import { replaceTemplate } from '../../utils';
+import usePromptStore from '../../store/prompt';
 
-const auth0 = useAuth0();
+const auth = useAdminAuth();
 const toast = useToast();
 const promptStore = usePromptStore();
 const comments = defineModel<Comment[]>('comments');
@@ -45,7 +44,7 @@ async function doApprove(): Promise<void> {
 
   isApproving.value = true;
   const newComments: Comment[] = [];
-  const token = await auth0.getAccessTokenSilently();
+  const headers = await auth.buildHeaders();
   for (const comment of comments.value) {
     newComments.push(comment);
     if (!modelValue.value.includes(comment.id)
@@ -58,9 +57,7 @@ async function doApprove(): Promise<void> {
         postId: comment.postId,
         status: CommentStatus.Approved,
       },
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
+      headers,
     });
   }
   comments.value = newComments;
@@ -71,7 +68,7 @@ async function doReject(): Promise<void> {
 
   isRejecting.value = true;
   const newComments: Comment[] = [];
-  const token = await auth0.getAccessTokenSilently();
+  const headers = await auth.buildHeaders();
   for (const comment of comments.value) {
     newComments.push(comment);
     if (!modelValue.value.includes(comment.id)
@@ -84,9 +81,7 @@ async function doReject(): Promise<void> {
         postId: comment.postId,
         status: CommentStatus.Rejected,
       },
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
+      headers,
     });
   }
   comments.value = newComments;
@@ -97,7 +92,6 @@ async function doDelete(): Promise<void> {
   isDeleting.value = true;
 
   const newComments: Comment[] = [];
-  const token = await auth0.getAccessTokenSilently();
   for (const comment of comments.value) {
     if (!modelValue.value.includes(comment.id)) {
       newComments.push(comment);
@@ -108,7 +102,7 @@ async function doDelete(): Promise<void> {
       await $fetch('/api/admin/comment/' + comment.id, {
         method: 'DELETE',
         headers: {
-          Authorization: `Bearer ${token}`,
+          ...(await auth.buildHeaders()),
           'X-AC-STATUS': comment.status,
           'X-AC-POST-id': comment.postId,
         },
@@ -134,13 +128,11 @@ async function doDelete(): Promise<void> {
 
 async function replyToComment(content: string, comment: Comment): Promise<void> {
   try {
-    const accessToken = await auth0.getAccessTokenSilently();
     const { data } = await $fetch('/api/comment', {
       method: 'POST',
-      headers: {
+      headers: await auth.buildHeaders({
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${accessToken}`,
-      },
+      }),
       body: {
         comment: content,
         postId: comment.postId,
@@ -149,6 +141,7 @@ async function replyToComment(content: string, comment: Comment): Promise<void> 
         status: comment.status,
       },
     });
+    const user = auth.user.value;
     if (!comment.children) comment.children = [];
     comment.children.push({
       id: data.id,
@@ -159,8 +152,9 @@ async function replyToComment(content: string, comment: Comment): Promise<void> 
       status: CommentStatus.Approved,
       createdAt: new Date(),
       user: {
-        email: auth0.user.value?.email,
-        name: auth0.user.value?.name,
+        avatar: user?.picture || '',
+        email: user?.email || '',
+        name: user?.name || '',
       },
     } as Comment);
     comment.status = CommentStatus.Approved;
@@ -172,11 +166,8 @@ async function getPrompt(id: string, comment: Comment): Promise<string> {
   const template = promptStore.prompts[ id ].content;
   let title = '';
   if (template.includes('$TITLE$')) {
-    const accessToken = await auth0.getAccessTokenSilently();
     const res = await $fetch<ResponseBody<{ title: string }>>('/api/fetch-url', {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
+      headers: await auth.buildHeaders(),
       params: {
         url: comment.postId,
       },
@@ -186,13 +177,11 @@ async function getPrompt(id: string, comment: Comment): Promise<string> {
   return replaceTemplate(template, comment, title, '');
 }
 async function getAiReply(postId:string, content: string): Promise<string> {
-  const accessToken = await auth0.getAccessTokenSilently();
   const reqOptions = {
     method: 'POST',
-    headers: {
+    headers: await auth.buildHeaders({
       'Content-Type': 'application/json',
-      Authorization: `Bearer ${accessToken}`,
-    },
+    }),
     body: {
       postId,
       messages: [{

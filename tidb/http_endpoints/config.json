@@ -130,6 +130,13 @@
         "required": 1,
         "default": "",
         "description": ""
+      },
+      {
+        "name": "post_id",
+        "type": "string",
+        "required": 0,
+        "default": "",
+        "description": ""
       }
     ],
     "settings": {
@@ -160,6 +167,13 @@
         "required": 1,
         "default": "",
         "description": ""
+      },
+      {
+        "name": "post_id",
+        "type": "string",
+        "required": 0,
+        "default": "",
+        "description": ""
       }
     ],
     "settings": {
@@ -188,6 +202,13 @@
         "name": "user_id",
         "type": "string",
         "required": 1,
+        "default": "",
+        "description": ""
+      },
+      {
+        "name": "post_id_prefix",
+        "type": "string",
+        "required": 0,
         "default": "",
         "description": ""
       },
@@ -234,6 +255,13 @@
         "required": 1,
         "default": "",
         "description": ""
+      },
+      {
+        "name": "post_id",
+        "type": "string",
+        "required": 0,
+        "default": "",
+        "description": ""
       }
     ],
     "settings": {
@@ -265,6 +293,13 @@
         "default": "",
         "description": "",
         "item_type": "string"
+      },
+      {
+        "name": "post_id_prefix",
+        "type": "string",
+        "required": 0,
+        "default": "",
+        "description": ""
       },
       {
         "name": "post_id",
@@ -340,6 +375,13 @@
         "item_type": "string"
       },
       {
+        "name": "post_id_prefix",
+        "type": "string",
+        "required": 0,
+        "default": "",
+        "description": ""
+      },
+      {
         "name": "post_id",
         "type": "string",
         "required": 0,
@@ -397,6 +439,13 @@
         "default": "",
         "description": "",
         "item_type": "string"
+      },
+      {
+        "name": "post_id_prefix",
+        "type": "string",
+        "required": 0,
+        "default": "",
+        "description": ""
       },
       {
         "name": "post_id",
@@ -524,6 +573,13 @@
     },
     "params": [
       {
+        "name": "post_id_prefix",
+        "type": "string",
+        "required": 0,
+        "default": "",
+        "description": ""
+      },
+      {
         "name": "start",
         "type": "number",
         "required": 0,
@@ -552,7 +608,15 @@
     "data_source": {
       "cluster_id": 1379661944646254419
     },
-    "params": [],
+    "params": [
+      {
+        "name": "post_id_prefix",
+        "type": "string",
+        "required": 0,
+        "default": "",
+        "description": ""
+      }
+    ],
     "settings": {
       "timeout": 30000,
       "row_limit": 1000,
@@ -734,6 +798,13 @@
         "name": "id",
         "type": "integer",
         "required": 1,
+        "default": "",
+        "description": ""
+      },
+      {
+        "name": "post_id",
+        "type": "string",
+        "required": 0,
         "default": "",
         "description": ""
       }

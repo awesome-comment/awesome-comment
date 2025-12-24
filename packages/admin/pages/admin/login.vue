@@ -1,27 +1,15 @@
 <script lang="ts" setup>
-import { useAuth0, User } from '@auth0/auth0-vue';
+import { useAdminAuth } from '../../composables/use-admin-auth';
 
-const auth0 = import.meta.client ? useAuth0() : undefined;
+const adminAuth = useAdminAuth();
+const { isAuthenticated, isLoading } = adminAuth;
 
-const isAuthenticated = computed<boolean>(() => {
-  return !!auth0?.isAuthenticated.value;
-});
-const isLoading = computed<boolean>(() => {
-  return !!auth0?.isLoading.value;
-});
-const user = computed<User | null>(() => {
-  return auth0?.user.value || null;
-});
-
-function doLogin() {
-  auth0?.checkSession();
-  if (!isAuthenticated.value) {
-    auth0?.loginWithPopup();
-  }
+async function doLogin(): Promise<void> {
+  await adminAuth.login();
 }
 
 async function doLogout(): Promise<void> {
-  await auth0?.logout();
+  await adminAuth.logout();
 }
 
 useHead({
@@ -39,7 +27,7 @@ definePageMeta({
 <template lang="pug">
 h1.text-xl.font-bold.mb-4 Login
 template(v-if="isAuthenticated")
-  p.mb-4 Welcome, {{user?.name || user?.email}}
+  p.mb-4 已登录
   button.btn.btn-info(
     type="button"
     :disabled="isLoading"

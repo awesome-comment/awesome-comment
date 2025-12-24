@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import type { ResponseBody, StatDailyByUser } from '@awesome-comment/core/types';
-import { useAuth0 } from '@auth0/auth0-vue';
 import dayjs from 'dayjs';
+import { useAdminAuth } from '../../composables/use-admin-auth';
 
-const auth0 = process.client && useAuth0();
+const adminAuth = useAdminAuth();
 const route = useRoute();
 const router = useRouter();
 const yesterday = dayjs().subtract(1, 'd');
@@ -15,21 +15,17 @@ const { data, pending, refresh } = useLazyAsyncData<StatDailyByUser[]>(
   'daily-stat-by-user',
   async function () {
     const empty = [] as StatDailyByUser[];
-    if (!auth0) return empty;
-    if (!auth0.isAuthenticated.value) {
+    if (!adminAuth.isAuthenticated.value) {
       message.value = 'Sorry, you must login first.'
       return empty;
     }
 
-    const token = await auth0.getAccessTokenSilently();
     try {
       const { data } = await $fetch<ResponseBody<StatDailyByUser[]>>('/api/daily-stat-by-user', {
         params: {
           start: start.value,
         },
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        headers: await adminAuth.buildHeaders(),
       });
       return (data || []).map(item => {
         return {

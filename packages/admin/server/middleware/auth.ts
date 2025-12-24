@@ -1,4 +1,4 @@
-import { checkUserPermission } from '~/server/utils';
+import { checkUserPermission } from '../utils';
 
 export default defineEventHandler(async function (event) {
   // not visit admin
@@ -8,7 +8,8 @@ export default defineEventHandler(async function (event) {
   }
 
   const authEndpoint = getHeader(event, 'Auth-Endpoint');
-  const check = await checkUserPermission(event, authEndpoint);
+  const siteId = (getHeader(event, 'x-ac-site-id') || '').trim();
+  const check = await checkUserPermission(event, authEndpoint, siteId || null);
   if (!check) return;
 
   const [user, config] = check;

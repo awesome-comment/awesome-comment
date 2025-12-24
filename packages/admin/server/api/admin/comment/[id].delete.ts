@@ -1,5 +1,5 @@
 import { ResponseBody } from '@awesome-comment/core/types';
-import { clearCache, getCacheKey } from '~/server/utils';
+import { clearCache, getCacheKey } from '../../../utils';
 import { CommentStatus } from '@awesome-comment/core/data';
 import createStorage from '@awesome-comment/core/utils/storage';
 
@@ -11,6 +11,7 @@ export default defineEventHandler(async function (event): Promise<ResponseBody<s
       message: 'Missing post id',
     });
   }
+  const postId = getHeader(event, 'X-AC-POST-ID');
 
   try {
     const url = process.env.TIDB_END_POINT + '/v1/moderator/delete';
@@ -23,6 +24,7 @@ export default defineEventHandler(async function (event): Promise<ResponseBody<s
       },
       body: JSON.stringify({
         id,
+        ...postId && { post_id: postId },
       }),
     });
     const json = await response.json();
@@ -43,7 +45,6 @@ export default defineEventHandler(async function (event): Promise<ResponseBody<s
 
   // clear cache
   const status = Number(getHeader(event, 'X-AC-STATUS'));
-  const postId = getHeader(event, 'X-AC-POST-ID');
   if (status === CommentStatus.Approved && postId) {
     const storage = createStorage(event);
     const key = getCacheKey(postId);

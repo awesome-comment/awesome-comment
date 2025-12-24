@@ -1,8 +1,7 @@
 <script setup lang="ts">
 import { clickWithModifier } from '@awesome-comment/core/utils';
-import { useAuth0 } from '@auth0/auth0-vue';
-import useConfigStore from '~/store';
-import usePromptStore from '~/store/prompt';
+import useConfigStore from '../store';
+import usePromptStore from '../store/prompt';
 
 type Props = {
   disabled?: boolean;
@@ -16,7 +15,6 @@ type Emits = {
 }
 const emit = defineEmits<Emits>();
 
-const auth0 = useAuth0();
 const configStore = useConfigStore();
 const promptStore = usePromptStore();
 

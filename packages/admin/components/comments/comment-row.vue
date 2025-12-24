@@ -2,7 +2,6 @@
 import { marked } from 'marked';
 import type { Comment, CommentUser, User } from '@awesome-comment/core/types';
 import { CommentStatus } from '@awesome-comment/core/data';
-import { useAuth0 } from '@auth0/auth0-vue';
 import type { FetchError } from 'ofetch';
 
 export type RowItem = Comment & {
@@ -43,10 +42,9 @@ const emit = defineEmits<{
   error: [message: string];
 }>();
 
-const auth0 = import.meta.client ? useAuth0() : undefined;
+const auth = useAdminAuth();
 
 async function doReview(comment: RowItem, status: CommentStatus) {
-  if (!auth0) return;
   if (comment.isApproving || comment.isRejecting || comment.isDeleting) return;
 
   if (status === CommentStatus.Approved) {
@@ -54,11 +52,17 @@ async function doReview(comment: RowItem, status: CommentStatus) {
   } else {
     comment.isRejecting = true;
   }
-  const token = await auth0.getAccessTokenSilently();
+  let headers: Record<string, string>;
+  try {
+    headers = await auth.buildHeaders();
+  } catch {
+    comment.isApproving = comment.isRejecting = false;
+    return;
+  }
   await $fetch('/api/admin/comment/' + comment.id, {
     method: 'PATCH',
     body: { postId: comment.postId, status },
-    headers: { Authorization: `Bearer ${token}` },
+    headers,
   });
   comment.status = status;
   comment.isApproving = comment.isRejecting = false;
@@ -68,20 +72,24 @@ async function doReview(comment: RowItem, status: CommentStatus) {
 }
 
 async function doDelete(): Promise<void> {
-  if (!auth0) return;
   const comment = props.comment;
   if (comment.isApproving || comment.isRejecting || comment.isDeleting) return;
 
   comment.isDeleting = true;
-  const token = await auth0.getAccessTokenSilently();
+  let headers: Record<string, string>;
+  try {
+    headers = await auth.buildHeaders({
+      'X-AC-STATUS': comment.status.toString(),
+      'X-AC-POST-id': comment.postId,
+    });
+  } catch {
+    comment.isDeleting = false;
+    return;
+  }
   try {
     await $fetch('/api/admin/comment/' + comment.id, {
       method: 'DELETE',
-      headers: {
-        Authorization: `Bearer ${token}`,
-        'X-AC-STATUS': comment.status.toString(),
-        'X-AC-POST-id': comment.postId,
-      },
+      headers,
     });
   } catch (e) {
     if ((e as FetchError).status !== 500) {
@@ -96,19 +104,23 @@ async function doDelete(): Promise<void> {
 }
 
 async function doRemoveReply(child: RowItem, index: number): Promise<void> {
-  if (!auth0) return;
   if (!confirm('Are you sure to delete this reply?')) return;
 
   const comment = props.comment;
   child.isDeleting = true;
-  const token = await auth0.getAccessTokenSilently();
-  await $fetch('/api/admin/comment/' + child.id, {
-    method: 'DELETE',
-    headers: {
-      Authorization: `Bearer ${token}`,
+  let headers: Record<string, string>;
+  try {
+    headers = await auth.buildHeaders({
       'X-AC-STATUS': comment.status.toString(),
       'X-AC-POST-id': comment.postId,
-    },
+    });
+  } catch {
+    child.isDeleting = false;
+    return;
+  }
+  await $fetch('/api/admin/comment/' + child.id, {
+    method: 'DELETE',
+    headers,
   });
   comment.children?.splice(index, 1);
 }

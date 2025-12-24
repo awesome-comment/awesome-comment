@@ -2,11 +2,11 @@
 import dayjs from 'dayjs';
 import { DatePicker } from 'v-calendar';
 import type { ResponseBody, StatDailyByLanguage } from '@awesome-comment/core/types';
-import { useAuth0 } from '@auth0/auth0-vue';
 import 'v-calendar/dist/style.css';
 import type { DatePickerRangeObject } from 'v-calendar/dist/types/src/use/datePicker';
+import { useAdminAuth } from '../../composables/use-admin-auth';
 
-const auth0 = process.client && useAuth0();
+const adminAuth = useAdminAuth();
 const route = useRoute();
 const router = useRouter();
 
@@ -21,19 +21,15 @@ const { data, pending, refresh } = useLazyAsyncData<StatDailyByLanguage[]>(
   'daily-stat',
   async function () {
     const empty = [] as StatDailyByLanguage[];
-    if (!auth0) return empty;
-    if (!auth0.isAuthenticated.value) {
+    if (!adminAuth.isAuthenticated.value) {
       message.value = 'Sorry, you must login first.'
       return empty;
     }
 
-    const token = await auth0.getAccessTokenSilently();
     try {
       const { data } = await $fetch<ResponseBody<StatDailyByLanguage[]>>('/api/admin/daily-stat-by-lang', {
         params: dateRange.value,
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        headers: await adminAuth.buildHeaders(),
       });
       return data;
     } catch (error) {

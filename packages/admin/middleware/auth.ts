@@ -1,9 +1,9 @@
-import { useAuth0 } from '@auth0/auth0-vue';
+import { useAdminAuth } from '../composables/use-admin-auth';
 
 export default defineNuxtRouteMiddleware((to, from) => {
-  if (import.meta.client) {
-    const auth0 = useAuth0();
-    if (!auth0.isAuthenticated.value) {
+  if (process.client) {
+    const adminAuth = useAdminAuth();
+    if (!adminAuth.isAuthenticated.value) {
       return navigateTo('/admin/login');
     }
   }

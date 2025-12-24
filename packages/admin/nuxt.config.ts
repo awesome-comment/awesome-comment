@@ -1,5 +1,8 @@
-import pkg from './package.json' with { type: 'json' };
-import acPkg from '../awesome-comment/package.json' with { type: 'json' };
+import { createRequire } from 'node:module';
+
+const require = createRequire(import.meta.url);
+const pkg = require('./package.json') as { version: string };
+const acPkg = require('../awesome-comment/package.json') as { version: string };
 
 const repoUrl = `https://unpkg.com/@roudanio/awesome-comment@${acPkg.version}/dist`; // 固定版本，降低供应链风险
 const siteUrl = process.env.NUXT_PUBLIC_SITE_URL || 'https://awesome-comment.org';
@@ -46,7 +49,7 @@ export default defineNuxtConfig({
   },
   compatibilityDate: '2025-10-01',
   css: [
-    '~/assets/css/main.css',
+    'assets/css/main.css',
   ],
   devtools: { enabled: true },
   modules,

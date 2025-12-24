@@ -1,6 +1,6 @@
 import { CommentStatus } from '@awesome-comment/core/data';
 import { ResponseBody } from '@awesome-comment/core/types';
-import { clearCache, getCacheKey } from '~/server/utils';
+import { clearCache, getCacheKey } from '../../../utils';
 import createStorage from '@awesome-comment/core/utils/storage';
 
 type PatchRequest = {
@@ -40,6 +40,7 @@ export default defineEventHandler(async function (event): Promise<ResponseBody<s
       body: JSON.stringify({
         ...status !== undefined && { status },
         ...content && { content },
+        ...body.postId && { post_id: body.postId },
         id,
       }),
     });

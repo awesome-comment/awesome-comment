@@ -6,6 +6,7 @@ WHERE a.parent_id = 0
   AND COALESCE(JSON_UNQUOTE(JSON_EXTRACT(a.user, '$.email')), '') NOT IN (${emails})
   AND a.status IN (0, 1)
   AND a.deleted_at IS NULL
+  AND IF(LENGTH(${post_id_prefix}) > 0, a.post_id LIKE ${post_id_prefix}, 1)
   AND IF(LENGTH(${post_id}) > 0, a.post_id = ${post_id}, 1)
   AND IF(LENGTH(${user_id}) > 0, a.user_id = ${user_id}, 1)
   AND IF(LENGTH(${lang}) > 0, a.post_id LIKE ${lang}, 1)

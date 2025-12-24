@@ -1,12 +1,8 @@
 <script setup lang="ts">
-import { useAuth0, User } from '@auth0/auth0-vue';
-
-const auth0 = import.meta.client ? useAuth0() : undefined;
+const auth = useAdminAuth();
 const runtime = useRuntimeConfig();
 
-const user = computed<User | null>(() => {
-  return auth0?.user.value || null;
-});
+const user = computed(() => auth.user.value);
 const items = computed(() => {
   return [
     [
@@ -22,8 +18,8 @@ const items = computed(() => {
       {
         label: 'Logout',
         icon: 'i-lucide-arrow-left',
-        async onSelect() {
-          await auth0?.logout();
+        async click() {
+          await auth.logout();
         },
       },
     ],
@@ -63,13 +59,14 @@ const items = computed(() => {
             :src="user.picture || ''"
           />
         </u-dropdown-menu>
-        <nuxt-link
+        <button
           v-else
           class="btn btn-sm btn-primary"
-          to="/admin/login"
+          type="button"
+          @click="auth.login()"
         >
           Login
-        </nuxt-link>
+        </button>
       </div>
     </div>
   </header>

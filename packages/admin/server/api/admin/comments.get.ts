@@ -1,5 +1,6 @@
 import { Comment, ResponseBody } from '@awesome-comment/core/types';
 import { CommentStatus } from '@awesome-comment/core/data';
+import { getSiteIdFromEvent } from '../../utils';
 
 export default defineEventHandler(async function (event): Promise<ResponseBody<Comment[]>> {
   const query = getQuery(event);
@@ -19,6 +20,10 @@ export default defineEventHandler(async function (event): Promise<ResponseBody<C
     const params = new URLSearchParams();
     params.set('start', start as string);
     params.set('emails', event.context.config.adminEmails);
+    const siteId = getSiteIdFromEvent(event);
+    if (siteId) {
+      params.set('post_id_prefix', `${siteId}:%`);
+    }
     if (language) {
       params.set('lang', `%/${language}/%`);
     }

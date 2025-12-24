@@ -6,6 +6,7 @@ SELECT * FROM (
         FROM ac_comment
         WHERE deleted_at IS NULL
             AND user_email NOT IN (${emails})
+            AND IF(LENGTH(${post_id_prefix}) > 0, post_id LIKE ${post_id_prefix}, 1)
             AND IF(LENGTH(${post_id}) > 0, post_id = ${post_id}, 1)
             AND IF(LENGTH(${status}) > 0, status = ${status}, 1)
             AND IF(LENGTH(${user_id}) > 0, user_id = ${user_id}, 1)

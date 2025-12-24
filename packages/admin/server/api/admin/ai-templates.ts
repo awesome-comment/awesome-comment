@@ -1,5 +1,5 @@
 import { ResponseBody } from '@awesome-comment/core/types';
-import type { AiPromptTemplate } from '~/types';
+import type { AiPromptTemplate } from '../../../types';
 
 export default defineEventHandler(async function (event): Promise<ResponseBody<AiPromptTemplate[]>> {
   const encodedCredentials = btoa(`${process.env.TIDB_PUBLIC_KEY}:${process.env.TIDB_PRIVATE_KEY}`);

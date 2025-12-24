@@ -3,8 +3,8 @@ import type { UiModal } from '#components';
 import type { Comment, ResponseBody } from '@awesome-comment/core/types';
 import { CommentStatus } from '@awesome-comment/core/data';
 import { withCommandModifier } from '@awesome-comment/core/utils';
-import { useAuth0 } from '@auth0/auth0-vue';
-import { ShortcutEmojis } from '~/data';
+import { ShortcutEmojis } from '../data';
+import { useAdminAuth } from '../composables/use-admin-auth';
 
 type Props = {
   comment: Comment;
@@ -20,8 +20,8 @@ type Emits = {
 }
 const emit = defineEmits<Emits>();
 
-const auth0 = useAuth0();
-const hasAiHelper = true; // AI Helper 现在始终可用（已迁移到本地）
+const adminAuth = useAdminAuth();
+const hasAiHelper = !!__AI_ADMIN_ENDPOINT__;
 const modal = ref<UiModal>();
 const textarea = ref<HTMLTextAreaElement>();
 
@@ -29,6 +29,26 @@ const hasModal = ref<boolean>(false);
 const isReplying = ref<boolean>(false);
 const message = ref<string>('');
 const reply = ref<string>(props.reply || '');
+
+function parseJwtPayload(token: string): { email?: string; name?: string } {
+  const parts = token.split('.');
+  if (parts.length < 2) return {};
+
+  const base64Url = parts[1] || '';
+  const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+  try {
+    const json = decodeURIComponent(
+      atob(base64)
+        .split('')
+        .map((c) => `%${`00${c.charCodeAt(0).toString(16)}`.slice(-2)}`)
+        .join(''),
+    );
+    const payload = JSON.parse(json) as { email?: string; name?: string };
+    return payload || {};
+  } catch {
+    return {};
+  }
+}
 
 async function doOpenModal(): Promise<void> {
   hasModal.value = true;
@@ -46,7 +66,7 @@ async function doReply(event?: Event): Promise<void> {
   if (!content) return;
 
   try {
-    const accessToken = await auth0.getAccessTokenSilently();
+    const token = await adminAuth.getAccessToken();
     const method = props.reply ? 'PATCH' : 'POST';
     const url = props.reply ? '/api/admin/comment/' + props.target.id : '/api/comment';
     const body = props.reply ? { content } : {
@@ -59,14 +79,16 @@ async function doReply(event?: Event): Promise<void> {
     const { data } = await $fetch(url, {
       method,
       headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${accessToken}`,
+        ...(await adminAuth.buildHeaders({
+          'Content-Type': 'application/json',
+        })),
       },
       body,
     });
     if (props.reply) {
       emit('save', content);
     } else {
+      const payload = parseJwtPayload(token);
       emit('reply', {
         id: data.id,
         content: content,
@@ -76,8 +98,8 @@ async function doReply(event?: Event): Promise<void> {
         status: CommentStatus.Approved,
         createdAt: new Date(),
         user: {
-          email: auth0.user.value?.email,
-          name: auth0.user.value?.name,
+          email: payload.email,
+          name: payload.name,
         },
       } as Comment);
       reply.value = '';
@@ -112,10 +134,9 @@ async function doInsertLink(): Promise<void> {
   try {
     // validate input url
     new URL(url);
-    const accessToken = await auth0.getAccessTokenSilently();
     const res = await $fetch<ResponseBody<{ title: string }>>('/api/fetch-url', {
       headers: {
-        Authorization: `Bearer ${accessToken}`,
+        ...(await adminAuth.buildHeaders()),
       },
       params: {
         url,
