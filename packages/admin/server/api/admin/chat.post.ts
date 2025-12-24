@@ -1,6 +1,6 @@
 import { H3Event } from 'h3';
 import OpenAI from 'openai';
-import { Model } from '~/server/utils/enum';
+import { Model } from '../../utils/enum';
 
 export default defineEventHandler(async function (event: H3Event) {
   const { messages, postId } = await readBody(event) as {

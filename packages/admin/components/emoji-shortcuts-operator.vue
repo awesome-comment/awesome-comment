@@ -1,10 +1,9 @@
 <script setup lang="ts">
 import type { Comment, ResponseBody } from '@awesome-comment/core/types';
 import { CommentStatus } from '@awesome-comment/core/data';
-import { useAuth0 } from '@auth0/auth0-vue';
-import { replaceTemplate } from '~/utils';
-import usePromptStore from '~/store/prompt';
-import useConfigStore from '~/store';
+import { replaceTemplate } from '../utils';
+import usePromptStore from '../store/prompt';
+import useConfigStore from '../store';
 
 type Props = {
   className: string;
@@ -16,7 +15,7 @@ type Emits = {
 }
 const emit = defineEmits<Emits>();
 
-const auth0 = useAuth0();
+const auth = useAdminAuth();
 const configStore = useConfigStore();
 const promptStore = usePromptStore();
 
@@ -50,13 +49,11 @@ async function onReply(content: string, isPreview: boolean): Promise<void> {
 }
 async function replyToComment(content: string): Promise<void> {
   try {
-    const accessToken = await auth0.getAccessTokenSilently();
     const { data } = await $fetch('/api/comment', {
       method: 'POST',
-      headers: {
+      headers: await auth.buildHeaders({
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${accessToken}`,
-      },
+      }),
       body: {
         comment: content,
         postId: props.comment.postId,
@@ -65,6 +62,7 @@ async function replyToComment(content: string): Promise<void> {
         status: props.comment.status,
       },
     });
+    const user = auth.user.value;
     emit('reply', {
       id: data.id,
       content: content,
@@ -74,8 +72,9 @@ async function replyToComment(content: string): Promise<void> {
       status: CommentStatus.Approved,
       createdAt: new Date(),
       user: {
-        email: auth0.user.value?.email,
-        name: auth0.user.value?.name,
+        avatar: user?.picture || '',
+        email: user?.email || '',
+        name: user?.name || '',
       },
     } as Comment);
   } catch (e) {
@@ -87,11 +86,8 @@ async function getPrompt(id: string): Promise<string> {
   const template = promptStore.prompts[ id ].content;
   let title = '';
   if (template.includes('$TITLE$')) {
-    const accessToken = await auth0.getAccessTokenSilently();
     const res = await $fetch<ResponseBody<{ title: string }>>('/api/fetch-url', {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
+      headers: await auth.buildHeaders(),
       params: {
         url: props.comment.postId,
       },
@@ -101,13 +97,11 @@ async function getPrompt(id: string): Promise<string> {
   return replaceTemplate(template, props.comment, title, '');
 }
 async function getAiReply(postId:string, content: string): Promise<string> {
-  const accessToken = await auth0.getAccessTokenSilently();
   const reqOptions = {
     method: 'POST',
-    headers: {
+    headers: await auth.buildHeaders({
       'Content-Type': 'application/json',
-      Authorization: `Bearer ${accessToken}`,
-    },
+    }),
     body: {
       postId,
       messages: [{

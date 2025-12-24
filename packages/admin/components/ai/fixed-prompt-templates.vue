@@ -1,11 +1,10 @@
 <script setup lang="ts">
 import type { Comment, ResponseBody } from '@awesome-comment/core/types';
 import { clickWithModifier } from '@awesome-comment/core/utils';
-import usePromptStore from '~/store/prompt';
-import type { AiPromptTemplate } from '~/types';
-import { replaceTemplate, writeToClipboard } from '~/utils';
-import { useAuth0 } from '@auth0/auth0-vue';
-import useConfigStore from '~/store';
+import usePromptStore from '../../store/prompt';
+import type { AiPromptTemplate } from '../../types';
+import { replaceTemplate, writeToClipboard } from '../../utils';
+import useConfigStore from '../../store';
 
 type Props = {
   comment: Comment;
@@ -18,7 +17,7 @@ type Emits = {
 }
 const emit = defineEmits<Emits>();
 
-const auth0 = useAuth0();
+const auth = useAdminAuth();
 const configStore = useConfigStore();
 const promptStore = usePromptStore();
 const toast = useToast();
@@ -51,11 +50,8 @@ async function doUse(id: string, event?: MouseEvent): Promise<void> {
   }
   let title = '';
   if (item.content.includes('$TITLE$')) {
-    const accessToken = await auth0.getAccessTokenSilently();
     const res = await $fetch<ResponseBody<{ title: string }>>('/api/fetch-url', {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
+      headers: await auth.buildHeaders(),
       params: {
         url: props.comment.postId,
       },
@@ -73,13 +69,11 @@ async function doUse(id: string, event?: MouseEvent): Promise<void> {
 }
 async function doSubmitChat(): Promise<void> {
   isLoading.value = templateId.value;
-  const accessToken = await auth0.getAccessTokenSilently();
   const reqOptions = {
     method: 'POST',
-    headers: {
+    headers: await auth.buildHeaders({
       'Content-Type': 'application/json',
-      Authorization: `Bearer ${accessToken}`,
-    },
+    }),
     body: {
       postId: props.comment.postId,
       messages: [{

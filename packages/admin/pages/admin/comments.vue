@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import type { Comment } from '@awesome-comment/core/types';
 import { CommentStatus } from '@awesome-comment/core/data';
-import { useAuth0 } from '@auth0/auth0-vue';
 import keyBy from 'lodash-es/keyBy';
-import type { RowItem } from '~/components/comments/comment-row.vue';
+import type { RowItem } from '../../components/comments/comment-row.vue';
+import { useAdminAuth } from '../../composables/use-admin-auth';
 
 const postIdPrefix = __POST_ID_PREFIX__;
 const CSKeys = Object.values(CommentStatus).filter((v) => !isNaN(Number(v)));
-const auth0 = import.meta.client ? useAuth0() : undefined;
+const adminAuth = useAdminAuth();
 const route = useRoute();
 
 const start = ref<number>(0);
@@ -47,8 +47,7 @@ const filter = computed<URLSearchParams>(() => {
 const { data: commentsList, status, refresh, error } = useLazyAsyncData<RowItem[]>(
   'comments',
   async function () {
-    if (!auth0) return [];
-    if (!auth0.isAuthenticated.value) {
+    if (!adminAuth.isAuthenticated.value) {
       message.value = 'Sorry, you must login first.'
       return [];
     }
@@ -62,7 +61,6 @@ const { data: commentsList, status, refresh, error } = useLazyAsyncData<RowItem[
       }
     }
 
-    const token = await auth0.getAccessTokenSilently();
     const { data, meta } = await $fetch('/api/admin/comments', {
       query: {
         status: filterStatus.value === 'all' ? null : filterStatus.value,
@@ -72,9 +70,7 @@ const { data: commentsList, status, refresh, error } = useLazyAsyncData<RowItem[
         language: filterLanguage.value,
         tag: filterTag.value,
       },
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
+      headers: await adminAuth.buildHeaders(),
     });
 
     const { adminEmails = [] } = meta?.config || {};

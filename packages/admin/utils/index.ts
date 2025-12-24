@@ -1,6 +1,6 @@
 import type { Comment } from '@awesome-comment/core/types';
-import { LocalLanguageName, LanguageName } from '~/data/lang';
-import type { UserAgentInfo } from '~/types';
+import { LocalLanguageName, LanguageName } from '../data/lang';
+import type { UserAgentInfo } from '../types';
 
 type LanguageKey = keyof typeof LocalLanguageName | keyof typeof LanguageName;
 

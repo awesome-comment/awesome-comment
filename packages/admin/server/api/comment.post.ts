@@ -1,6 +1,6 @@
 import type { PostCommentRequest, ResponseBody, User } from '@awesome-comment/core/types';
 import { CommentStatus, POST_INTERVAL } from '@awesome-comment/core/data';
-import { getUser, getCacheKey, getConfig, checkCommentStatus, clearCache, updateUserPostHistory } from '~/server/utils';
+import { getSiteIdFromPostId, getUser, getCacheKey, getConfig, checkCommentStatus, clearCache, updateUserPostHistory } from '../utils';
 import createStorage from '@awesome-comment/core/utils/storage';
 
 type PostResponse = ResponseBody<{
@@ -63,10 +63,11 @@ export default defineEventHandler(async function (event): Promise<PostResponse> 
     sub,
   } = user;
   // check if user is admin
-  const config = await getConfig(storage);
+  const siteId = getSiteIdFromPostId(body.postId);
+  const config = await getConfig(storage, siteId);
   const isAdmin = config.adminEmails.includes(email);
   const status = isAdmin ? CommentStatus.Approved
-    : (await checkCommentStatus(sub, body, config));
+    : (await checkCommentStatus(sub, body, config, siteId));
   if (!isAdmin && (!comment || comment.length < 5 || /^\w{35,}$/.test(comment))) {
     throw createError({
       statusCode: 400,
@@ -129,6 +130,7 @@ export default defineEventHandler(async function (event): Promise<PostResponse> 
       body: JSON.stringify({
         status: CommentStatus.Approved,
         id: body.parentId,
+        post_id: body.postId,
       }),
     });
   }

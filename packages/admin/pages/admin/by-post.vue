@@ -1,31 +1,27 @@
 <script setup lang="ts">
 import type { PostCount, ResponseBody } from '@awesome-comment/core/types';
 import { CommentStatus } from '@awesome-comment/core/data';
-import { useAuth0 } from '@auth0/auth0-vue';
+import { useAdminAuth } from '../../composables/use-admin-auth';
 
 const page = ref<number>(1);
 const message = ref<string>('');
-const auth0 = process.client && useAuth0();
+const adminAuth = useAdminAuth();
 
 const { data, pending, refresh } = useLazyAsyncData<{list: PostCount[], total: number}>(
   'count',
   async function () {
     const empty = { list: [], total: 0 };
-    if (!auth0) return empty;
-    if (!auth0.isAuthenticated.value) {
+    if (!adminAuth.isAuthenticated.value) {
       message.value = 'Sorry, you must login first.'
       return empty;
     }
 
-    const token = await auth0.getAccessTokenSilently();
     try {
       const { data, meta } = await $fetch<ResponseBody<PostCount[]>>('/api/admin/count-by-post', {
         params: {
           start: (page.value - 1) * 20,
         },
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        headers: await adminAuth.buildHeaders(),
       });
       return { list: data, total: meta.total };
     } catch (error) {

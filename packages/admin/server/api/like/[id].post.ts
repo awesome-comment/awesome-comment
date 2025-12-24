@@ -1,7 +1,7 @@
 import type { ResponseBody, VoteItem } from '@awesome-comment/core/types';
 import { H3Event } from 'h3';
 import createStorage from '@awesome-comment/core/utils/storage';
-import { getVoteCacheKey, requestTiDB } from '~/server/utils';
+import { getVoteCacheKey, requestTiDB } from '../../utils';
 
 type PostResponse = ResponseBody<{
   like: number;
@@ -52,6 +52,7 @@ export default defineEventHandler(async function(event: H3Event): Promise<PostRe
     await requestTiDB('/v1/like_comment', 'PUT', {
       id: Number(id),
       like: num,
+      post_id: postId,
     });
     return {
       code: 0,
@@ -82,6 +83,7 @@ export default defineEventHandler(async function(event: H3Event): Promise<PostRe
   await requestTiDB('/v1/like_comment', 'PUT', {
     id: Number(id),
     like: voteItem.like,
+    post_id: postId,
   });
   return {
     code: 0,

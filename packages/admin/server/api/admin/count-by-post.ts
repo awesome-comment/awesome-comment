@@ -1,4 +1,5 @@
 import { PostCount, ResponseBody } from '@awesome-comment/core/types';
+import { getSiteIdFromEvent } from '../../utils';
 
 export default defineEventHandler(async function (event): Promise<ResponseBody<PostCount[]>> {
   const query = getQuery(event);
@@ -9,9 +10,15 @@ export default defineEventHandler(async function (event): Promise<ResponseBody<P
   const data: PostCount[] = [];
   let total = 0;
   const encodedCredentials = btoa(`${process.env.TIDB_PUBLIC_KEY}:${process.env.TIDB_PRIVATE_KEY}`);
+  const siteId = getSiteIdFromEvent(event);
+  const postIdPrefix = siteId ? `${siteId}:%` : '';
   try {
     const url = process.env.TIDB_END_POINT + '/v1/moderator/count_post';
-    const response = await fetch(url, {
+    const params = new URLSearchParams();
+    if (postIdPrefix) {
+      params.set('post_id_prefix', postIdPrefix);
+    }
+    const response = await fetch(`${url}?${params.toString()}`, {
       method: 'GET',
       headers: {
         'Authorization': `Basic ${encodedCredentials}`,
@@ -32,6 +39,9 @@ export default defineEventHandler(async function (event): Promise<ResponseBody<P
     const url = process.env.TIDB_END_POINT + '/v1/moderator/by_post';
     const params = new URLSearchParams();
     params.set('start', start as string);
+    if (postIdPrefix) {
+      params.set('post_id_prefix', postIdPrefix);
+    }
     const response = await fetch(`${url}?${params}`, {
       method: 'GET',
       headers: {

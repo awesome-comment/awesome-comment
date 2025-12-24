@@ -1,5 +1,5 @@
 import type { AcConfig, Comment, ResponseBody, VoteItem } from '@awesome-comment/core/types';
-import { getCacheKey, getConfig, getVoteCacheKey } from '~/server/utils';
+import { getCacheKey, getConfig, getSiteIdFromPostId, getVoteCacheKey } from '../utils';
 import { H3Event } from 'h3';
 import createStorage from '@awesome-comment/core/utils/storage';
 
@@ -24,6 +24,7 @@ export default defineEventHandler(async function (event: H3Event): Promise<Respo
     });
   }
 
+  const siteId = getSiteIdFromPostId(postId as string);
   const storage = createStorage(event);
   const key = getCacheKey(postId + (start ? '-' + start : ''));
   const stored = await storage.get<Comment[]>(key);
@@ -60,7 +61,7 @@ export default defineEventHandler(async function (event: H3Event): Promise<Respo
     const result = await response.json();
     data.push(...result.data.rows);
 
-    const config = await getConfig(storage) as AcConfig;
+    const config = await getConfig(storage, siteId) as AcConfig;
     const {
       adminEmails = [],
       adminDisplayName = '',

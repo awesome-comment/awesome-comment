@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { Comment } from '@awesome-comment/core/types';
 import { CommentStatus } from '@awesome-comment/core/data';
-import { useAuth0 } from '@auth0/auth0-vue';
+import { useAdminAuth } from '../composables/use-admin-auth';
 
 type Props = {
   buttonClass?: string;
@@ -16,7 +16,7 @@ type Emits = {
   (event: 'close'): void;
 }
 const emit = defineEmits<Emits>();
-const auth0 = useAuth0();
+const adminAuth = useAdminAuth();
 
 const modal = ref<HTMLDialogElement>();
 
@@ -37,12 +37,12 @@ async function doEdit(event: Event): Promise<void> {
   isSaving.value = true;
   message.value = '';
   try {
-    const accessToken = await auth0.getAccessTokenSilently();
     await $fetch('/api/admin/comment/' + props.comment.id, {
       method: 'PATCH',
       headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${accessToken}`,
+        ...(await adminAuth.buildHeaders({
+          'Content-Type': 'application/json',
+        })),
       },
       body: {
         content: newContent.value,

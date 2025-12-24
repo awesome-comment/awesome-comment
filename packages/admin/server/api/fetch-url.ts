@@ -1,6 +1,6 @@
 import { H3Event } from 'h3';
 import type { ResponseBody } from '@awesome-comment/core/types';
-import { checkUserPermission } from '~/server/utils';
+import { checkUserPermission } from '../utils';
 
 function isPrivateHost(hostname: string): boolean {
   // 屏蔽本地或内网地址，避免 SSRF 探测

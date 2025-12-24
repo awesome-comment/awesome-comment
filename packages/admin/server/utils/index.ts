@@ -11,8 +11,52 @@ import {
 import { CommentStatus, MarkdownLinkRegex, POST_INTERVAL } from '@awesome-comment/core/data';
 import createStorage, { AcStorage } from '@awesome-comment/core/utils/storage';
 
-export async function getConfig(storage: AcStorage): Promise<AcConfig> {
-  const key = getConfigKey();
+function normalizeSiteId(siteId: string | null | undefined): string | null {
+  const value = (siteId || '').trim();
+  return value ? value : null;
+}
+
+export function getSiteIdFromPostId(postId: string): string | null {
+  if (!postId) return null;
+  if (postId.includes('://')) return null;
+
+  const index = postId.indexOf(':');
+  if (index <= 0) return null;
+  return normalizeSiteId(postId.slice(0, index));
+}
+
+export function getSiteIdFromEvent(event: H3Event): string | null {
+  return normalizeSiteId(getHeader(event, 'x-ac-site-id'));
+}
+
+function getKeyPrefix(): string {
+  return (process.env.KEY_PREFIX || '').trim();
+}
+
+export function getConfigKey(siteId?: string | null): string {
+  const normalizedSiteId = normalizeSiteId(siteId);
+  const keyPrefix = getKeyPrefix();
+  if (keyPrefix && normalizedSiteId) {
+    return `${keyPrefix}-site-${normalizedSiteId}-config`;
+  }
+
+  const legacySite = process.env.ADMIN_SITE || keyPrefix || 'ac';
+  return `${legacySite}_ac_config`;
+}
+
+export function getMyConfigKey(email: string, siteId?: string | null): string {
+  const normalizedSiteId = normalizeSiteId(siteId);
+  const keyPrefix = getKeyPrefix();
+  if (keyPrefix && normalizedSiteId) {
+    return `${keyPrefix}-site-${normalizedSiteId}-admin-my-${email}`;
+  }
+
+  const legacySite = process.env.ADMIN_SITE || keyPrefix || 'ac';
+  return `${legacySite}_ac_config_${email}`;
+}
+
+export async function getConfig(storage: AcStorage, siteId?: string | null): Promise<AcConfig> {
+  const key = getConfigKey(siteId);
   return (await storage.get(key)) || {
     adminDisplayName: 'Admin',
     adminDisplayAvatar: '',
@@ -24,9 +68,14 @@ export async function getConfig(storage: AcStorage): Promise<AcConfig> {
   } as AcConfig;
 }
 
-export async function checkUserPermission(event: H3Event, endpoint?: string): Promise<[User, AcConfig] | void> {
+export async function checkUserPermission(
+  event: H3Event,
+  endpoint?: string,
+  siteId?: string | null,
+): Promise<[User, AcConfig] | void> {
   const storage = createStorage(event);
-  const config = await getConfig(storage);
+  const tenantSiteId = normalizeSiteId(siteId) || getSiteIdFromEvent(event);
+  const config = await getConfig(storage, tenantSiteId);
 
   const authorization = getHeader(event, 'authorization');
   if (!authorization) {
@@ -130,21 +179,16 @@ export function getVoteCacheKey(postId: string): string {
   return `vote-comment-${postId}`;
 }
 
-export function getConfigKey(): string {
-  return `${process.env.ADMIN_SITE}_ac_config`;
-}
-
-export function getMyConfigKey(email: string): string {
-  // generate a encrypted id by combining email and salt
-  return `${process.env.ADMIN_SITE}_ac_config_${email}`;
-}
-
-export async function getUserComments(userId: string): Promise<ResponseComment[]> {
+export async function getUserComments(userId: string, siteId?: string | null): Promise<ResponseComment[]> {
   const data: ResponseComment[] = [];
   const url = process.env.TIDB_END_POINT + '/v1/user';
   const params = new URLSearchParams();
   params.set('user_id', userId as string);
   params.set('start', '0');
+  const normalizedSiteId = normalizeSiteId(siteId);
+  if (normalizedSiteId) {
+    params.set('post_id_prefix', `${normalizedSiteId}:%`);
+  }
   // params.set('status', status.toString());
   const encodedCredentials = btoa(`${process.env.TIDB_PUBLIC_KEY}:${process.env.TIDB_PRIVATE_KEY}`);
   const response = await fetch(`${url}?${params}`, {
@@ -158,8 +202,13 @@ export async function getUserComments(userId: string): Promise<ResponseComment[]
   return data;
 }
 
-export async function checkCommentStatus(userId: string, comment: PostCommentRequest, config: AcConfig): Promise<CommentStatus> {
-  const history = await getUserComments(userId);
+export async function checkCommentStatus(
+  userId: string,
+  comment: PostCommentRequest,
+  config: AcConfig,
+  siteId?: string | null,
+): Promise<CommentStatus> {
+  const history = await getUserComments(userId, siteId);
   if (!history.length) return CommentStatus.Pending;
 
   const lastCommentTime = new Date(history[ 0 ].created_at);

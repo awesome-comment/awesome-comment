@@ -1,10 +1,10 @@
-import { useAuth0 } from '@auth0/auth0-vue';
 import type { ResponseBody, AcConfig } from '@awesome-comment/core/types';
-import type { MyAdminConfig } from '~/types';
-import { ShortcutEmojis } from '~/data';
+import type { MyAdminConfig } from '../types';
+import { ShortcutEmojis } from '../data';
+import { useAdminAuth } from '../composables/use-admin-auth';
 
 const useConfigStore = defineStore('config', () => {
-  const auth0 = useAuth0();
+  const adminAuth = useAdminAuth();
   const config = ref<AcConfig>({
     adminEmails: [],
     adminDisplayName: '',
@@ -24,36 +24,32 @@ const useConfigStore = defineStore('config', () => {
     Object.assign(config.value, value);
   }
   async function initStore(): Promise<void> {
-    const token = await auth0.getAccessTokenSilently();
-    if (!token) throw new Error('No access token');
-
+    const headers = await adminAuth.buildHeaders();
     const { data } = await $fetch<ResponseBody<AcConfig>>('/api/admin/config', {
       headers: {
-        Authorization: `Bearer ${token}`,
+        ...headers,
       },
     });
     setConfig(data as Partial<AcConfig>);
   }
   async function initMyConfig(): Promise<void> {
-    const token = await auth0.getAccessTokenSilently();
-    if (!token) throw new Error('No access token');
-
+    const headers = await adminAuth.buildHeaders();
     const { data } = await $fetch<ResponseBody<MyAdminConfig>>('/api/admin/my', {
       headers: {
-        Authorization: `Bearer ${token}`,
+        ...headers,
       },
     });
     Object.assign(myConfig.value, data);
   }
   async function updateMyConfig(value: Partial<MyAdminConfig>): Promise<void> {
-    const token = await auth0.getAccessTokenSilently();
-    if (!token) throw new Error('No access token');
-
     Object.assign(myConfig.value, value);
+    const headers = await adminAuth.buildHeaders({
+      'Content-Type': 'application/json',
+    });
     await $fetch<ResponseBody<string>>('/api/admin/my', {
       method: 'POST',
       headers: {
-        Authorization: `Bearer ${token}`,
+        ...headers,
       },
       body: myConfig.value,
     });
