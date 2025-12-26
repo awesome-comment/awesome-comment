@@ -35,16 +35,16 @@ const useAuthStore = defineStore('auth', () => {
   }
 
   if (awesomeAuth) {
-    awesomeAuth.on(AwesomeAuthEvent.INIT, value => {
+    awesomeAuth.on(AwesomeAuthEvent.INIT, (value: boolean) => {
       isLoading.value = value;
       if (value) {
         isAuthenticated.value = false;
       }
     });
-    awesomeAuth.on(AwesomeAuthEvent.VERIFYING, value => {
+    awesomeAuth.on(AwesomeAuthEvent.VERIFYING, (value: boolean) => {
       isLoading.value = value
     });
-    awesomeAuth.on(AwesomeAuthEvent.VERIFIED, value => {
+    awesomeAuth.on(AwesomeAuthEvent.VERIFIED, (value: boolean) => {
       isAuthenticated.value = value;
       user.value = value ? awesomeAuth.user : undefined;
     });

@@ -18,8 +18,10 @@ function formatHelper(item: ResponseComment): Comment {
   return {
     ...rest,
     id: Number(id),
+    user_id: userId,
     userId,
     parentId: Number(parentId),
+    post_id: postId,
     postId,
     ancestorId: Number(ancestorId),
     status: Number(item.status),
@@ -140,10 +142,11 @@ const useStore = defineStore('store', () => {
       name = '',
       picture = '',
       email = '',
-      nickname = '' ,
+      nickname = '',
     } = user;
     const newComment: Comment = {
       id,
+      post_id: postId,
       postId,
       content: comment,
       createdAt: new Date(),
@@ -152,6 +155,7 @@ const useStore = defineStore('store', () => {
         email: email,
         name: nickname || name,
       },
+      user_id: sub,
       userId: sub,
       status,
       isNew: true,
