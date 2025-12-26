@@ -1,7 +1,7 @@
 import { fetchTidb } from '../services/fetch-tidb';
 import { CommentItem } from '../types';
-import { GoogleGenAI } from '@google/genai';
 import { checkShouldTranslate } from '../utils';
+import { createTranslateProvider } from './translate-provider';
 
 const KV_KEY = 'cronjob-lock';
 export async function translateComments(env: Cloudflare.Env): Promise<void> {
@@ -33,9 +33,10 @@ export async function translateComments(env: Cloudflare.Env): Promise<void> {
     return;
   }
 
-  const ai = new GoogleGenAI({
-    apiKey: env.GOOGLE_GEMINI_API_KEY,
-  });
+  // 使用 provider 工厂创建翻译服务
+  const translateProvider = createTranslateProvider(env);
+  console.log('Using translate provider:', env.TRANSLATE_PROVIDER || 'google');
+
   let success = 0;
   for (const comment of comments) {
     if (/\/(en|cn|zh)\/?/i.test(comment.post_id)
@@ -57,19 +58,8 @@ export async function translateComments(env: Cloudflare.Env): Promise<void> {
     }
 
     try {
-      const response = await ai.models.generateContent({
-        model: env.DEFAULT_AI_MODEL,
-        contents: `Please translate the following text between \`"""\` to English.
-
-"""${comment.content}"""
-
-Note:
-- JUST return the translated text, no other content.
-- If the text is Chinese, JUST return the original text.
-- Try to keep the format same as original text.`
-      });
-      const translation = response.text?.trim() || '';
-      console.log('xxx', comment.content, translation);
+      const translation = await translateProvider.translate(comment.content);
+      console.log('Translated:', comment.content, '->', translation);
       await fetchTidb(
         env,
         '/v1/update_translation',

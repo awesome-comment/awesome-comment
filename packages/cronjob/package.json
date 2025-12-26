@@ -1,24 +1,25 @@
 {
-	"name": "@roudanio/awesome-comment-cronjob",
-	"version": "0.1.4",
-	"private": true,
-	"scripts": {
-		"deploy": "wrangler deploy",
-		"dev": "wrangler dev --test-scheduled",
-		"start": "wrangler dev --test-scheduled",
-		"cf-typegen": "wrangler types"
-	},
-	"devDependencies": {
-		"@types/lodash-es": "^4.17.12",
-		"typescript": "^5.5.2",
-		"wrangler": "^4.41.0"
-	},
-	"dependencies": {
+  "name": "@roudanio/awesome-comment-cronjob",
+  "version": "0.1.5",
+  "private": true,
+  "scripts": {
+    "deploy": "wrangler deploy",
+    "dev": "wrangler dev --test-scheduled",
+    "start": "wrangler dev --test-scheduled",
+    "cf-typegen": "wrangler types"
+  },
+  "devDependencies": {
+    "@types/lodash-es": "^4.17.12",
+    "typescript": "^5.5.2",
+    "wrangler": "^4.41.0"
+  },
+  "dependencies": {
     "@awesome-comment/core": "workspace:*",
-		"@google/genai": "^1.22.0",
-		"lodash-es": "^4.17.21",
-		"zod": "^4.1.13",
-		"zod-to-json-schema": "^3.25.0"
-	},
-	"type": "module"
+    "@google/genai": "^1.22.0",
+    "lodash-es": "^4.17.21",
+    "openai": "^6.0.1",
+    "zod": "^4.1.13",
+    "zod-to-json-schema": "^3.25.0"
+  },
+  "type": "module"
 }

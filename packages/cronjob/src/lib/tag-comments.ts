@@ -1,8 +1,7 @@
 import { TagItem } from '../types';
 import { CommentTags } from '@awesome-comment/core/data';
 import { fetchTidb } from '../services/fetch-tidb';
-import { GoogleGenAI } from '@google/genai';
-import z from 'zod';
+import { createAIProvider } from './translate-provider';
 
 const KV_KEY = 'cronjob-tag-lock';
 
@@ -35,33 +34,19 @@ export async function tagComments(env: Cloudflare.Env): Promise<void> {
     return;
   }
 
-  const ai = new GoogleGenAI({
-    apiKey: env.GOOGLE_GEMINI_API_KEY,
-  });
+  // 使用 AI provider 工厂创建服务
+  const aiProvider = createAIProvider(env);
+  console.log('Using AI provider:', env.TRANSLATE_PROVIDER || 'google');
 
   let success = 0;
-  const tagsSchema = z.array(z.enum(CommentTags));
   for (const comment of comments) {
     try {
-      const response = await ai.models.generateContent({
-        model: env.DEFAULT_AI_MODEL,
-        contents: `Please classify the following comment between \`"""\` into one or more of these categories: ${CommentTags.join(', ')}.
-
-"""${comment.content}"""
-
-Note:
-- If uncertain, choose the most likely category.`,
-        config: {
-          responseMimeType: 'application/json',
-          responseJsonSchema: tagsSchema,
-        }
-      });
-      if (!response.text) {
+      const tags = await aiProvider.classifyTags(comment.content, CommentTags);
+      if (tags.length === 0) {
         console.log('Empty response for comment:', comment.id);
         continue;
       }
 
-      const tags = tagsSchema.parse(JSON.parse(response.text));
       await fetchTidb(
         env,
         '/v1/update_tags',
@@ -80,3 +65,4 @@ Note:
   await env.KV.delete(KV_KEY);
   console.log('Tagging job completed.', success, comments.length);
 }
+
