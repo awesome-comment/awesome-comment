@@ -47,7 +47,7 @@ async function doSubmit(event: Event): Promise<void> {
   if ((event.target as HTMLFormElement).matches(':invalid')) return;
   const commentContent = comment.value.trim();
   if (!commentContent) return;
-  if (validateCommentContent(commentContent)){
+  if (!validateCommentContent(commentContent).valid){
     message.value = 'We encourage meaningful contributions to foster a positive community. Thank you for your understanding!';
     return;
   }
