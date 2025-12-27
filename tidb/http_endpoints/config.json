@@ -936,5 +936,56 @@
     "sql_file": "sql/GET-v1-prompt.sql",
     "type": "sql_endpoint",
     "return_type": "json"
+  },
+  {
+    "name": "/v1/prompt",
+    "description": "",
+    "method": "POST",
+    "endpoint": "/v1/prompt",
+    "data_source": {
+      "cluster_id": 1379661944646254419
+    },
+    "params": [
+      {
+        "name": "title",
+        "type": "string",
+        "required": 1,
+        "default": "",
+        "description": ""
+      },
+      {
+        "name": "content",
+        "type": "string",
+        "required": 1,
+        "default": "",
+        "description": ""
+      },
+      {
+        "name": "owner",
+        "type": "string",
+        "required": 1,
+        "default": "",
+        "description": ""
+      },
+      {
+        "name": "allowed_emails",
+        "type": "string",
+        "required": 0,
+        "default": "[]",
+        "description": ""
+      }
+    ],
+    "settings": {
+      "timeout": 30000,
+      "row_limit": 1000,
+      "cache_enabled": 0,
+      "cache_ttl": 0,
+      "enable_pagination": 0
+    },
+    "tag": "Default",
+    "batch_operation": 0,
+    "sql_file": "sql/POST-v1-prompt.sql",
+    "type": "sql_endpoint",
+    "return_type": "json"
   }
 ]
