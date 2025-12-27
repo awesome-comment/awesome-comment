@@ -969,10 +969,11 @@
       },
       {
         "name": "allowed_emails",
-        "type": "string",
+        "type": "array",
         "required": 0,
         "default": "[]",
-        "description": ""
+        "description": "",
+        "item_type": "string"
       }
     ],
     "settings": {
