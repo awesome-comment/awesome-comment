@@ -7,32 +7,32 @@
     "dev": "nuxt dev --port 3020"
   },
   "devDependencies": {
-    "@cloudflare/workers-types": "^4.20251001.0",
+    "@cloudflare/workers-types": "^4.20251225.0",
     "@nuxt/devtools": "latest",
     "@nuxt/image": "^1.11.0",
-    "@pinia/nuxt": "^0.11.2",
+    "@pinia/nuxt": "^0.11.3",
     "@types/lodash-es": "^4.17.12",
-    "@types/node": "^24.6.2",
-    "autoprefixer": "^10.4.21",
+    "@types/node": "^24.10.4",
+    "autoprefixer": "^10.4.23",
     "postcss": "^8.5.6",
-    "tailwindcss": "^3.4.18",
-    "wrangler": "^4.41.0"
+    "tailwindcss": "^3.4.19",
+    "wrangler": "^4.54.0"
   },
   "dependencies": {
     "@awesome-comment/core": "workspace:*",
-    "@iconify-json/bi": "^1.2.6",
-    "@nuxt/ui": "^4.0.1",
-    "@upstash/redis": "^1.35.4",
+    "@iconify-json/bi": "^1.2.7",
+    "@nuxt/ui": "^4.3.0",
+    "@upstash/redis": "^1.36.0",
     "@vueuse/core": "^13.9.0",
-    "dayjs": "^1.11.18",
+    "dayjs": "^1.11.19",
     "dayjs-nuxt": "^2.1.11",
     "eventemitter3": "^5.0.1",
-    "google-auth-library": "^10.4.0",
-    "jsonwebtoken": "^9.0.2",
-    "lodash-es": "^4.17.21",
+    "google-auth-library": "^10.5.0",
+    "jsonwebtoken": "^9.0.3",
+    "lodash-es": "^4.17.22",
     "nitro-cloudflare-dev": "^0.2.2",
-    "nuxt": "^4.1.2",
-    "pinia": "^3.0.3",
+    "nuxt": "^4.2.2",
+    "pinia": "^3.0.4",
     "v-calendar": "^3.1.2"
   }
 }

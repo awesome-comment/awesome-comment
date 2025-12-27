@@ -21,7 +21,7 @@ type Emits = {
 const emit = defineEmits<Emits>();
 
 const auth0 = useAuth0();
-const hasAiHelper = !!__AI_ADMIN_ENDPOINT__;
+const hasAiHelper = true; // AI Helper 现在始终可用（已迁移到本地）
 const modal = ref<UiModal>();
 const textarea = ref<HTMLTextAreaElement>();
 

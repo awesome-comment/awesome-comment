@@ -7,27 +7,27 @@
     "build": "vue-tsc && vite build"
   },
   "dependencies": {
-    "@auth0/auth0-vue": "^2.4.0",
+    "@auth0/auth0-vue": "^2.5.0",
     "@awesome-comment/core": "workspace:*",
     "@roudanio/awesome-auth": "workspace:*",
     "animate.css": "^4.1.1",
     "lucide-vue-next": "^0.544.0",
-    "marked": "^16.4.1",
-    "pinia": "^3.0.3",
-    "vue": "^3.5.22",
-    "vue-i18n": "^11.1.12"
+    "marked": "^16.4.2",
+    "pinia": "^3.0.4",
+    "vue": "^3.5.26",
+    "vue-i18n": "^11.2.7"
   },
   "devDependencies": {
-    "@types/node": "^24.9.2",
-    "@vitejs/plugin-vue": "^6.0.1",
-    "autoprefixer": "^10.4.21",
+    "@types/node": "^24.10.4",
+    "@vitejs/plugin-vue": "^6.0.3",
+    "autoprefixer": "^10.4.23",
     "daisyui": "^4.12.24",
     "postcss": "^8.5.6",
     "pug": "^3.0.3",
-    "tailwindcss": "^3.4.18",
+    "tailwindcss": "^3.4.19",
     "typescript": "^5.9.3",
-    "vite": "^7.1.12",
-    "vue-tsc": "^3.1.2"
+    "vite": "^7.3.0",
+    "vue-tsc": "^3.2.1"
   },
   "author": {
     "email": "meathill@gmail.com",

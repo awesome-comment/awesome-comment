@@ -9,36 +9,19 @@ export default defineEventHandler(async function (event: H3Event) {
   };
 
   const isEnCn = /\/(en|cn|zh)(\/|$)/i.test(postId);
-  let result = '';
-  if (process.env.AI_ADMIN_ENDPOINT) {
-    const message = messages.map((m) => m.content).join('\n');
-    result = await $fetch(`${process.env.AI_ADMIN_ENDPOINT}/chat`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        AC_REQUEST_AUTH: process.env.AI_ADMIN_AUTH_TOKEN || '',
-      },
-      body: {
-        message,
-        model: Model.Gemini_2_5_Flash,
-      },
-    });
-  } else {
-    const openai = new OpenAI({
-      apiKey: process.env.OPENAI_API_KEY,
-    });
-    const res = await openai.chat.completions.create({
-      model: isEnCn ? Model.CHAT_GPT4o_MINI : Model.CHAT_GPT4o,
-      messages,
-      stream: false,
-    });
-    const { content } = res.choices[ 0 ].message;
-    result = content || '';
-  }
-
+  const openai = new OpenAI({
+    apiKey: process.env.OPENAI_API_KEY,
+  });
+  const res = await openai.chat.completions.create({
+    model: isEnCn ? Model.CHAT_GPT4o_MINI : Model.CHAT_GPT4o,
+    messages,
+    stream: false,
+  });
+  const { content } = res.choices[0].message;
 
   return {
     code: 0,
-    data: result,
+    data: content || '',
   };
 });
+

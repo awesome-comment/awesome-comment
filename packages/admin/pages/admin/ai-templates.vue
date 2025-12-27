@@ -75,6 +75,13 @@ async function doSave(): Promise<void> {
       />
     </div>
     <div class="flex items-center ms-auto gap-4">
+      <NuxtLink
+        to="/admin/prompts/new"
+        class="btn btn-primary btn-sm text-white"
+      >
+        <i class="bi bi-plus-lg" />
+        New Prompt
+      </NuxtLink>
       <button
         class="btn btn-success btn-sm text-white"
         type="button"
@@ -128,7 +135,14 @@ async function doSave(): Promise<void> {
         v-for="(prompt, index) in sortedPrompts"
         :key="index"
       >
-        <td>{{ prompt.title }}</td>
+        <td>
+          <NuxtLink
+            :to="`/admin/prompts/${prompt.id}`"
+            class="link link-primary"
+          >
+            {{ prompt.title }}
+          </NuxtLink>
+        </td>
         <td>
           <input
             v-model="fixed"
