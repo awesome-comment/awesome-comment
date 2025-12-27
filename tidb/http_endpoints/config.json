@@ -1029,7 +1029,7 @@
     "params": [
       {
         "name": "title",
-        "type": "integer",
+        "type": "string",
         "required": 1,
         "default": "",
         "description": ""
@@ -1043,10 +1043,11 @@
       },
       {
         "name": "allowed_emails",
-        "type": "string",
+        "type": "array",
         "required": 0,
         "default": "[]",
-        "description": ""
+        "description": "",
+        "item_type": "string"
       },
       {
         "name": "id",
