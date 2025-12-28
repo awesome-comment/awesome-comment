@@ -31,7 +31,7 @@ export default defineEventHandler(async function (event): Promise<ResponseBody<A
       };
     }
 
-    const row = rows[0];
+    const row = rows[ 0 ];
     const data: AiPromptTemplate = {
       ...row,
       allowed_emails: typeof row.allowed_emails === 'string'

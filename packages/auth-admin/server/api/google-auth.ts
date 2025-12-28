@@ -1,7 +1,6 @@
 import { createError, defineEventHandler, readBody, setCookie, type H3Event } from 'h3';
 import { OAuth2Client } from 'google-auth-library';
-import jwt from 'jsonwebtoken';
-import { getJwtExpirationSeconds, getJwtSecret, getTokenCookieKey } from '~/server/utils';
+import { getTokenCookieKey, signJwt } from '~/server/utils';
 
 type GoogleAuthRequestBody = {
   credential?: string;
@@ -58,15 +57,13 @@ export default defineEventHandler(async function (event: H3Event){
     });
   }
 
-  const token = jwt.sign({
+  const token = await signJwt({
     sub,
     email: email || '',
     picture: picture || '',
     name: name || '',
     given_name: given_name || '',
     family_name: family_name || '',
-  }, getJwtSecret(), {
-    expiresIn: getJwtExpirationSeconds(),
   });
 
   setCookie(event, getTokenCookieKey(), token);

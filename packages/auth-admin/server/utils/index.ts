@@ -1,7 +1,8 @@
 import { createError, getHeader, type H3Event } from 'h3';
-import jwt, { type JwtPayload } from 'jsonwebtoken';
+import { SignJWT, jwtVerify, type JWTPayload } from 'jose';
 
 const DEFAULT_JWT_EXPIRATION_SECONDS = 60 * 60;
+const JWT_ALGORITHM = 'HS256';
 
 const UNIT_TO_SECONDS = {
   ms: 0.001,
@@ -15,17 +16,45 @@ const UNIT_TO_SECONDS = {
 
 type TimeUnit = keyof typeof UNIT_TO_SECONDS;
 
-export function checkUserPermission(event: H3Event): JwtPayload | null {
+let lastJwtSecret: string | null = null;
+let jwtSecretKey: Uint8Array | null = null;
+
+function getJwtSecretKey(): Uint8Array {
+  const secret = getJwtSecret();
+  if (!jwtSecretKey || secret !== lastJwtSecret) {
+    lastJwtSecret = secret;
+    jwtSecretKey = new TextEncoder().encode(secret);
+  }
+  return jwtSecretKey;
+}
+
+export async function checkUserPermission(event: H3Event): Promise<JWTPayload | null> {
   const authorization = getHeader(event, 'authorization');
   const token = authorization?.split(' ')[ 1 ] || '';
   if (!token) return null;
 
   try {
-    const payload = jwt.verify(token, getJwtSecret());
-    return payload as JwtPayload;
+    return await verifyJwt(token);
   } catch (e) {
     return null;
   }
+}
+
+export async function verifyJwt(token: string): Promise<JWTPayload> {
+  const { payload } = await jwtVerify(token, getJwtSecretKey(), { algorithms: [JWT_ALGORITHM] });
+  return payload;
+}
+
+export async function signJwt(payload: JWTPayload): Promise<string> {
+  const issuedAt = Math.floor(Date.now() / 1000);
+  const expirationSeconds = getJwtExpirationSeconds();
+  const expiresAt = issuedAt + expirationSeconds;
+
+  return await new SignJWT(payload)
+    .setProtectedHeader({ alg: JWT_ALGORITHM, typ: 'JWT' })
+    .setIssuedAt(issuedAt)
+    .setExpirationTime(expiresAt)
+    .sign(getJwtSecretKey());
 }
 
 export function getJwtSecret(): string {
@@ -57,8 +86,8 @@ export function getJwtExpirationSeconds(): number {
     });
   }
 
-  const amountText = match[1];
-  const unitText = match[2];
+  const amountText = match[ 1 ];
+  const unitText = match[ 2 ];
   if (!amountText || !unitText) {
     throw createError({
       statusCode: 500,
@@ -74,7 +103,7 @@ export function getJwtExpirationSeconds(): number {
     });
   }
   const unit = unitText.toLowerCase() as TimeUnit;
-  const value = Math.round(amount * UNIT_TO_SECONDS[unit]);
+  const value = Math.round(amount * UNIT_TO_SECONDS[ unit ]);
   return Math.max(1, value);
 }
 

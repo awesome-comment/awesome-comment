@@ -24,7 +24,7 @@ const usePromptStore = defineStore('prompt', () => {
     });
     (data || []).forEach((prompt) => {
       const title = prompt.title.replace(/^ac-/i, '');
-      prompts.value[prompt.id] = {
+      prompts.value[ prompt.id ] = {
         ...prompt,
         title,
       };
@@ -34,15 +34,15 @@ const usePromptStore = defineStore('prompt', () => {
 
   // Get single prompt
   async function getPrompt(id: number): Promise<AiPromptTemplate | null> {
-    if (prompts.value[id]) {
-      return prompts.value[id];
+    if (prompts.value[ id ]) {
+      return prompts.value[ id ];
     }
     const headers = await getAuthHeaders();
     const { data } = await $fetch<ResponseBody<AiPromptTemplate | null>>(`/api/admin/prompt/${id}`, {
       headers,
     });
     if (data) {
-      prompts.value[id] = data;
+      prompts.value[ id ] = data;
     }
     return data;
   }
@@ -84,9 +84,9 @@ const usePromptStore = defineStore('prompt', () => {
       },
     });
     // Update local cache
-    if (prompts.value[id]) {
-      prompts.value[id] = {
-        ...prompts.value[id],
+    if (prompts.value[ id ]) {
+      prompts.value[ id ] = {
+        ...prompts.value[ id ],
         title,
         content,
         allowed_emails: allowedEmails,
@@ -102,13 +102,13 @@ const usePromptStore = defineStore('prompt', () => {
       headers,
     });
     // Remove from local cache
-    delete prompts.value[id];
+    delete prompts.value[ id ];
   }
 
   // Set prompts (used for local updates)
   function setPrompts(items: AiPromptTemplate[]): void {
     items.forEach((prompt) => {
-      prompts.value[prompt.id] = prompt;
+      prompts.value[ prompt.id ] = prompt;
     });
   }
 

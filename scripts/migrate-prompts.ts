@@ -54,7 +54,7 @@ async function main(): Promise<void> {
 
   // 检查表是否存在
   const [tables] = await connection.query<RowDataPacket[]>(
-    "SHOW TABLES LIKE 'ai_prompts'"
+    'SHOW TABLES LIKE \'ai_prompts\''
   );
   if (tables.length === 0) {
     console.log('表 ai_prompts 不存在，正在创建...');

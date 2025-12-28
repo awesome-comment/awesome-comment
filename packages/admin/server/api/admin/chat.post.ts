@@ -17,7 +17,7 @@ export default defineEventHandler(async function (event: H3Event) {
     messages,
     stream: false,
   });
-  const { content } = res.choices[0].message;
+  const { content } = res.choices[ 0 ].message;
 
   return {
     code: 0,

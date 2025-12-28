@@ -1,4 +1,4 @@
-import jwt from 'jsonwebtoken';
+import { SignJWT } from 'jose';
 import type { H3Event } from 'h3';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 
@@ -7,7 +7,9 @@ import {
   getJwtExpirationSeconds,
   getJwtSecret,
   getTokenCookieKey,
-} from './index';
+  signJwt,
+  verifyJwt,
+} from '~/server/utils';
 
 type EnvKey = 'JWT_SECRET' | 'JWT_EXPIRATION' | 'KEY_PREFIX';
 
@@ -77,7 +79,7 @@ describe('server/utils', () => {
     expect(() => getJwtExpirationSeconds()).toThrow('JWT_EXPIRATION 格式错误');
   });
 
-  it('checkUserPermission：无 token 返回 null', () => {
+  it('checkUserPermission：无 token 返回 null', async () => {
     setEnv('JWT_SECRET', 'test-secret');
     const event = {
       node: {
@@ -87,10 +89,10 @@ describe('server/utils', () => {
       },
     } as unknown as H3Event;
 
-    expect(checkUserPermission(event)).toBeNull();
+    await expect(checkUserPermission(event)).resolves.toBeNull();
   });
 
-  it('checkUserPermission：无效 token 返回 null', () => {
+  it('checkUserPermission：无效 token 返回 null', async () => {
     setEnv('JWT_SECRET', 'test-secret');
     const event = {
       node: {
@@ -102,12 +104,20 @@ describe('server/utils', () => {
       },
     } as unknown as H3Event;
 
-    expect(checkUserPermission(event)).toBeNull();
+    await expect(checkUserPermission(event)).resolves.toBeNull();
   });
 
-  it('checkUserPermission：有效 token 返回 payload', () => {
+  it('checkUserPermission：过期 token 返回 null', async () => {
     setEnv('JWT_SECRET', 'test-secret');
-    const token = jwt.sign({ sub: 'user-1', email: 'a@b.com' }, getJwtSecret());
+
+    const now = Math.floor(Date.now() / 1000);
+    const secretKey = new TextEncoder().encode(getJwtSecret());
+    const token = await new SignJWT({ sub: 'user-1' })
+      .setProtectedHeader({ alg: 'HS256' })
+      .setIssuedAt(now - 20)
+      .setExpirationTime(now - 10)
+      .sign(secretKey);
+
     const event = {
       node: {
         req: {
@@ -118,8 +128,47 @@ describe('server/utils', () => {
       },
     } as unknown as H3Event;
 
-    const payload = checkUserPermission(event);
+    await expect(checkUserPermission(event)).resolves.toBeNull();
+  });
+
+  it('checkUserPermission：有效 token 返回 payload', async () => {
+    setEnv('JWT_SECRET', 'test-secret');
+
+    const secretKey = new TextEncoder().encode(getJwtSecret());
+    const token = await new SignJWT({ sub: 'user-1', email: 'a@b.com' })
+      .setProtectedHeader({ alg: 'HS256' })
+      .setIssuedAt()
+      .setExpirationTime('2h')
+      .sign(secretKey);
+
+    const event = {
+      node: {
+        req: {
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        },
+      },
+    } as unknown as H3Event;
+
+    const payload = await checkUserPermission(event);
     expect(payload?.sub).toBe('user-1');
+  });
+
+  it('signJwt/verifyJwt：可以往返并写入 iat/exp', async () => {
+    setEnv('JWT_SECRET', 'test-secret');
+    setEnv('JWT_EXPIRATION', '10');
+
+    const token = await signJwt({ sub: 'user-1', foo: 'bar' });
+    const payload = await verifyJwt(token);
+
+    expect(payload.sub).toBe('user-1');
+    expect(payload.foo).toBe('bar');
+    expect(typeof payload.iat).toBe('number');
+    expect(typeof payload.exp).toBe('number');
+    if (payload.iat && payload.exp) {
+      expect(payload.exp - payload.iat).toBe(10);
+    }
   });
 });
 

@@ -34,6 +34,9 @@ export default defineNuxtConfig({
   modules,
   ...(process.env.CLOUDFLARE ? {
     nitro: {
+      prerender: {
+        autoSubfolderIndex: false
+      },
       preset: 'cloudflare-pages',
     },
   } : {}),

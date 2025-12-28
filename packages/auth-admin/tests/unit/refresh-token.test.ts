@@ -1,8 +1,8 @@
-import jwt from 'jsonwebtoken';
+import { jwtVerify } from 'jose';
 import type { H3Event } from 'h3';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 
-import refreshTokenHandler from './refresh-token';
+import refreshTokenHandler from '~/server/api/refresh-token';
 
 type EnvKey = 'JWT_SECRET' | 'JWT_EXPIRATION' | 'KEY_PREFIX';
 
@@ -50,6 +50,7 @@ function createEvent(options: {
 }): { event: H3Event; response: FakeResponse } {
   const response = new FakeResponse();
   const event = {
+    method: options.method ?? 'POST',
     node: {
       req: {
         method: options.method ?? 'POST',
@@ -116,7 +117,8 @@ describe('server/api/refresh-token', () => {
     expect(typeof token).toBe('string');
     if (typeof token !== 'string') return;
 
-    const decoded = jwt.verify(token, 'test-secret') as unknown as { sub?: string };
+    const secretKey = new TextEncoder().encode('test-secret');
+    const { payload: decoded } = await jwtVerify(token, secretKey, { algorithms: ['HS256'] });
     expect(decoded.sub).toBe('user-1');
 
     const cookie = response.getHeader('set-cookie');
@@ -125,3 +127,4 @@ describe('server/api/refresh-token', () => {
     expect(cookieText).toContain(token);
   });
 });
+

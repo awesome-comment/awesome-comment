@@ -1,6 +1,6 @@
 {
   "name": "@awesome-comment/auth-admin",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "type": "module",
   "scripts": {
     "build": "nuxt build",
@@ -14,7 +14,6 @@
     "@nuxt/image": "^2.0.0",
     "@pinia/nuxt": "^0.11.3",
     "@tailwindcss/vite": "^4.1.18",
-    "@types/jsonwebtoken": "^9.0.10",
     "@types/lodash-es": "^4.17.12",
     "@types/node": "^24.10.4",
     "autoprefixer": "^10.4.23",
@@ -34,7 +33,7 @@
     "eventemitter3": "^5.0.1",
     "google-auth-library": "^10.5.0",
     "h3": "^1.15.4",
-    "jsonwebtoken": "^9.0.3",
+    "jose": "^6.1.0",
     "lodash-es": "^4.17.22",
     "nitro-cloudflare-dev": "^0.2.2",
     "nuxt": "^4.2.2",

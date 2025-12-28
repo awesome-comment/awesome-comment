@@ -112,7 +112,10 @@ watch(() => props.data, () => {
       {{ data ? 'Edit Prompt' : 'Create Prompt' }}
     </header>
     <div class="mb-4">
-      <label class="label" for="title">
+      <label
+        class="label"
+        for="title"
+      >
         <span class="label-text">Title</span>
       </label>
       <input
@@ -125,7 +128,10 @@ watch(() => props.data, () => {
       >
     </div>
     <div class="mb-4">
-      <label class="label" for="content">
+      <label
+        class="label"
+        for="content"
+      >
         <span class="label-text">Content</span>
       </label>
       <textarea
@@ -150,8 +156,14 @@ watch(() => props.data, () => {
         class="btn btn-primary flex-1"
         :disabled="isSaving || isDeleting"
       >
-        <span v-if="isSaving && !isForking" class="loading loading-spinner" />
-        <i v-else class="bi bi-check-lg" />
+        <span
+          v-if="isSaving && !isForking"
+          class="loading loading-spinner"
+        />
+        <i
+          v-else
+          class="bi bi-check-lg"
+        />
         {{ data ? 'Save Prompt' : 'Create Prompt' }}
       </button>
       <button
@@ -161,8 +173,14 @@ watch(() => props.data, () => {
         :disabled="isSaving || isDeleting"
         @click="doFork"
       >
-        <span v-if="isForking" class="loading loading-spinner" />
-        <i v-else class="bi bi-signpost-split" />
+        <span
+          v-if="isForking"
+          class="loading loading-spinner"
+        />
+        <i
+          v-else
+          class="bi bi-signpost-split"
+        />
         Fork
       </button>
       <button
@@ -172,8 +190,14 @@ watch(() => props.data, () => {
         :disabled="isSaving || isDeleting"
         @click="doDelete"
       >
-        <span v-if="isDeleting" class="loading loading-spinner" />
-        <i v-else class="bi bi-trash3" />
+        <span
+          v-if="isDeleting"
+          class="loading loading-spinner"
+        />
+        <i
+          v-else
+          class="bi bi-trash3"
+        />
         Delete
       </button>
     </div>

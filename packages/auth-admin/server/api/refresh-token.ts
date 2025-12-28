@@ -1,8 +1,7 @@
 import { createError, defineEventHandler, setCookie, type H3Event } from 'h3';
-import jwt from 'jsonwebtoken';
 import omit from 'lodash-es/omit';
 import type { AwesomeUser } from '@awesome-comment/core/types';
-import { getJwtExpirationSeconds, getJwtSecret, getTokenCookieKey } from '~/server/utils';
+import { getTokenCookieKey, signJwt } from '~/server/utils';
 
 type AwesomeUserJwtPayload = AwesomeUser & {
   iat?: number;
@@ -30,9 +29,7 @@ export default defineEventHandler(async function (event: H3Event){
     });
   }
 
-  const token = jwt.sign(omit(payload, 'iat', 'exp'), getJwtSecret(), {
-    expiresIn: getJwtExpirationSeconds(),
-  });
+  const token = await signJwt(omit(payload, 'iat', 'exp'));
 
   setCookie(event, getTokenCookieKey(), token);
   return {

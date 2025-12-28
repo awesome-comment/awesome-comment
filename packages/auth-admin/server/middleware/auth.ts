@@ -7,7 +7,7 @@ export default defineEventHandler(async function (event) {
     return;
   }
 
-  const payload = checkUserPermission(event);
+  const payload = await checkUserPermission(event);
   event.context.payload = payload;
   if (!payload) {
     if (url.pathname.endsWith('/verify-auth')) return;

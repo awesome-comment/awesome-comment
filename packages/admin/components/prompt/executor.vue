@@ -35,9 +35,9 @@ const template = computed<string>({
 const realReplacement = computed<Record<string, string>>(() => {
   const result = { ...replacement.value };
   for (const key in result) {
-    const value = result[key];
-    result[key] = value.replace(/\$(\w+?)\$/g, (match, key) => {
-      return replacement.value[key] || '';
+    const value = result[ key ];
+    result[ key ] = value.replace(/\$(\w+?)\$/g, (match, key) => {
+      return replacement.value[ key ] || '';
     }).trim();
   }
   return result;
@@ -60,7 +60,7 @@ onMounted(async () => {
 
 async function doPreview(): Promise<void> {
   preview.value = template.value.replace(/\$(\w+?)\$/g, (match, key) => {
-    return realReplacement.value[key] || '';
+    return realReplacement.value[ key ] || '';
   });
   isSaving.value = true;
   isChanged.value = false;
@@ -210,8 +210,14 @@ async function doCopy(content: string): Promise<void> {
           <i class="bi bi-chevron-double-down" />
           Preview
         </button>
-        <span v-if="isSaving" class="loading loading-spinner ms-1" />
-        <i v-if="isChanged" class="bi bi-file-diff" />
+        <span
+          v-if="isSaving"
+          class="loading loading-spinner ms-1"
+        />
+        <i
+          v-if="isChanged"
+          class="bi bi-file-diff"
+        />
         <button
           class="btn btn-sm btn-ghost ms-auto"
           type="button"
@@ -235,8 +241,14 @@ async function doCopy(content: string): Promise<void> {
           type="button"
           @click="doExecute()"
         >
-          <span v-if="isExecuting" class="loading loading-spinner" />
-          <i v-else class="bi bi-play-fill" />
+          <span
+            v-if="isExecuting"
+            class="loading loading-spinner"
+          />
+          <i
+            v-else
+            class="bi bi-play-fill"
+          />
           Execute
         </button>
         <button
@@ -245,8 +257,14 @@ async function doCopy(content: string): Promise<void> {
           type="button"
           @click="doExecute(true)"
         >
-          <span v-if="isExecuting" class="loading loading-spinner" />
-          <i v-else class="bi bi-three-dots" />
+          <span
+            v-if="isExecuting"
+            class="loading loading-spinner"
+          />
+          <i
+            v-else
+            class="bi bi-three-dots"
+          />
           Continue
         </button>
         <button

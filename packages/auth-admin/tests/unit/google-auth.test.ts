@@ -1,4 +1,4 @@
-import jwt from 'jsonwebtoken';
+import { jwtVerify } from 'jose';
 import type { H3Event } from 'h3';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -111,13 +111,13 @@ describe('server/api/google-auth', () => {
   });
 
   it('非 POST 返回 405', async () => {
-    const { default: googleAuthHandler } = await import('./google-auth');
+    const { default: googleAuthHandler } = await import('~/server/api/google-auth');
     const { event } = createEvent({ method: 'GET', body: { credential: 'x' } });
     await expect(googleAuthHandler(event)).rejects.toMatchObject({ statusCode: 405 });
   });
 
   it('缺少 credential 返回 400', async () => {
-    const { default: googleAuthHandler } = await import('./google-auth');
+    const { default: googleAuthHandler } = await import('~/server/api/google-auth');
     const { event } = createEvent({ method: 'POST', body: {} });
     await expect(googleAuthHandler(event)).rejects.toMatchObject({ statusCode: 400 });
   });
@@ -125,7 +125,7 @@ describe('server/api/google-auth', () => {
   it('缺少 GOOGLE_CLIENT_ID 返回 500', async () => {
     setEnv('GOOGLE_CLIENT_ID', undefined);
 
-    const { default: googleAuthHandler } = await import('./google-auth');
+    const { default: googleAuthHandler } = await import('~/server/api/google-auth');
     const { event } = createEvent({ method: 'POST', body: { credential: 'x' } });
     await expect(googleAuthHandler(event)).rejects.toMatchObject({ statusCode: 500 });
   });
@@ -137,7 +137,7 @@ describe('server/api/google-auth', () => {
       },
     });
 
-    const { default: googleAuthHandler } = await import('./google-auth');
+    const { default: googleAuthHandler } = await import('~/server/api/google-auth');
     const { event } = createEvent({ method: 'POST', body: { credential: 'x' } });
     await expect(googleAuthHandler(event)).rejects.toMatchObject({ statusCode: 400 });
   });
@@ -149,7 +149,7 @@ describe('server/api/google-auth', () => {
       },
     });
 
-    const { default: googleAuthHandler } = await import('./google-auth');
+    const { default: googleAuthHandler } = await import('~/server/api/google-auth');
     const { event } = createEvent({ method: 'POST', body: { credential: 'x' } });
     await expect(googleAuthHandler(event)).rejects.toMatchObject({ statusCode: 400 });
   });
@@ -168,7 +168,7 @@ describe('server/api/google-auth', () => {
       },
     });
 
-    const { default: googleAuthHandler } = await import('./google-auth');
+    const { default: googleAuthHandler } = await import('~/server/api/google-auth');
     const { event, response } = createEvent({ method: 'POST', body: { credential: 'google-id-token' } });
     const result = await googleAuthHandler(event);
 
@@ -180,7 +180,8 @@ describe('server/api/google-auth', () => {
     expect(typeof token).toBe('string');
     if (typeof token !== 'string') return;
 
-    const decoded = jwt.verify(token, 'test-secret') as unknown as { sub?: string };
+    const secretKey = new TextEncoder().encode('test-secret');
+    const { payload: decoded } = await jwtVerify(token, secretKey, { algorithms: ['HS256'] });
     expect(decoded.sub).toBe('user-1');
 
     expect(verifyIdTokenMock).toHaveBeenCalledWith({
@@ -194,3 +195,4 @@ describe('server/api/google-auth', () => {
     expect(cookieText).toContain(token);
   });
 });
+
