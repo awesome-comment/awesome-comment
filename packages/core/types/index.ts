@@ -1,4 +1,4 @@
-import { CommentStatus, CommentTag } from '../data';
+import type { CommentStatus, CommentTag } from '../data';
 
 export type ToggleableRule = {
   enabled: boolean;

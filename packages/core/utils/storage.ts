@@ -1,5 +1,5 @@
-import { KVNamespace } from '@cloudflare/workers-types';
-import { H3Event } from 'h3';
+import type { KVNamespace } from '@cloudflare/workers-types';
+import type { H3Event } from 'h3';
 import { Redis } from '@upstash/redis/cloudflare.js';
 
 export class AcStorage {

@@ -1,11 +1,8 @@
+import tailwindcss from '@tailwindcss/vite';
+
 const modules = [
   '@nuxt/image',
-  [
-    '@pinia/nuxt',
-    {
-      autoImports: ['defineStore'],
-    },
-  ],
+  ['@pinia/nuxt', { autoImports: ['defineStore'] }] as [string, { autoImports: string[] }],
   '@nuxt/ui',
   'dayjs-nuxt',
 ];
@@ -47,16 +44,9 @@ export default defineNuxtConfig({
   dayjs: {
     plugins: ['utc', 'timezone'],
   },
-  postcss: {
-    plugins: {
-      'postcss-import': {},
-      'tailwindcss/nesting': {},
-      tailwindcss: {},
-      autoprefixer: {},
-      ...(process.env.NODE_ENV === 'production' ? { cssnano: {} } : {})
-    },
-  },
-  ui: {
-    icons: ['bi'],
+  vite: {
+    plugins: [
+      tailwindcss(),
+    ],
   },
 });
