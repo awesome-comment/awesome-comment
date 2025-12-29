@@ -5,6 +5,7 @@
   "scripts": {
     "build": "nuxt build",
     "dev": "nuxt dev --port 3020",
+    "postinstall": "nuxt prepare",
     "test": "vitest",
     "test:run": "vitest run"
   },
