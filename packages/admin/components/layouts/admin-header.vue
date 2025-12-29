@@ -22,7 +22,7 @@ const items = computed(() => {
       {
         label: 'Logout',
         icon: 'i-lucide-arrow-left',
-        async click() {
+        async onSelect() {
           await auth0?.logout();
         },
       },

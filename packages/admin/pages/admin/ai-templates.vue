@@ -113,6 +113,7 @@ async function doSave(): Promise<void> {
   <table class="table">
     <thead>
       <tr>
+        <th>ID</th>
         <th>Template Title</th>
         <th>Fix to Reply Modal</th>
         <th>Shortcuts</th>
@@ -135,6 +136,7 @@ async function doSave(): Promise<void> {
         v-for="(prompt, index) in sortedPrompts"
         :key="index"
       >
+        <td>{{prompt.id}}</td>
         <td>
           <NuxtLink
             :to="`/admin/prompts/${prompt.id}`"
