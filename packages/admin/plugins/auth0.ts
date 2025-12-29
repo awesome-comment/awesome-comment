@@ -1,7 +1,7 @@
 import { createAuth0 } from '@auth0/auth0-vue';
 
 export default defineNuxtPlugin(function (nuxtApp) {
-  if (!process.client) return;
+  if (!import.meta.client) return;
 
   const auth0 = createAuth0({
     domain: __AUTH0_DOMAIN__,
@@ -14,7 +14,7 @@ export default defineNuxtPlugin(function (nuxtApp) {
   nuxtApp.vueApp.use(auth0);
 
   addRouteMiddleware('auth', async function (to) {
-    if (!process.client) return;
+    if (!import.meta.client) return;
 
     await auth0.checkSession();
     if (!auth0.isAuthenticated.value) {

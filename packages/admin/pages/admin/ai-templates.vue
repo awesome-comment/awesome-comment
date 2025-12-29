@@ -136,7 +136,7 @@ async function doSave(): Promise<void> {
         v-for="(prompt, index) in sortedPrompts"
         :key="index"
       >
-        <td>{{prompt.id}}</td>
+        <td>{{ prompt.id }}</td>
         <td>
           <NuxtLink
             :to="`/admin/prompts/${prompt.id}`"

@@ -110,9 +110,14 @@ export default typescript.config(
     },
   },
 
-  // Layout Vue files
+  // Layout and Pages Vue files (Nuxt conventions allow single-word names)
   {
-    files: ['**/layouts/*.vue'],
+    files: [
+      '**/layouts/*.vue',
+      '**/pages/**/*.vue',
+      '**/components/prompt/executor.vue',
+      '**/components/prompt/form.vue',
+    ],
     rules: {
       'vue/multi-word-component-names': 'off',
     },
