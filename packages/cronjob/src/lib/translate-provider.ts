@@ -114,6 +114,7 @@ export class OpenAIProvider implements AIProvider {
     // OpenAI 可能返回 { tags: [...] } 或 { categories: [...] } 或直接 [...]
     const tagArray = result.tags || result.categories || result;
     if (!Array.isArray(tagArray)) {
+      console.log('xxx', text);
       return [];
     }
     return tagArray.filter((t: string) => tags.includes(t));
