@@ -1,0 +1,29 @@
+{
+  "name": "@awesome-comment/auth-admin-new",
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "$npm_execpath run build && vite preview",
+    "deploy": "$npm_execpath run build && wrangler deploy",
+    "cf-typegen": "wrangler types --env-interface CloudflareBindings",
+    "test": "vitest",
+    "test:run": "vitest run"
+  },
+  "dependencies": {
+    "@awesome-comment/core": "workspace:*",
+    "hono": "^4.11.3",
+    "jose": "^6.1.0",
+    "lodash-es": "^4.17.22"
+  },
+  "devDependencies": {
+    "@cloudflare/vite-plugin": "^1.17.1",
+    "@cloudflare/workers-types": "^4.20251228.0",
+    "@types/lodash-es": "^4.17.12",
+    "vite": "^6.4.1",
+    "vite-ssr-components": "^0.5.2",
+    "vitest": "^4.0.16",
+    "wrangler": "^4.54.0"
+  }
+}

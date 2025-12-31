@@ -1,0 +1,11 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "auth-admin",
+  "compatibility_date": "2025-08-03",
+  "main": "./src/index.ts",
+  "account_id": "bcde86cbc071c7d619bf11d706b50251",
+  "vars": {
+    "JWT_EXPIRATION": "7d",
+    "KEY_PREFIX": "aAuth"
+  }
+}
