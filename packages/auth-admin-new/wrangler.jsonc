@@ -1,6 +1,6 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "auth-admin",
+  "name": "awesome-auth",
   "compatibility_date": "2025-08-03",
   "main": "./src/index.ts",
   "account_id": "bcde86cbc071c7d619bf11d706b50251",
