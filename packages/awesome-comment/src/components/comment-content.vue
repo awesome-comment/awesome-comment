@@ -30,7 +30,7 @@ function getParentUserName(id: number): string {
 <template>
   <template v-if="comment.isAdmin">
     <a
-      v-if="comment.parentId &amp;&amp; comment.parentId !== comment.ancestorId"
+      v-if="comment.parentId && comment.parentId !== comment.ancestorId"
       :href="`#awcm-${comment.parentId}`"
       class="inline-block px-2 py-1 rounded-lg mt-2 bg-base-300 text-gray-500 dark:bg-neutral-400/20 dark:text-gray-400"
       target="_self"
@@ -45,7 +45,7 @@ function getParentUserName(id: number): string {
     class="text-gray-500 break-words overflow-x-auto whitespace-pre-line pb-3 mb-0 dark:text-gray-400"
   >
     <a
-      v-if="comment.parentId &amp;&amp; comment.parentId !== comment.ancestorId"
+      v-if="comment.parentId && comment.parentId !== comment.ancestorId"
       :href="`#awcm-${comment.parentId}`"
       class="inline-block px-2 py-1 rounded-lg me-1 bg-base-300 text-gray-500 dark:bg-neutral-400/20 dark:text-gray-400"
       target="_self"
