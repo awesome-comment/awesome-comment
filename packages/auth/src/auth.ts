@@ -168,9 +168,10 @@ export class AwesomeAuth extends EventEmitter3 {
       this.emit(AwesomeAuthEvent.ERROR, 'Google Identity Services 未加载完成');
       return;
     }
+    const isDarkMode = window.matchMedia?.('(prefers-color-scheme: dark)').matches;
     google.accounts.id.renderButton(target, {
       type: 'standard',
-      theme: 'outline',
+      theme: isDarkMode ? 'filled_black' : 'outline',
       size: 'large',
       text: 'signin_with',
       ...options,
