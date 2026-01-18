@@ -21,3 +21,7 @@
     @apply mb-0;
   }
 }
+
+.g-id-signin {
+  color-scheme: light;
+}

@@ -37,9 +37,11 @@ async function renderGoogleButton(): Promise<void> {
   await nextTick();
   const target = googleButton.value;
   if (!target) return;
+
   target.innerHTML = '';
+  const isDarkMode = window.matchMedia?.('(prefers-color-scheme: dark)').matches;
   await authStore.renderGoogleButton(target, {
-    theme: 'outline',
+    theme: isDarkMode ? 'filled_black' : 'outline',
     size: 'medium',
     text: 'signin_with',
     shape: 'pill',
@@ -133,6 +135,7 @@ watch(
         <div
           v-else
           ref="googleButton"
+          class="g-id-signin"
         />
       </div>
     </header>
