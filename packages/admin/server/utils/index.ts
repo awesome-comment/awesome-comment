@@ -10,6 +10,7 @@ import {
 } from '@awesome-comment/core/types';
 import { CommentStatus, MarkdownLinkRegex, POST_INTERVAL } from '@awesome-comment/core/data';
 import createStorage, { AcStorage } from '@awesome-comment/core/utils/storage';
+export { buildAnonymousUser, verifyTurnstileToken } from './turnstile';
 
 export async function getConfig(storage: AcStorage): Promise<AcConfig> {
   const key = getConfigKey();

@@ -125,4 +125,5 @@ export type PostCommentRequest = {
   window?: string;
   customData?: unknown;
   extraData?: unknown;
+  turnstileToken?: string;
 };

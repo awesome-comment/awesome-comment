@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import { inject, onMounted, ref } from 'vue';
+import { computed, inject, nextTick, onMounted, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import type { CommentStatus } from '@awesome-comment/core/data';
 import type { ResponseBody } from '@awesome-comment/core/types';
+import type { User } from '@auth0/auth0-vue';
 import { withCommandModifier } from '@awesome-comment/core/utils';
 import { validateCommentContent } from '@awesome-comment/core/utils/validation';
 import useStore from '../store';
@@ -33,16 +34,109 @@ const store = useStore();
 const { t } = useI18n();
 const baseUrl = inject('ApiBaseUrl');
 const auth0domain = inject('Auth0Domain');
+const turnstileSiteKey = inject<string | undefined>('TurnstileSiteKey');
 const version = __VERSION__;
 const textarea = ref<HTMLTextAreaElement>();
+const turnstileContainer = ref<HTMLDivElement>();
 
 const isSending = ref<boolean>(false);
 const comment = ref<string>(props.content || '');
 const message = ref<string>('');
+const needAuth = ref<boolean>(false);
+const turnstileToken = ref<string>('');
+const turnstileWidgetId = ref<string>('');
+const isAnonymous = computed(() => !authStore.isAuthenticated);
+
+let turnstileScriptPromise: Promise<void> | null = null;
+
+function loadTurnstileScript(): Promise<void> {
+  if (typeof window === 'undefined') return Promise.reject(new Error('Turnstile 仅支持浏览器环境'));
+  if (window.turnstile) return Promise.resolve();
+  if (turnstileScriptPromise) return turnstileScriptPromise;
+  const src = 'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit';
+  turnstileScriptPromise = new Promise((resolve, reject) => {
+    const existingScript = document.querySelector<HTMLScriptElement>(`script[src="${src}"]`);
+    const script = existingScript || document.createElement('script');
+
+    function handleLoad() {
+      resolve();
+    }
+    function handleError() {
+      reject(new Error('Turnstile 脚本加载失败'));
+    }
+
+    script.addEventListener('load', handleLoad, { once: true });
+    script.addEventListener('error', handleError, { once: true });
+    if (!existingScript) {
+      script.src = src;
+      script.async = true;
+      script.defer = true;
+      document.head.appendChild(script);
+    }
+  });
+  turnstileScriptPromise.catch(() => {
+    turnstileScriptPromise = null;
+  });
+  return turnstileScriptPromise;
+}
+
+async function renderTurnstile(): Promise<void> {
+  if (!turnstileSiteKey || !turnstileContainer.value) return;
+  await loadTurnstileScript();
+  if (!window.turnstile) {
+    message.value = 'Turnstile 初始化失败';
+    return;
+  }
+  if (turnstileWidgetId.value) {
+    window.turnstile.reset(turnstileWidgetId.value);
+    return;
+  }
+  turnstileWidgetId.value = window.turnstile.render(turnstileContainer.value, {
+    sitekey: turnstileSiteKey,
+    size: 'compact',
+    callback: (token: string) => {
+      turnstileToken.value = token;
+      message.value = '';
+    },
+    'expired-callback': () => {
+      turnstileToken.value = '';
+    },
+    'error-callback': () => {
+      turnstileToken.value = '';
+      message.value = 'Turnstile 验证失败，请重试。';
+    },
+  });
+}
+
+function resetTurnstile(): void {
+  if (!turnstileWidgetId.value || !window.turnstile) return;
+  window.turnstile.reset(turnstileWidgetId.value);
+  turnstileToken.value = '';
+}
+
+function getLocalUser(): User {
+  if (authStore.user) return authStore.user as User;
+  return {
+    sub: 'anonymous',
+    name: 'anonymous',
+    nickname: 'anonymous',
+    picture: '',
+    email: '',
+  } as User;
+}
 
 async function doSubmit(event: Event): Promise<void> {
-  if (!authStore.user) {
-    return doLogin();
+  if (!authStore.isAuthenticated) {
+    if (!turnstileSiteKey) {
+      return doLogin();
+    }
+    needAuth.value = true;
+    if (!turnstileToken.value) {
+      message.value = t('login_or_verify');
+      await nextTick();
+      await renderTurnstile();
+      return;
+    }
   }
   if ((event.target as HTMLFormElement).matches(':invalid')) return;
   const commentContent = comment.value.trim();
@@ -62,15 +156,33 @@ async function doSubmit(event: Event): Promise<void> {
     method = 'PATCH';
   }
   try {
-    const accessToken = await authStore.getAccessToken();
+    const accessToken = authStore.isAuthenticated ? await authStore.getAccessToken() : '';
     const authEndpoint = authStore.authEndpoint;
+    const headers: Record<string, string> = {
+      'Content-Type': 'application/json',
+      'Auth-Endpoint': authEndpoint,
+    };
+    if (accessToken) {
+      headers.Authorization = `Bearer ${accessToken}`;
+    }
+    const anonymousInfo = isAnonymous.value
+      ? {
+          referrer: document.referrer || '',
+          language: navigator.language || '',
+          languages: navigator.languages || [],
+          timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || '',
+          platform: navigator.platform || '',
+        }
+      : null;
+    const customData = isAnonymous.value
+      ? {
+          custom: window.custom_comment_data ?? null,
+          anonymous: anonymousInfo,
+        }
+      : window.custom_comment_data;
     const response = await fetch(url, {
       method,
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${accessToken}`,
-        'Auth-Endpoint': authEndpoint,
-      },
+      headers,
       body: JSON.stringify({
         comment: commentContent,
         postId: store.postId,
@@ -79,8 +191,9 @@ async function doSubmit(event: Event): Promise<void> {
         parentId: props.parentId ? Number(props.parentId) : undefined,
         status: props.status,
         window: `${window.innerWidth}x${window.innerHeight} / ${(screen.width, screen.height)}`,
-        customData: window.custom_comment_data,
+        customData,
         extraData: `${window.BM_LEVEL}:${window.BM_VALUE}`,
+        turnstileToken: isAnonymous.value ? turnstileToken.value : undefined,
       }),
     });
 
@@ -93,15 +206,20 @@ async function doSubmit(event: Event): Promise<void> {
     }
 
     const { id, status } = json.data as PostResponse;
+    const localUser = getLocalUser();
     if (props.ancestorId || props.parentId) {
-      store.addComment(id, commentContent, authStore.user, status, props.ancestorId, props.parentId);
+      store.addComment(id, commentContent, localUser, status, props.ancestorId, props.parentId);
     } else if (props.currentId) {
       emit('update', commentContent);
     } else {
-      store.addComment(id, commentContent, authStore.user, status);
+      store.addComment(id, commentContent, localUser, status);
     }
     comment.value = '';
     emit('close');
+    if (isAnonymous.value) {
+      resetTurnstile();
+      needAuth.value = false;
+    }
   } catch (e) {
     message.value = (e as Error).message || String(e);
   }
@@ -123,6 +241,25 @@ function onCancel(): void {
 onMounted(() => {
   textarea.value?.focus();
 });
+
+watch(
+  () => needAuth.value,
+  async (value) => {
+    if (!value || authStore.isAuthenticated) return;
+    await nextTick();
+    await renderTurnstile();
+  },
+);
+
+watch(
+  () => authStore.isAuthenticated,
+  (value) => {
+    if (value) {
+      needAuth.value = false;
+      resetTurnstile();
+    }
+  },
+);
 </script>
 
 <template>
@@ -161,8 +298,24 @@ onMounted(() => {
         >
           {{ message }}
         </div>
+        <div
+          v-if="needAuth && !authStore.isAuthenticated"
+          class="flex items-center gap-3 ms-4"
+        >
+          <button
+            class="ac-btn ac-btn-secondary ac-btn-xs"
+            type="button"
+            @click="doLogin"
+          >
+            {{ t('login') }}
+          </button>
+          <div
+            v-if="turnstileSiteKey"
+            ref="turnstileContainer"
+          />
+        </div>
         <button
-          :disabled="isSending"
+          :disabled="isSending || (needAuth && !authStore.isAuthenticated && !turnstileToken)"
           class="ac-btn ac-btn-primary ac-btn-sm ms-auto"
         >
           <span

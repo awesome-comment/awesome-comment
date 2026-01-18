@@ -1,6 +1,15 @@
 import type { PostCommentRequest, ResponseBody, User } from '@awesome-comment/core/types';
 import { CommentStatus, POST_INTERVAL } from '@awesome-comment/core/data';
-import { getUser, getCacheKey, getConfig, checkCommentStatus, clearCache, updateUserPostHistory } from '~/server/utils';
+import {
+  buildAnonymousUser,
+  checkCommentStatus,
+  clearCache,
+  getCacheKey,
+  getConfig,
+  getUser,
+  updateUserPostHistory,
+  verifyTurnstileToken,
+} from '~/server/utils';
 import createStorage from '@awesome-comment/core/utils/storage';
 
 type PostResponse = ResponseBody<{
@@ -10,30 +19,38 @@ type PostResponse = ResponseBody<{
 
 export default defineEventHandler(async function (event): Promise<PostResponse> {
   const headers = getHeaders(event);
-  const authorization = headers['authorization'];
-  if (!authorization) {
-    throw createError({
-      statusCode: 401,
-      message: 'Unauthorized',
-    });
-  }
-
   const body: PostCommentRequest = await readBody(event);
   const comment = body.comment?.replaceAll('\u200b', '').trim();
+  const authorization = headers['authorization'];
+  const ip = headers['x-real-ip'] || headers['x-forwarded-for'] || headers['x-client-ip'] || '';
 
   const storage = createStorage(event);
   const authEndpoint = headers['auth-endpoint'];
   let user: User | null = null;
-  try {
-    user = await (authEndpoint
-      ? getUser(storage, authorization, authEndpoint)
-      : getAuth0User(storage, authorization, body.domain));
-  } catch (e) {
-    const message = (e as Error).message || e;
-    throw createError({
-      statusCode: 401,
-      message: 'Failed to authorized user. ' + message,
-    });
+  let isAnonymous = false;
+  if (authorization) {
+    try {
+      user = await (authEndpoint
+        ? getUser(storage, authorization, authEndpoint)
+        : getAuth0User(storage, authorization, body.domain));
+    } catch (e) {
+      const message = (e as Error).message || e;
+      throw createError({
+        statusCode: 401,
+        message: 'Failed to authorized user. ' + message,
+      });
+    }
+  } else {
+    const token = body.turnstileToken;
+    if (!token) {
+      throw createError({
+        statusCode: 401,
+        message: '需要登录或完成验证码',
+      });
+    }
+    await verifyTurnstileToken(token, ip);
+    user = await buildAnonymousUser(body, headers, ip);
+    isAnonymous = true;
   }
 
   if (!user) {
@@ -68,7 +85,6 @@ export default defineEventHandler(async function (event): Promise<PostResponse> 
     });
   }
 
-  const ip = headers['x-real-ip'] || headers['x-forwarded-for'] || headers['x-client-ip'] || '';
   let id: number | null = null;
   const encodedCredentials = btoa(`${process.env.TIDB_PUBLIC_KEY}:${process.env.TIDB_PRIVATE_KEY}`);
   try {
@@ -130,7 +146,7 @@ export default defineEventHandler(async function (event): Promise<PostResponse> 
     await clearCache(storage, key);
   }
   // update user posts
-  if (!isAdmin) {
+  if (!isAdmin && !isAnonymous) {
     await updateUserPostHistory(storage, authorization, user);
   }
 

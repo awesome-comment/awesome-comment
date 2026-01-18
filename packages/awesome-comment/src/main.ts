@@ -18,6 +18,7 @@ export type InitOptions = {
   clientId?: string;
   locale?: string;
   awesomeAuth?: AwesomeAuth;
+  turnstileSiteKey?: string;
 };
 type Manager = {
   init: (dom: string | HTMLElement, options: InitOptions) => void;
@@ -83,15 +84,17 @@ const AwesomeComment: InitOptions & Manager = {
   clientId: '',
   locale: '',
   awesomeAuth: undefined,
+  turnstileSiteKey: '',
   init(
     dom: string | HTMLElement,
-    { postId, apiUrl, domain, clientId, awesomeAuth, locale = navigator.language }: InitOptions = {},
+    { postId, apiUrl, domain, clientId, awesomeAuth, turnstileSiteKey, locale = navigator.language }: InitOptions = {},
   ) {
     postId ??= this.postId;
     apiUrl ??= this.apiUrl;
     domain ??= this.domain || '';
     clientId ??= this.clientId;
     awesomeAuth ??= this.awesomeAuth;
+    turnstileSiteKey ??= this.turnstileSiteKey;
     const app = init({ domain, clientId, locale });
     app.provide('ApiBaseUrl', apiUrl);
     app.provide('postId', postId);
@@ -99,13 +102,15 @@ const AwesomeComment: InitOptions & Manager = {
     app.provide('comments', comments);
     app.provide('total', total);
     app.provide('awesomeAuth', awesomeAuth);
+    app.provide('TurnstileSiteKey', turnstileSiteKey);
     app.mount(dom);
   },
-  async preload({ postId, apiUrl, domain, clientId, awesomeAuth }: InitOptions): Promise<void> {
+  async preload({ postId, apiUrl, domain, clientId, awesomeAuth, turnstileSiteKey }: InitOptions): Promise<void> {
     this.postId = postId || '';
     this.apiUrl = apiUrl || '';
     this.domain = domain || '';
     this.clientId = clientId || '';
+    this.turnstileSiteKey = turnstileSiteKey || '';
     if (domain && clientId) {
       preAuth0 = createAuth0({
         domain,
