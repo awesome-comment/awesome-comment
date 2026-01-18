@@ -4,14 +4,14 @@ export type ToggleableRule = {
   enabled: boolean;
   exclude?: string;
   include?: string;
-}
+};
 export type AcConfig = {
   adminEmails: string[];
   adminDisplayName: string;
   adminDisplayAvatar: string;
   autoApprove: ToggleableRule;
   shortcutEmojis: string[];
-}
+};
 
 export type ResponseBody<T> = {
   code: number;
@@ -21,7 +21,7 @@ export type ResponseBody<T> = {
     total?: number;
     config?: AcConfig;
   };
-}
+};
 
 export type User = {
   id: string;
@@ -37,12 +37,12 @@ export type User = {
   ip?: string;
   custom?: unknown;
   extra?: unknown;
-}
+};
 export type CommentUser = {
   avatar: string;
   email: string;
   name: string;
-}
+};
 
 type BaseComment = {
   id?: number;
@@ -57,7 +57,7 @@ type BaseComment = {
   children?: Comment[];
   created_at?: string;
   like?: number;
-}
+};
 export type Comment = BaseComment & {
   ancestorId?: number;
   createdAt: Date;
@@ -67,24 +67,24 @@ export type Comment = BaseComment & {
   postId: string;
   user?: CommentUser;
   userId: string;
-}
+};
 export type ResponseComment = BaseComment & {
   created_at: string;
   parent_id?: number;
   ancestor_id?: number;
   user_id: string;
   post_id: string;
-}
+};
 export type PostCount = {
   post_id: string;
   comment_count: number;
-}
+};
 
 export type StatDailyByLanguage = {
   date: string;
   lang: string;
   total: number;
-}
+};
 
 export type StatDailyByUser = {
   from: string;
@@ -98,13 +98,13 @@ export type StatDailyByUser = {
     email: string;
     name: string;
   };
-}
+};
 
 export type VoteItem = {
   like: number;
   dislike: number;
   ip: Record<string, number[]>;
-}
+};
 
 export type AwesomeUser = {
   sub: string;
@@ -113,7 +113,7 @@ export type AwesomeUser = {
   name: string;
   given_name: string;
   family_name: string;
-}
+};
 
 export type PostCommentRequest = {
   postId: string;
@@ -125,4 +125,4 @@ export type PostCommentRequest = {
   window?: string;
   customData?: unknown;
   extraData?: unknown;
-}
+};

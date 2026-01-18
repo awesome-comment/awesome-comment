@@ -53,35 +53,34 @@ const useStore = defineStore('store', () => {
       removeLocalComment(Number(item.id));
       const formatted = formatHelper(item);
       if (!item.ancestor_id || Number(item.ancestor_id) === 0) {
-        res[ item.id as number ] = formatted;
+        res[item.id as number] = formatted;
       } else {
         deeper.push(formatted);
       }
     });
 
-    const comment = localComments[ postId ];
+    const comment = localComments[postId];
     if (comment) {
       comment.createdAt = new Date(comment.createdAt);
       if (!comment.ancestorId || Number(comment.ancestorId) === 0) {
-        res[ comment.id as number ] = comment;
+        res[comment.id as number] = comment;
       } else {
         deeper.push(comment);
       }
     }
 
     deeper.forEach((item: Comment) => {
-      if (item.ancestorId as number in res) {
-        const parent = res[ item.ancestorId as number ];
+      if ((item.ancestorId as number) in res) {
+        const parent = res[item.ancestorId as number];
         parent.children = [item, ...(parent.children || [])];
       }
     });
 
     // sort by id
     for (const key in res) {
-      const item = res[ key ];
+      const item = res[key];
       if (item.children) {
-        item.children = item.children
-          .sort((a, b) => (a.id as number) - (b.id as number));
+        item.children = item.children.sort((a, b) => (a.id as number) - (b.id as number));
       }
     }
     return res;
@@ -119,11 +118,10 @@ const useStore = defineStore('store', () => {
       total.value = data.meta?.total || data.data?.length || 0;
     }
 
-
     hasMore.value = Object.keys(formatted).length > 20;
     // remove extra comment
     if (hasMore.value) {
-      delete formatted[ Object.keys(formatted)[ 0 ] as unknown as number ];
+      delete formatted[Object.keys(formatted)[0] as unknown as number];
     }
     Object.assign(comments.value, formatted);
     isLoaded.value = true;
@@ -135,15 +133,9 @@ const useStore = defineStore('store', () => {
     user: User,
     status: CommentStatus = CommentStatus.Pending,
     ancestorId?: number,
-    parentId?: number
+    parentId?: number,
   ): void {
-    const {
-      sub = '',
-      name = '',
-      picture = '',
-      email = '',
-      nickname = '',
-    } = user;
+    const { sub = '', name = '', picture = '', email = '', nickname = '' } = user;
     const newComment: Comment = {
       id,
       post_id: postId,
@@ -159,44 +151,46 @@ const useStore = defineStore('store', () => {
       userId: sub,
       status,
       isNew: true,
-    }
+    };
     if (ancestorId || parentId) {
       newComment.ancestorId = ancestorId;
       newComment.parentId = parentId;
-      const ancestor = comments.value[ ancestorId as number ];
+      const ancestor = comments.value[ancestorId as number];
       if (!ancestor.children) {
-        ancestor.children = []
+        ancestor.children = [];
       }
-      if (ancestorId === parentId) { // if same value, means the comment is just reply to the ancestor item
+      if (ancestorId === parentId) {
+        // if same value, means the comment is just reply to the ancestor item
         ancestor.children!.unshift(newComment);
-      } else { // means the comment is the reply to the previous parent item
-        const idx = ancestor.children!.findIndex(i => Number(i.id) === parentId);
+      } else {
+        // means the comment is the reply to the previous parent item
+        const idx = ancestor.children!.findIndex((i) => Number(i.id) === parentId);
         ancestor.children!.splice(idx + 1, 0, newComment); // insert after parent
       }
     } else {
       newComment.ancestorId = 0;
       newComment.parentId = 0;
-      comments.value = { [ id ]: newComment, ...comments.value }; // new comment should be positioned at the beginning
+      comments.value = { [id]: newComment, ...comments.value }; // new comment should be positioned at the beginning
     }
     total.value++;
 
     // save comment to local if user is not admin
     if (status !== CommentStatus.Approved) {
-      localComments[ postId ] = newComment;
+      localComments[postId] = newComment;
       localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(localComments));
     }
   }
   function removeLocalComment(id: number): void {
-    if (localComments[ postId ]?.id !== id) return;
-    delete localComments[ postId ];
+    if (localComments[postId]?.id !== id) return;
+    delete localComments[postId];
     localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(localComments));
   }
   function updateComment(id: number, obj: Partial<Comment>) {
-    let comment: Comment | void = comments.value[ id ];
+    let comment: Comment | void = comments.value[id];
     if (!comment) {
       for (const ancestor of Object.values(comments.value)) {
         if (ancestor.children) {
-          comment = ancestor.children.find(i => Number(i.id) === id);
+          comment = ancestor.children.find((i) => Number(i.id) === id);
           if (comment) break;
         }
       }

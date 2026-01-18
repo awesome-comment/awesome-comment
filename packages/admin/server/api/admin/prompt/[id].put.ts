@@ -25,7 +25,7 @@ export default defineEventHandler(async function (event): Promise<ResponseBody<n
     const response = await fetch(`${process.env.TIDB_END_POINT}/v1/prompt`, {
       method: 'PUT',
       headers: {
-        'Authorization': `Basic ${encodedCredentials}`,
+        Authorization: `Basic ${encodedCredentials}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({

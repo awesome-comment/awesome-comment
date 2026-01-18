@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, nextTick, onMounted, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import CommentForm from './components/comment-form.vue';
 import CommentSection from './components/comment-section.vue';
@@ -9,6 +9,7 @@ import useAuthStore from './store/auth.ts';
 const store = useStore();
 const { t } = useI18n();
 const authStore = useAuthStore();
+const googleButton = ref<HTMLDivElement>();
 const total = computed<number | string>(() => {
   const total = store.hasMore ? store.total + '+' : store.total;
   if (store.total === 0) return '0';
@@ -30,6 +31,33 @@ function doLogout(): void {
     openUrl: false,
   });
 }
+
+async function renderGoogleButton(): Promise<void> {
+  if (!authStore.isAwesomeAuth || authStore.isAuthenticated) return;
+  await nextTick();
+  const target = googleButton.value;
+  if (!target) return;
+  target.innerHTML = '';
+  await authStore.renderGoogleButton(target, {
+    theme: 'outline',
+    size: 'medium',
+    text: 'signin_with',
+    shape: 'pill',
+  });
+}
+
+onMounted(() => {
+  renderGoogleButton();
+});
+
+watch(
+  () => authStore.isAuthenticated,
+  (value) => {
+    if (!value) {
+      renderGoogleButton();
+    }
+  },
+);
 </script>
 
 <template>
@@ -94,7 +122,7 @@ function doLogout(): void {
           </ul>
         </template>
         <button
-          v-else
+          v-else-if="!authStore.isAwesomeAuth"
           :disabled="authStore.isLoading"
           class="ac-btn ac-btn-secondary ac-btn-xs"
           type="button"
@@ -102,6 +130,10 @@ function doLogout(): void {
         >
           {{ t('login') }}
         </button>
+        <div
+          v-else
+          ref="googleButton"
+        />
       </div>
     </header>
     <comment-form />

@@ -18,7 +18,7 @@ const props = withDefaults(defineProps<Props>(), {
 });
 type Emits = {
   (event: 'select-user', userId: string): void;
-}
+};
 const emit = defineEmits<Emits>();
 
 const route = useRoute();
@@ -33,7 +33,7 @@ const from = computed(() => {
 });
 const localPrefix = computed<string>(() => {
   return props.prefix || route.path;
-})
+});
 const userLink = computed<string>(() => {
   const params = new URLSearchParams();
   params.set('user', props.userId);
@@ -42,18 +42,22 @@ const userLink = computed<string>(() => {
 });
 const agentInfo = computed<string>(() => {
   const info = parseUserAgent(props.user.agent || '');
-  return `${ info.deviceType }
-${ info.os } ${ info.osVersion }
-${ info.browser } ${ info.browserVersion }`
-    .split('\n').map(item => item.trim())
-    .join('\n').replace(/\n+/g, '\n').trim();
+  return `${info.deviceType}
+${info.os} ${info.osVersion}
+${info.browser} ${info.browserVersion}`
+    .split('\n')
+    .map((item) => item.trim())
+    .join('\n')
+    .replace(/\n+/g, '\n')
+    .trim();
 });
 
 async function doCopyCustomData() {
   await navigator.clipboard.writeText(JSON.stringify(props.user.custom));
   isCustomCopied.value = true;
   await sleep(1500);
-  isCustomCopied.value = false;1
+  isCustomCopied.value = false;
+  1;
 }
 async function copyUserName() {
   await navigator.clipboard.writeText(props.user.name);

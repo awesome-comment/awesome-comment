@@ -1,22 +1,22 @@
 <script setup lang="ts">
-import { useMouse, useWindowScroll } from '@vueuse/core'
+import { useMouse, useWindowScroll } from '@vueuse/core';
 
-const { x, y } = useMouse()
-const { y: windowY } = useWindowScroll()
+const { x, y } = useMouse();
+const { y: windowY } = useWindowScroll();
 
-const isOpen = ref(false)
-const virtualElement = ref({ getBoundingClientRect: () => ({}) })
+const isOpen = ref(false);
+const virtualElement = ref({ getBoundingClientRect: () => ({}) });
 
-function onContextMenu () {
-  const top = unref(y) - unref(windowY)
-  const left = unref(x)
+function onContextMenu() {
+  const top = unref(y) - unref(windowY);
+  const left = unref(x);
 
   virtualElement.value.getBoundingClientRect = () => ({
     width: 0,
     height: 0,
     top,
-    left
-  })
+    left,
+  });
 
   isOpen.value = true;
 }

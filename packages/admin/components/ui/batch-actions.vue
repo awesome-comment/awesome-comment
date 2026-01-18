@@ -48,8 +48,7 @@ async function doApprove(): Promise<void> {
   const token = await auth0.getAccessTokenSilently();
   for (const comment of comments.value) {
     newComments.push(comment);
-    if (!modelValue.value.includes(comment.id)
-      || comment.status !== CommentStatus.Pending) continue;
+    if (!modelValue.value.includes(comment.id) || comment.status !== CommentStatus.Pending) continue;
 
     comment.status = CommentStatus.Approved;
     await $fetch('/api/admin/comment/' + comment.id, {
@@ -74,8 +73,7 @@ async function doReject(): Promise<void> {
   const token = await auth0.getAccessTokenSilently();
   for (const comment of comments.value) {
     newComments.push(comment);
-    if (!modelValue.value.includes(comment.id)
-      || comment.status !== CommentStatus.Pending) continue;
+    if (!modelValue.value.includes(comment.id) || comment.status !== CommentStatus.Pending) continue;
 
     comment.status = CommentStatus.Rejected;
     await $fetch('/api/admin/comment/' + comment.id, {
@@ -169,7 +167,7 @@ async function replyToComment(content: string, comment: Comment): Promise<void> 
   }
 }
 async function getPrompt(id: string, comment: Comment): Promise<string> {
-  const template = promptStore.prompts[ id ].content;
+  const template = promptStore.prompts[id].content;
   let title = '';
   if (template.includes('$TITLE$')) {
     const accessToken = await auth0.getAccessTokenSilently();
@@ -185,7 +183,7 @@ async function getPrompt(id: string, comment: Comment): Promise<string> {
   }
   return replaceTemplate(template, comment, title, '');
 }
-async function getAiReply(postId:string, content: string): Promise<string> {
+async function getAiReply(postId: string, content: string): Promise<string> {
   const accessToken = await auth0.getAccessTokenSilently();
   const reqOptions = {
     method: 'POST',
@@ -195,10 +193,12 @@ async function getAiReply(postId:string, content: string): Promise<string> {
     },
     body: {
       postId,
-      messages: [{
-        role: 'user',
-        content,
-      }],
+      messages: [
+        {
+          role: 'user',
+          content,
+        },
+      ],
     },
   };
   const res = await $fetch<ResponseBody<string>>('/api/admin/chat', reqOptions);

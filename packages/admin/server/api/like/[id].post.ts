@@ -11,12 +11,9 @@ type LikeRequest = {
   postId: string;
 };
 
-export default defineEventHandler(async function(event: H3Event): Promise<PostResponse> {
+export default defineEventHandler(async function (event: H3Event): Promise<PostResponse> {
   const headers = getHeaders(event);
-  const ip = headers[ 'x-real-ip' ]
-    || headers[ 'x-forwarded-for' ]
-    || headers[ 'x-client-ip' ]
-    || '';
+  const ip = headers['x-real-ip'] || headers['x-forwarded-for'] || headers['x-client-ip'] || '';
   if (!ip) {
     throw createError({
       statusCode: 400,
@@ -36,16 +33,16 @@ export default defineEventHandler(async function(event: H3Event): Promise<PostRe
   const { like, postId } = body;
   const storage = createStorage(event);
   const key = getVoteCacheKey(postId);
-  const vote = await storage.get<Record<string, VoteItem>>(key) || {};
-  const voteItem = vote[ id ];
+  const vote = (await storage.get<Record<string, VoteItem>>(key)) || {};
+  const voteItem = vote[id];
   const now = Date.now();
   if (!voteItem) {
     const num = like ? 1 : 0;
-    vote[ id ] = {
+    vote[id] = {
       like: num,
       dislike: 0,
       ip: {
-        [ ip ]: [now],
+        [ip]: [now],
       },
     };
     await storage.put(key, vote);
@@ -62,9 +59,9 @@ export default defineEventHandler(async function(event: H3Event): Promise<PostRe
   }
 
   // check ip
-  const ips = voteItem.ip[ ip ] || [];
+  const ips = voteItem.ip[ip] || [];
   // find ip records in last 60s
-  const index = ips.findIndex(t => now - t < 60 * 1000); // 60s
+  const index = ips.findIndex((t) => now - t < 60 * 1000); // 60s
   if (index > -1) {
     ips.splice(0, index);
   }

@@ -12,7 +12,7 @@ type PatchRequest = {
 
 export default defineEventHandler(async function (event): Promise<ResponseBody<string>> {
   const headers = getHeaders(event);
-  const authorization = headers[ 'authorization' ];
+  const authorization = headers['authorization'];
   if (!authorization) {
     throw createError({
       statusCode: 401,
@@ -56,7 +56,7 @@ export default defineEventHandler(async function (event): Promise<ResponseBody<s
     await fetch(url, {
       method: 'PUT',
       headers: {
-        'Authorization': `Basic ${encodedCredentials}`,
+        Authorization: `Basic ${encodedCredentials}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
@@ -83,4 +83,4 @@ export default defineEventHandler(async function (event): Promise<ResponseBody<s
     code: 0,
     data: 'ok',
   };
-})
+});

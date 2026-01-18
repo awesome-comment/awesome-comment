@@ -91,7 +91,7 @@ export class OpenAIProvider implements AIProvider {
         },
       ],
     });
-    return response.choices[ 0 ]?.message?.content?.trim() || '';
+    return response.choices[0]?.message?.content?.trim() || '';
   }
 
   async classifyTags(content: string, tags: readonly string[]): Promise<string[]> {
@@ -109,7 +109,7 @@ export class OpenAIProvider implements AIProvider {
       ],
       response_format: { type: 'json_object' },
     });
-    const text = response.choices[ 0 ]?.message?.content?.trim() || '{}';
+    const text = response.choices[0]?.message?.content?.trim() || '{}';
     const result = JSON.parse(text);
     // OpenAI 可能返回 { tags: [...] } 或 { categories: [...] } 或直接 [...]
     const tagArray = result.tags || result.categories || result;
@@ -130,10 +130,7 @@ export function createAIProvider(env: Cloudflare.Env): AIProvider {
       if (!env.OPENAI_API_KEY) {
         throw new Error('OPENAI_API_KEY is required for OpenAI provider');
       }
-      return new OpenAIProvider(
-        env.OPENAI_API_KEY,
-        env.TRANSLATE_MODEL || DEFAULT_OPENAI_MODEL,
-      );
+      return new OpenAIProvider(env.OPENAI_API_KEY, env.TRANSLATE_MODEL || DEFAULT_OPENAI_MODEL);
 
     case 'google':
     default:

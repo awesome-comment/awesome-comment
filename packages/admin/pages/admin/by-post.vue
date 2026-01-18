@@ -7,13 +7,13 @@ const page = ref<number>(1);
 const message = ref<string>('');
 const auth0 = process.client && useAuth0();
 
-const { data, pending, refresh } = useLazyAsyncData<{list: PostCount[], total: number}>(
+const { data, pending, refresh } = useLazyAsyncData<{ list: PostCount[]; total: number }>(
   'count',
   async function () {
     const empty = { list: [], total: 0 };
     if (!auth0) return empty;
     if (!auth0.isAuthenticated.value) {
-      message.value = 'Sorry, you must login first.'
+      message.value = 'Sorry, you must login first.';
       return empty;
     }
 

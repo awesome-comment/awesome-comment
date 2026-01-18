@@ -18,7 +18,7 @@ export default defineEventHandler(async function (event): Promise<ResponseBody<s
     const response = await fetch(url, {
       method: 'POST',
       headers: {
-        'Authorization': `Basic ${encodedCredentials}`,
+        Authorization: `Basic ${encodedCredentials}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
@@ -54,4 +54,4 @@ export default defineEventHandler(async function (event): Promise<ResponseBody<s
     code: 0,
     data: 'ok',
   };
-})
+});

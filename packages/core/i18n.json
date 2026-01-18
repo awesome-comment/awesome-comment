@@ -37,12 +37,7 @@
     "reply": "Reply",
     "reply_to": "reply to",
     "save_editing": "Save",
-    "ui_texts": [
-      "Be the first to start the discussion!",
-      "Join the Conversation (#)",
-      "Loading...",
-      "Load Comments"
-    ],
+    "ui_texts": ["Be the first to start the discussion!", "Join the Conversation (#)", "Loading...", "Load Comments"],
     "your_comment": "Your comment"
   },
   "es": {
@@ -191,12 +186,7 @@
     "reply": "ตอบกลับ",
     "reply_to": "ตอบกลับถึง",
     "save_editing": "บันทึก",
-    "ui_texts": [
-      "เป็นคนแรกที่เริ่มการอภิปราย",
-      "เข้าร่วมการสนทนา (#)",
-      "กำลังโหลด...",
-      "โหลดความคิดเห็น"
-    ],
+    "ui_texts": ["เป็นคนแรกที่เริ่มการอภิปราย", "เข้าร่วมการสนทนา (#)", "กำลังโหลด...", "โหลดความคิดเห็น"],
     "your_comment": "ความคิดเห็นของคุณ"
   },
   "zh": {

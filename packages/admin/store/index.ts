@@ -67,7 +67,7 @@ const useConfigStore = defineStore('config', () => {
     setConfig,
     initMyConfig,
     updateMyConfig,
-  }
+  };
 });
 
 export default useConfigStore;

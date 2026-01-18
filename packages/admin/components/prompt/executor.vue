@@ -6,7 +6,7 @@ import { useAuth0 } from '@auth0/auth0-vue';
 
 type Props = {
   data: AiPromptTemplate;
-}
+};
 const props = defineProps<Props>();
 
 const auth0 = useAuth0();
@@ -35,10 +35,12 @@ const template = computed<string>({
 const realReplacement = computed<Record<string, string>>(() => {
   const result = { ...replacement.value };
   for (const key in result) {
-    const value = result[ key ];
-    result[ key ] = value.replace(/\$(\w+?)\$/g, (match, key) => {
-      return replacement.value[ key ] || '';
-    }).trim();
+    const value = result[key];
+    result[key] = value
+      .replace(/\$(\w+?)\$/g, (match, key) => {
+        return replacement.value[key] || '';
+      })
+      .trim();
   }
   return result;
 });
@@ -60,7 +62,7 @@ onMounted(async () => {
 
 async function doPreview(): Promise<void> {
   preview.value = template.value.replace(/\$(\w+?)\$/g, (match, key) => {
-    return realReplacement.value[ key ] || '';
+    return realReplacement.value[key] || '';
   });
   isSaving.value = true;
   isChanged.value = false;

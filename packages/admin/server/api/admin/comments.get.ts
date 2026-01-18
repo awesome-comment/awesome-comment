@@ -31,7 +31,7 @@ export default defineEventHandler(async function (event): Promise<ResponseBody<C
           url = process.env.TIDB_END_POINT + '/v3/moderator/uncommented';
           break;
 
-        case CommentStatus[ 'Replied to Admin' ]:
+        case CommentStatus['Replied to Admin']:
           url = process.env.TIDB_END_POINT + '/v3/moderator/reply_admin';
           break;
 
@@ -49,7 +49,7 @@ export default defineEventHandler(async function (event): Promise<ResponseBody<C
     const response = await fetch(`${url}?${params.toString()}`, {
       method: 'GET',
       headers: {
-        'Authorization': `Basic ${encodedCredentials}`,
+        Authorization: `Basic ${encodedCredentials}`,
       },
     });
     const result = await response.json();

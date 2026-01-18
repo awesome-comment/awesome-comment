@@ -9,7 +9,7 @@ type Props = {
   isLoading?: boolean;
   modelValue?: boolean;
   title?: string;
-}
+};
 const props = withDefaults(defineProps<Props>(), {
   buttonClass: 'btn-info btn-sm',
   buttonIcon: '',
@@ -25,7 +25,7 @@ type Emits = {
   (event: 'open'): void;
   (event: 'close'): void;
   (event: 'update:modelValue', value: boolean): void;
-}
+};
 const emit = defineEmits<Emits>();
 
 const modal = ref<HTMLDialogElement>();
@@ -56,13 +56,16 @@ function onClose(): void {
   emit('close');
 }
 
-watch(() => props.modelValue, (value: boolean) => {
-  if (value) {
-    doOpenModal();
-  } else {
-    close();
-  }
-});
+watch(
+  () => props.modelValue,
+  (value: boolean) => {
+    if (value) {
+      doOpenModal();
+    } else {
+      close();
+    }
+  },
+);
 
 defineExpose({
   open: doOpenModal,

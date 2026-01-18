@@ -9,11 +9,7 @@ export async function fetchTidb<T>(
   options?: RequestInit,
   queryParams?: Record<string, string | number | null | undefined>,
 ): Promise<T[]> {
-  const {
-    ENVIRONMENT,
-    TIDB_CLOUD_API_KEY,
-    TIDB_CLOUD_ENDPOINT,
-  } = env || {};
+  const { ENVIRONMENT, TIDB_CLOUD_API_KEY, TIDB_CLOUD_ENDPOINT } = env || {};
   const credentials = btoa(TIDB_CLOUD_API_KEY || '');
 
   // Build URL with query parameters
@@ -49,8 +45,6 @@ export async function fetchTidb<T>(
 }
 
 function toJSON(value: JSONData): string {
-  value = mapValues(value, v =>
-    isPlainObject(v) || Array.isArray(v) ? JSON.stringify(v) : v
-  );
+  value = mapValues(value, (v) => (isPlainObject(v) || Array.isArray(v) ? JSON.stringify(v) : v));
   return JSON.stringify(value);
 }

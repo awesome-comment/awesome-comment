@@ -4,7 +4,7 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: #333E;
+  background-color: #333e;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -16,20 +16,20 @@
   max-width: 800px;
 }
 #acClosePopupButton {
-  display:block;
+  display: block;
   position: absolute;
   top: -33px;
   right: 0px;
   color: #fff;
-  font-family:system-ui;
+  font-family: system-ui;
   padding: 5px 10px;
   cursor: pointer;
 }
 #acClosePopupButton path {
-  pointer-events:none;
+  pointer-events: none;
 }
 #acClosePopupButton:hover path {
-  fill:#6f6;
+  fill: #6f6;
 }
 #acMain {
   background: var(--common-bg-color);
@@ -47,13 +47,13 @@
   overscroll-behavior: contain;
 }
 .acLoading {
-  display:flex;
+  display: flex;
   justify-content: center;
   align-items: center;
 }
 #acInner.acLoading::after {
-  content:"Loading...";
-  color:#090;
+  content: "Loading...";
+  color: #090;
 }
 #acInner::-webkit-scrollbar {
   width: 10px;

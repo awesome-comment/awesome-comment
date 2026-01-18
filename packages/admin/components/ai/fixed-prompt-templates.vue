@@ -10,12 +10,12 @@ import useConfigStore from '~/store';
 type Props = {
   comment: Comment;
   reply: string;
-}
+};
 const props = defineProps<Props>();
 type Emits = {
   (event: 'ai', text: string, autoSubmit: boolean): void;
   (event: 'ai:start');
-}
+};
 const emit = defineEmits<Emits>();
 
 const auth0 = useAuth0();
@@ -29,13 +29,16 @@ const isLoading = ref<string>('');
 const isCopied = ref<string>('');
 const promptResult = ref<string>('');
 const fixed = computed<Record<string, AiPromptTemplate>>(() => {
-  return configStore.myConfig.fixedAiTemplates.reduce((acc, id) => {
-    const template = promptStore.prompts[ id ];
-    if (template) {
-      acc[ id ] = template as AiPromptTemplate;
-    }
-    return acc;
-  }, {} as Record<string, AiPromptTemplate>);
+  return configStore.myConfig.fixedAiTemplates.reduce(
+    (acc, id) => {
+      const template = promptStore.prompts[id];
+      if (template) {
+        acc[id] = template as AiPromptTemplate;
+      }
+      return acc;
+    },
+    {} as Record<string, AiPromptTemplate>,
+  );
 });
 const length = computed<number>(() => Object.keys(fixed.value).length);
 
@@ -43,7 +46,7 @@ async function doUse(id: string, event?: MouseEvent): Promise<void> {
   templateId.value = id;
   const hasPreviewPrompt = clickWithModifier(event);
 
-  const item = promptStore.prompts[ id ];
+  const item = promptStore.prompts[id];
   if (!item) return;
   isLoading.value = id;
   if (configStore.myConfig.autoSubmit.includes(Number(id))) {
@@ -69,7 +72,7 @@ async function doUse(id: string, event?: MouseEvent): Promise<void> {
     return;
   }
 
-  return doSubmitChat()
+  return doSubmitChat();
 }
 async function doSubmitChat(): Promise<void> {
   isLoading.value = templateId.value;
@@ -82,10 +85,12 @@ async function doSubmitChat(): Promise<void> {
     },
     body: {
       postId: props.comment.postId,
-      messages: [{
-        role: 'user',
-        content: promptResult.value,
-      }],
+      messages: [
+        {
+          role: 'user',
+          content: promptResult.value,
+        },
+      ],
     },
   };
   try {

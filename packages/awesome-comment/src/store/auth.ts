@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia';
 import { computed, inject, ref, watch } from 'vue';
 import { type LogoutOptions, useAuth0, User } from '@auth0/auth0-vue';
-import { AwesomeAuth, AwesomeAuthEvent } from '@roudanio/awesome-auth';
+import { AwesomeAuth, AwesomeAuthEvent, type GoogleButtonOptions } from '@roudanio/awesome-auth';
 
 const useAuthStore = defineStore('auth', () => {
   const awesomeAuth = inject('awesomeAuth') as AwesomeAuth | undefined;
@@ -33,6 +33,10 @@ const useAuthStore = defineStore('auth', () => {
       auth0.logout(options);
     }
   }
+  async function renderGoogleButton(target: HTMLElement, options?: GoogleButtonOptions): Promise<void> {
+    if (!awesomeAuth) return;
+    await awesomeAuth.renderButton(target, options);
+  }
 
   if (awesomeAuth) {
     awesomeAuth.on(AwesomeAuthEvent.INIT, (value: boolean) => {
@@ -42,7 +46,7 @@ const useAuthStore = defineStore('auth', () => {
       }
     });
     awesomeAuth.on(AwesomeAuthEvent.VERIFYING, (value: boolean) => {
-      isLoading.value = value
+      isLoading.value = value;
     });
     awesomeAuth.on(AwesomeAuthEvent.VERIFIED, (value: boolean) => {
       isAuthenticated.value = value;
@@ -52,15 +56,27 @@ const useAuthStore = defineStore('auth', () => {
     isAuthenticated.value = awesomeAuth.isVerified;
     user.value = awesomeAuth.user;
   } else if (auth0) {
-    watch(auth0.isLoading, value => {
-      isLoading.value = value;
-    }, { immediate: true });
-    watch(auth0.isAuthenticated, value => {
-      isAuthenticated.value = value;
-    }, { immediate: true });
-    watch(auth0.user, value => {
-      user.value = value;
-    }, { immediate: true });
+    watch(
+      auth0.isLoading,
+      (value) => {
+        isLoading.value = value;
+      },
+      { immediate: true },
+    );
+    watch(
+      auth0.isAuthenticated,
+      (value) => {
+        isAuthenticated.value = value;
+      },
+      { immediate: true },
+    );
+    watch(
+      auth0.user,
+      (value) => {
+        user.value = value;
+      },
+      { immediate: true },
+    );
   }
 
   return {
@@ -71,8 +87,9 @@ const useAuthStore = defineStore('auth', () => {
     user,
 
     getAccessToken,
+    renderGoogleButton,
     login,
-    logout
+    logout,
   };
 });
 export default useAuthStore;

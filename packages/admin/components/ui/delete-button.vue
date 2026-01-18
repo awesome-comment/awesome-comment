@@ -2,11 +2,11 @@
 type Props = {
   disabled?: boolean;
   isLoading?: boolean;
-}
+};
 defineProps<Props>();
 type Emits = {
   (event: 'delete'): void;
-}
+};
 const emit = defineEmits<Emits>();
 
 const MaxWaiting = 5;

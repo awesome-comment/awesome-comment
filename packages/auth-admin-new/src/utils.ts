@@ -111,9 +111,7 @@ export async function signJwt(payload: JWTPayload, env: Env): Promise<string> {
     .sign(getJwtSecretKey(secret));
 }
 
-export async function checkUserPermission(
-  c: Context<{ Bindings: Env }>
-): Promise<JWTPayload | null> {
+export async function checkUserPermission(c: Context<{ Bindings: Env }>): Promise<JWTPayload | null> {
   const authorization = c.req.header('authorization');
   const token = authorization?.split(' ')[1] || '';
   if (!token) return null;

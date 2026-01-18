@@ -17,7 +17,7 @@ const { data, pending, refresh } = useLazyAsyncData<StatDailyByUser[]>(
     const empty = [] as StatDailyByUser[];
     if (!auth0) return empty;
     if (!auth0.isAuthenticated.value) {
-      message.value = 'Sorry, you must login first.'
+      message.value = 'Sorry, you must login first.';
       return empty;
     }
 
@@ -31,11 +31,11 @@ const { data, pending, refresh } = useLazyAsyncData<StatDailyByUser[]>(
           Authorization: `Bearer ${token}`,
         },
       });
-      return (data || []).map(item => {
+      return (data || []).map((item) => {
         return {
           ...item,
           userInfo: JSON.parse(item.user_info),
-          from: item.user_id.split('|')[ 0 ],
+          from: item.user_id.split('|')[0],
         };
       });
     } catch (error) {

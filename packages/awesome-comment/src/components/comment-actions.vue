@@ -7,11 +7,11 @@ import useStore from '../store';
 
 type Props = {
   comment: Comment;
-}
+};
 const props = defineProps<Props>();
 type Emits = {
   (event: 'reply'): void;
-}
+};
 const emit = defineEmits<Emits>();
 
 const store = useStore();
@@ -27,10 +27,10 @@ async function doLike(isLike = true) {
   if (local) {
     const liked: Record<number, number> = JSON.parse(local);
     const now = Date.now();
-    const lastTime = liked[ props.comment.id as number ];
-    liked[ props.comment.id as number ] = now;
+    const lastTime = liked[props.comment.id as number];
+    liked[props.comment.id as number] = now;
     localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(liked));
-    if (lastTime && now - lastTime < 6E4) {
+    if (lastTime && now - lastTime < 6e4) {
       // fake vote, cheat the user
       store.updateComment(props.comment.id as number, {
         like: Math.max((props.comment.like || 0) + (isLike ? 1 : -1), 0),
@@ -38,7 +38,7 @@ async function doLike(isLike = true) {
       return;
     }
   } else {
-    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify({ [ props.comment.id as number ]: Date.now() }));
+    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify({ [props.comment.id as number]: Date.now() }));
   }
 
   isSending.value = isLike ? 1 : -1;

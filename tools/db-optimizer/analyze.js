@@ -20,27 +20,36 @@ async function getConnection() {
 }
 
 async function getTableSchema(conn) {
-  const [tables] = await conn.query(`
+  const [tables] = await conn.query(
+    `
     SELECT TABLE_NAME, TABLE_ROWS, DATA_LENGTH, INDEX_LENGTH
     FROM information_schema.TABLES
     WHERE TABLE_SCHEMA = ?
-  `, [process.env.DATABASE_NAME]);
+  `,
+    [process.env.DATABASE_NAME],
+  );
 
   const schemas = {};
   for (const table of tables) {
-    const [columns] = await conn.query(`
+    const [columns] = await conn.query(
+      `
       SELECT COLUMN_NAME, DATA_TYPE, IS_NULLABLE, COLUMN_KEY, EXTRA
       FROM information_schema.COLUMNS
       WHERE TABLE_SCHEMA = ? AND TABLE_NAME = ?
       ORDER BY ORDINAL_POSITION
-    `, [process.env.DATABASE_NAME, table.TABLE_NAME]);
+    `,
+      [process.env.DATABASE_NAME, table.TABLE_NAME],
+    );
 
-    const [indexes] = await conn.query(`
+    const [indexes] = await conn.query(
+      `
       SELECT INDEX_NAME, COLUMN_NAME, NON_UNIQUE, SEQ_IN_INDEX
       FROM information_schema.STATISTICS
       WHERE TABLE_SCHEMA = ? AND TABLE_NAME = ?
       ORDER BY INDEX_NAME, SEQ_IN_INDEX
-    `, [process.env.DATABASE_NAME, table.TABLE_NAME]);
+    `,
+      [process.env.DATABASE_NAME, table.TABLE_NAME],
+    );
 
     schemas[table.TABLE_NAME] = {
       rows: table.TABLE_ROWS,
@@ -56,7 +65,7 @@ async function getTableSchema(conn) {
 async function loadSqlFiles() {
   const files = await readdir(SQL_DIR);
   const sqls = {};
-  for (const file of files.filter(f => f.endsWith('.sql'))) {
+  for (const file of files.filter((f) => f.endsWith('.sql'))) {
     const content = await readFile(join(SQL_DIR, file), 'utf-8');
     sqls[file] = content;
   }
@@ -151,7 +160,6 @@ async function main() {
 
     await writeFile(OUTPUT_FILE, markdown);
     console.log(`✅ 已保存到: ${OUTPUT_FILE}`);
-
   } finally {
     await conn.end();
   }

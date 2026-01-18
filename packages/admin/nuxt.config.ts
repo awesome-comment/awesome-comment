@@ -45,16 +45,16 @@ export default defineNuxtConfig({
     },
   },
   compatibilityDate: '2025-10-01',
-  css: [
-    '~/assets/css/main.css',
-  ],
+  css: ['~/assets/css/main.css'],
   devtools: { enabled: true },
   modules,
-  ...(process.env.CLOUDFLARE ? {
-    nitro: {
-      preset: 'cloudflare-pages',
-    },
-  } : {}),
+  ...(process.env.CLOUDFLARE
+    ? {
+        nitro: {
+          preset: 'cloudflare-pages',
+        },
+      }
+    : {}),
   routeRules: {
     // pre-rendered at build time
     '/': { prerender: true },
@@ -71,7 +71,8 @@ export default defineNuxtConfig({
   site: {
     url: siteUrl,
     name: 'Awesome Comment',
-    description: 'AI-powered comment system that breaks language barriers and provides seamless authentication. Free, open source, self-host or use our SaaS.',
+    description:
+      'AI-powered comment system that breaks language barriers and provides seamless authentication. Free, open source, self-host or use our SaaS.',
     defaultLocale: 'en',
   },
 
@@ -79,25 +80,15 @@ export default defineNuxtConfig({
   sitemap: {
     enabled: enableSpider,
     excludeAppSources: true,
-    exclude: [
-      '/admin/**',
-      '/api/**',
-    ],
-    sources: [
-      '/api/__sitemap__/urls',
-    ],
+    exclude: ['/admin/**', '/api/**'],
+    sources: ['/api/__sitemap__/urls'],
   },
 
   // Robots Configuration
   robots: {
     enabled: true,
     // If AC_SPIDER is not set, disallow all crawlers
-    disallow: enableSpider ? [
-      '/admin',
-      '/admin/*',
-      '/api',
-      '/api/*',
-    ] : ['/'],
+    disallow: enableSpider ? ['/admin', '/admin/*', '/api', '/api/*'] : ['/'],
   },
 
   // SEO Metadata
@@ -126,7 +117,7 @@ export default defineNuxtConfig({
   postcss: {
     plugins: {
       '@tailwindcss/postcss': {},
-      ...(process.env.NODE_ENV === 'production' ? { cssnano: {} } : {})
+      ...(process.env.NODE_ENV === 'production' ? { cssnano: {} } : {}),
     },
   },
   ui: {

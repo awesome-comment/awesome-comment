@@ -7,18 +7,18 @@ const socialLinks = [
   {
     label: 'Twitter',
     to: 'https://twitter.com/meathill1',
-    icon: 'i-simple-icons-twitter'
+    icon: 'i-simple-icons-twitter',
   },
   {
     label: 'Facebook',
     to: 'https://facebook.com/meathill',
-    icon: 'i-simple-icons-facebook'
+    icon: 'i-simple-icons-facebook',
   },
   {
     label: 'YouTube',
     to: 'https://www.youtube.com/channel/UCBeD-XqErDK4tKy5FtZj8vg',
-    icon: 'i-simple-icons-youtube'
-  }
+    icon: 'i-simple-icons-youtube',
+  },
 ];
 </script>
 

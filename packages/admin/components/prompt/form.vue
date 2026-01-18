@@ -5,7 +5,7 @@ import usePromptStore from '~/store/prompt';
 type Props = {
   data?: AiPromptTemplate;
   isNew?: boolean;
-}
+};
 const props = defineProps<Props>();
 const emit = defineEmits<{
   (e: 'saved', id: number): void;
@@ -37,31 +37,24 @@ async function doSubmit(event?: Event): Promise<void> {
 
     if (props.data && !isForking.value) {
       // Update existing
-      await promptStore.updatePrompt(
-        props.data.id,
-        newTitle,
-        content.value,
-        allowEmails.value
-      );
+      await promptStore.updatePrompt(props.data.id, newTitle, content.value, allowEmails.value);
       id = props.data.id;
       message.value = 'Prompt updated';
     } else {
       // Create new
-      id = await promptStore.createPrompt(
-        newTitle,
-        content.value,
-        allowEmails.value
-      );
+      id = await promptStore.createPrompt(newTitle, content.value, allowEmails.value);
       message.value = 'Prompt created';
     }
 
-    promptStore.setPrompts([{
-      id,
-      title: newTitle,
-      content: content.value,
-      owner: props.data?.owner || '',
-      allowed_emails: allowEmails.value,
-    }]);
+    promptStore.setPrompts([
+      {
+        id,
+        title: newTitle,
+        content: content.value,
+        owner: props.data?.owner || '',
+        allowed_emails: allowEmails.value,
+      },
+    ]);
 
     if (props.isNew || isForking.value) {
       title.value = '';
@@ -96,11 +89,14 @@ async function doDelete(): Promise<void> {
   isDeleting.value = false;
 }
 
-watch(() => props.data, () => {
-  title.value = props.data?.title || '';
-  content.value = props.data?.content || '';
-  allowEmails.value = props.data?.allowed_emails || [];
-});
+watch(
+  () => props.data,
+  () => {
+    title.value = props.data?.title || '';
+    content.value = props.data?.content || '';
+    allowEmails.value = props.data?.allowed_emails || [];
+  },
+);
 </script>
 
 <template>

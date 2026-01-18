@@ -47,15 +47,10 @@ export async function tagComments(env: Cloudflare.Env): Promise<void> {
         continue;
       }
 
-      await fetchTidb(
-        env,
-        '/v1/update_tags',
-        'PUT',
-        {
-          id: comment.id,
-          tags,
-        },
-      );
+      await fetchTidb(env, '/v1/update_tags', 'PUT', {
+        id: comment.id,
+        tags,
+      });
       success++;
       console.log('Tagged comment:', comment.id, 'with', tags);
     } catch (e) {
@@ -65,4 +60,3 @@ export async function tagComments(env: Cloudflare.Env): Promise<void> {
   await env.KV.delete(KV_KEY);
   console.log('Tagging job completed.', success, comments.length);
 }
-

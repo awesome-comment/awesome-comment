@@ -26,9 +26,7 @@ async function doLogout(): Promise<void> {
 
 useHead({
   title: 'Admin Login',
-  meta: [
-    { name: 'robots', content: 'noindex, nofollow' },
-  ],
+  meta: [{ name: 'robots', content: 'noindex, nofollow' }],
 });
 definePageMeta({
   layout: 'admin',

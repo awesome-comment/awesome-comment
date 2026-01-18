@@ -1,9 +1,11 @@
 <script lang="ts" setup>
 useSeoMeta({
   title: 'Examples - Awesome Comment',
-  description: 'Explore examples and integration guides for Awesome Comment. Learn how to implement AI-powered comments with auto-translation and seamless authentication.',
+  description:
+    'Explore examples and integration guides for Awesome Comment. Learn how to implement AI-powered comments with auto-translation and seamless authentication.',
   ogTitle: 'Examples - Awesome Comment',
-  ogDescription: 'Explore integration examples for AI-powered comment system with auto-translation and Google One Tap login.',
+  ogDescription:
+    'Explore integration examples for AI-powered comment system with auto-translation and Google One Tap login.',
 });
 
 const examples = [

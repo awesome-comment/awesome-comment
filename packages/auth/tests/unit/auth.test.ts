@@ -27,6 +27,7 @@ describe('AwesomeAuth One Tap', () => {
   let promptCallbacks: PromptCallback[];
   let initialize: ReturnType<typeof vi.fn>;
   let prompt: ReturnType<typeof vi.fn>;
+  let revoke: ReturnType<typeof vi.fn>;
 
   beforeEach(() => {
     promptCallbacks = [];
@@ -36,12 +37,14 @@ describe('AwesomeAuth One Tap', () => {
         promptCallbacks.push(callback);
       }
     });
+    revoke = vi.fn();
 
     const googleMock = {
       accounts: {
         id: {
           initialize,
           prompt,
+          revoke,
         },
       },
     };
@@ -79,34 +82,73 @@ describe('AwesomeAuth One Tap', () => {
     vi.clearAllMocks();
   });
 
-  it('在提示被关闭后重置初始化状态，并允许再次唤起', () => {
+  it('在提示被关闭后重置初始化状态，并允许再次唤起', async () => {
     const events: boolean[] = [];
     const auth = new AwesomeAuth({ googleId: 'test-client' });
     auth.on(AwesomeAuthEvent.INIT, (value: boolean) => {
       events.push(value);
     });
 
+    await flushPromises();
     expect(promptCallbacks).toHaveLength(1);
     promptCallbacks[0](createPromptNotification('dismissed'));
 
     expect(events).toEqual([false]);
 
     auth.doSignIn();
+    await flushPromises();
     expect(promptCallbacks).toHaveLength(2);
     expect(events[1]).toBe(true);
     expect(initialize).toHaveBeenCalledTimes(1);
   });
 
-  it('在提示未显示时结束初始化状态', () => {
+  it('在提示未显示时结束初始化状态', async () => {
     const events: boolean[] = [];
     const auth = new AwesomeAuth({ googleId: 'test-client' });
     auth.on(AwesomeAuthEvent.INIT, (value: boolean) => {
       events.push(value);
     });
 
+    await flushPromises();
     expect(promptCallbacks).toHaveLength(1);
     promptCallbacks[0](createPromptNotification('not-displayed'));
 
     expect(events).toEqual([false]);
   });
+
+  it('未提供 hint 时不调用 revoke', () => {
+    const auth = new AwesomeAuth({ googleId: 'test-client' });
+
+    auth.doSignOut();
+
+    expect(revoke).not.toHaveBeenCalled();
+  });
+
+  it('使用 email 作为 hint 调用 revoke', () => {
+    const token = createJwt({
+      email: 'test@example.com',
+      sub: 'sub-123',
+    });
+
+    const auth = new AwesomeAuth({ googleId: 'test-client' });
+    (auth as unknown as { setAccessToken: (value: string, local?: boolean) => void }).setAccessToken(token, false);
+
+    auth.doSignOut();
+
+    expect(revoke).toHaveBeenCalledWith('test@example.com');
+  });
 });
+
+function createJwt(payload: Record<string, unknown>): string {
+  const header = encodeBase64Url(JSON.stringify({ alg: 'none', typ: 'JWT' }));
+  const body = encodeBase64Url(JSON.stringify(payload));
+  return `${header}.${body}.`;
+}
+
+function encodeBase64Url(value: string): string {
+  return Buffer.from(value, 'utf-8').toString('base64').replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/g, '');
+}
+
+async function flushPromises(): Promise<void> {
+  await new Promise((resolve) => setTimeout(resolve, 0));
+}

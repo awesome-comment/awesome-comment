@@ -39,20 +39,13 @@ export async function translateComments(env: Cloudflare.Env): Promise<void> {
 
   let success = 0;
   for (const comment of comments) {
-    if (/\/(en|cn|zh)\/?/i.test(comment.post_id)
-      || !checkShouldTranslate(comment.content)
-    ) {
+    if (/\/(en|cn|zh)\/?/i.test(comment.post_id) || !checkShouldTranslate(comment.content)) {
       // skip if contains link with /en/ or /cn/ or /zh/
       console.log('Skipping comment with link:', comment.id);
-      await fetchTidb(
-        env,
-        '/v1/update_translation',
-        'PUT',
-        {
-          id: comment.id,
-          translation: '',
-        },
-      );
+      await fetchTidb(env, '/v1/update_translation', 'PUT', {
+        id: comment.id,
+        translation: '',
+      });
       success++;
       continue;
     }
@@ -60,15 +53,10 @@ export async function translateComments(env: Cloudflare.Env): Promise<void> {
     try {
       const translation = await translateProvider.translate(comment.content);
       console.log('Translated:', comment.content, '->', translation);
-      await fetchTidb(
-        env,
-        '/v1/update_translation',
-        'PUT',
-        {
-          id: comment.id,
-          translation,
-        },
-      );
+      await fetchTidb(env, '/v1/update_translation', 'PUT', {
+        id: comment.id,
+        translation,
+      });
       success += translation ? 1 : 0;
       console.log('Translated comment:', comment.id);
     } catch (e) {

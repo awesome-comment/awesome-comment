@@ -53,9 +53,7 @@ async function main(): Promise<void> {
   console.log('已连接到 TiDB');
 
   // 检查表是否存在
-  const [tables] = await connection.query<RowDataPacket[]>(
-    'SHOW TABLES LIKE \'ai_prompts\''
-  );
+  const [tables] = await connection.query<RowDataPacket[]>("SHOW TABLES LIKE 'ai_prompts'");
   if (tables.length === 0) {
     console.log('表 ai_prompts 不存在，正在创建...');
     const schemaPath = join(import.meta.dirname, '../tidb/schema/create_ai_prompts.sql');
@@ -71,10 +69,7 @@ async function main(): Promise<void> {
   for (const prompt of prompts) {
     try {
       // 检查是否已存在
-      const [existing] = await connection.query<RowDataPacket[]>(
-        'SELECT id FROM ai_prompts WHERE id = ?',
-        [prompt.id]
-      );
+      const [existing] = await connection.query<RowDataPacket[]>('SELECT id FROM ai_prompts WHERE id = ?', [prompt.id]);
 
       if (existing.length > 0) {
         console.log(`跳过已存在的 prompt: ${prompt.title} (id: ${prompt.id})`);
@@ -93,7 +88,7 @@ async function main(): Promise<void> {
           JSON.stringify(prompt.allowed_emails || []),
           prompt.created_at || new Date().toISOString(),
           prompt.updated_at || new Date().toISOString(),
-        ]
+        ],
       );
       console.log(`已导入: ${prompt.title}`);
       successCount++;

@@ -18,7 +18,7 @@ export type RowItem = Comment & {
   toContent?: string;
   toUser?: CommentUser;
   user: User;
-}
+};
 
 const props = defineProps<{
   comment: RowItem;

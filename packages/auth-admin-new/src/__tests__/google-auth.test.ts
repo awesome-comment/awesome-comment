@@ -50,10 +50,7 @@ describe('src/api/google-auth', () => {
       headers: { 'Content-Type': 'application/json' },
     });
 
-    const response = await googleAuthApp.fetch(
-      request,
-      envWithoutClientId as unknown as Env
-    );
+    const response = await googleAuthApp.fetch(request, envWithoutClientId as unknown as Env);
     expect(response.status).toBe(500);
   });
 
@@ -105,4 +102,3 @@ describe('src/api/google-auth', () => {
     expect(decoded.sub).toBe('user-1');
   });
 });
-

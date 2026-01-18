@@ -16,7 +16,7 @@ onMounted(() => {
   if (!store.isLoaded) {
     store.loadComments();
   }
-})
+});
 </script>
 
 <template>

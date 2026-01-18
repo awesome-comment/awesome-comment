@@ -6,14 +6,7 @@ import globals from 'globals';
 export default typescript.config(
   // Ignore patterns
   {
-    ignores: [
-      '**/node_modules/**',
-      '**/dist/**',
-      '**/.nuxt/**',
-      '**/.vercel/**',
-      '**/.vitepress/**',
-      '**/*.test.ts',
-    ],
+    ignores: ['**/node_modules/**', '**/dist/**', '**/.nuxt/**', '**/.vercel/**', '**/.vitepress/**', '**/*.test.ts'],
   },
 
   // Base configs
@@ -88,7 +81,7 @@ export default typescript.config(
       },
     },
     rules: {
-      'quotes': ['error', 'single'],
+      quotes: ['error', 'single'],
       'object-curly-spacing': ['error', 'always'],
       'computed-property-spacing': ['error', 'always'],
       '@typescript-eslint/no-unused-vars': 'off',

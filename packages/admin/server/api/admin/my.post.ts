@@ -9,11 +9,7 @@ export default defineEventHandler(async function (event: H3Event): Promise<Respo
 
   const storage = createStorage(event);
   const key = getMyConfigKey(event.context.user.email);
-  const {
-    fixedAiTemplates,
-    aiTemplateShortcuts,
-    autoSubmit,
-  } = body;
+  const { fixedAiTemplates, aiTemplateShortcuts, autoSubmit } = body;
   await storage.put(key, {
     fixedAiTemplates,
     aiTemplateShortcuts,

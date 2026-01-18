@@ -28,8 +28,7 @@ app.post('/', async (c) => {
   try {
     payload = await verifyGoogleIdToken(credential, googleClientId);
   } catch (error) {
-    const message =
-      error instanceof Error ? error.message : 'Failed to verify ID token';
+    const message = error instanceof Error ? error.message : 'Failed to verify ID token';
     throw new HTTPException(400, { message });
   }
 
@@ -48,7 +47,7 @@ app.post('/', async (c) => {
       given_name: given_name || '',
       family_name: family_name || '',
     },
-    c.env
+    c.env,
   );
 
   setCookie(c, getTokenCookieKey(c.env), token);

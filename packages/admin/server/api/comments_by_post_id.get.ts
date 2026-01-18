@@ -20,7 +20,7 @@ export default defineEventHandler(async function (event: H3Event): Promise<Respo
     const response = await fetch(`${url}?${params}`, {
       method: 'GET',
       headers: {
-        'Authorization': `Basic ${encodedCredentials}`,
+        Authorization: `Basic ${encodedCredentials}`,
       },
     });
     const result = await response.json();

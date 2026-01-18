@@ -2,9 +2,7 @@ import { PostCount, ResponseBody } from '@awesome-comment/core/types';
 
 export default defineEventHandler(async function (event): Promise<ResponseBody<PostCount[]>> {
   const query = getQuery(event);
-  const {
-    start = 0,
-  } = query;
+  const { start = 0 } = query;
 
   const data: PostCount[] = [];
   let total = 0;
@@ -14,12 +12,12 @@ export default defineEventHandler(async function (event): Promise<ResponseBody<P
     const response = await fetch(url, {
       method: 'GET',
       headers: {
-        'Authorization': `Basic ${encodedCredentials}`,
+        Authorization: `Basic ${encodedCredentials}`,
         'Content-Type': 'application/json',
       },
     });
     const result = await response.json();
-    total = Number(result.data.rows[ 0 ].comment_count);
+    total = Number(result.data.rows[0].comment_count);
   } catch (e) {
     const message = (e as Error).message || String(e);
     throw createError({
@@ -35,7 +33,7 @@ export default defineEventHandler(async function (event): Promise<ResponseBody<P
     const response = await fetch(`${url}?${params}`, {
       method: 'GET',
       headers: {
-        'Authorization': `Basic ${encodedCredentials}`,
+        Authorization: `Basic ${encodedCredentials}`,
       },
     });
     const result = await response.json();

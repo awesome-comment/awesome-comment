@@ -4,7 +4,7 @@ export type UserAgentInfo = {
   browserVersion: string;
   os: string;
   osVersion: string;
-}
+};
 
 export type AiPromptTemplate = {
   id: number;
@@ -14,10 +14,10 @@ export type AiPromptTemplate = {
   allowed_emails: string[];
   created_at?: number;
   updated_at?: number;
-}
+};
 
 export type MyAdminConfig = {
   fixedAiTemplates: number[];
   aiTemplateShortcuts: Record<string, string>;
   autoSubmit: number[];
-}
+};

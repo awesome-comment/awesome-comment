@@ -5,8 +5,8 @@ import { useAuth0 } from '@auth0/auth0-vue';
 
 type Props = {
   buttonClass?: string;
-  comment: Comment,
-}
+  comment: Comment;
+};
 const props = withDefaults(defineProps<Props>(), {
   buttonClass: 'btn-sm btn-warning sm:btn-xs',
 });
@@ -14,7 +14,7 @@ type Emits = {
   (event: 'save', content: string): (event: Event) => boolean | void;
   (event: 'open'): void;
   (event: 'close'): void;
-}
+};
 const emit = defineEmits<Emits>();
 const auth0 = useAuth0();
 

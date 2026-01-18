@@ -91,7 +91,12 @@ describe('Server Utils', () => {
 
     it('should return false when comment contains markdown link', () => {
       const history = createHistory(5, CommentStatus.Approved);
-      const result = isAutoApprove(baseConfig, 'https://example.com/post/1', history, 'Check [this link](https://spam.com)');
+      const result = isAutoApprove(
+        baseConfig,
+        'https://example.com/post/1',
+        history,
+        'Check [this link](https://spam.com)',
+      );
       expect(result).toBe(false);
     });
 

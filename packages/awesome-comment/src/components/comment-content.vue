@@ -7,21 +7,20 @@ import { marked } from 'marked';
 type Props = {
   ancestorId: number;
   comment: Comment;
-}
+};
 const props = defineProps<Props>();
 
 const { t } = useI18n();
 const store = useStore();
 
 function getHtml(content: string): string {
-  return (marked(content) as string)
-    .replace(/<a/g, '<a target="_blank"');
+  return (marked(content) as string).replace(/<a/g, '<a target="_blank"');
 }
 function getParentUserName(id: number): string {
   if (props.ancestorId) {
-    const ancestor = store.comments[ props.ancestorId ];
+    const ancestor = store.comments[props.ancestorId];
     const parent = ancestor?.children?.find((c) => Number(c.id) === Number(id));
-    return parent?.isAdmin ? t('admin') : (parent?.user?.name || parent?.user?.email || '');
+    return parent?.isAdmin ? t('admin') : parent?.user?.name || parent?.user?.email || '';
   }
   return '';
 }

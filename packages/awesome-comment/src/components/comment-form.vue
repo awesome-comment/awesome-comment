@@ -9,8 +9,8 @@ import useStore from '../store';
 import useAuthStore from '../store/auth.ts';
 
 type PostResponse = {
-  id: number,
-  status: CommentStatus,
+  id: number;
+  status: CommentStatus;
 };
 
 type Props = {
@@ -20,12 +20,12 @@ type Props = {
   ancestorId?: number;
   content?: string;
   status?: CommentStatus;
-}
+};
 const props = defineProps<Props>();
 type Emits = {
   (event: 'close'): void;
   (event: 'update', value: string): void;
-}
+};
 const emit = defineEmits<Emits>();
 
 const authStore = useAuthStore();
@@ -47,8 +47,9 @@ async function doSubmit(event: Event): Promise<void> {
   if ((event.target as HTMLFormElement).matches(':invalid')) return;
   const commentContent = comment.value.trim();
   if (!commentContent) return;
-  if (!validateCommentContent(commentContent).valid){
-    message.value = 'We encourage meaningful contributions to foster a positive community. Thank you for your understanding!';
+  if (!validateCommentContent(commentContent).valid) {
+    message.value =
+      'We encourage meaningful contributions to foster a positive community. Thank you for your understanding!';
     return;
   }
 
@@ -77,7 +78,7 @@ async function doSubmit(event: Event): Promise<void> {
         ancestorId: props.ancestorId ? Number(props.ancestorId) : undefined,
         parentId: props.parentId ? Number(props.parentId) : undefined,
         status: props.status,
-        window: `${window.innerWidth}x${window.innerHeight} / ${screen.width, screen.height}`,
+        window: `${window.innerWidth}x${window.innerHeight} / ${(screen.width, screen.height)}`,
         customData: window.custom_comment_data,
         extraData: `${window.BM_LEVEL}:${window.BM_VALUE}`,
       }),
@@ -93,14 +94,7 @@ async function doSubmit(event: Event): Promise<void> {
 
     const { id, status } = json.data as PostResponse;
     if (props.ancestorId || props.parentId) {
-      store.addComment(
-        id,
-        commentContent,
-        authStore.user,
-        status,
-        props.ancestorId,
-        props.parentId,
-      );
+      store.addComment(id, commentContent, authStore.user, status, props.ancestorId, props.parentId);
     } else if (props.currentId) {
       emit('update', commentContent);
     } else {

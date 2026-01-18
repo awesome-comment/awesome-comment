@@ -3,7 +3,7 @@ import type { AwesomeUser } from '@awesome-comment/core/types';
 import { getUserStoreKey } from '~/server/utils';
 import createStorage from '@awesome-comment/core/utils/storage';
 
-export default defineEventHandler(async function (event: H3Event){
+export default defineEventHandler(async function (event: H3Event) {
   const method = event.node.req.method;
   if (method === 'OPTIONS') {
     return '';
@@ -21,8 +21,8 @@ export default defineEventHandler(async function (event: H3Event){
   const { sub } = payload;
   const key = getUserStoreKey(sub);
   const storage = createStorage(event);
-  const data = await storage.get(key) as Record<string, string>;
-  data[ body.key ] = body.value;
+  const data = (await storage.get(key)) as Record<string, string>;
+  data[body.key] = body.value;
   await storage.put(key, data);
 
   return {

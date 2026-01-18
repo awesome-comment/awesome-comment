@@ -10,12 +10,12 @@ type RowItem = Comment & {
   isReplying: boolean;
   from: string;
   toContent?: string;
-}
+};
 type Props = {
   comment: RowItem;
   isBatching: boolean;
   loadingMore: boolean;
-}
+};
 defineProps<Props>();
 type Emits = {
   (event: 'delete', comment: Comment): void;
@@ -23,7 +23,7 @@ type Emits = {
   (event: 'modal', isOpen: boolean): void;
   (event: 'reply', comment: Comment, parent: Comment): void;
   (event: 'review', comment: Comment, status: CommentStatus): void;
-}
+};
 const emit = defineEmits<Emits>();
 </script>
 

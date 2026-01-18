@@ -4,14 +4,17 @@ const siteUrl = 'https://awesome-comment.org';
 // SEO Configuration
 useSeoMeta({
   title: 'Awesome Comment - AI-Powered Comment System with Seamless Authentication',
-  description: 'Engage with your global audience effortlessly. AI-powered comment system that breaks language barriers with auto-translation, AI replies, and Google One Tap login. Free and open source.',
+  description:
+    'Engage with your global audience effortlessly. AI-powered comment system that breaks language barriers with auto-translation, AI replies, and Google One Tap login. Free and open source.',
   ogTitle: 'Awesome Comment - AI-Powered Comment System',
-  ogDescription: 'Break language barriers and boost engagement with AI-powered translation, intelligent replies, and seamless Google One Tap authentication.',
+  ogDescription:
+    'Break language barriers and boost engagement with AI-powered translation, intelligent replies, and seamless Google One Tap authentication.',
   ogImage: `${siteUrl}/og-image.png`,
   ogUrl: siteUrl,
   twitterCard: 'summary_large_image',
   twitterTitle: 'Awesome Comment - AI-Powered Comment System',
-  twitterDescription: 'AI-powered comments with auto-translation, intelligent replies, and Google One Tap login. Boost engagement effortlessly.',
+  twitterDescription:
+    'AI-powered comments with auto-translation, intelligent replies, and Google One Tap login. Boost engagement effortlessly.',
   twitterImage: `${siteUrl}/og-image.png`,
 });
 
@@ -74,8 +77,8 @@ const highlights = [
     features: [
       'Auto-translate comments from any language',
       'Generate intelligent replies instantly',
-      'Proven to increase user engagement significantly'
-    ]
+      'Proven to increase user engagement significantly',
+    ],
   },
   {
     icon: 'i-heroicons-finger-print',
@@ -84,83 +87,83 @@ const highlights = [
     features: [
       'Zero-friction login experience',
       'Users sign in without leaving the page',
-      'No password required, just one tap'
-    ]
-  }
+      'No password required, just one tap',
+    ],
+  },
 ];
 
 const features = [
   {
     icon: 'i-heroicons-language',
     title: 'Auto Translation',
-    description: 'Break language barriers - automatically translate comments to your preferred language'
+    description: 'Break language barriers - automatically translate comments to your preferred language',
   },
   {
     icon: 'i-heroicons-sparkles',
     title: 'AI Reply Generation',
-    description: 'Generate contextual responses with OpenAI GPT or Google Gemini in seconds'
+    description: 'Generate contextual responses with OpenAI GPT or Google Gemini in seconds',
   },
   {
     icon: 'i-heroicons-chat-bubble-left-right',
     title: 'Boost User Engagement',
-    description: 'Real-world results show users love to communicate when AI helps bridge the gap'
+    description: 'Real-world results show users love to communicate when AI helps bridge the gap',
   },
   {
     icon: 'i-heroicons-finger-print',
     title: 'Google One Tap',
-    description: 'Invisible login - users authenticate seamlessly without interruption'
+    description: 'Invisible login - users authenticate seamlessly without interruption',
   },
   {
     icon: 'i-heroicons-shield-check',
     title: 'Spam Detection',
-    description: 'Advanced filtering with auto-approval for trusted users'
+    description: 'Advanced filtering with auto-approval for trusted users',
   },
   {
     icon: 'i-heroicons-code-bracket',
     title: 'Markdown Support',
-    description: 'Rich text formatting for better content expression'
-  }
+    description: 'Rich text formatting for better content expression',
+  },
 ];
 
 const adminFeatures = [
   {
     icon: 'i-heroicons-sparkles',
     title: 'AI-Powered Replies',
-    description: 'Generate contextual responses instantly with GPT or Gemini - respond to users in any language'
+    description: 'Generate contextual responses instantly with GPT or Gemini - respond to users in any language',
   },
   {
     icon: 'i-heroicons-language',
     title: 'One-Click Translation',
-    description: 'Translate foreign comments automatically - understand and respond to global users effortlessly'
+    description: 'Translate foreign comments automatically - understand and respond to global users effortlessly',
   },
   {
     icon: 'i-heroicons-bolt',
     title: 'Smart Shortcuts',
-    description: 'AI templates and emoji reactions (❤️, 👍, 😂) for lightning-fast responses'
+    description: 'AI templates and emoji reactions (❤️, 👍, 😂) for lightning-fast responses',
   },
   {
     icon: 'i-heroicons-chart-bar',
     title: 'Engagement Analytics',
-    description: 'Track how AI-assisted communication boosts user participation and satisfaction'
-  }
+    description: 'Track how AI-assisted communication boosts user participation and satisfaction',
+  },
 ];
 
 const techStack = [
   {
     icon: 'i-heroicons-cloud',
     title: 'Cloudflare Support',
-    description: 'Built-in caching and Pages deployment for optimal performance'
+    description: 'Built-in caching and Pages deployment for optimal performance',
   },
   {
     icon: 'i-heroicons-circle-stack',
     title: 'TiDB Cloud & Upstash Redis',
-    description: 'Scalable database backend with fast caching layer'
+    description: 'Scalable database backend with fast caching layer',
   },
   {
     icon: 'i-heroicons-code-bracket-square',
     title: 'Modern Development',
-    description: 'TypeScript, ESLint v9, API-first design with full type safety'
-  }
+    description: 'TypeScript, ESLint v9, API-first design with full type safety',
+  },
 ];
 
 const contributors = [
@@ -169,17 +172,17 @@ const contributors = [
     avatar: '/images/meathill.webp',
     github: 'https://github.com/meathill',
     twitter: 'https://twitter.com/meathill1',
-    blog: 'https://blog.meathill.com/'
+    blog: 'https://blog.meathill.com/',
   },
   {
     name: 'Bamboo',
     avatar: 'https://avatars.githubusercontent.com/u/14840170?v=4',
-    github: 'https://github.com/bambooom'
+    github: 'https://github.com/bambooom',
   },
   {
     name: 'Mystery Boss',
-    avatar: null
-  }
+    avatar: null,
+  },
 ];
 
 function initAwesomeComment(): void {
@@ -187,14 +190,11 @@ function initAwesomeComment(): void {
     setTimeout(initAwesomeComment, 100);
     return;
   }
-  AwesomeComment.init(
-    '#comment',
-    {
-      postId: 'awesome-comment-self',
-      domain: __AUTH0_DOMAIN__,
-      clientId: __AUTH0_CLIENT_ID__,
-    },
-  );
+  AwesomeComment.init('#comment', {
+    postId: 'awesome-comment-self',
+    domain: __AUTH0_DOMAIN__,
+    clientId: __AUTH0_CLIENT_ID__,
+  });
 }
 
 onMounted(initAwesomeComment);

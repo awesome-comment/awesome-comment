@@ -5,10 +5,7 @@ export enum StreamFetchEvent {
   CHANGE = 'change',
 }
 
-export async function sendMessage(
-  token: string,
-  data: OpenAI.ChatCompletionMessageParam[],
-): Promise<Response> {
+export async function sendMessage(token: string, data: OpenAI.ChatCompletionMessageParam[]): Promise<Response> {
   return fetch('/api/admin/chat', {
     method: 'POST',
     headers: {

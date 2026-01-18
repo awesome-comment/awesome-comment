@@ -4,13 +4,13 @@ import { getUser, getCacheKey, getConfig, checkCommentStatus, clearCache, update
 import createStorage from '@awesome-comment/core/utils/storage';
 
 type PostResponse = ResponseBody<{
-  id: number,
-  status: CommentStatus,
+  id: number;
+  status: CommentStatus;
 }>;
 
 export default defineEventHandler(async function (event): Promise<PostResponse> {
   const headers = getHeaders(event);
-  const authorization = headers[ 'authorization' ];
+  const authorization = headers['authorization'];
   if (!authorization) {
     throw createError({
       statusCode: 401,
@@ -22,13 +22,12 @@ export default defineEventHandler(async function (event): Promise<PostResponse> 
   const comment = body.comment?.replaceAll('\u200b', '').trim();
 
   const storage = createStorage(event);
-  const authEndpoint = headers[ 'auth-endpoint' ];
+  const authEndpoint = headers['auth-endpoint'];
   let user: User | null = null;
   try {
     user = await (authEndpoint
       ? getUser(storage, authorization, authEndpoint)
-      : getAuth0User(storage, authorization, body.domain)
-    );
+      : getAuth0User(storage, authorization, body.domain));
   } catch (e) {
     const message = (e as Error).message || e;
     throw createError({
@@ -45,39 +44,31 @@ export default defineEventHandler(async function (event): Promise<PostResponse> 
   }
   // check if user has posted comment in the last 15 minutes
   if (user.posts) {
-    const lastPost = user.posts[ user.posts.length - 1 ];
+    const lastPost = user.posts[user.posts.length - 1];
     const now = Date.now();
     if (now - lastPost < POST_INTERVAL) {
       throw createError({
         statusCode: 429,
-        message: 'You just posted a comment less than 15 minutes ago. Please edit your previous comment to contribute to a better community.',
+        message:
+          'You just posted a comment less than 15 minutes ago. Please edit your previous comment to contribute to a better community.',
       });
     }
   }
 
-  const {
-    name,
-    nickname,
-    picture,
-    email,
-    sub,
-  } = user;
+  const { name, nickname, picture, email, sub } = user;
   // check if user is admin
   const config = await getConfig(storage);
   const isAdmin = config.adminEmails.includes(email);
-  const status = isAdmin ? CommentStatus.Approved
-    : (await checkCommentStatus(sub, body, config));
+  const status = isAdmin ? CommentStatus.Approved : await checkCommentStatus(sub, body, config);
   if (!isAdmin && (!comment || comment.length < 5 || /^\w{35,}$/.test(comment))) {
     throw createError({
       statusCode: 400,
-      message: 'We encourage meaningful contributions to foster a positive community. Thank you for your understanding!',
+      message:
+        'We encourage meaningful contributions to foster a positive community. Thank you for your understanding!',
     });
   }
 
-  const ip = headers[ 'x-real-ip' ]
-    || headers[ 'x-forwarded-for' ]
-    || headers[ 'x-client-ip' ]
-    || '';
+  const ip = headers['x-real-ip'] || headers['x-forwarded-for'] || headers['x-client-ip'] || '';
   let id: number | null = null;
   const encodedCredentials = btoa(`${process.env.TIDB_PUBLIC_KEY}:${process.env.TIDB_PRIVATE_KEY}`);
   try {
@@ -85,7 +76,7 @@ export default defineEventHandler(async function (event): Promise<PostResponse> 
     const response = await fetch(url, {
       method: 'POST',
       headers: {
-        'Authorization': `Basic ${encodedCredentials}`,
+        Authorization: `Basic ${encodedCredentials}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
@@ -99,7 +90,7 @@ export default defineEventHandler(async function (event): Promise<PostResponse> 
           name: name || nickname,
           avatar: picture,
           ip,
-          agent: headers[ 'user-agent' ],
+          agent: headers['user-agent'],
           window: body.window || '',
           custom: body.customData || '',
           extra: body.extraData || '',
@@ -108,7 +99,7 @@ export default defineEventHandler(async function (event): Promise<PostResponse> 
       }),
     });
     const json = await response.json();
-    id = Number(json.data.rows[ 0 ].last_insert_id);
+    id = Number(json.data.rows[0].last_insert_id);
   } catch (e) {
     const message = (e as Error).message || String(e);
     throw createError({
@@ -123,7 +114,7 @@ export default defineEventHandler(async function (event): Promise<PostResponse> 
     await fetch(url, {
       method: 'POST',
       headers: {
-        'Authorization': `Basic ${encodedCredentials}`,
+        Authorization: `Basic ${encodedCredentials}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
@@ -150,4 +141,4 @@ export default defineEventHandler(async function (event): Promise<PostResponse> 
       status,
     },
   };
-})
+});

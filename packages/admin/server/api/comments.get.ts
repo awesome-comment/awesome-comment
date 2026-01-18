@@ -4,8 +4,8 @@ import { H3Event } from 'h3';
 import createStorage from '@awesome-comment/core/utils/storage';
 
 function mergeVote(vote: Record<number, VoteItem>, comments: Comment[]): Comment[] {
-  return comments.map(item => {
-    const voteItem = vote?.[ item.id as number ];
+  return comments.map((item) => {
+    const voteItem = vote?.[item.id as number];
     if (voteItem) {
       item.like = voteItem.like;
     }
@@ -27,8 +27,8 @@ export default defineEventHandler(async function (event: H3Event): Promise<Respo
   const storage = createStorage(event);
   const key = getCacheKey(postId + (start ? '-' + start : ''));
   const stored = await storage.get<Comment[]>(key);
-  const voteKey = getVoteCacheKey(postId as string)
-  const vote = await storage.get<Record<number, VoteItem>>(voteKey) || {};
+  const voteKey = getVoteCacheKey(postId as string);
+  const vote = (await storage.get<Record<number, VoteItem>>(voteKey)) || {};
   if (stored) {
     console.log('[cache] get comments from cache: ', key);
     // TODO remove this compatibility code after the next release
@@ -54,18 +54,14 @@ export default defineEventHandler(async function (event: H3Event): Promise<Respo
     const response = await fetch(`${url}?${params}`, {
       method: 'GET',
       headers: {
-        'Authorization': `Basic ${encodedCredentials}`,
+        Authorization: `Basic ${encodedCredentials}`,
       },
     });
     const result = await response.json();
     data.push(...result.data.rows);
 
-    const config = await getConfig(storage) as AcConfig;
-    const {
-      adminEmails = [],
-      adminDisplayName = '',
-      adminDisplayAvatar = '',
-    } = config || {};
+    const config = (await getConfig(storage)) as AcConfig;
+    const { adminEmails = [], adminDisplayName = '', adminDisplayAvatar = '' } = config || {};
     for (const item of data) {
       if (!item.user) continue;
       item.user = JSON.parse(String(item.user));
@@ -87,11 +83,11 @@ export default defineEventHandler(async function (event: H3Event): Promise<Respo
     const response = await fetch(`${url}?${params}`, {
       method: 'GET',
       headers: {
-        'Authorization': `Basic ${encodedCredentials}`,
+        Authorization: `Basic ${encodedCredentials}`,
       },
     });
     const json = await response.json();
-    total = Number(json.data.rows[ 0 ].num);
+    total = Number(json.data.rows[0].num);
   } catch (e) {
     const message = 'Failed to fetch the quantity of comments. ' + (e as Error).message || String(e);
     throw createError({

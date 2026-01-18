@@ -3,7 +3,7 @@ import OpenAI from 'openai';
 import { Model } from '~/server/utils/enum';
 
 export default defineEventHandler(async function (event: H3Event) {
-  const { messages, postId } = await readBody(event) as {
+  const { messages, postId } = (await readBody(event)) as {
     messages: OpenAI.ChatCompletionMessageParam[];
     postId: string;
   };
@@ -17,11 +17,10 @@ export default defineEventHandler(async function (event: H3Event) {
     messages,
     stream: false,
   });
-  const { content } = res.choices[ 0 ].message;
+  const { content } = res.choices[0].message;
 
   return {
     code: 0,
     data: content || '',
   };
 });
-

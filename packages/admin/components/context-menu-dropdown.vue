@@ -1,11 +1,11 @@
 <script setup lang="ts">
 const isOpen = ref<boolean>(false);
 
-function onContextMenu () {
+function onContextMenu() {
   isOpen.value = true;
 }
 
-function onBodyClick (event: MouseEvent) {
+function onBodyClick(event: MouseEvent) {
   if (event.target instanceof HTMLElement && event.target.closest('.menu')) return;
 
   isOpen.value = false;

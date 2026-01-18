@@ -18,7 +18,7 @@ export default defineEventHandler(async function (event): Promise<ResponseBody<n
     const response = await fetch(`${process.env.TIDB_END_POINT}/v1/prompt`, {
       method: 'POST',
       headers: {
-        'Authorization': `Basic ${encodedCredentials}`,
+        Authorization: `Basic ${encodedCredentials}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
@@ -31,7 +31,7 @@ export default defineEventHandler(async function (event): Promise<ResponseBody<n
 
     const result = await response.json();
 
-    const id = result.data?.rows?.[ 0 ]?.last_insert_id;
+    const id = result.data?.rows?.[0]?.last_insert_id;
     return {
       code: 0,
       data: id || 0,

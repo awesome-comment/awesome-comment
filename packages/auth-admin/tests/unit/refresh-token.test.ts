@@ -37,17 +37,14 @@ class FakeResponse {
       return;
     }
     if (Array.isArray(existing)) {
-      this.headers[key] = [ ...existing, value ];
+      this.headers[key] = [...existing, value];
       return;
     }
-    this.headers[key] = [ existing, value ];
+    this.headers[key] = [existing, value];
   }
 }
 
-function createEvent(options: {
-  method?: string;
-  payload?: unknown;
-}): { event: H3Event; response: FakeResponse } {
+function createEvent(options: { method?: string; payload?: unknown }): { event: H3Event; response: FakeResponse } {
   const response = new FakeResponse();
   const event = {
     method: options.method ?? 'POST',
@@ -127,4 +124,3 @@ describe('server/api/refresh-token', () => {
     expect(cookieText).toContain(token);
   });
 });
-

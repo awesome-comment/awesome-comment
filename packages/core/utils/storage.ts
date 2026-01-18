@@ -19,9 +19,7 @@ export class AcStorage {
 
   async get<T>(key: string): Promise<T> {
     try {
-      const result = this.kv
-        ? await this.kv.get(key, { type: 'json' }) as T
-        : await this.redis?.get(key) as T;
+      const result = this.kv ? ((await this.kv.get(key, { type: 'json' })) as T) : ((await this.redis?.get(key)) as T);
       return result;
     } catch (e) {
       console.log(e);
@@ -29,13 +27,15 @@ export class AcStorage {
     }
   }
 
-  async put(key: string, value: unknown, options?: {expirationTtl?: number}): Promise<void> {
+  async put(key: string, value: unknown, options?: { expirationTtl?: number }): Promise<void> {
     if (this.kv) {
       await this.kv.put(key, JSON.stringify(value), options);
     } else {
-      const setOptions = options?.expirationTtl ? {
-        ex: options.expirationTtl,
-      } : undefined;
+      const setOptions = options?.expirationTtl
+        ? {
+            ex: options.expirationTtl,
+          }
+        : undefined;
       await this.redis?.set(key, value, setOptions);
     }
   }
@@ -43,7 +43,7 @@ export class AcStorage {
   async list(prefix?: string): Promise<string[]> {
     if (this.kv) {
       const list = await this.kv.list({ prefix });
-      return list.keys.map(key => key.name);
+      return list.keys.map((key) => key.name);
     } else if (this.redis) {
       return await this.redis.keys(prefix || '*');
     }

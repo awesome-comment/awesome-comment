@@ -90,7 +90,8 @@ describe('Utils', () => {
 
   describe('parseUserAgent', () => {
     it('should parse Chrome on Windows', () => {
-      const ua = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36';
+      const ua =
+        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36';
       const result = parseUserAgent(ua);
       expect(result.browser).toBe('Chrome');
       expect(result.browserVersion).toBe('120.0.0.0');
@@ -110,7 +111,8 @@ describe('Utils', () => {
     });
 
     it('should parse Safari on iOS', () => {
-      const ua = 'Mozilla/5.0 (iPhone; CPU iPhone OS 17_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.2 Mobile/15E148 Safari/604.1';
+      const ua =
+        'Mozilla/5.0 (iPhone; CPU iPhone OS 17_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.2 Mobile/15E148 Safari/604.1';
       const result = parseUserAgent(ua);
       expect(result.browser).toBe('Safari');
       expect(result.browserVersion).toBe('17.2');
@@ -119,7 +121,8 @@ describe('Utils', () => {
     });
 
     it('should parse Chrome on Android', () => {
-      const ua = 'Mozilla/5.0 (Linux; Android 14; Pixel 8) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.6099.210 Mobile Safari/537.36';
+      const ua =
+        'Mozilla/5.0 (Linux; Android 14; Pixel 8) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.6099.210 Mobile Safari/537.36';
       const result = parseUserAgent(ua);
       expect(result.browser).toBe('Chrome');
       expect(result.browserVersion).toBe('120.0.6099.210');
@@ -129,7 +132,8 @@ describe('Utils', () => {
     });
 
     it('should parse Edge on Windows', () => {
-      const ua = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36 Edg/120.0.2210.91';
+      const ua =
+        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36 Edg/120.0.2210.91';
       const result = parseUserAgent(ua);
       expect(result.browser).toBe('Edge');
       expect(result.browserVersion).toBe('120.0.2210.91');
@@ -145,7 +149,8 @@ describe('Utils', () => {
     });
 
     it('should detect iPad as Mobile/Tablet', () => {
-      const ua = 'Mozilla/5.0 (iPad; CPU OS 17_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.2 Mobile/15E148 Safari/604.1';
+      const ua =
+        'Mozilla/5.0 (iPad; CPU OS 17_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.2 Mobile/15E148 Safari/604.1';
       const result = parseUserAgent(ua);
       expect(result.deviceType).toBe('Mobile / Tablet');
     });

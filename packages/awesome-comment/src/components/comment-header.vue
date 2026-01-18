@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { Comment } from '@awesome-comment/core/types';
-import {  EmailAppendixRegex } from '@awesome-comment/core/data';
+import { EmailAppendixRegex } from '@awesome-comment/core/data';
 import { BadgeCheck } from 'lucide-vue-next';
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
@@ -15,7 +15,7 @@ type Props = {
 const props = defineProps<Props>();
 type Emits = {
   (event: 'edit'): void;
-}
+};
 const emit = defineEmits<Emits>();
 
 const { t } = useI18n();
@@ -29,11 +29,9 @@ const username = computed<string>(() => {
   return name;
 });
 
-
 function getCommentLink(id: number): string {
   return `${location.origin}${location.pathname}#awcm-${id}`;
 }
-
 </script>
 
 <template>

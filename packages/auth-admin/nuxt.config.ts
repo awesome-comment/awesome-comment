@@ -15,9 +15,7 @@ export default defineNuxtConfig({
   app: {
     head: {
       title: 'Awesome Auth',
-      link: [
-
-      ],
+      link: [],
       meta: [
         {
           name: 'viewport',
@@ -27,19 +25,19 @@ export default defineNuxtConfig({
     },
   },
   compatibilityDate: '2024-10-27',
-  css: [
-    '~/assets/css/main.css',
-  ],
+  css: ['~/assets/css/main.css'],
   devtools: { enabled: true },
   modules,
-  ...(process.env.CLOUDFLARE ? {
-    nitro: {
-      prerender: {
-        autoSubfolderIndex: false
-      },
-      preset: 'cloudflare-pages',
-    },
-  } : {}),
+  ...(process.env.CLOUDFLARE
+    ? {
+        nitro: {
+          prerender: {
+            autoSubfolderIndex: false,
+          },
+          preset: 'cloudflare-pages',
+        },
+      }
+    : {}),
   routeRules: {
     // Add cors headers on API routes
     '/api/**': { cors: true },
@@ -48,8 +46,6 @@ export default defineNuxtConfig({
     plugins: ['utc', 'timezone'],
   },
   vite: {
-    plugins: [
-      tailwindcss(),
-    ],
+    plugins: [tailwindcss()],
   },
 });

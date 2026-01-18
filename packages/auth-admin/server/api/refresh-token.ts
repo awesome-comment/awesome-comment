@@ -8,7 +8,7 @@ type AwesomeUserJwtPayload = AwesomeUser & {
   exp?: number;
 };
 
-export default defineEventHandler(async function (event: H3Event){
+export default defineEventHandler(async function (event: H3Event) {
   const method = event.node.req.method;
   if (method === 'OPTIONS') {
     return '';

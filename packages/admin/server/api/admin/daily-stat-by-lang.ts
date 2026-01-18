@@ -2,10 +2,7 @@ import { ResponseBody, StatDailyByLanguage } from '@awesome-comment/core/types';
 
 export default defineEventHandler(async function (event): Promise<ResponseBody<StatDailyByLanguage[]>> {
   const query = getQuery(event);
-  const {
-    start,
-    end,
-  } = query;
+  const { start, end } = query;
 
   const rows = [];
   const params = new URLSearchParams();
@@ -17,7 +14,7 @@ export default defineEventHandler(async function (event): Promise<ResponseBody<S
     const response = await fetch(`${url}?${params}`, {
       method: 'GET',
       headers: {
-        'Authorization': `Basic ${encodedCredentials}`,
+        Authorization: `Basic ${encodedCredentials}`,
       },
     });
     const result = await response.json();

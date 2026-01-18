@@ -3,19 +3,19 @@ const links = [
   {
     label: 'Examples',
     to: '/examples',
-    icon: 'i-heroicons-code-bracket'
+    icon: 'i-heroicons-code-bracket',
   },
   {
     label: 'GitHub',
     to: 'https://github.com/awesome-comment/awesome-comment',
     icon: 'i-heroicons-arrow-top-right-on-square',
-    external: true
+    external: true,
   },
   {
     label: 'Admin',
     to: '/admin',
-    icon: 'i-heroicons-cog-6-tooth'
-  }
+    icon: 'i-heroicons-cog-6-tooth',
+  },
 ];
 </script>
 

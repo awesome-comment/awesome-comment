@@ -6,31 +6,34 @@ import usePromptStore from '~/store/prompt';
 
 type Props = {
   disabled?: boolean;
-}
+};
 defineProps<Props>();
 const isReplying = defineModel<string>('isReplying', {
   default: '',
 });
 type Emits = {
   (event: 'reply', content: string, isPreview: boolean): void;
-}
+};
 const emit = defineEmits<Emits>();
 
 const auth0 = useAuth0();
 const configStore = useConfigStore();
 const promptStore = usePromptStore();
 
-const shortcuts = computed<{key: string, id: string}[]>(() => {
+const shortcuts = computed<{ key: string; id: string }[]>(() => {
   return Object.entries(configStore.myConfig.aiTemplateShortcuts)
-    .reduce((acc, [key, id]) => {
-      if (!(id in promptStore.prompts)) return acc;
+    .reduce(
+      (acc, [key, id]) => {
+        if (!(id in promptStore.prompts)) return acc;
 
-      acc.push({ key, id });
-      return acc;
-    }, [] as { key: string, id: string }[])
+        acc.push({ key, id });
+        return acc;
+      },
+      [] as { key: string; id: string }[],
+    )
     .sort(({ id }, { id: id2 }) => {
-      const a = promptStore.prompts[ id ];
-      const b = promptStore.prompts[ id2 ];
+      const a = promptStore.prompts[id];
+      const b = promptStore.prompts[id2];
       return a.title.localeCompare(b.title);
     });
 });

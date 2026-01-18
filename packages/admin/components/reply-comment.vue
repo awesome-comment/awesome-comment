@@ -10,14 +10,14 @@ type Props = {
   comment: Comment;
   reply?: string;
   target?: Comment;
-}
+};
 const props = defineProps<Props>();
 type Emits = {
   (event: 'reply', reply: Comment): void;
   (event: 'save', content: string): void;
   (event: 'open'): void;
   (event: 'close'): void;
-}
+};
 const emit = defineEmits<Emits>();
 
 const auth0 = useAuth0();
@@ -36,9 +36,7 @@ async function doOpenModal(): Promise<void> {
   emit('open');
 }
 async function doReply(event?: Event): Promise<void> {
-  if (event
-    && (isReplying.value || (event.target as HTMLFormElement).matches(':invalid'))
-  ) return;
+  if (event && (isReplying.value || (event.target as HTMLFormElement).matches(':invalid'))) return;
 
   isReplying.value = true;
   message.value = '';
@@ -49,13 +47,15 @@ async function doReply(event?: Event): Promise<void> {
     const accessToken = await auth0.getAccessTokenSilently();
     const method = props.reply ? 'PATCH' : 'POST';
     const url = props.reply ? '/api/admin/comment/' + props.target.id : '/api/comment';
-    const body = props.reply ? { content } : {
-      comment: content,
-      postId: props.comment.postId,
-      ancestorId: props.comment.ancestorId || props.comment.id,
-      parentId: props.comment.id,
-      status: props.comment.status,
-    };
+    const body = props.reply
+      ? { content }
+      : {
+          comment: content,
+          postId: props.comment.postId,
+          ancestorId: props.comment.ancestorId || props.comment.id,
+          parentId: props.comment.id,
+          status: props.comment.status,
+        };
     const { data } = await $fetch(url, {
       method,
       headers: {
@@ -143,9 +143,9 @@ async function doInsertLink(): Promise<void> {
 }
 function doInsertUsername(): void {
   let username = props.comment.user.name || props.comment.user.email;
-  username = username.split(' ')[ 0 ];
+  username = username.split(' ')[0];
   if (username.includes('@')) {
-    username = username.split('@')[ 0 ];
+    username = username.split('@')[0];
   }
   doInsertEmoji(`Hi ${username}, `);
 }

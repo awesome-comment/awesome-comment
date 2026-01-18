@@ -23,7 +23,7 @@ const { data, pending, refresh } = useLazyAsyncData<StatDailyByLanguage[]>(
     const empty = [] as StatDailyByLanguage[];
     if (!auth0) return empty;
     if (!auth0.isAuthenticated.value) {
-      message.value = 'Sorry, you must login first.'
+      message.value = 'Sorry, you must login first.';
       return empty;
     }
 
@@ -52,7 +52,7 @@ const dateRange = computed<DatePickerRangeObject>(() => {
   return {
     start: (range.value.start as Date).toISOString().substring(0, 10),
     end: (range.value.end as Date).toISOString().substring(0, 10),
-  }
+  };
 });
 const languages = computed<string[]>(() => {
   if (!data.value) return [];
@@ -62,21 +62,21 @@ const languages = computed<string[]>(() => {
     set.add(item.lang);
   }
   return Array.from(set);
-})
+});
 const stats = computed<Record<string, Record<string, number>>>(() => {
   if (!data.value) return {};
 
   const stats: Record<string, Record<string, number>> = {};
   for (const item of data.value) {
-    const dateStat: Record<string, number> = stats[ item.date ] || {};
-    dateStat[ item.lang ] = Number(item.total);
+    const dateStat: Record<string, number> = stats[item.date] || {};
+    dateStat[item.lang] = Number(item.total);
     dateStat.total = (dateStat.total || 0) + Number(item.total);
-    stats[ item.date ] = dateStat;
+    stats[item.date] = dateStat;
   }
-  const dates = Object.keys(stats).sort((a: string, b: string) => b > a ? 1 : -1);
+  const dates = Object.keys(stats).sort((a: string, b: string) => (b > a ? 1 : -1));
   const result: Record<string, Record<string, number>> = {};
   for (const date of dates) {
-    result[ date ] = stats[ date ];
+    result[date] = stats[date];
   }
   return result;
 });

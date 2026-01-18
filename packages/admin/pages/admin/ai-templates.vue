@@ -22,11 +22,13 @@ const { data, refresh, status } = useAsyncData(
     await store.initMyConfig();
     fixed.value = store.myConfig.fixedAiTemplates || [];
     autoSubmit.value = store.myConfig.autoSubmit || [];
-    shortcuts.value = Object.entries(store.myConfig.aiTemplateShortcuts)
-      .reduce((acc, [key, value]) => {
-        acc[ value ] = key;
+    shortcuts.value = Object.entries(store.myConfig.aiTemplateShortcuts).reduce(
+      (acc, [key, value]) => {
+        acc[value] = key;
         return acc;
-      }, {} as Record<string, string>);
+      },
+      {} as Record<string, string>,
+    );
     return promptStore.prompts;
   },
   {
@@ -44,17 +46,17 @@ async function doSave(): Promise<void> {
   errors.value = {};
   for (const [key, value] of Object.entries(shortcuts.value)) {
     if (value in aiTemplateShortcuts) {
-      errors.value[ key ] = 'Duplicate shortcut';
+      errors.value[key] = 'Duplicate shortcut';
       return;
     }
-    aiTemplateShortcuts[ value ] = key;
+    aiTemplateShortcuts[value] = key;
   }
   isSaving.value = true;
   const toUpdate = {
     fixedAiTemplates: fixed.value,
     aiTemplateShortcuts,
     autoSubmit: autoSubmit.value,
-  }
+  };
   await store.updateMyConfig(toUpdate);
   isSaving.value = false;
   isSaved.value = true;

@@ -13,12 +13,12 @@ export default defineEventHandler(async function (event: H3Event) {
     process.env.TIDB_END_POINT + '/v1/cron/daily_stat',
     process.env.TIDB_END_POINT + '/cron/daily_stat_by_user',
   ];
-  const requests = URLs.map(async url => {
+  const requests = URLs.map(async (url) => {
     const encodedCredentials = btoa(`${process.env.TIDB_PUBLIC_KEY}:${process.env.TIDB_PRIVATE_KEY}`);
     const response = await fetch(url, {
       method: 'POST',
       headers: {
-        'Authorization': `Basic ${encodedCredentials}`,
+        Authorization: `Basic ${encodedCredentials}`,
       },
     });
     const json = await response.json();

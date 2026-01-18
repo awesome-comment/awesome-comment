@@ -53,11 +53,7 @@ const shortcutEmojis = computed<string>({
 });
 
 async function doSave(event: Event): Promise<void> {
-  if (
-    !auth0
-    || isSaving.value
-    || (event.target as HTMLFormElement).matches(':invalid'))
-  {
+  if (!auth0 || isSaving.value || (event.target as HTMLFormElement).matches(':invalid')) {
     return;
   }
   if (auth0 && !auth0.isAuthenticated.value) {
@@ -73,18 +69,12 @@ async function doSave(event: Event): Promise<void> {
       method: 'POST',
       body: {
         ...store.config,
-        adminEmails: Array.from(
-          new Set(
-            store.config.adminEmails
-              .map(item => item.trim())
-              .filter(Boolean)
-          )
-        ),
+        adminEmails: Array.from(new Set(store.config.adminEmails.map((item) => item.trim()).filter(Boolean))),
       },
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
-      }
+      },
     });
     isSaved.value = true;
     await sleep(1500);

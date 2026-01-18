@@ -28,8 +28,7 @@ const now = ref<number>(Date.now());
 const isEditing = ref<boolean>(false);
 const isReplying = ref<boolean>(false);
 const isEditable = computed<boolean>(() => {
-  return props.comment.userId === authStore.user?.sub
-    && now.value - props.comment.createdAt.getTime() < 36E5;
+  return props.comment.userId === authStore.user?.sub && now.value - props.comment.createdAt.getTime() < 36e5;
 });
 
 onMounted(() => {

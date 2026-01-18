@@ -4,7 +4,9 @@ import { checkUserPermission } from '~/server/utils';
 
 function isPrivateHost(hostname: string): boolean {
   // 屏蔽本地或内网地址，避免 SSRF 探测
-  return /^(localhost|0\.0\.0\.0|127\.|10\.|172\.(1[6-9]|2\d|3[0-1])\.|192\.168\.|\[?::1\]?|169\.254\.169\.254)/i.test(hostname);
+  return /^(localhost|0\.0\.0\.0|127\.|10\.|172\.(1[6-9]|2\d|3[0-1])\.|192\.168\.|\[?::1\]?|169\.254\.169\.254)/i.test(
+    hostname,
+  );
 }
 
 export default defineEventHandler(async function (event: H3Event): Promise<ResponseBody<{ title: string }> | void> {
@@ -80,7 +82,7 @@ export default defineEventHandler(async function (event: H3Event): Promise<Respo
   }
   clearTimeout(timeout);
 
-  const title = text.match(/<title>(.*?)<\/title>/i)?.[ 1 ] || 'No title';
+  const title = text.match(/<title>(.*?)<\/title>/i)?.[1] || 'No title';
   setHeader(event, 'cache-control', 'public, max-age=' + 60 * 30);
   return {
     code: 0,

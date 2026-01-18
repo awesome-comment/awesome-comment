@@ -1,8 +1,6 @@
 import { createRemoteJWKSet, jwtVerify, type JWTPayload } from 'jose';
 
-const GOOGLE_JWKS = createRemoteJWKSet(
-  new URL('https://www.googleapis.com/oauth2/v3/certs')
-);
+const GOOGLE_JWKS = createRemoteJWKSet(new URL('https://www.googleapis.com/oauth2/v3/certs'));
 
 export interface GooglePayload extends JWTPayload {
   sub: string;
@@ -18,10 +16,7 @@ export interface GooglePayload extends JWTPayload {
  * 验证 Google ID Token
  * 使用 jose 库替代 google-auth-library，兼容 Cloudflare Workers 环境
  */
-export async function verifyGoogleIdToken(
-  idToken: string,
-  clientId: string
-): Promise<GooglePayload> {
+export async function verifyGoogleIdToken(idToken: string, clientId: string): Promise<GooglePayload> {
   const { payload } = await jwtVerify(idToken, GOOGLE_JWKS, {
     issuer: ['https://accounts.google.com', 'accounts.google.com'],
     audience: clientId,

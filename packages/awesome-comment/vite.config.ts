@@ -18,8 +18,7 @@ export default defineConfig(function ({ command }) {
       lib: {
         entry: 'src/main.ts',
         name: 'AwesomeComment',
-        fileName: (format) =>
-          format === 'es' ? 'awesome-comment.js' : `awesome-comment.${format}.js`,
+        fileName: (format) => (format === 'es' ? 'awesome-comment.js' : `awesome-comment.${format}.js`),
         formats: ['es', 'umd', 'iife'],
         cssFileName: 'style',
       },
@@ -27,7 +26,7 @@ export default defineConfig(function ({ command }) {
         output: {
           banner: '// @AwesomeComment v' + pkg.version + '\n// https://github.com/awesome-comment/awesome-comment',
         },
-      }
+      },
     },
     server: {
       proxy: {

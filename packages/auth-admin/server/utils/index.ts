@@ -30,7 +30,7 @@ function getJwtSecretKey(): Uint8Array {
 
 export async function checkUserPermission(event: H3Event): Promise<JWTPayload | null> {
   const authorization = getHeader(event, 'authorization');
-  const token = authorization?.split(' ')[ 1 ] || '';
+  const token = authorization?.split(' ')[1] || '';
   if (!token) return null;
 
   try {
@@ -86,8 +86,8 @@ export function getJwtExpirationSeconds(): number {
     });
   }
 
-  const amountText = match[ 1 ];
-  const unitText = match[ 2 ];
+  const amountText = match[1];
+  const unitText = match[2];
   if (!amountText || !unitText) {
     throw createError({
       statusCode: 500,
@@ -103,7 +103,7 @@ export function getJwtExpirationSeconds(): number {
     });
   }
   const unit = unitText.toLowerCase() as TimeUnit;
-  const value = Math.round(amount * UNIT_TO_SECONDS[ unit ]);
+  const value = Math.round(amount * UNIT_TO_SECONDS[unit]);
   return Math.max(1, value);
 }
 

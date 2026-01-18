@@ -16,14 +16,12 @@ const hasMore = ref<boolean>(false);
 const loadingMore = ref<boolean>(false);
 const message = ref<string>('');
 const filterStatus = ref<CommentStatus | 'all'>(
-  route.query.status
-    ? route.query.status === 'all' ? 'all' : Number(route.query.status)
-    : CommentStatus.Pending
+  route.query.status ? (route.query.status === 'all' ? 'all' : Number(route.query.status)) : CommentStatus.Pending,
 );
-const filterPostId = ref<string>(route.query.post_id as string || '');
-const filterUser = ref<string>(route.query.user as string || '');
-const filterLanguage = ref<string>(route.query.language as string || '');
-const filterTag = ref<string>(route.query.tag as string || '');
+const filterPostId = ref<string>((route.query.post_id as string) || '');
+const filterUser = ref<string>((route.query.user as string) || '');
+const filterLanguage = ref<string>((route.query.language as string) || '');
+const filterTag = ref<string>((route.query.tag as string) || '');
 const comments = ref<Record<number, RowItem>>({});
 const currentItem = ref<number>(-1);
 const hasReplyModal = ref<boolean>(false);
@@ -44,20 +42,25 @@ const filter = computed<URLSearchParams>(() => {
   return params;
 });
 
-const { data: commentsList, status, refresh, error } = useLazyAsyncData<RowItem[]>(
+const {
+  data: commentsList,
+  status,
+  refresh,
+  error,
+} = useLazyAsyncData<RowItem[]>(
   'comments',
   async function () {
     if (!auth0) return [];
     if (!auth0.isAuthenticated.value) {
-      message.value = 'Sorry, you must login first.'
+      message.value = 'Sorry, you must login first.';
       return [];
     }
 
     // removed approved comments if filterStatus is pending
     if (filterStatus.value === CommentStatus.Pending) {
       for (const key of Object.keys(comments.value)) {
-        if (comments.value[ Number(key) ]!.status === CommentStatus.Approved) {
-          delete comments.value[ Number(key) ];
+        if (comments.value[Number(key)]!.status === CommentStatus.Approved) {
+          delete comments.value[Number(key)];
         }
       }
     }
@@ -78,11 +81,12 @@ const { data: commentsList, status, refresh, error } = useLazyAsyncData<RowItem[
     });
 
     const { adminEmails = [] } = meta?.config || {};
-    const [cms, replies, replyTo]: [Record<number, RowItem>, Comment[], Record<string, Comment>] = (data || [])
-      .reduce(([map, replies, replyTo], c) => {
+    const [cms, replies, replyTo]: [Record<number, RowItem>, Comment[], Record<string, Comment>] = (data || []).reduce(
+      ([map, replies, replyTo], c) => {
         // manually filter status, maybe upstream DB has bug
-        if (filterStatus.value !== 'all'
-          && [CommentStatus.Pending, CommentStatus.Approved, CommentStatus.Rejected].includes(filterStatus.value)
+        if (
+          filterStatus.value !== 'all' &&
+          [CommentStatus.Pending, CommentStatus.Approved, CommentStatus.Rejected].includes(filterStatus.value)
         ) {
           c.status = Number(c.status);
           if (c.status !== filterStatus.value) {
@@ -95,7 +99,7 @@ const { data: commentsList, status, refresh, error } = useLazyAsyncData<RowItem[
         c.userId = c.user_id;
         c.status = Number(c.status);
         c.id = Number(c.id);
-        c.from = from.length > 1 ? from[ 0 ] : 'google';
+        c.from = from.length > 1 ? from[0] : 'google';
         c.postId = c.post_id;
         c.parentId = Number(c.parent_id);
         c.ancestorId = Number(c.ancestor_id);
@@ -109,22 +113,24 @@ const { data: commentsList, status, refresh, error } = useLazyAsyncData<RowItem[
         if (adminEmails.includes(c.user.email) && c.parentId) {
           replies.push(c);
         } else if (c.status === status.value) {
-          replyTo[ c.id ] = c;
+          replyTo[c.id] = c;
         } else {
-          map[ c.id ] = c;
+          map[c.id] = c;
         }
         return [map, replies, replyTo];
-      }, [{}, [], {}]);
+      },
+      [{}, [], {}],
+    );
     hasMore.value = Object.values(cms).length >= 20;
     for (const reply of replies) {
-      const parent = cms[ reply.parentId ];
+      const parent = cms[reply.parentId];
       if (!parent) continue;
       parent.children = parent.children ?? [];
       parent.children.push(reply);
     }
     for (const item of Object.values(cms)) {
       if (item.parentId) {
-        const parent = replyTo[ item.parentId ] || cms[ item.parentId ];
+        const parent = replyTo[item.parentId] || cms[item.parentId];
         if (parent) {
           item.toContent = parent.content;
           item.toUser = parent.user;
@@ -144,7 +150,7 @@ const { data: commentsList, status, refresh, error } = useLazyAsyncData<RowItem[
 );
 
 function onDeleted(comment: RowItem) {
-  commentsList.value = commentsList.value.filter(item => item.id !== comment.id);
+  commentsList.value = commentsList.value.filter((item) => item.id !== comment.id);
 }
 
 function doLoadMore() {
@@ -238,7 +244,7 @@ function onKeydown(event: KeyboardEvent): void {
       break;
   }
   if (shouldScroll) {
-    tr.value[ currentItem.value ]?.scrollIntoView({
+    tr.value[currentItem.value]?.scrollIntoView({
       behavior: 'smooth',
       block: 'center',
     });

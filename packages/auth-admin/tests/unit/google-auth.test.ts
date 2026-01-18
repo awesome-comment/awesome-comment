@@ -49,17 +49,14 @@ class FakeResponse {
       return;
     }
     if (Array.isArray(existing)) {
-      this.headers[key] = [ ...existing, value ];
+      this.headers[key] = [...existing, value];
       return;
     }
-    this.headers[key] = [ existing, value ];
+    this.headers[key] = [existing, value];
   }
 }
 
-function createEvent(options: {
-  method?: string;
-  body?: unknown;
-}): { event: H3Event; response: FakeResponse } {
+function createEvent(options: { method?: string; body?: unknown }): { event: H3Event; response: FakeResponse } {
   const response = new FakeResponse();
   const method = options.method ?? 'POST';
   const headers: Record<string, string> = {};
@@ -195,4 +192,3 @@ describe('server/api/google-auth', () => {
     expect(cookieText).toContain(token);
   });
 });
-

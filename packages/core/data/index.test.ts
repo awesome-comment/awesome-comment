@@ -1,12 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import {
-  CommentStatus,
-  CommentTags,
-  MarkdownLinkRegex,
-  EmailAppendixRegex,
-  Languages,
-  POST_INTERVAL,
-} from './index';
+import { CommentStatus, CommentTags, MarkdownLinkRegex, EmailAppendixRegex, Languages, POST_INTERVAL } from './index';
 
 describe('Core Data Constants', () => {
   describe('CommentStatus', () => {

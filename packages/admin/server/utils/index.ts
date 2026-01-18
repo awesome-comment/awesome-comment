@@ -6,22 +6,25 @@ import {
   ResponseBody,
   ResponseComment,
   ToggleableRule,
-  User
+  User,
 } from '@awesome-comment/core/types';
 import { CommentStatus, MarkdownLinkRegex, POST_INTERVAL } from '@awesome-comment/core/data';
 import createStorage, { AcStorage } from '@awesome-comment/core/utils/storage';
 
 export async function getConfig(storage: AcStorage): Promise<AcConfig> {
   const key = getConfigKey();
-  return (await storage.get(key)) || {
-    adminDisplayName: 'Admin',
-    adminDisplayAvatar: '',
-    adminEmails: process.env.DEFAULT_ADMIN_EMAILS?.split(',') || [],
-    autoApprove: {
-      enabled: false,
-    },
-    shortcutEmojis: [],
-  } as AcConfig;
+  return (
+    (await storage.get(key)) ||
+    ({
+      adminDisplayName: 'Admin',
+      adminDisplayAvatar: '',
+      adminEmails: process.env.DEFAULT_ADMIN_EMAILS?.split(',') || [],
+      autoApprove: {
+        enabled: false,
+      },
+      shortcutEmojis: [],
+    } as AcConfig)
+  );
 }
 
 export async function checkUserPermission(event: H3Event, endpoint?: string): Promise<[User, AcConfig] | void> {
@@ -44,7 +47,7 @@ export async function checkUserPermission(event: H3Event, endpoint?: string): Pr
       user = await getAuth0User(storage, authorization);
     }
   } catch (e) {
-    const message =  (e as Error).message || e;
+    const message = (e as Error).message || e;
     throw createError({
       statusCode: 401,
       message: 'Failed to authorized user. ' + message,
@@ -103,15 +106,12 @@ export async function getAuth0User(storage: AcStorage, accessToken: string, doma
     return cached as User;
   }
 
-  const response = await fetch(
-    `https://${domain}/userinfo`,
-    {
-      headers: {
-        Authorization: accessToken,
-        'Content-Type': 'application/json',
-      },
+  const response = await fetch(`https://${domain}/userinfo`, {
+    headers: {
+      Authorization: accessToken,
+      'Content-Type': 'application/json',
     },
-  );
+  });
   if (!response.ok) {
     throw new Error(`${response.status} ${response.statusText}`);
   }
@@ -150,7 +150,7 @@ export async function getUserComments(userId: string): Promise<ResponseComment[]
   const response = await fetch(`${url}?${params}`, {
     method: 'GET',
     headers: {
-      'Authorization': `Basic ${encodedCredentials}`,
+      Authorization: `Basic ${encodedCredentials}`,
     },
   });
   const result = await response.json();
@@ -158,11 +158,15 @@ export async function getUserComments(userId: string): Promise<ResponseComment[]
   return data;
 }
 
-export async function checkCommentStatus(userId: string, comment: PostCommentRequest, config: AcConfig): Promise<CommentStatus> {
+export async function checkCommentStatus(
+  userId: string,
+  comment: PostCommentRequest,
+  config: AcConfig,
+): Promise<CommentStatus> {
   const history = await getUserComments(userId);
   if (!history.length) return CommentStatus.Pending;
 
-  const lastCommentTime = new Date(history[ 0 ].created_at);
+  const lastCommentTime = new Date(history[0].created_at);
   // users can only post once every 30 seconds
   if (Date.now() - lastCommentTime.getTime() < 3e4) {
     throw createError({
@@ -180,8 +184,9 @@ export async function checkCommentStatus(userId: string, comment: PostCommentReq
   // if user has 5 or more pending comments in current postId,
   // or have pending comments in 10 postId,
   // they cannot post new comment
-  const pendingForCurrentPost = history.filter(c =>
-    c.post_id === comment.postId && c.status === CommentStatus.Pending);
+  const pendingForCurrentPost = history.filter(
+    (c) => c.post_id === comment.postId && c.status === CommentStatus.Pending,
+  );
   if (pendingForCurrentPost.length >= 5) {
     console.log(`user_id: ${userId} have 5 or more pending comments in this post_id, cannot post new comment.`);
     throw createError({
@@ -202,7 +207,7 @@ export async function checkCommentStatus(userId: string, comment: PostCommentReq
     });
   }
   // if user has 5 or more rejected comments, they will be keep out until we give them a pass
-  if (history.filter(c => Number(c.status) === CommentStatus.Rejected).length >= 5) {
+  if (history.filter((c) => Number(c.status) === CommentStatus.Rejected).length >= 5) {
     console.log(`user_id: ${userId} have 5 or more rejected comments, is banned currently.`);
     throw createError({
       statusCode: 405,
@@ -215,21 +220,13 @@ export async function checkCommentStatus(userId: string, comment: PostCommentReq
 
 // if autoApprove is enabled, and current postId is included in autoApprove.include
 // if user has 2 or more approved comments, they can post comment freely
-export function isAutoApprove(
-  config: AcConfig,
-  postId: string,
-  history: ResponseComment[],
-  content: string,
-): boolean {
+export function isAutoApprove(config: AcConfig, postId: string, history: ResponseComment[], content: string): boolean {
   if (config.autoApprove && !config.autoApprove.enabled) return false;
-  if (config.autoApprove?.include
-    && !(new RegExp(config.autoApprove.include, 'i').test(postId))
-  ) return false;
-  if (config.autoApprove?.exclude
-    && new RegExp(config.autoApprove.exclude, 'i').test(postId)
-  ) return false;
-  return !MarkdownLinkRegex.test(content)
-    && history.filter(c => Number(c.status) === CommentStatus.Approved).length >= 2;
+  if (config.autoApprove?.include && !new RegExp(config.autoApprove.include, 'i').test(postId)) return false;
+  if (config.autoApprove?.exclude && new RegExp(config.autoApprove.exclude, 'i').test(postId)) return false;
+  return (
+    !MarkdownLinkRegex.test(content) && history.filter((c) => Number(c.status) === CommentStatus.Approved).length >= 2
+  );
 }
 
 export async function clearCache(storage: AcStorage, key: string): Promise<void> {
@@ -249,11 +246,11 @@ export async function requestTiDB(
   const response = await fetch(process.env.TIDB_END_POINT + url, {
     method,
     headers: {
-      'Authorization': `Basic ${encodedCredentials}`,
+      Authorization: `Basic ${encodedCredentials}`,
       'Content-Type': 'application/json',
       ...headers,
     },
-    ...body && { body: JSON.stringify(body) },
+    ...(body && { body: JSON.stringify(body) }),
   });
   return await response.json();
 }
@@ -261,12 +258,16 @@ export async function requestTiDB(
 export async function updateUserPostHistory(storage: AcStorage, accessToken: string, user: User): Promise<void> {
   const key = `user-${accessToken}`;
   const now = Date.now();
-  const posts = (user.posts || []).filter(t => now - t < POST_INTERVAL);
+  const posts = (user.posts || []).filter((t) => now - t < POST_INTERVAL);
   posts.push(now);
-  await storage.put(key, {
-    ...user,
-    posts,
-  }, {
-    expirationTtl: 60 * 60,
-  });
+  await storage.put(
+    key,
+    {
+      ...user,
+      posts,
+    },
+    {
+      expirationTtl: 60 * 60,
+    },
+  );
 }

@@ -8,13 +8,7 @@ export default defineEventHandler(async function (event: H3Event): Promise<Respo
 
   const storage = createStorage(event);
   const key = getConfigKey();
-  const {
-    adminEmails,
-    autoApprove,
-    adminDisplayName,
-    adminDisplayAvatar,
-    shortcutEmojis,
-  } = body;
+  const { adminEmails, autoApprove, adminDisplayName, adminDisplayAvatar, shortcutEmojis } = body;
   await storage.put(key, {
     adminEmails,
     autoApprove,

@@ -3,12 +3,12 @@ import type { UiModal } from '#components';
 
 type Props = {
   prompt: string;
-}
+};
 defineProps<Props>();
 type Emits = {
   (event: 'submit'): void;
   (event: 'close', isSubmit: boolean): void;
-}
+};
 const emit = defineEmits<Emits>();
 
 const root = ref<typeof UiModal>(null!);

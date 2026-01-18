@@ -9,11 +9,11 @@ import useConfigStore from '~/store';
 type Props = {
   className: string;
   comment: Comment;
-}
+};
 const props = defineProps<Props>();
 type Emits = {
   (event: 'reply', reply: Comment): void;
-}
+};
 const emit = defineEmits<Emits>();
 
 const auth0 = useAuth0();
@@ -84,7 +84,7 @@ async function replyToComment(content: string): Promise<void> {
   isReplying.value = '';
 }
 async function getPrompt(id: string): Promise<string> {
-  const template = promptStore.prompts[ id ].content;
+  const template = promptStore.prompts[id].content;
   let title = '';
   if (template.includes('$TITLE$')) {
     const accessToken = await auth0.getAccessTokenSilently();
@@ -100,7 +100,7 @@ async function getPrompt(id: string): Promise<string> {
   }
   return replaceTemplate(template, props.comment, title, '');
 }
-async function getAiReply(postId:string, content: string): Promise<string> {
+async function getAiReply(postId: string, content: string): Promise<string> {
   const accessToken = await auth0.getAccessTokenSilently();
   const reqOptions = {
     method: 'POST',
@@ -110,10 +110,12 @@ async function getAiReply(postId:string, content: string): Promise<string> {
     },
     body: {
       postId,
-      messages: [{
-        role: 'user',
-        content,
-      }],
+      messages: [
+        {
+          role: 'user',
+          content,
+        },
+      ],
     },
   };
   const res = await $fetch<ResponseBody<string>>('/api/admin/chat', reqOptions);

@@ -8,15 +8,14 @@ export default defineEventHandler(async function (event): Promise<ResponseBody<A
     const response = await fetch(`${process.env.TIDB_END_POINT}/v1/prompts`, {
       method: 'GET',
       headers: {
-        'Authorization': `Basic ${encodedCredentials}`,
+        Authorization: `Basic ${encodedCredentials}`,
       },
     });
     const result = await response.json();
     const data: AiPromptTemplate[] = (result.data?.rows || []).map((row: Record<string, unknown>) => ({
       ...row,
-      allowed_emails: typeof row.allowed_emails === 'string'
-        ? JSON.parse(row.allowed_emails as string)
-        : (row.allowed_emails || []),
+      allowed_emails:
+        typeof row.allowed_emails === 'string' ? JSON.parse(row.allowed_emails as string) : row.allowed_emails || [],
     }));
 
     return {

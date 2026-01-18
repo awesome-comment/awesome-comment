@@ -1,5 +1,5 @@
-import { defineConfig } from 'vite'
-import vue from '@vitejs/plugin-vue'
+import { defineConfig } from 'vite';
+import vue from '@vitejs/plugin-vue';
 import dts from 'vite-plugin-dts';
 import pkg from './package.json';
 
@@ -24,8 +24,7 @@ export default defineConfig(function ({ command }) {
       lib: {
         entry: 'src/auth.ts',
         name: 'AwesomeAuth',
-        fileName: (format) =>
-          format === 'es' ? 'awesome-auth.js' : `awesome-auth.${format}.js`,
+        fileName: (format) => (format === 'es' ? 'awesome-auth.js' : `awesome-auth.${format}.js`),
         formats: ['es', 'umd', 'iife'],
       },
       rollupOptions: {

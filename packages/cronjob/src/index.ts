@@ -11,7 +11,7 @@ export default {
           version: pkg.version,
         },
       }),
-      { headers: { 'Content-Type': 'application/json' } }
+      { headers: { 'Content-Type': 'application/json' } },
     );
   },
 

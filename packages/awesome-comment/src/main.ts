@@ -1,4 +1,4 @@
-import { createApp } from 'vue'
+import { createApp } from 'vue';
 import { createPinia } from 'pinia';
 import { Auth0Plugin, createAuth0 } from '@auth0/auth0-vue';
 import { createI18n } from 'vue-i18n';
@@ -22,7 +22,7 @@ export type InitOptions = {
 type Manager = {
   init: (dom: string | HTMLElement, options: InitOptions) => void;
   preload: (options: InitOptions) => Promise<void>;
-}
+};
 
 const comments: ResponseComment[] = [];
 let total = 0;
@@ -39,13 +39,17 @@ function init({
 }) {
   const app = createApp(App);
   const pinia = createPinia();
-  const auth0 = preAuth0 || domain && clientId && createAuth0({
-    domain,
-    clientId,
-    authorizationParams: {
-      redirect_uri: location.origin,
-    },
-  });
+  const auth0 =
+    preAuth0 ||
+    (domain &&
+      clientId &&
+      createAuth0({
+        domain,
+        clientId,
+        authorizationParams: {
+          redirect_uri: location.origin,
+        },
+      }));
   const i18n = createI18n({
     legacy: false,
     locale,
@@ -81,14 +85,7 @@ const AwesomeComment: InitOptions & Manager = {
   awesomeAuth: undefined,
   init(
     dom: string | HTMLElement,
-    {
-      postId,
-      apiUrl,
-      domain,
-      clientId,
-      awesomeAuth,
-      locale = navigator.language,
-    }: InitOptions = {}
+    { postId, apiUrl, domain, clientId, awesomeAuth, locale = navigator.language }: InitOptions = {},
   ) {
     postId ??= this.postId;
     apiUrl ??= this.apiUrl;
@@ -104,13 +101,7 @@ const AwesomeComment: InitOptions & Manager = {
     app.provide('awesomeAuth', awesomeAuth);
     app.mount(dom);
   },
-  async preload({
-    postId,
-    apiUrl,
-    domain,
-    clientId,
-    awesomeAuth,
-  }: InitOptions): Promise<void> {
+  async preload({ postId, apiUrl, domain, clientId, awesomeAuth }: InitOptions): Promise<void> {
     this.postId = postId || '';
     this.apiUrl = apiUrl || '';
     this.domain = domain || '';

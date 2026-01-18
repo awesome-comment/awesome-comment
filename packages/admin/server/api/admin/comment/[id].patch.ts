@@ -34,12 +34,12 @@ export default defineEventHandler(async function (event): Promise<ResponseBody<s
     await fetch(url, {
       method: 'POST',
       headers: {
-        'Authorization': `Basic ${encodedCredentials}`,
+        Authorization: `Basic ${encodedCredentials}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        ...status !== undefined && { status },
-        ...content && { content },
+        ...(status !== undefined && { status }),
+        ...(content && { content }),
         id,
       }),
     });
@@ -62,4 +62,4 @@ export default defineEventHandler(async function (event): Promise<ResponseBody<s
     code: 0,
     data: 'ok',
   };
-})
+});

@@ -4,21 +4,16 @@ import type { UserAgentInfo } from '~/types';
 
 type LanguageKey = keyof typeof LocalLanguageName | keyof typeof LanguageName;
 
-export function replaceTemplate(
-  template: string,
-  comment: Comment,
-  title: string,
-  reply: string,
-): string {
+export function replaceTemplate(template: string, comment: Comment, title: string, reply: string): string {
   const lang: LanguageKey = comment?.postId.replace(/\/$/, '').split('/').pop() ?? 'en';
-  return template.replace(/\$(\w+)\$/ig, (match, key) => {
+  return template.replace(/\$(\w+)\$/gi, (match, key) => {
     switch (key) {
       case 'TITLE':
         return title;
       case 'LANG_LOCAL':
-        return LocalLanguageName[ lang ] ?? '';
+        return LocalLanguageName[lang] ?? '';
       case 'LANG_EN':
-        return LanguageName[ lang ] ?? '';
+        return LanguageName[lang] ?? '';
       case 'USERNAME':
         return comment.user?.name || comment.user?.email || '';
       case 'COMMENT':
@@ -35,7 +30,7 @@ export async function writeToClipboard(text: string): Promise<void> {
   if (navigator.clipboard) {
     try {
       await navigator.clipboard.writeText(text);
-      return ;
+      return;
     } catch (e) {
       // do nothing
     }
@@ -63,7 +58,7 @@ export function parseUserAgent(userAgent: string): UserAgentInfo {
     browser: '',
     browserVersion: '',
     os: '',
-    osVersion: ''
+    osVersion: '',
   };
 
   // Determine device type
@@ -77,14 +72,14 @@ export function parseUserAgent(userAgent: string): UserAgentInfo {
     { name: 'Firefox', regex: /Firefox\/([0-9.]+)/ },
     { name: 'Safari', regex: /Version\/([0-9.]+).*Safari/ },
     { name: 'Opera', regex: /OPR\/([0-9.]+)/ },
-    { name: 'Internet Explorer', regex: /MSIE ([0-9.]+)/ }
+    { name: 'Internet Explorer', regex: /MSIE ([0-9.]+)/ },
   ];
 
   for (const browser of browserRegexes) {
     const match = userAgent.match(browser.regex);
     if (match) {
       result.browser = browser.name;
-      result.browserVersion = match[ 1 ] || '';
+      result.browserVersion = match[1] || '';
       break;
     }
   }
@@ -95,14 +90,14 @@ export function parseUserAgent(userAgent: string): UserAgentInfo {
     { name: 'Mac OS', regex: /Mac OS X ([0-9_]+)/ },
     { name: 'iOS', regex: /iP(hone|od|ad).*OS ([0-9_]+)/ },
     { name: 'Android', regex: /Android ([0-9.]+)/ },
-    { name: 'Linux', regex: /Linux/ }
+    { name: 'Linux', regex: /Linux/ },
   ];
 
   for (const os of osRegexes) {
     const match = userAgent.match(os.regex);
     if (match) {
       result.os = os.name;
-      result.osVersion = match[ 1 ]?.replace(/_/g, '.') || '';
+      result.osVersion = match[1]?.replace(/_/g, '.') || '';
       break;
     }
   }
