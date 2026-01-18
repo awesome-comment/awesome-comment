@@ -30,6 +30,18 @@ cd packages/admin
 pnpm test:run
 ```
 
+**Auth 包：**
+```bash
+cd packages/auth
+pnpm test:run
+```
+
+**Auth Admin 包：**
+```bash
+cd packages/auth-admin
+pnpm test:run
+```
+
 ## Test Structure
 
 ```
@@ -39,6 +51,10 @@ packages/
 │   │   └── index.test.ts        # Data constants tests
 │   └── utils/
 │       └── validation.test.ts   # Validation utilities tests
+├── auth/
+│   └── tests/
+│       └── unit/
+│           └── auth.test.ts      # One Tap 流程测试
 └── admin/
     └── tests/
         └── unit/

@@ -30,6 +30,7 @@ export class AwesomeAuth extends EventEmitter3 {
   #isSigningIn: boolean = false;
   #isVerifying: boolean = false;
   #isVerified: boolean = false;
+  #hasInitialized: boolean = false;
   #now: number;
   #prefix: string;
   #root: string;
@@ -128,13 +129,28 @@ export class AwesomeAuth extends EventEmitter3 {
 
     this.emit(AwesomeAuthEvent.INIT, true);
     this.#isSigningIn = true;
-    google.accounts.id.initialize({
-      client_id: this.#googleId,
-      callback: (res) => this.onGoogleIdentityCallback(res),
-      auto_select: true,
-      ux_mode: 'popup',
+    if (!this.#hasInitialized) {
+      google.accounts.id.initialize({
+        client_id: this.#googleId,
+        callback: (res) => this.onGoogleIdentityCallback(res),
+        auto_select: true,
+        ux_mode: 'popup',
+      });
+      this.#hasInitialized = true;
+    }
+    google.accounts.id.prompt((notification) => {
+      this.handlePromptMoment(notification);
     });
-    google.accounts.id.prompt();
+  }
+  private handlePromptMoment(notification: google.accounts.id.PromptMomentNotification): void {
+    if (
+      notification.isNotDisplayed()
+      || notification.isSkippedMoment()
+      || notification.isDismissedMoment()
+    ) {
+      this.#isSigningIn = false;
+      this.emit(AwesomeAuthEvent.INIT, false);
+    }
   }
   private refreshCountDown(): void {
     this.#now = Date.now() / 1000 >> 0;
