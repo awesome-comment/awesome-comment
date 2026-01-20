@@ -34,10 +34,5 @@ function prefixSelector(selector) {
 }
 
 export default {
-  plugins: [
-    tailwindcssNesting(),
-    tailwindcss(),
-    scopeAwesomeCommentStyles(),
-    autoprefixer(),
-  ],
+  plugins: [tailwindcssNesting(), tailwindcss(), scopeAwesomeCommentStyles(), autoprefixer()],
 };

@@ -4,14 +4,6 @@ import pkg from './package.json' with { type: 'json' };
 
 export default defineConfig(function ({ command }) {
   const isProd = command === 'build';
-  const bundledDependencies = new Set(['@awesome-comment/core', '@roudanio/awesome-auth']);
-  const externalDependencies = Object.keys(pkg.dependencies || {}).filter(
-    (dependency) => !bundledDependencies.has(dependency),
-  );
-
-  function isExternal(id: string): boolean {
-    return externalDependencies.some((dependency) => id === dependency || id.startsWith(`${dependency}/`));
-  }
 
   return {
     define: {
@@ -22,7 +14,7 @@ export default defineConfig(function ({ command }) {
     plugins: [vue()],
     build: {
       target: 'chrome96',
-      outDir: 'dist/esm',
+      outDir: 'dist/esm-unpkg',
       lib: {
         entry: 'src/main.ts',
         name: 'AwesomeComment',
@@ -31,12 +23,20 @@ export default defineConfig(function ({ command }) {
         cssFileName: 'style',
       },
       rollupOptions: {
-        external: isExternal,
         output: {
           banner: '// @AwesomeComment v' + pkg.version + '\n// https://github.com/awesome-comment/awesome-comment',
           manualChunks(id) {
-            if (id.includes('node_modules')) return 'vendor';
-            return undefined;
+            if (!id.includes('node_modules')) return undefined;
+            if (id.includes('/@vue/')) return 'vendor-vue';
+            if (id.includes('/vue/dist/')) return 'vendor-vue';
+            if (id.includes('/pinia/')) return 'vendor-pinia';
+            if (id.includes('/vue-i18n/')) return 'vendor-i18n';
+            if (id.includes('/@auth0/auth0-vue/')) return 'vendor-auth0';
+            if (id.includes('/marked/')) return 'vendor-marked';
+            if (id.includes('/lodash-es/')) return 'vendor-lodash';
+            if (id.includes('/lucide-vue-next/')) return 'vendor-lucide';
+            if (id.includes('/animate.css/')) return 'vendor-animate';
+            return 'vendor-misc';
           },
         },
       },

@@ -103,14 +103,22 @@ async function renderTurnstile(): Promise<void> {
     },
     'error-callback': () => {
       turnstileToken.value = '';
-      message.value = 'Turnstile 验证失败，请重试。';
+      message.value = 'Turnstile validation failed, please try again.';
     },
   });
 }
 
 function resetTurnstile(): void {
-  if (!turnstileWidgetId.value || !window.turnstile) return;
-  window.turnstile.reset(turnstileWidgetId.value);
+  if (!turnstileWidgetId.value || !window.turnstile) {
+    turnstileToken.value = '';
+    return;
+  }
+  try {
+    window.turnstile.remove(turnstileWidgetId.value);
+  } catch {
+    window.turnstile.reset(turnstileWidgetId.value);
+  }
+  turnstileWidgetId.value = '';
   turnstileToken.value = '';
 }
 
@@ -132,7 +140,6 @@ async function doSubmit(event: Event): Promise<void> {
     }
     needAuth.value = true;
     if (!turnstileToken.value) {
-      message.value = t('login_or_verify');
       await nextTick();
       await renderTurnstile();
       return;
@@ -285,10 +292,11 @@ watch(
         @keydown.enter="onKeydown"
         @keydown.esc="onCancel"
       />
-      <div class="p-2 rounded-b-lg bg-base-300 flex items-center">
+      <div class="p-2 rounded-b-lg bg-base-300 flex items-center relative">
         <div
           v-if="!noVersion"
           class="text-xs text-neutral-400/40"
+          :class="{'me-auto': !message}"
         >
           v{{ version }}
         </div>
@@ -300,9 +308,10 @@ watch(
         </div>
         <div
           v-if="needAuth && !authStore.isAuthenticated"
-          class="flex items-center gap-3 ms-4"
+          class="flex items-center gap-3 mx-4"
         >
           <button
+            v-if="!authStore.isAwesomeAuth"
             class="ac-btn ac-btn-secondary ac-btn-xs"
             type="button"
             @click="doLogin"
@@ -312,11 +321,12 @@ watch(
           <div
             v-if="turnstileSiteKey"
             ref="turnstileContainer"
+            class="absolute right-2 top-10"
           />
         </div>
         <button
           :disabled="isSending || (needAuth && !authStore.isAuthenticated && !turnstileToken)"
-          class="ac-btn ac-btn-primary ac-btn-sm ms-auto"
+          class="ac-btn ac-btn-primary ac-btn-sm"
         >
           <span
             v-if="isSending"
