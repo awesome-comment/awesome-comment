@@ -13,8 +13,8 @@ export default defineConfig(function ({ command }) {
     },
     plugins: [vue()],
     build: {
-      target: 'chrome96',
-      outDir: 'dist/esm-unpkg',
+      target: 'es2022',
+      outDir: 'dist',
       lib: {
         entry: 'src/main.ts',
         name: 'AwesomeComment',
