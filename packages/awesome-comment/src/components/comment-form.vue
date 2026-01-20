@@ -62,7 +62,7 @@ function loadTurnstileScript(): Promise<void> {
       resolve();
     }
     function handleError() {
-      reject(new Error('Turnstile 脚本加载失败'));
+      reject(new Error('Failed to load Turnstile script'));
     }
 
     script.addEventListener('load', handleLoad, { once: true });
@@ -84,7 +84,7 @@ async function renderTurnstile(): Promise<void> {
   if (!turnstileSiteKey || !turnstileContainer.value) return;
   await loadTurnstileScript();
   if (!window.turnstile) {
-    message.value = 'Turnstile 初始化失败';
+    message.value = 'Turnstile initialization failed';
     return;
   }
   if (turnstileWidgetId.value) {
@@ -302,17 +302,16 @@ watch(
         </div>
         <div
           v-if="message"
-          class="ac-alert ac-alert-error mx-4 py-1"
+          class="ac-alert ac-alert-error ms-4 me-auto py-1"
         >
           {{ message }}
         </div>
-        <div
+        <template
           v-if="needAuth && !authStore.isAuthenticated"
-          class="flex items-center gap-3 mx-4"
         >
           <button
             v-if="!authStore.isAwesomeAuth"
-            class="ac-btn ac-btn-secondary ac-btn-xs"
+            class="ac-btn ac-btn-secondary ac-btn-xs mx-4"
             type="button"
             @click="doLogin"
           >
@@ -323,7 +322,7 @@ watch(
             ref="turnstileContainer"
             class="absolute right-2 top-10"
           />
-        </div>
+        </template>
         <button
           :disabled="isSending || (needAuth && !authStore.isAuthenticated && !turnstileToken)"
           class="ac-btn ac-btn-primary ac-btn-sm"
