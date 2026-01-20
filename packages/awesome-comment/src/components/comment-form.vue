@@ -62,7 +62,7 @@ function loadTurnstileScript(): Promise<void> {
       resolve();
     }
     function handleError() {
-      reject(new Error('Turnstile 脚本加载失败'));
+      reject(new Error('Failed to load Turnstile script'));
     }
 
     script.addEventListener('load', handleLoad, { once: true });
@@ -84,7 +84,7 @@ async function renderTurnstile(): Promise<void> {
   if (!turnstileSiteKey || !turnstileContainer.value) return;
   await loadTurnstileScript();
   if (!window.turnstile) {
-    message.value = 'Turnstile 初始化失败';
+    message.value = 'Turnstile initialization failed';
     return;
   }
   if (turnstileWidgetId.value) {
@@ -103,14 +103,22 @@ async function renderTurnstile(): Promise<void> {
     },
     'error-callback': () => {
       turnstileToken.value = '';
-      message.value = 'Turnstile 验证失败，请重试。';
+      message.value = 'Turnstile validation failed, please try again.';
     },
   });
 }
 
 function resetTurnstile(): void {
-  if (!turnstileWidgetId.value || !window.turnstile) return;
-  window.turnstile.reset(turnstileWidgetId.value);
+  if (!turnstileWidgetId.value || !window.turnstile) {
+    turnstileToken.value = '';
+    return;
+  }
+  try {
+    window.turnstile.remove(turnstileWidgetId.value);
+  } catch {
+    window.turnstile.reset(turnstileWidgetId.value);
+  }
+  turnstileWidgetId.value = '';
   turnstileToken.value = '';
 }
 
@@ -132,7 +140,6 @@ async function doSubmit(event: Event): Promise<void> {
     }
     needAuth.value = true;
     if (!turnstileToken.value) {
-      message.value = t('login_or_verify');
       await nextTick();
       await renderTurnstile();
       return;
@@ -285,25 +292,26 @@ watch(
         @keydown.enter="onKeydown"
         @keydown.esc="onCancel"
       />
-      <div class="p-2 rounded-b-lg bg-base-300 flex items-center">
+      <div class="p-2 rounded-b-lg bg-base-300 flex items-center relative">
         <div
           v-if="!noVersion"
           class="text-xs text-neutral-400/40"
+          :class="{'me-auto': !message}"
         >
           v{{ version }}
         </div>
         <div
           v-if="message"
-          class="ac-alert ac-alert-error mx-4 py-1"
+          class="ac-alert ac-alert-error ms-4 me-auto py-1"
         >
           {{ message }}
         </div>
-        <div
+        <template
           v-if="needAuth && !authStore.isAuthenticated"
-          class="flex items-center gap-3 ms-4"
         >
           <button
-            class="ac-btn ac-btn-secondary ac-btn-xs"
+            v-if="!authStore.isAwesomeAuth"
+            class="ac-btn ac-btn-secondary ac-btn-xs mx-4"
             type="button"
             @click="doLogin"
           >
@@ -312,11 +320,12 @@ watch(
           <div
             v-if="turnstileSiteKey"
             ref="turnstileContainer"
+            class="absolute right-2 top-10"
           />
-        </div>
+        </template>
         <button
           :disabled="isSending || (needAuth && !authStore.isAuthenticated && !turnstileToken)"
-          class="ac-btn ac-btn-primary ac-btn-sm ms-auto"
+          class="ac-btn ac-btn-primary ac-btn-sm"
         >
           <span
             v-if="isSending"

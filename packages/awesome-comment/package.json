@@ -1,10 +1,12 @@
 {
   "name": "@roudanio/awesome-comment",
-  "version": "0.10.2",
+  "version": "0.10.3",
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vue-tsc && vite build"
+    "build": "vue-tsc && vite build",
+    "build:esm": "vue-tsc && vite build -c vite.config.esm.ts",
+    "build:esm:unpkg": "vue-tsc && vite build -c vite.config.esm.unpkg.ts"
   },
   "dependencies": {
     "@auth0/auth0-vue": "^2.5.0",

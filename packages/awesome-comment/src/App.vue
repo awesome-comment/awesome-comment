@@ -79,52 +79,57 @@ watch(
         class="ac-loading ac-loading-spinner"
       />
       <div
-        v-else
+        v-else-if="authStore.isAuthenticated && authStore.user"
         class="ac-dropdown ac-dropdown-end"
       >
-        <template v-if="authStore.isAuthenticated && authStore.user">
-          <label
-            v-if="authStore.user.picture"
-            class="ac-avatar flex"
-            tabindex="0"
-          >
-            <span class="block w-6 h-6 rounded-full">
-              <img
-                :alt="authStore.user.name || authStore.user.email"
-                :src="authStore.user.picture"
-                class="w-full h-full block"
-              >
-            </span>
-          </label>
-          <label
-            v-else
-            class="ac-btn ac-btn-ghost"
-            tabindex="0"
-          >{{ authStore.user.email }}</label>
-          <ul
-            class="ac-dropdown-content z-10 ac-menu p-2 shadow bg-base-100 rounded-box w-52"
-            tabindex="0"
-          >
-            <li
-              v-if="authStore.user.picture"
-              class="border-b border-neutral pb-2 mb-2 pointer-events-none"
+        <label
+          v-if="authStore.user.picture"
+          class="ac-avatar flex"
+          tabindex="0"
+        >
+          <span class="block w-6 h-6 rounded-full">
+            <img
+              :alt="authStore.user.name || authStore.user.email"
+              :src="authStore.user.picture"
+              class="w-full h-full block"
             >
-              <span class="text-base-content">{{ authStore.user.email }}</span>
-            </li>
-            <li>
-              <button
-                :disabled="authStore.isLoading"
-                class="border-0 bg-base-100"
-                type="button"
-                @click="doLogout"
-              >
-                {{ t('logout') }}
-              </button>
-            </li>
-          </ul>
-        </template>
+          </span>
+        </label>
+        <label
+          v-else
+          class="ac-btn ac-btn-ghost"
+          tabindex="0"
+        >{{ authStore.user.email }}</label>
+        <ul
+          class="ac-dropdown-content z-10 ac-menu p-2 shadow bg-base-100 rounded-box w-52"
+          tabindex="0"
+        >
+          <li
+            v-if="authStore.user.picture"
+            class="border-b border-neutral pb-2 mb-2 pointer-events-none"
+          >
+            <span class="text-base-content">{{ authStore.user.email }}</span>
+          </li>
+          <li>
+            <button
+              :disabled="authStore.isLoading"
+              class="border-0 bg-base-100"
+              type="button"
+              @click="doLogout"
+            >
+              {{ t('logout') }}
+            </button>
+          </li>
+        </ul>
+      </div>
+      <template v-else>
+        <div
+          v-if="authStore.isAwesomeAuth"
+          ref="googleButton"
+          class="g-id-signin"
+        />
         <button
-          v-else-if="!authStore.isAwesomeAuth"
+          v-else
           :disabled="authStore.isLoading"
           class="ac-btn ac-btn-secondary ac-btn-xs"
           type="button"
@@ -132,12 +137,7 @@ watch(
         >
           {{ t('login') }}
         </button>
-        <div
-          v-else
-          ref="googleButton"
-          class="g-id-signin"
-        />
-      </div>
+      </template>
     </header>
     <comment-form />
     <comment-section />
