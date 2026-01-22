@@ -9,5 +9,11 @@ declare namespace Cloudflare {
     TRANSLATE_MODEL?: string;
     // OpenAI API Key，使用 OpenAI provider 时必填
     OPENAI_API_KEY?: string;
+    // Google Gemini API Key，使用 Google provider 时必填
+    GOOGLE_GEMINI_API_KEY?: string;
+    // Cloudflare AI Gateway 基础地址（不包含 provider 路径）
+    AI_GATEWAY_BASE_URL?: string;
+    // Cloudflare AI Gateway 访问令牌（可选）
+    AI_GATEWAY_TOKEN?: string;
   }
 }

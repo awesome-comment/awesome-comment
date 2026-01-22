@@ -8,10 +8,42 @@ export const DEFAULT_GOOGLE_MODEL = 'gemini-3-flash-preview';
 
 export type AIProviderType = 'google' | 'openai';
 
+type AiGatewayConfig = {
+  baseUrl?: string;
+  headers?: Record<string, string>;
+};
+
+function normalizeBaseUrl(baseUrl: string): string {
+  return baseUrl.replace(/\/+$/, '');
+}
+
+function appendProviderPath(baseUrl: string, provider: string): string {
+  const normalized = normalizeBaseUrl(baseUrl);
+  if (normalized.endsWith(`/${provider}`)) {
+    return normalized;
+  }
+  return `${normalized}/${provider}`;
+}
+
 // AI Provider 接口
 export interface AIProvider {
   translate(content: string): Promise<string>;
   classifyTags(content: string, tags: readonly string[]): Promise<string[]>;
+}
+
+function getAiGatewayConfig(env: Cloudflare.Env, provider: 'openai' | 'google-ai-studio'): AiGatewayConfig {
+  const baseUrl = env.AI_GATEWAY_BASE_URL?.trim();
+  if (!baseUrl) {
+    return {};
+  }
+
+  const token = env.AI_GATEWAY_TOKEN?.trim();
+  const headers = token ? { 'cf-aig-authorization': `Bearer ${token}` } : undefined;
+
+  return {
+    baseUrl: appendProviderPath(baseUrl, provider),
+    headers,
+  };
 }
 
 // 构建翻译 prompt
@@ -41,8 +73,18 @@ export class GoogleAIProvider implements AIProvider {
   private ai: GoogleGenAI;
   private model: string;
 
-  constructor(apiKey: string, model?: string) {
-    this.ai = new GoogleGenAI({ apiKey });
+  constructor(apiKey: string, model?: string, gatewayConfig?: AiGatewayConfig) {
+    this.ai = new GoogleGenAI({
+      apiKey,
+      ...(gatewayConfig?.baseUrl || gatewayConfig?.headers
+        ? {
+            httpOptions: {
+              baseUrl: gatewayConfig.baseUrl,
+              headers: gatewayConfig.headers,
+            },
+          }
+        : {}),
+    });
     this.model = model || DEFAULT_GOOGLE_MODEL;
   }
 
@@ -76,8 +118,12 @@ export class OpenAIProvider implements AIProvider {
   private openai: OpenAI;
   private model: string;
 
-  constructor(apiKey: string, model?: string) {
-    this.openai = new OpenAI({ apiKey });
+  constructor(apiKey: string, model?: string, gatewayConfig?: AiGatewayConfig) {
+    this.openai = new OpenAI({
+      apiKey,
+      ...(gatewayConfig?.baseUrl ? { baseURL: gatewayConfig.baseUrl } : {}),
+      ...(gatewayConfig?.headers ? { defaultHeaders: gatewayConfig.headers } : {}),
+    });
     this.model = model || DEFAULT_OPENAI_MODEL;
   }
 
@@ -124,13 +170,15 @@ export class OpenAIProvider implements AIProvider {
 // Provider 工厂函数
 export function createAIProvider(env: Cloudflare.Env): AIProvider {
   const providerType = (env.TRANSLATE_PROVIDER || 'google') as AIProviderType;
+  const openAiGateway = getAiGatewayConfig(env, 'openai');
+  const googleGateway = getAiGatewayConfig(env, 'google-ai-studio');
 
   switch (providerType) {
     case 'openai':
       if (!env.OPENAI_API_KEY) {
         throw new Error('OPENAI_API_KEY is required for OpenAI provider');
       }
-      return new OpenAIProvider(env.OPENAI_API_KEY, env.TRANSLATE_MODEL || DEFAULT_OPENAI_MODEL);
+      return new OpenAIProvider(env.OPENAI_API_KEY, env.TRANSLATE_MODEL || DEFAULT_OPENAI_MODEL, openAiGateway);
 
     case 'google':
     default:
@@ -140,6 +188,7 @@ export function createAIProvider(env: Cloudflare.Env): AIProvider {
       return new GoogleAIProvider(
         env.GOOGLE_GEMINI_API_KEY,
         env.TRANSLATE_MODEL || env.DEFAULT_AI_MODEL || DEFAULT_GOOGLE_MODEL,
+        googleGateway,
       );
   }
 }

@@ -40,6 +40,16 @@ NUXT_PUBLIC_SITE_URL=https://awesome-comment.pages.dev
 # Set to "1" to allow search engine indexing
 # Default: disabled (recommended for self-hosted instances)
 # AC_SPIDER=1
+
+# AI Provider (Optional)
+ADMIN_AI_PROVIDER=openai
+ADMIN_AI_MODEL=
+OPENAI_API_KEY=
+GOOGLE_GEMINI_API_KEY=
+
+# Cloudflare AI Gateway（可选）
+AI_GATEWAY_BASE_URL=
+AI_GATEWAY_TOKEN=
 ```
 
 **Important**: By default, all search engine crawlers are blocked. Only set `AC_SPIDER=1` for the official Awesome Comment website. Self-hosted instances should keep this disabled to protect privacy and avoid SEO issues.

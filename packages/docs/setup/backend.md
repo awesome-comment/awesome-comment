@@ -80,7 +80,12 @@ UPSTASH_REDIS_REST_TOKEN=your-redis-token
 # AI Services (Optional but recommended)
 OPENAI_API_KEY=sk-your-openai-key
 # or
-GEMINI_API_KEY=your-gemini-key
+GOOGLE_GEMINI_API_KEY=your-gemini-key
+
+# Admin 端 AI Provider（可选，默认 openai）
+ADMIN_AI_PROVIDER=openai
+# 可选：强制指定 admin 端模型
+ADMIN_AI_MODEL=
 
 # Email Configuration (Optional)
 SMTP_HOST=smtp.gmail.com
@@ -251,8 +256,33 @@ fetch('https://your-api.com/api/admin/comments', {
 1. Get API key from [Google AI Studio](https://makersuite.google.com/)
 2. Add to `.env`:
    ```bash
-   GEMINI_API_KEY=your-key
+   GOOGLE_GEMINI_API_KEY=your-key
    ```
+
+### Admin 端 AI Provider 切换
+
+默认使用 OpenAI。如需切换为 Google AI Studio：
+
+```bash
+ADMIN_AI_PROVIDER=google
+```
+
+你也可以通过 `ADMIN_AI_MODEL` 指定 admin 端模型（例如 `gemini-2.5-pro`）。
+
+### Cloudflare AI Gateway（可选）
+
+如果你希望所有 AI provider 请求通过 Cloudflare AI Gateway 代理，请在后端与 Cronjob 环境中增加以下变量：
+
+```bash
+# Cloudflare AI Gateway 基础地址（不包含 provider 路径）
+AI_GATEWAY_BASE_URL=https://gateway.ai.cloudflare.com/v1/<account_id>/<gateway_name>
+# 可选：需要鉴权时设置
+AI_GATEWAY_TOKEN=your-cloudflare-token
+```
+
+说明：
+- OpenAI 会自动走 `${AI_GATEWAY_BASE_URL}/openai`
+- Google Gemini 会自动走 `${AI_GATEWAY_BASE_URL}/google-ai-studio`
 
 ### Translation Service
 
