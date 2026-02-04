@@ -35,6 +35,7 @@ const localComments: Record<string, Comment> = local ? JSON.parse(local) : {};
 
 const useStore = defineStore('store', () => {
   const postId = inject('postId') as string;
+  const siteId = inject('siteId') as string;
   const preloaded = inject('comments') as ResponseComment[];
   const preloadedTotal = inject('total') as number;
   const isLoaded = ref<boolean>(!!preloaded?.length);
@@ -97,6 +98,9 @@ const useStore = defineStore('store', () => {
     } else {
       const params = new URLSearchParams();
       params.append('postId', postId);
+      if (siteId) {
+        params.append('siteId', siteId);
+      }
       params.append('start', start.value.toString());
       const res = await fetch(`${baseUrl}/api/comments?${params}`);
 

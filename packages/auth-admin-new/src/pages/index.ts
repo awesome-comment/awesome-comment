@@ -65,10 +65,10 @@ export function indexPage(): string {
         </div>
 
         <div class="space-y-3 rounded-lg border bg-white p-5">
-          <h3 class="font-semibold"><code>POST /api/retrive</code></h3>
+          <h3 class="font-semibold"><code>POST /api/retrieve</code></h3>
           <p class="text-gray-700">按用户维度读取一个键对应的值（需要鉴权）。</p>
           <p class="text-sm text-gray-600">请求体：<code>{ "key": "xxx" }</code></p>
-          <pre class="overflow-x-auto rounded-md bg-gray-900 p-4 text-sm text-gray-100"><code>curl -X POST http://localhost:5173/api/retrive \\
+          <pre class="overflow-x-auto rounded-md bg-gray-900 p-4 text-sm text-gray-100"><code>curl -X POST http://localhost:5173/api/retrieve \\
   -H 'Authorization: Bearer &lt;token&gt;' \\
   -H 'Content-Type: application/json' \\
   -d '{"key":"theme"}'</code></pre>

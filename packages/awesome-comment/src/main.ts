@@ -18,6 +18,7 @@ export type InitOptions = {
   clientId?: string;
   locale?: string;
   awesomeAuth?: AwesomeAuth;
+  siteId?: string;
   turnstileSiteKey?: string;
 };
 type Manager = {
@@ -87,7 +88,7 @@ const AwesomeComment: InitOptions & Manager = {
   turnstileSiteKey: '',
   init(
     dom: string | HTMLElement,
-    { postId, apiUrl, domain, clientId, awesomeAuth, turnstileSiteKey, locale = navigator.language }: InitOptions = {},
+    { postId, apiUrl, domain, clientId, awesomeAuth, turnstileSiteKey, locale = navigator.language, siteId }: InitOptions = {},
   ) {
     postId ??= this.postId;
     apiUrl ??= this.apiUrl;
@@ -95,6 +96,7 @@ const AwesomeComment: InitOptions & Manager = {
     clientId ??= this.clientId;
     awesomeAuth ??= this.awesomeAuth;
     turnstileSiteKey ??= this.turnstileSiteKey;
+    siteId ??= this.siteId;
     const app = init({ domain, clientId, locale });
     app.provide('ApiBaseUrl', apiUrl);
     app.provide('postId', postId);
@@ -103,14 +105,16 @@ const AwesomeComment: InitOptions & Manager = {
     app.provide('total', total);
     app.provide('awesomeAuth', awesomeAuth);
     app.provide('TurnstileSiteKey', turnstileSiteKey);
+    app.provide('siteId', siteId);
     app.mount(dom);
   },
-  async preload({ postId, apiUrl, domain, clientId, awesomeAuth, turnstileSiteKey }: InitOptions): Promise<void> {
+  async preload({ postId, apiUrl, domain, clientId, awesomeAuth, turnstileSiteKey, siteId }: InitOptions): Promise<void> {
     this.postId = postId || '';
     this.apiUrl = apiUrl || '';
     this.domain = domain || '';
     this.clientId = clientId || '';
     this.turnstileSiteKey = turnstileSiteKey || '';
+    this.siteId = siteId || '';
     if (domain && clientId) {
       preAuth0 = createAuth0({
         domain,
@@ -125,7 +129,12 @@ const AwesomeComment: InitOptions & Manager = {
     }
     this.awesomeAuth = awesomeAuth as AwesomeAuth;
 
-    const response = await fetch(`${apiUrl}/api/comments?postId=${postId}`);
+    const params = new URLSearchParams();
+    params.set('postId', postId as string);
+    if (siteId) {
+      params.set('siteId', siteId);
+    }
+    const response = await fetch(`${apiUrl}/api/comments?${params.toString()}`);
     if (!response.ok) {
       console.log('[Awesome comment] Failed to preload comments.');
     }

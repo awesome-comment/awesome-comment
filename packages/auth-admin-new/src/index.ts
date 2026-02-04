@@ -10,6 +10,7 @@ import verifyAuth from './api/verify-auth';
 import refreshToken from './api/refresh-token';
 import store from './api/store';
 import retrive from './api/retrive';
+import retrieve from './api/retrieve';
 
 // 页面
 import { indexPage } from './pages/index';
@@ -29,6 +30,7 @@ app.route('/api/verify-auth', verifyAuth);
 app.route('/api/refresh-token', refreshToken);
 app.route('/api/store', store);
 app.route('/api/retrive', retrive);
+app.route('/api/retrieve', retrieve);
 
 // 首页文档
 app.get('/', (c) => {

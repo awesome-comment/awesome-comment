@@ -17,6 +17,7 @@ const emit = defineEmits<Emits>();
 const store = useStore();
 const { t } = useI18n();
 const baseUrl = inject('ApiBaseUrl');
+const siteId = inject('siteId') as string;
 const LOCAL_STORAGE_KEY = 'awesome-comment-likes';
 
 const isSending = ref<number>(0);
@@ -50,6 +51,7 @@ async function doLike(isLike = true) {
     body: JSON.stringify({
       like: isLike,
       postId: props.comment.postId,
+      siteId,
     }),
   });
   const json = (await response.json()) as ResponseBody<{ like: number }>;

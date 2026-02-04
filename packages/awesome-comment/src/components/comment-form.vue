@@ -34,6 +34,7 @@ const store = useStore();
 const { t } = useI18n();
 const baseUrl = inject('ApiBaseUrl');
 const auth0domain = inject('Auth0Domain');
+const siteId = inject('siteId') as string;
 const turnstileSiteKey = inject<string | undefined>('TurnstileSiteKey');
 const version = __VERSION__;
 const textarea = ref<HTMLTextAreaElement>();
@@ -193,6 +194,7 @@ async function doSubmit(event: Event): Promise<void> {
       body: JSON.stringify({
         comment: commentContent,
         postId: store.postId,
+        siteId,
         domain: auth0domain,
         ancestorId: props.ancestorId ? Number(props.ancestorId) : undefined,
         parentId: props.parentId ? Number(props.parentId) : undefined,
