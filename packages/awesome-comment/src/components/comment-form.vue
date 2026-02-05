@@ -36,6 +36,7 @@ const baseUrl = inject('ApiBaseUrl');
 const auth0domain = inject('Auth0Domain');
 const siteId = inject('siteId') as string;
 const turnstileSiteKey = inject<string | undefined>('TurnstileSiteKey');
+const autoFocus = inject<boolean>('AutoFocus');
 const version = __VERSION__;
 const textarea = ref<HTMLTextAreaElement>();
 const turnstileContainer = ref<HTMLDivElement>();
@@ -248,7 +249,9 @@ function onCancel(): void {
 }
 
 onMounted(() => {
-  textarea.value?.focus();
+  if (autoFocus || props.currentId) {
+    textarea.value?.focus();
+  }
 });
 
 watch(

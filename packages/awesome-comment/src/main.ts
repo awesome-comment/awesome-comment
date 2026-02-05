@@ -20,6 +20,7 @@ export type InitOptions = {
   awesomeAuth?: AwesomeAuth;
   siteId?: string;
   turnstileSiteKey?: string;
+  autoFocus?: boolean;
 };
 type Manager = {
   init: (dom: string | HTMLElement, options: InitOptions) => void;
@@ -88,7 +89,17 @@ const AwesomeComment: InitOptions & Manager = {
   turnstileSiteKey: '',
   init(
     dom: string | HTMLElement,
-    { postId, apiUrl, domain, clientId, awesomeAuth, turnstileSiteKey, locale = navigator.language, siteId }: InitOptions = {},
+    {
+      postId,
+      apiUrl,
+      domain,
+      clientId,
+      awesomeAuth,
+      turnstileSiteKey,
+      locale = navigator.language,
+      siteId,
+      autoFocus,
+    }: InitOptions = {},
   ) {
     postId ??= this.postId;
     apiUrl ??= this.apiUrl;
@@ -106,9 +117,18 @@ const AwesomeComment: InitOptions & Manager = {
     app.provide('awesomeAuth', awesomeAuth);
     app.provide('TurnstileSiteKey', turnstileSiteKey);
     app.provide('siteId', siteId);
+    app.provide('AutoFocus', autoFocus || false);
     app.mount(dom);
   },
-  async preload({ postId, apiUrl, domain, clientId, awesomeAuth, turnstileSiteKey, siteId }: InitOptions): Promise<void> {
+  async preload({
+    postId,
+    apiUrl,
+    domain,
+    clientId,
+    awesomeAuth,
+    turnstileSiteKey,
+    siteId,
+  }: InitOptions): Promise<void> {
     this.postId = postId || '';
     this.apiUrl = apiUrl || '';
     this.domain = domain || '';
