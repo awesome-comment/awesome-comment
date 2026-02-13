@@ -25,7 +25,7 @@ function formatHelper(item: ResponseComment): Comment {
     postId,
     ancestorId: Number(ancestorId),
     status: Number(item.status),
-    createdAt: createUTCDate(createdAt),
+    createdAt: createUTCDate(createdAt || rest.createdAt || ''),
   };
 }
 

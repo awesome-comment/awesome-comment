@@ -69,6 +69,7 @@ export type Comment = BaseComment & {
   userId: string;
 };
 export type ResponseComment = BaseComment & {
+  createdAt?: string;
   created_at: string;
   parent_id?: number;
   ancestor_id?: number;
