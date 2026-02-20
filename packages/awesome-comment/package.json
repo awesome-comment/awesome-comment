@@ -1,12 +1,13 @@
 {
   "name": "@roudanio/awesome-comment",
-  "version": "0.10.6",
+  "version": "0.10.7",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "vue-tsc && vite build",
     "build:esm": "vue-tsc && vite build -c vite.config.esm.ts",
-    "build:esm:unpkg": "vue-tsc && vite build -c vite.config.esm.unpkg.ts"
+    "build:esm:unpkg": "vue-tsc && vite build -c vite.config.esm.unpkg.ts",
+    "test": "vitest run"
   },
   "dependencies": {
     "@auth0/auth0-vue": "^2.5.0",
@@ -21,16 +22,20 @@
     "vue-i18n": "^11.2.8"
   },
   "devDependencies": {
+    "@pinia/testing": "^1.0.3",
     "@types/lodash-es": "^4.17.12",
     "@types/node": "^24.10.9",
     "@vitejs/plugin-vue": "^6.0.3",
+    "@vue/test-utils": "^2.4.6",
     "autoprefixer": "^10.4.23",
     "daisyui": "^4.12.24",
+    "jsdom": "^28.1.0",
     "postcss": "^8.5.6",
     "pug": "^3.0.3",
     "tailwindcss": "^3.4.19",
     "typescript": "^5.9.3",
     "vite": "^7.3.1",
+    "vitest": "^4.0.18",
     "vue-tsc": "^3.2.2"
   },
   "author": {

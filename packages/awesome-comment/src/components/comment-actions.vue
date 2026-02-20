@@ -50,7 +50,7 @@ async function doLike(isLike = true) {
     },
     body: JSON.stringify({
       like: isLike,
-      postId: props.comment.postId,
+      postId: props.comment.postId || store.postId,
       siteId,
     }),
   });
