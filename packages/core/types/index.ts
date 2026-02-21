@@ -73,8 +73,11 @@ export type ResponseComment = BaseComment & {
   created_at: string;
   parent_id?: number;
   ancestor_id?: number;
+  parentId?: number;
+  ancestorId?: number;
   user_id: string;
   post_id: string;
+  postId?: string;
 };
 export type PostCount = {
   post_id: string;

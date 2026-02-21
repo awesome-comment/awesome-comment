@@ -8,13 +8,18 @@ import { createUTCDate } from '../utils/time.ts';
 function formatHelper(item: ResponseComment): Comment {
   const {
     id,
-    created_at: createdAt,
-    parent_id: parentId,
-    ancestor_id: ancestorId,
-    post_id: postId,
+    created_at,
+    parent_id,
+    ancestor_id,
+    post_id,
     user_id: userId,
     ...rest
   } = item;
+  // 兼容 camelCase 和 snake_case 两种 API 返回格式
+  const createdAt = created_at || rest.createdAt || '';
+  const parentId = parent_id ?? item.parentId;
+  const ancestorId = ancestor_id ?? item.ancestorId;
+  const postId = post_id || item.postId || '';
   return {
     ...rest,
     id: Number(id),
@@ -25,7 +30,7 @@ function formatHelper(item: ResponseComment): Comment {
     postId,
     ancestorId: Number(ancestorId),
     status: Number(item.status),
-    createdAt: createUTCDate(createdAt || rest.createdAt || ''),
+    createdAt: createUTCDate(createdAt),
   };
 }
 
@@ -53,7 +58,9 @@ const useStore = defineStore('store', () => {
     from.forEach((item: ResponseComment) => {
       removeLocalComment(Number(item.id));
       const formatted = formatHelper(item);
-      if (!item.ancestor_id || Number(item.ancestor_id) === 0) {
+      // 兼容 camelCase 和 snake_case
+      const ancestorId = item.ancestor_id ?? item.ancestorId;
+      if (!ancestorId || Number(ancestorId) === 0) {
         res[item.id as number] = formatted;
       } else {
         deeper.push(formatted);
