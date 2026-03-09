@@ -3,7 +3,7 @@ import type { Comment } from '@awesome-comment/core/types';
 import { CommentStatus } from '@awesome-comment/core/data';
 import { useAuth0 } from '@auth0/auth0-vue';
 import keyBy from 'lodash-es/keyBy';
-import type { RowItem } from '~/components/comments/comment-row.vue';
+import type { RowItem } from '~/types';
 
 const postIdPrefix = __POST_ID_PREFIX__;
 const CSKeys = Object.values(CommentStatus).filter((v) => !isNaN(Number(v)));
@@ -343,7 +343,7 @@ definePageMeta({
           :is-batching="isBatching"
           :loading-more="loadingMore"
           :filter="filter"
-          @approve="onApproved"
+          @approve="refresh"
           @select="toggleSelect"
           @edit="comment.content = $event"
           @modal="hasReplyModal = $event"

@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import type { Comment } from '@awesome-comment/core/types';
 import type { RowItem } from '~/types';
 import { CommentStatus } from '@awesome-comment/core/data';
 type Props = {

@@ -15,7 +15,7 @@ function mergeVote(vote: Record<number, VoteItem>, comments: Comment[]): Comment
 
 export default defineEventHandler(async function (event: H3Event): Promise<ResponseBody<Comment[]>> {
   const query = getQuery(event);
-  const { postId, siteId, start = 0 } = query;
+  const { postId, start = 0 } = query;
   if (!postId) {
     throw createError({
       statusCode: 400,

@@ -53,12 +53,6 @@ async function doReview(comment: RowItem, status: CommentStatus) {
   }
 }
 
-function doApprove(comment: RowItem) {
-  return doReview(comment, CommentStatus.Approved);
-}
-function doReject(comment: RowItem) {
-  return doReview(comment, CommentStatus.Rejected);
-}
 
 async function toggleShadowBan(comment: RowItem, isPrivate: boolean) {
   if (!auth0) return;
