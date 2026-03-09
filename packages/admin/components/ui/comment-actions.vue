@@ -1,18 +1,7 @@
 <script setup lang="ts">
 import type { Comment } from '@awesome-comment/core/types';
+import type { RowItem } from '~/types';
 import { CommentStatus } from '@awesome-comment/core/data';
-
-type RowItem = Comment & {
-  isApproving: boolean;
-  isRejecting: boolean;
-  isDeleting: boolean;
-  isDeleted: boolean;
-  isReplying: boolean;
-  isShadowBanning: boolean;
-  from: string;
-  toContent?: string;
-  isShadowBanned?: boolean;
-};
 type Props = {
   comment: RowItem;
   isBatching: boolean;
@@ -25,7 +14,7 @@ type Emits = {
   (event: 'modal', isOpen: boolean): void;
   (event: 'reply', comment: RowItem, parent: RowItem): void;
   (event: 'review', comment: RowItem, status: CommentStatus): void;
-  (event: 'toggle-private', comment: RowItem, isPrivate: boolean): void;
+  (event: 'toggle-shadow-ban', comment: RowItem, isPrivate: boolean): void;
 };
 const emit = defineEmits<Emits>();
 </script>
@@ -95,10 +84,16 @@ const emit = defineEmits<Emits>();
           class="btn btn-outline btn-sm sm:btn-xs"
           :class="comment.isShadowBanned ? 'btn-success' : 'btn-warning'"
           type="button"
-          :disabled="isBatching || comment.isApproving || comment.isRejecting || comment.isDeleting || loadingMore"
-          @click="emit('toggle-private', comment, !comment.isShadowBanned)"
+          :disabled="isBatching || comment.isApproving || comment.isRejecting || comment.isDeleting || comment.isShadowBanning || loadingMore"
+          @click="emit('toggle-shadow-ban', comment, !comment.isShadowBanned)"
         >
-          {{ comment.isShadowBanned ? '设为公开' : '仅本人可见' }}
+          <span
+            v-if="comment.isShadowBanning"
+            class="loading loading-xs loading-spinner"
+          />
+          <template v-else>
+            {{ comment.isShadowBanned ? '设为公开' : '仅本人可见' }}
+          </template>
         </button>
       </div>
     </details>

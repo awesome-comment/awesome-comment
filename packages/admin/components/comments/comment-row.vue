@@ -1,25 +1,10 @@
 <script setup lang="ts">
 import { marked } from 'marked';
-import type { Comment, CommentUser, User } from '@awesome-comment/core/types';
-import { CommentStatus } from '@awesome-comment/core/data';
 import { useAuth0 } from '@auth0/auth0-vue';
 import type { FetchError } from 'ofetch';
-
-export type RowItem = Comment & {
-  children?: RowItem[];
-  created_at: string;
-  from: string;
-  id: number;
-  isApproving: boolean;
-  isRejecting: boolean;
-  isDeleting: boolean;
-  isDeleted: boolean;
-  isReplying: boolean;
-  isShadowBanning: boolean;
-  toContent?: string;
-  toUser?: CommentUser;
-  user: User;
-};
+import type { Comment, CommentUser, User } from '@awesome-comment/core/types';
+import type { RowItem } from '~/types';
+import { CommentStatus } from '@awesome-comment/core/data';
 
 const props = defineProps<{
   comment: RowItem;
@@ -68,10 +53,14 @@ async function doReview(comment: RowItem, status: CommentStatus) {
   }
 }
 
-const doApprove = (comment: RowItem) => doReview(comment, CommentStatus.Approved);
-const doReject = (comment: RowItem) => doReview(comment, CommentStatus.Rejected);
+function doApprove(comment: RowItem) {
+  return doReview(comment, CommentStatus.Approved);
+}
+function doReject(comment: RowItem) {
+  return doReview(comment, CommentStatus.Rejected);
+}
 
-async function togglePrivate(comment: RowItem, isPrivate: boolean) {
+async function toggleShadowBan(comment: RowItem, isPrivate: boolean) {
   if (!auth0) return;
   if (comment.isApproving || comment.isRejecting || comment.isDeleting || comment.isShadowBanning) return;
 
@@ -384,7 +373,7 @@ function parseMarkdown(md: string): string {
         <div>{{ CommentStatus[comment.status] }}</div>
         <div
           v-if="comment.isShadowBanned"
-          class="badge badge-error badge-sm"
+          class="badge badge-warning badge-sm"
         >
           仅本人可见
         </div>
@@ -396,14 +385,12 @@ function parseMarkdown(md: string): string {
         :comment="comment"
         :is-batching="isBatching"
         :loading-more="loadingMore"
-        @delete="() => doDelete()"
+        @delete="doDelete"
         @edit="$emit('edit', $event)"
-        @approve="item => doApprove(item as RowItem)"
-        @reject="item => doReject(item as RowItem)"
         @modal="$emit('modal', $event)"
         @reply="onReply"
-        @review="(item, s) => doReview(item as RowItem, s)"
-        @toggle-private="(item, s) => togglePrivate(item as RowItem, s)"
+        @review="doReview"
+        @toggle-shadow-ban="toggleShadowBan"
       />
     </td>
   </tr>

@@ -2,14 +2,15 @@
 import type { UiModal } from '#components';
 import type { Comment, ResponseBody } from '@awesome-comment/core/types';
 import { CommentStatus } from '@awesome-comment/core/data';
+import type { RowItem } from '~/types';
 import { withCommandModifier } from '@awesome-comment/core/utils';
 import { useAuth0 } from '@auth0/auth0-vue';
 import { ShortcutEmojis } from '~/data';
 
 type Props = {
-  comment: Comment;
+  comment: RowItem;
   reply?: string;
-  target?: Comment;
+  target?: RowItem;
 };
 const props = defineProps<Props>();
 type Emits = {

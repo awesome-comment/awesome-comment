@@ -7,15 +7,7 @@ import useAuthStore from './auth.ts';
 import { createUTCDate } from '../utils/time.ts';
 
 function formatHelper(item: ResponseComment): Comment {
-  const {
-    id,
-    created_at,
-    parent_id,
-    ancestor_id,
-    post_id,
-    user_id: userId,
-    ...rest
-  } = item;
+  const { id, created_at, parent_id, ancestor_id, post_id, user_id: userId, is_shadow_banned, ...rest } = item;
   // 兼容 camelCase 和 snake_case 两种 API 返回格式
   const createdAt = created_at || rest.createdAt || '';
   const parentId = parent_id ?? item.parentId;
@@ -32,12 +24,68 @@ function formatHelper(item: ResponseComment): Comment {
     ancestorId: Number(ancestorId),
     status: Number(item.status),
     createdAt: createUTCDate(createdAt),
+    isShadowBanned: !!is_shadow_banned,
   };
 }
 
 const LOCAL_STORAGE_KEY = 'awesome-comment-comments';
 const local = localStorage.getItem(LOCAL_STORAGE_KEY);
 const localComments: Record<string, Comment> = local ? JSON.parse(local) : {};
+
+export function formatComment(
+  from: ResponseComment[],
+  currentUserId: string | undefined,
+  postId: string,
+): Record<number, Comment> {
+  const res: Record<number, Comment> = {};
+  const deeper: Comment[] = [];
+  from.forEach((item: ResponseComment) => {
+    removeLocalComment(Number(item.id), postId);
+    const formatted = formatHelper(item);
+    if (formatted.isShadowBanned && formatted.userId !== currentUserId) {
+      return;
+    }
+    // 兼容 camelCase 和 snake_case
+    const ancestorId = item.ancestor_id ?? item.ancestorId;
+    if (!ancestorId || Number(ancestorId) === 0) {
+      res[item.id as number] = formatted;
+    } else {
+      deeper.push(formatted);
+    }
+  });
+
+  const comment = localComments[postId];
+  if (comment) {
+    comment.createdAt = new Date(comment.createdAt);
+    if (!comment.ancestorId || Number(comment.ancestorId) === 0) {
+      res[comment.id as number] = comment;
+    } else {
+      deeper.push(comment);
+    }
+  }
+
+  deeper.forEach((item: Comment) => {
+    if ((item.ancestorId as number) in res) {
+      const parent = res[item.ancestorId as number];
+      parent.children = [item, ...(parent.children || [])];
+    }
+  });
+
+  // sort by id
+  for (const key in res) {
+    const item = res[key];
+    if (item.children) {
+      item.children = item.children.sort((a, b) => (a.id as number) - (b.id as number));
+    }
+  }
+  return res;
+}
+
+function removeLocalComment(id: number, postId: string): void {
+  if (localComments[postId]?.id !== id) return;
+  delete localComments[postId];
+  localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(localComments));
+}
 
 const useStore = defineStore('store', () => {
   const postId = inject('postId') as string;
@@ -52,53 +100,7 @@ const useStore = defineStore('store', () => {
   const baseUrl = inject('ApiBaseUrl');
   const loadingMore = ref<boolean>(false);
   const hasMore = ref<boolean>(false);
-
-  function formatComment(from: ResponseComment[]): Record<number, Comment> {
-    const res: Record<number, Comment> = {};
-    const deeper: Comment[] = [];
-    const authStore = useAuthStore();
-    const currentUserId = authStore.user?.sub;
-    from.forEach((item: ResponseComment) => {
-      removeLocalComment(Number(item.id));
-      const formatted = formatHelper(item);
-      if (formatted.isShadowBanned && formatted.userId !== currentUserId) {
-        return;
-      }
-      // 兼容 camelCase 和 snake_case
-      const ancestorId = item.ancestor_id ?? item.ancestorId;
-      if (!ancestorId || Number(ancestorId) === 0) {
-        res[item.id as number] = formatted;
-      } else {
-        deeper.push(formatted);
-      }
-    });
-
-    const comment = localComments[postId];
-    if (comment) {
-      comment.createdAt = new Date(comment.createdAt);
-      if (!comment.ancestorId || Number(comment.ancestorId) === 0) {
-        res[comment.id as number] = comment;
-      } else {
-        deeper.push(comment);
-      }
-    }
-
-    deeper.forEach((item: Comment) => {
-      if ((item.ancestorId as number) in res) {
-        const parent = res[item.ancestorId as number];
-        parent.children = [item, ...(parent.children || [])];
-      }
-    });
-
-    // sort by id
-    for (const key in res) {
-      const item = res[key];
-      if (item.children) {
-        item.children = item.children.sort((a, b) => (a.id as number) - (b.id as number));
-      }
-    }
-    return res;
-  }
+  const authStore = useAuthStore();
 
   async function loadComments(init = false) {
     if (loadingMore.value) return;
@@ -107,7 +109,7 @@ const useStore = defineStore('store', () => {
     loadingMore.value = true;
     let formatted: Record<number, Comment>;
     if (init && preloaded?.length) {
-      formatted = formatComment(preloaded);
+      formatted = formatComment(preloaded, authStore.user?.sub, postId);
     } else {
       const params = new URLSearchParams();
       params.append('postId', postId);
@@ -131,7 +133,7 @@ const useStore = defineStore('store', () => {
         loadingMore.value = false;
         return;
       }
-      formatted = formatComment(data.data || []);
+      formatted = formatComment(data.data || [], authStore.user?.sub, postId);
       total.value = data.meta?.total || data.data?.length || 0;
     }
 

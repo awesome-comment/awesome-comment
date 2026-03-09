@@ -16,7 +16,7 @@ export default defineEventHandler(async function (event): Promise<ResponseBody<s
   if (status === undefined && content === undefined && isShadowBanned === undefined) {
     throw createError({
       statusCode: 400,
-      message: 'Invalided body',
+      message: 'Invalid body',
     });
   }
   const id = event.context.params?.id;
@@ -54,7 +54,7 @@ export default defineEventHandler(async function (event): Promise<ResponseBody<s
   }
 
   // clear cache
-  if (body.status === CommentStatus.Approved && body.postId) {
+  if ((status === CommentStatus.Approved || isShadowBanned !== undefined) && body.postId) {
     const storage = createStorage(event);
     const key = getCacheKey(body.postId);
     await clearCache(storage, key);

@@ -12,9 +12,11 @@ export default defineEventHandler(async function (event: H3Event) {
   const openai = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY,
     baseURL: process.env.AI_GATEWAY_BASE_URL ? `${process.env.AI_GATEWAY_BASE_URL}/openai` : undefined,
-    defaultHeaders: process.env.AI_GATEWAY_TOKEN ? {
-      'cf-aig-authorization': `Bearer ${process.env.AI_GATEWAY_TOKEN}`,
-    } : undefined,
+    defaultHeaders: process.env.AI_GATEWAY_TOKEN
+      ? {
+          'cf-aig-authorization': `Bearer ${process.env.AI_GATEWAY_TOKEN}`,
+        }
+      : undefined,
   });
   const res = await openai.chat.completions.create({
     model: isEnCn ? Model.CHAT_GPT4o_MINI : Model.CHAT_GPT4o,
