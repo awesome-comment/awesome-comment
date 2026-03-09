@@ -3,6 +3,27 @@ import { mount, config } from '@vue/test-utils';
 import { createPinia, setActivePinia, defineStore } from 'pinia';
 import CommentActions from '../comment-actions.vue';
 
+// mock localStorage
+const localStorageMock = (function () {
+  let store: Record<string, string> = {};
+  return {
+    getItem: vi.fn((key: string) => store[key] || null),
+    setItem: vi.fn((key: string, value: string) => {
+      store[key] = value.toString();
+    }),
+    clear: vi.fn(() => {
+      store = {};
+    }),
+    removeItem: vi.fn((key: string) => {
+      delete store[key];
+    }),
+  };
+})();
+Object.defineProperty(window, 'localStorage', {
+  value: localStorageMock,
+  writable: true,
+});
+
 // mock store
 const mockStore = {
   postId: 'store-post-123',
@@ -24,7 +45,7 @@ describe('comment-actions.vue', () => {
     vi.clearAllMocks();
 
     // mock fetch
-    global.fetch = vi.fn(() =>
+    globalThis.fetch = vi.fn(() =>
       Promise.resolve({
         json: () => Promise.resolve({ code: 0, data: { like: 1 } }),
       }),
@@ -60,10 +81,10 @@ describe('comment-actions.vue', () => {
 
     // 等待异步操作
     await vi.waitFor(() => {
-      expect(global.fetch).toHaveBeenCalledOnce();
+      expect(globalThis.fetch).toHaveBeenCalledOnce();
     });
 
-    const fetchCall = vi.mocked(global.fetch).mock.calls[0];
+    const fetchCall = vi.mocked(globalThis.fetch).mock.calls[0];
     expect(fetchCall[0]).toBe('https://api.example.com/api/like/1');
 
     const body = JSON.parse((fetchCall[1] as RequestInit).body as string);
@@ -90,10 +111,10 @@ describe('comment-actions.vue', () => {
     await likeButton.trigger('click');
 
     await vi.waitFor(() => {
-      expect(global.fetch).toHaveBeenCalledOnce();
+      expect(globalThis.fetch).toHaveBeenCalledOnce();
     });
 
-    const fetchCall = vi.mocked(global.fetch).mock.calls[0];
+    const fetchCall = vi.mocked(globalThis.fetch).mock.calls[0];
     const body = JSON.parse((fetchCall[1] as RequestInit).body as string);
     expect(body).toEqual({
       like: true,
@@ -117,10 +138,10 @@ describe('comment-actions.vue', () => {
     await dislikeButton.trigger('click');
 
     await vi.waitFor(() => {
-      expect(global.fetch).toHaveBeenCalledOnce();
+      expect(globalThis.fetch).toHaveBeenCalledOnce();
     });
 
-    const fetchCall = vi.mocked(global.fetch).mock.calls[0];
+    const fetchCall = vi.mocked(globalThis.fetch).mock.calls[0];
     const body = JSON.parse((fetchCall[1] as RequestInit).body as string);
     expect(body.like).toBe(false);
     expect(body.postId).toBe('store-post-123');

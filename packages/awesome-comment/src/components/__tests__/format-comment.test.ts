@@ -11,7 +11,7 @@ const localStorageMock = {
   length: 0,
   key: vi.fn(),
 };
-Object.defineProperty(globalThis, 'localStorage', { value: localStorageMock });
+Object.defineProperty(window, 'localStorage', { value: localStorageMock, writable: true });
 
 // 先 mock localStorage，再导入 store
 const { default: useStore } = await import('../../store/index.ts');
@@ -46,7 +46,7 @@ describe('formatComment 兼容性', () => {
       const store = useStore();
 
       // 模拟 snake_case API 响应
-      global.fetch = vi.fn(() =>
+      globalThis.fetch = vi.fn(() =>
         Promise.resolve({
           ok: true,
           json: () =>
@@ -98,7 +98,7 @@ describe('formatComment 兼容性', () => {
       const store = useStore();
 
       // 模拟 camelCase API 响应（SaaS 官网格式）
-      global.fetch = vi.fn(() =>
+      globalThis.fetch = vi.fn(() =>
         Promise.resolve({
           ok: true,
           json: () =>

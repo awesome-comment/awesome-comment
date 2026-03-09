@@ -53,7 +53,6 @@ async function doReview(comment: RowItem, status: CommentStatus) {
   }
 }
 
-
 async function toggleShadowBan(comment: RowItem, isPrivate: boolean) {
   if (!auth0) return;
   if (comment.isApproving || comment.isRejecting || comment.isDeleting || comment.isShadowBanning) return;
