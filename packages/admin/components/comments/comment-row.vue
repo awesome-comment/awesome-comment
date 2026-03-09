@@ -15,6 +15,7 @@ export type RowItem = Comment & {
   isDeleting: boolean;
   isDeleted: boolean;
   isReplying: boolean;
+  isShadowBanning: boolean;
   toContent?: string;
   toUser?: CommentUser;
   user: User;
@@ -47,7 +48,7 @@ const auth0 = import.meta.client ? useAuth0() : undefined;
 
 async function doReview(comment: RowItem, status: CommentStatus) {
   if (!auth0) return;
-  if (comment.isApproving || comment.isRejecting || comment.isDeleting) return;
+  if (comment.isApproving || comment.isRejecting || comment.isDeleting || comment.isShadowBanning) return;
 
   if (status === CommentStatus.Approved) {
     comment.isApproving = true;
@@ -64,6 +65,29 @@ async function doReview(comment: RowItem, status: CommentStatus) {
   comment.isApproving = comment.isRejecting = false;
   if (status === CommentStatus.Approved) {
     emit('approve', comment.id);
+  }
+}
+
+const doApprove = (comment: RowItem) => doReview(comment, CommentStatus.Approved);
+const doReject = (comment: RowItem) => doReview(comment, CommentStatus.Rejected);
+
+async function togglePrivate(comment: RowItem, isPrivate: boolean) {
+  if (!auth0) return;
+  if (comment.isApproving || comment.isRejecting || comment.isDeleting || comment.isShadowBanning) return;
+
+  comment.isShadowBanning = true;
+  const token = await auth0.getAccessTokenSilently();
+  try {
+    await $fetch('/api/admin/comment/' + comment.id, {
+      method: 'PATCH',
+      body: { postId: comment.postId, isShadowBanned: isPrivate },
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    comment.isShadowBanned = isPrivate;
+  } catch (e) {
+    emit('error', 'Failed to change private status. ' + (e as FetchError).message);
+  } finally {
+    comment.isShadowBanning = false;
   }
 }
 
@@ -356,7 +380,15 @@ function parseMarkdown(md: string): string {
       </div>
     </td>
     <td class="align-top hidden sm:table-cell">
-      {{ CommentStatus[comment.status] }}
+      <div class="flex flex-col gap-1">
+        <div>{{ CommentStatus[comment.status] }}</div>
+        <div
+          v-if="comment.isShadowBanned"
+          class="badge badge-error badge-sm"
+        >
+          仅本人可见
+        </div>
+      </div>
     </td>
     <td class="align-top hidden sm:table-cell">
       <ui-comment-actions
@@ -364,11 +396,14 @@ function parseMarkdown(md: string): string {
         :comment="comment"
         :is-batching="isBatching"
         :loading-more="loadingMore"
-        @delete="doDelete"
+        @delete="() => doDelete()"
         @edit="$emit('edit', $event)"
+        @approve="item => doApprove(item as RowItem)"
+        @reject="item => doReject(item as RowItem)"
         @modal="$emit('modal', $event)"
         @reply="onReply"
-        @review="doReview"
+        @review="(item, s) => doReview(item as RowItem, s)"
+        @toggle-private="(item, s) => togglePrivate(item as RowItem, s)"
       />
     </td>
   </tr>

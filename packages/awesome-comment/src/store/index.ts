@@ -3,6 +3,7 @@ import { inject, ref } from 'vue';
 import { Comment, ResponseBody, ResponseComment } from '@awesome-comment/core/types';
 import { CommentStatus } from '@awesome-comment/core/data';
 import { User } from '@auth0/auth0-vue';
+import useAuthStore from './auth.ts';
 import { createUTCDate } from '../utils/time.ts';
 
 function formatHelper(item: ResponseComment): Comment {
@@ -55,9 +56,14 @@ const useStore = defineStore('store', () => {
   function formatComment(from: ResponseComment[]): Record<number, Comment> {
     const res: Record<number, Comment> = {};
     const deeper: Comment[] = [];
+    const authStore = useAuthStore();
+    const currentUserId = authStore.user?.sub;
     from.forEach((item: ResponseComment) => {
       removeLocalComment(Number(item.id));
       const formatted = formatHelper(item);
+      if (formatted.isShadowBanned && formatted.userId !== currentUserId) {
+        return;
+      }
       // 兼容 camelCase 和 snake_case
       const ancestorId = item.ancestor_id ?? item.ancestorId;
       if (!ancestorId || Number(ancestorId) === 0) {

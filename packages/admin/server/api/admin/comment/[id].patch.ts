@@ -7,12 +7,13 @@ type PatchRequest = {
   status?: CommentStatus;
   content?: string;
   postId?: string;
+  isShadowBanned?: boolean;
 };
 
 export default defineEventHandler(async function (event): Promise<ResponseBody<string>> {
   const body = (await readBody(event)) as PatchRequest;
-  const { status, content } = body;
-  if (!status && !content) {
+  const { status, content, isShadowBanned } = body;
+  if (status === undefined && content === undefined && isShadowBanned === undefined) {
     throw createError({
       statusCode: 400,
       message: 'Invalided body',
@@ -40,6 +41,7 @@ export default defineEventHandler(async function (event): Promise<ResponseBody<s
       body: JSON.stringify({
         ...(status !== undefined && { status }),
         ...(content && { content }),
+        ...(isShadowBanned !== undefined && { is_shadow_banned: isShadowBanned ? 1 : 0 }),
         id,
       }),
     });

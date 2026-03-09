@@ -8,8 +8,10 @@ type RowItem = Comment & {
   isDeleting: boolean;
   isDeleted: boolean;
   isReplying: boolean;
+  isShadowBanning: boolean;
   from: string;
   toContent?: string;
+  isShadowBanned?: boolean;
 };
 type Props = {
   comment: RowItem;
@@ -18,11 +20,12 @@ type Props = {
 };
 defineProps<Props>();
 type Emits = {
-  (event: 'delete', comment: Comment): void;
+  (event: 'delete', comment: RowItem): void;
   (event: 'edit', content: string): void;
   (event: 'modal', isOpen: boolean): void;
-  (event: 'reply', comment: Comment, parent: Comment): void;
-  (event: 'review', comment: Comment, status: CommentStatus): void;
+  (event: 'reply', comment: RowItem, parent: RowItem): void;
+  (event: 'review', comment: RowItem, status: CommentStatus): void;
+  (event: 'toggle-private', comment: RowItem, isPrivate: boolean): void;
 };
 const emit = defineEmits<Emits>();
 </script>
@@ -87,6 +90,15 @@ const emit = defineEmits<Emits>();
           <template v-else>
             Reject
           </template>
+        </button>
+        <button
+          class="btn btn-outline btn-sm sm:btn-xs"
+          :class="comment.isShadowBanned ? 'btn-success' : 'btn-warning'"
+          type="button"
+          :disabled="isBatching || comment.isApproving || comment.isRejecting || comment.isDeleting || loadingMore"
+          @click="emit('toggle-private', comment, !comment.isShadowBanned)"
+        >
+          {{ comment.isShadowBanned ? '设为公开' : '仅本人可见' }}
         </button>
       </div>
     </details>

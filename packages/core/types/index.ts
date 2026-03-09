@@ -57,6 +57,7 @@ type BaseComment = {
   children?: Comment[];
   created_at?: string;
   like?: number;
+  is_shadow_banned?: boolean;
 };
 export type Comment = BaseComment & {
   ancestorId?: number;
@@ -67,6 +68,7 @@ export type Comment = BaseComment & {
   postId: string;
   user?: CommentUser;
   userId: string;
+  isShadowBanned?: boolean;
 };
 export type ResponseComment = BaseComment & {
   createdAt?: string;
