@@ -343,7 +343,7 @@ definePageMeta({
           :is-batching="isBatching"
           :loading-more="loadingMore"
           :filter="filter"
-          @approve="refresh"
+          @approve="refresh()"
           @select="toggleSelect"
           @edit="comment.content = $event"
           @modal="hasReplyModal = $event"
