@@ -199,11 +199,6 @@ const useStore = defineStore('store', () => {
       localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(localComments));
     }
   }
-  function removeLocalComment(id: number): void {
-    if (localComments[postId]?.id !== id) return;
-    delete localComments[postId];
-    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(localComments));
-  }
   function updateComment(id: number, obj: Partial<Comment>) {
     let comment: Comment | void = comments.value[id];
     if (!comment) {

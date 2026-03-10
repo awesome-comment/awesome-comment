@@ -24,7 +24,7 @@ const emit = defineEmits<Emits>();
       v-if="comment.status === CommentStatus.Pending || comment.status === CommentStatus.Rejected"
       class="btn btn-success btn-sm text-white sm:btn-xs hover:text-white"
       type="button"
-      :disabled="isBatching || comment.isApproving || comment.isRejecting || comment.isDeleting || loadingMore"
+      :disabled="isBatching || comment.isApproving || comment.isRejecting || comment.isDeleting || comment.isShadowBanning || loadingMore"
       @click="emit('review', comment, CommentStatus.Approved)"
     >
       <span
@@ -43,7 +43,7 @@ const emit = defineEmits<Emits>();
       @close="emit('modal', false)"
     />
     <ui-delete-button
-      :disabled="isBatching || comment.isApproving || comment.isRejecting || comment.isDeleting || loadingMore"
+      :disabled="isBatching || comment.isApproving || comment.isRejecting || comment.isDeleting || comment.isShadowBanning || loadingMore"
       :is-loading="comment.isDeleting"
       @delete="emit('delete', comment)"
     />
@@ -68,7 +68,7 @@ const emit = defineEmits<Emits>();
           v-if="comment.status === CommentStatus.Pending || comment.status === CommentStatus.Approved"
           class="btn btn-outline btn-warning btn-sm sm:btn-xs"
           type="button"
-          :disabled="isBatching || comment.isApproving || comment.isRejecting || comment.isDeleting || loadingMore"
+          :disabled="isBatching || comment.isApproving || comment.isRejecting || comment.isDeleting || comment.isShadowBanning || loadingMore"
           @click="emit('review', comment, CommentStatus.Rejected)"
         >
           <span

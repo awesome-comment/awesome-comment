@@ -257,7 +257,7 @@ defineExpose({
           @ai:start="onAiStart"
         />
         <button
-          :disabled="isReplying"
+          :disabled="isReplying || comment.isShadowBanning"
           class="btn btn-primary btn-sm btn-block text-white sm:w-1/3 min-w-64 hover:text-white"
         >
           <span

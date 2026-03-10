@@ -76,7 +76,7 @@ async function toggleShadowBan(comment: RowItem, isPrivate: boolean) {
 async function doDelete(): Promise<void> {
   if (!auth0) return;
   const comment = props.comment;
-  if (comment.isApproving || comment.isRejecting || comment.isDeleting) return;
+  if (comment.isApproving || comment.isRejecting || comment.isDeleting || comment.isShadowBanning) return;
 
   comment.isDeleting = true;
   const token = await auth0.getAccessTokenSilently();
@@ -119,7 +119,7 @@ async function doRemoveReply(child: RowItem, index: number): Promise<void> {
   comment.children?.splice(index, 1);
 }
 
-function onReply(reply: Comment) {
+function onReply(reply: Comment, parent: RowItem) {
   const comment = props.comment;
   comment.children ??= [];
   comment.children.push(reply);
@@ -278,7 +278,7 @@ function parseMarkdown(md: string): string {
         v-if="!comment.children?.length"
         class-name="pt-4"
         :comment="comment"
-        @reply="onReply"
+        @reply="onReply($event, comment)"
       />
       <ui-comment-actions
         class="grid-cols-4 py-2 sm:hidden"
@@ -288,7 +288,7 @@ function parseMarkdown(md: string): string {
         @delete="doDelete"
         @edit="$emit('edit', $event)"
         @modal="$emit('modal', $event)"
-        @reply="onReply"
+        @reply="onReply($event, comment)"
         @review="doReview"
       />
     </td>
@@ -381,7 +381,7 @@ function parseMarkdown(md: string): string {
         @delete="doDelete"
         @edit="$emit('edit', $event)"
         @modal="$emit('modal', $event)"
-        @reply="onReply"
+        @reply="onReply($event, comment)"
         @review="doReview"
         @toggle-shadow-ban="toggleShadowBan"
       />
