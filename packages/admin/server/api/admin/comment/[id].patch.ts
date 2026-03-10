@@ -19,32 +19,43 @@ export default defineEventHandler(async function (event): Promise<ResponseBody<s
       message: 'Invalid body',
     });
   }
-  const id = event.context.params?.id;
-  if (!id) {
+  const id = Number(event.context.params?.id);
+  if (isNaN(id)) {
     throw createError({
-      statusCode: 404,
-      message: 'Missing post id',
+      statusCode: 400,
+      message: 'Invalid comment id',
     });
   }
 
-  const url = body.content
-    ? process.env.TIDB_END_POINT + '/v1/moderator/patch'
-    : process.env.TIDB_END_POINT + '/v1/moderator/review';
+  let url = process.env.TIDB_END_POINT + '/v1/moderator/review';
+  let method = 'POST';
+  let requestBody: Record<string, unknown> = { id };
+
+  if (content !== undefined) {
+    url = process.env.TIDB_END_POINT + '/v1/moderator/patch';
+    requestBody.content = content;
+  } else if (isShadowBanned !== undefined) {
+    url = process.env.TIDB_END_POINT + '/v1/moderator/ban';
+    method = 'PUT';
+    requestBody.banned = isShadowBanned ? 1 : 0;
+  } else if (status !== undefined) {
+    requestBody.status = status;
+  }
+
   try {
     const encodedCredentials = btoa(`${process.env.TIDB_PUBLIC_KEY}:${process.env.TIDB_PRIVATE_KEY}`);
-    await fetch(url, {
-      method: 'POST',
+    const response = await fetch(url, {
+      method,
       headers: {
         Authorization: `Basic ${encodedCredentials}`,
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({
-        ...(status !== undefined && { status }),
-        ...(content && { content }),
-        ...(isShadowBanned !== undefined && { is_shadow_banned: isShadowBanned ? 1 : 0 }),
-        id,
-      }),
+      body: JSON.stringify(requestBody),
     });
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.message || `Failed to update: ${response.statusText}`);
+    }
   } catch (e) {
     const message = (e as Error).message || String(e);
     throw createError({
