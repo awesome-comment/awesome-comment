@@ -2,7 +2,7 @@
 import { marked } from 'marked';
 import { useAuth0 } from '@auth0/auth0-vue';
 import type { FetchError } from 'ofetch';
-import type { Comment, CommentUser, User } from '@awesome-comment/core/types';
+import type { Comment } from '@awesome-comment/core/types';
 import type { RowItem } from '~/types';
 import { CommentStatus } from '@awesome-comment/core/data';
 
@@ -369,7 +369,7 @@ function parseMarkdown(md: string): string {
           v-if="comment.isShadowBanned"
           class="badge badge-warning badge-sm"
         >
-          仅本人可见
+          Shadow banned
         </div>
       </div>
     </td>
