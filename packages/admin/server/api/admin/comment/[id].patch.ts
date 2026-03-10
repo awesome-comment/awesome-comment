@@ -7,15 +7,16 @@ type PatchRequest = {
   status?: CommentStatus;
   content?: string;
   postId?: string;
+  isShadowBanned?: boolean;
 };
 
 export default defineEventHandler(async function (event): Promise<ResponseBody<string>> {
   const body = (await readBody(event)) as PatchRequest;
-  const { status, content } = body;
-  if (!status && !content) {
+  const { status, content, isShadowBanned } = body;
+  if (status === undefined && content === undefined && isShadowBanned === undefined) {
     throw createError({
       statusCode: 400,
-      message: 'Invalided body',
+      message: 'Invalid body',
     });
   }
   const id = event.context.params?.id;
@@ -40,6 +41,7 @@ export default defineEventHandler(async function (event): Promise<ResponseBody<s
       body: JSON.stringify({
         ...(status !== undefined && { status }),
         ...(content && { content }),
+        ...(isShadowBanned !== undefined && { is_shadow_banned: isShadowBanned ? 1 : 0 }),
         id,
       }),
     });
@@ -52,7 +54,7 @@ export default defineEventHandler(async function (event): Promise<ResponseBody<s
   }
 
   // clear cache
-  if (body.status === CommentStatus.Approved && body.postId) {
+  if ((status === CommentStatus.Approved || isShadowBanned !== undefined) && body.postId) {
     const storage = createStorage(event);
     const key = getCacheKey(body.postId);
     await clearCache(storage, key);

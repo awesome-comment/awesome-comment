@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import type { Comment } from '@awesome-comment/core/types';
+import type { RowItem } from '~/types';
 import { CommentStatus } from '@awesome-comment/core/data';
 import { useAuth0 } from '@auth0/auth0-vue';
 
 type Props = {
   buttonClass?: string;
-  comment: Comment;
+  comment: RowItem;
 };
 const props = withDefaults(defineProps<Props>(), {
   buttonClass: 'btn-sm btn-warning sm:btn-xs',
@@ -65,7 +65,7 @@ function onModalClose(): void {
 button.btn(
   type="button",
   :class="buttonClass"
-  :disabled="isSaving"
+  :disabled="isSaving || comment.isShadowBanning"
   @click="doOpenModal"
 )
   span.loading.loading-xs.loading-spinner(v-if="isSaving")

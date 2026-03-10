@@ -1,16 +1,6 @@
 <script setup lang="ts">
-import type { Comment } from '@awesome-comment/core/types';
+import type { RowItem } from '~/types';
 import { CommentStatus } from '@awesome-comment/core/data';
-
-type RowItem = Comment & {
-  isApproving: boolean;
-  isRejecting: boolean;
-  isDeleting: boolean;
-  isDeleted: boolean;
-  isReplying: boolean;
-  from: string;
-  toContent?: string;
-};
 type Props = {
   comment: RowItem;
   isBatching: boolean;
@@ -18,11 +8,12 @@ type Props = {
 };
 defineProps<Props>();
 type Emits = {
-  (event: 'delete', comment: Comment): void;
+  (event: 'delete', comment: RowItem): void;
   (event: 'edit', content: string): void;
   (event: 'modal', isOpen: boolean): void;
-  (event: 'reply', comment: Comment, parent: Comment): void;
-  (event: 'review', comment: Comment, status: CommentStatus): void;
+  (event: 'reply', comment: RowItem, parent: RowItem): void;
+  (event: 'review', comment: RowItem, status: CommentStatus): void;
+  (event: 'toggle-shadow-ban', comment: RowItem, isPrivate: boolean): void;
 };
 const emit = defineEmits<Emits>();
 </script>
@@ -33,7 +24,7 @@ const emit = defineEmits<Emits>();
       v-if="comment.status === CommentStatus.Pending || comment.status === CommentStatus.Rejected"
       class="btn btn-success btn-sm text-white sm:btn-xs hover:text-white"
       type="button"
-      :disabled="isBatching || comment.isApproving || comment.isRejecting || comment.isDeleting || loadingMore"
+      :disabled="isBatching || comment.isApproving || comment.isRejecting || comment.isDeleting || comment.isShadowBanning || loadingMore"
       @click="emit('review', comment, CommentStatus.Approved)"
     >
       <span
@@ -52,7 +43,7 @@ const emit = defineEmits<Emits>();
       @close="emit('modal', false)"
     />
     <ui-delete-button
-      :disabled="isBatching || comment.isApproving || comment.isRejecting || comment.isDeleting || loadingMore"
+      :disabled="isBatching || comment.isApproving || comment.isRejecting || comment.isDeleting || comment.isShadowBanning || loadingMore"
       :is-loading="comment.isDeleting"
       @delete="emit('delete', comment)"
     />
@@ -77,7 +68,7 @@ const emit = defineEmits<Emits>();
           v-if="comment.status === CommentStatus.Pending || comment.status === CommentStatus.Approved"
           class="btn btn-outline btn-warning btn-sm sm:btn-xs"
           type="button"
-          :disabled="isBatching || comment.isApproving || comment.isRejecting || comment.isDeleting || loadingMore"
+          :disabled="isBatching || comment.isApproving || comment.isRejecting || comment.isDeleting || comment.isShadowBanning || loadingMore"
           @click="emit('review', comment, CommentStatus.Rejected)"
         >
           <span
@@ -86,6 +77,22 @@ const emit = defineEmits<Emits>();
           />
           <template v-else>
             Reject
+          </template>
+        </button>
+        <button
+          class="btn btn-outline btn-sm sm:btn-xs"
+          :class="comment.isShadowBanned ? 'btn-success' : 'btn-warning'"
+          type="button"
+          :disabled="isBatching || comment.isApproving || comment.isRejecting || comment.isDeleting || comment.isShadowBanning || loadingMore"
+          :aria-label="comment.isShadowBanned ? 'Set as public' : 'Set as private (author only)'"
+          @click="emit('toggle-shadow-ban', comment, !comment.isShadowBanned)"
+        >
+          <span
+            v-if="comment.isShadowBanning"
+            class="loading loading-xs loading-spinner"
+          />
+          <template v-else>
+            {{ comment.isShadowBanned ? '设为公开' : '仅本人可见' }}
           </template>
         </button>
       </div>

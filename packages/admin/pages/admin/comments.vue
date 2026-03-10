@@ -3,7 +3,7 @@ import type { Comment } from '@awesome-comment/core/types';
 import { CommentStatus } from '@awesome-comment/core/data';
 import { useAuth0 } from '@auth0/auth0-vue';
 import keyBy from 'lodash-es/keyBy';
-import type { RowItem } from '~/components/comments/comment-row.vue';
+import type { RowItem } from '~/types';
 
 const postIdPrefix = __POST_ID_PREFIX__;
 const CSKeys = Object.values(CommentStatus).filter((v) => !isNaN(Number(v)));
@@ -103,6 +103,7 @@ const {
         c.postId = c.post_id;
         c.parentId = Number(c.parent_id);
         c.ancestorId = Number(c.ancestor_id);
+        c.isShadowBanned = !!c.is_shadow_banned;
         if (c.tags && typeof c.tags === 'string') {
           try {
             c.tags = JSON.parse(c.tags);
@@ -343,7 +344,7 @@ definePageMeta({
           :is-batching="isBatching"
           :loading-more="loadingMore"
           :filter="filter"
-          @approve="onApproved"
+          @approve="refresh()"
           @select="toggleSelect"
           @edit="comment.content = $event"
           @modal="hasReplyModal = $event"

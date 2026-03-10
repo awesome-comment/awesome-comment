@@ -1,24 +1,10 @@
 <script setup lang="ts">
 import { marked } from 'marked';
-import type { Comment, CommentUser, User } from '@awesome-comment/core/types';
-import { CommentStatus } from '@awesome-comment/core/data';
 import { useAuth0 } from '@auth0/auth0-vue';
 import type { FetchError } from 'ofetch';
-
-export type RowItem = Comment & {
-  children?: RowItem[];
-  created_at: string;
-  from: string;
-  id: number;
-  isApproving: boolean;
-  isRejecting: boolean;
-  isDeleting: boolean;
-  isDeleted: boolean;
-  isReplying: boolean;
-  toContent?: string;
-  toUser?: CommentUser;
-  user: User;
-};
+import type { Comment, CommentUser, User } from '@awesome-comment/core/types';
+import type { RowItem } from '~/types';
+import { CommentStatus } from '@awesome-comment/core/data';
 
 const props = defineProps<{
   comment: RowItem;
@@ -47,7 +33,7 @@ const auth0 = import.meta.client ? useAuth0() : undefined;
 
 async function doReview(comment: RowItem, status: CommentStatus) {
   if (!auth0) return;
-  if (comment.isApproving || comment.isRejecting || comment.isDeleting) return;
+  if (comment.isApproving || comment.isRejecting || comment.isDeleting || comment.isShadowBanning) return;
 
   if (status === CommentStatus.Approved) {
     comment.isApproving = true;
@@ -67,10 +53,30 @@ async function doReview(comment: RowItem, status: CommentStatus) {
   }
 }
 
+async function toggleShadowBan(comment: RowItem, isPrivate: boolean) {
+  if (!auth0) return;
+  if (comment.isApproving || comment.isRejecting || comment.isDeleting || comment.isShadowBanning) return;
+
+  comment.isShadowBanning = true;
+  const token = await auth0.getAccessTokenSilently();
+  try {
+    await $fetch('/api/admin/comment/' + comment.id, {
+      method: 'PATCH',
+      body: { postId: comment.postId, isShadowBanned: isPrivate },
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    comment.isShadowBanned = isPrivate;
+  } catch (e) {
+    emit('error', 'Failed to update shadow ban status. ' + (e as FetchError).message);
+  } finally {
+    comment.isShadowBanning = false;
+  }
+}
+
 async function doDelete(): Promise<void> {
   if (!auth0) return;
   const comment = props.comment;
-  if (comment.isApproving || comment.isRejecting || comment.isDeleting) return;
+  if (comment.isApproving || comment.isRejecting || comment.isDeleting || comment.isShadowBanning) return;
 
   comment.isDeleting = true;
   const token = await auth0.getAccessTokenSilently();
@@ -272,7 +278,7 @@ function parseMarkdown(md: string): string {
         v-if="!comment.children?.length"
         class-name="pt-4"
         :comment="comment"
-        @reply="onReply"
+        @reply="onReply($event)"
       />
       <ui-comment-actions
         class="grid-cols-4 py-2 sm:hidden"
@@ -282,8 +288,9 @@ function parseMarkdown(md: string): string {
         @delete="doDelete"
         @edit="$emit('edit', $event)"
         @modal="$emit('modal', $event)"
-        @reply="onReply"
+        @reply="onReply($event)"
         @review="doReview"
+        @toggle-shadow-ban="toggleShadowBan"
       />
     </td>
     <td class="align-top">
@@ -356,7 +363,15 @@ function parseMarkdown(md: string): string {
       </div>
     </td>
     <td class="align-top hidden sm:table-cell">
-      {{ CommentStatus[comment.status] }}
+      <div class="flex flex-col gap-1">
+        <div>{{ CommentStatus[comment.status] }}</div>
+        <div
+          v-if="comment.isShadowBanned"
+          class="badge badge-warning badge-sm"
+        >
+          仅本人可见
+        </div>
+      </div>
     </td>
     <td class="align-top hidden sm:table-cell">
       <ui-comment-actions
@@ -367,8 +382,9 @@ function parseMarkdown(md: string): string {
         @delete="doDelete"
         @edit="$emit('edit', $event)"
         @modal="$emit('modal', $event)"
-        @reply="onReply"
+        @reply="onReply($event)"
         @review="doReview"
+        @toggle-shadow-ban="toggleShadowBan"
       />
     </td>
   </tr>

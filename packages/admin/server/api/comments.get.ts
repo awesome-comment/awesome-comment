@@ -15,17 +15,16 @@ function mergeVote(vote: Record<number, VoteItem>, comments: Comment[]): Comment
 
 export default defineEventHandler(async function (event: H3Event): Promise<ResponseBody<Comment[]>> {
   const query = getQuery(event);
-  const { postId } = query;
-  const start = Number(query.start || 0);
+  const { postId, start = 0 } = query;
   if (!postId) {
     throw createError({
-      statusCode: 404,
-      message: 'Missing post id',
+      statusCode: 400,
+      message: 'Post ID is required',
     });
   }
 
   const storage = createStorage(event);
-  const key = getCacheKey(postId + (start ? '-' + start : ''));
+  const key = getCacheKey(postId + (start ? `-${start}` : ''));
   const stored = await storage.get<Comment[]>(key);
   const voteKey = getVoteCacheKey(postId as string);
   const vote = (await storage.get<Record<number, VoteItem>>(voteKey)) || {};
@@ -47,7 +46,7 @@ export default defineEventHandler(async function (event: H3Event): Promise<Respo
   let total = 0;
   const params = new URLSearchParams();
   params.set('post_id', postId as string);
-  params.set('start', start.toString());
+  params.set('start', (start || 0).toString());
   const encodedCredentials = btoa(`${process.env.TIDB_PUBLIC_KEY}:${process.env.TIDB_PRIVATE_KEY}`);
   try {
     const url = process.env.TIDB_END_POINT + '/v1/get';
