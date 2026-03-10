@@ -290,6 +290,7 @@ function parseMarkdown(md: string): string {
         @modal="$emit('modal', $event)"
         @reply="onReply($event)"
         @review="doReview"
+        @toggle-shadow-ban="toggleShadowBan"
       />
     </td>
     <td class="align-top">
