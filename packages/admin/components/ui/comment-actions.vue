@@ -84,6 +84,7 @@ const emit = defineEmits<Emits>();
           :class="comment.isShadowBanned ? 'btn-success' : 'btn-warning'"
           type="button"
           :disabled="isBatching || comment.isApproving || comment.isRejecting || comment.isDeleting || comment.isShadowBanning || loadingMore"
+          :aria-label="comment.isShadowBanned ? 'Set as public' : 'Set as private (author only)'"
           @click="emit('toggle-shadow-ban', comment, !comment.isShadowBanned)"
         >
           <span
