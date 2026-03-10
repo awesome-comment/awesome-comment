@@ -66,6 +66,7 @@ async function toggleShadowBan(comment: RowItem, isPrivate: boolean) {
       headers: { Authorization: `Bearer ${token}` },
     });
     comment.isShadowBanned = isPrivate;
+    comment.status = CommentStatus.Approved;
   } catch (e) {
     emit('error', 'Failed to update shadow ban status. ' + (e as FetchError).message);
   } finally {
@@ -369,7 +370,8 @@ function parseMarkdown(md: string): string {
           v-if="comment.isShadowBanned"
           class="badge badge-warning badge-sm"
         >
-          Shadow banned
+          <i class="bi bi-eye-slash" />
+          Banned
         </div>
       </div>
     </td>
