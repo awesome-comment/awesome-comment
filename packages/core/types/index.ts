@@ -80,6 +80,7 @@ export type ResponseComment = BaseComment & {
   user_id: string;
   post_id: string;
   postId?: string;
+  isShadowBanned?: boolean;
 };
 export type PostCount = {
   post_id: string;

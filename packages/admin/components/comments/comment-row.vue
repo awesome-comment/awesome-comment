@@ -67,7 +67,7 @@ async function toggleShadowBan(comment: RowItem, isPrivate: boolean) {
     });
     comment.isShadowBanned = isPrivate;
   } catch (e) {
-    emit('error', 'Failed to change private status. ' + (e as FetchError).message);
+    emit('error', 'Failed to update shadow ban status. ' + (e as FetchError).message);
   } finally {
     comment.isShadowBanning = false;
   }
@@ -119,7 +119,7 @@ async function doRemoveReply(child: RowItem, index: number): Promise<void> {
   comment.children?.splice(index, 1);
 }
 
-function onReply(reply: Comment, parent: RowItem) {
+function onReply(reply: Comment) {
   const comment = props.comment;
   comment.children ??= [];
   comment.children.push(reply);
@@ -278,7 +278,7 @@ function parseMarkdown(md: string): string {
         v-if="!comment.children?.length"
         class-name="pt-4"
         :comment="comment"
-        @reply="onReply($event, comment)"
+        @reply="onReply($event)"
       />
       <ui-comment-actions
         class="grid-cols-4 py-2 sm:hidden"
@@ -288,7 +288,7 @@ function parseMarkdown(md: string): string {
         @delete="doDelete"
         @edit="$emit('edit', $event)"
         @modal="$emit('modal', $event)"
-        @reply="onReply($event, comment)"
+        @reply="onReply($event)"
         @review="doReview"
       />
     </td>
@@ -381,7 +381,7 @@ function parseMarkdown(md: string): string {
         @delete="doDelete"
         @edit="$emit('edit', $event)"
         @modal="$emit('modal', $event)"
-        @reply="onReply($event, comment)"
+        @reply="onReply($event)"
         @review="doReview"
         @toggle-shadow-ban="toggleShadowBan"
       />
