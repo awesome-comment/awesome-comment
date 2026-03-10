@@ -12,6 +12,7 @@ function formatHelper(item: ResponseComment): Comment {
   const createdAt = created_at || rest.createdAt || '';
   const parentId = parent_id ?? item.parentId;
   const ancestorId = ancestor_id ?? item.ancestorId;
+  const isShadowBanned = is_shadow_banned ?? item.isShadowBanned;
   const postId = post_id || item.postId || '';
   return {
     ...rest,
@@ -24,7 +25,7 @@ function formatHelper(item: ResponseComment): Comment {
     ancestorId: Number(ancestorId),
     status: Number(item.status),
     createdAt: createUTCDate(createdAt),
-    isShadowBanned: !!is_shadow_banned,
+    isShadowBanned: isShadowBanned,
   };
 }
 

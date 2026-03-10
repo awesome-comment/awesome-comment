@@ -103,6 +103,7 @@ const {
         c.postId = c.post_id;
         c.parentId = Number(c.parent_id);
         c.ancestorId = Number(c.ancestor_id);
+        c.isShadowBanned = !!c.is_shadow_banned;
         if (c.tags && typeof c.tags === 'string') {
           try {
             c.tags = JSON.parse(c.tags);
