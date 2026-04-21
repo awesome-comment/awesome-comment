@@ -181,6 +181,9 @@ function doFilter(postId: string): void {
 function doFilterBySlugname(slugname: string): void {
   doReset();
   filterSlugname.value = slugname;
+  if (slugname) {
+    filterLanguage.value = '';
+  }
   updateUrl();
 }
 
@@ -193,6 +196,14 @@ function doFilterByUser(userId: string): void {
 function doFilterByTag(tag: string): void {
   doReset();
   filterTag.value = tag;
+  updateUrl();
+}
+
+function onLanguageChange(): void {
+  doReset();
+  if (filterLanguage.value) {
+    filterSlugname.value = '';
+  }
   updateUrl();
 }
 
@@ -292,6 +303,8 @@ definePageMeta({
     :comment-status-enum="CommentStatus"
     @refresh="refresh"
     @status-change="onStatusChange"
+    @language-change="onLanguageChange"
+    @tag-change="onStatusChange"
   />
 
   <div

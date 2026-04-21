@@ -21,7 +21,8 @@ export default defineEventHandler(async function (event): Promise<ResponseBody<C
     params.set('start', start as string);
     params.set('emails', event.context.config.adminEmails);
     if (slugname) {
-      params.set('lang', `${slugname}%`);
+      const escaped = (slugname as string).replace(/[%_]/g, '\\$&');
+      params.set('lang', `${escaped}%`);
     } else if (language) {
       params.set('lang', `%/${language}/%`);
     }
