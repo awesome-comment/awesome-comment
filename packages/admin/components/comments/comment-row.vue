@@ -146,12 +146,19 @@ function getUrl(postId: string, only = false): string {
   return url.toString();
 }
 
-function getSlugName(postId: string): string {
-  return postId.replace(/\/[a-z]{2}(?:-[a-z]{2})?\/?$/i, '/');
+function getSlugName(postId: string): string | null {
+  const languageSuffixPattern = /\/[a-z]{2}(?:-[a-z]{2})?\/?$/i;
+  if (!languageSuffixPattern.test(postId)) {
+    return null;
+  }
+  return postId.replace(languageSuffixPattern, '/');
 }
 
 function getSlugNameUrl(postId: string, only = false): string {
   const slugName = getSlugName(postId);
+  if (!slugName) {
+    return getUrl(postId, only);
+  }
   if (only) {
     const params = new URLSearchParams();
     params.set('slugname', slugName);
@@ -348,15 +355,15 @@ function parseMarkdown(md: string): string {
                 Filter by post
               </nuxt-link>
             </li>
-            <li>
+            <li v-if="getSlugName(comment.postId)">
               <button
                 type="button"
-                @click="$emit('filterBySlugName', getSlugName(comment.postId))"
+                @click="$emit('filterBySlugName', getSlugName(comment.postId) as string)"
               >
                 Filter by slug name
               </button>
             </li>
-            <li>
+            <li v-if="getSlugName(comment.postId)">
               <nuxt-link
                 :to="getSlugNameUrl(comment.postId, true)"
                 target="_blank"

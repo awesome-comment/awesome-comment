@@ -3,7 +3,7 @@ import { CommentStatus } from '@awesome-comment/core/data';
 
 export default defineEventHandler(async function (event): Promise<ResponseBody<Comment[]>> {
   const query = getQuery(event);
-  const {
+  let {
     start = 0,
     status, // 0=to be reviewed, 1=approved
     postId = '',
@@ -12,6 +12,10 @@ export default defineEventHandler(async function (event): Promise<ResponseBody<C
     language = '',
     tag = '',
   } = query;
+
+  if (slugName && !(slugName as string).endsWith('/')) {
+    slugName = (slugName as string) + '/';
+  }
 
   if (slugName && (language || postId)) {
     throw createError({
