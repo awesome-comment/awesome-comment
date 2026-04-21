@@ -24,6 +24,7 @@ const emit = defineEmits<{
   reply: [reply: Comment, parent: Comment];
   modal: [isOpen: boolean];
   filterByPost: [postId: string];
+  filterBySlugName: [slugName: string];
   filterByTag: [tag: string];
   deleted: [comment: RowItem];
   error: [message: string];
@@ -142,6 +143,32 @@ function getUrl(postId: string, only = false): string {
   }
   const url = new URL(location.href);
   url.searchParams.set('post_id', postId);
+  return url.toString();
+}
+
+function getSlugName(postId: string): string | null {
+  const languageSuffixPattern = /\/[a-z]{2}(?:-[a-z]{2})?\/?$/i;
+  if (!languageSuffixPattern.test(postId)) {
+    return null;
+  }
+  return postId.replace(languageSuffixPattern, '/');
+}
+
+function getSlugNameUrl(postId: string, only = false): string {
+  const slugName = getSlugName(postId);
+  if (!slugName) {
+    return getUrl(postId, only);
+  }
+  if (only) {
+    const params = new URLSearchParams();
+    params.set('slugname', slugName);
+    params.set('status', 'all');
+    return `${location.pathname}?${params.toString()}`;
+  }
+  const url = new URL(location.href);
+  url.searchParams.delete('language');
+  url.searchParams.delete('post_id');
+  url.searchParams.set('slugname', slugName);
   return url.toString();
 }
 
@@ -328,6 +355,27 @@ function parseMarkdown(md: string): string {
                 Filter by post
               </nuxt-link>
             </li>
+            <template
+              v-for="slugName in [getSlugName(comment.postId)]"
+              :key="slugName ?? 'empty-slug-name'"
+            >
+              <li v-if="slugName">
+                <button
+                  type="button"
+                  @click="$emit('filterBySlugName', slugName)"
+                >
+                  Filter by slug name
+                </button>
+              </li>
+              <li v-if="slugName">
+                <nuxt-link
+                  :to="getSlugNameUrl(comment.postId, true)"
+                  target="_blank"
+                >
+                  Filter by slug name (new tab)
+                </nuxt-link>
+              </li>
+            </template>
           </template>
         </context-menu-dropdown>
         <nuxt-link

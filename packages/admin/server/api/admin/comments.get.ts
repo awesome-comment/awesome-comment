@@ -3,7 +3,7 @@ import { CommentStatus } from '@awesome-comment/core/data';
 
 export default defineEventHandler(async function (event): Promise<ResponseBody<Comment[]>> {
   const query = getQuery(event);
-  const {
+  let {
     start = 0,
     status, // 0=to be reviewed, 1=approved
     postId = '',
@@ -12,6 +12,20 @@ export default defineEventHandler(async function (event): Promise<ResponseBody<C
     tag = '',
   } = query;
 
+  let slugName = Array.isArray(query.slugname) ? query.slugname[0] : query.slugname;
+  slugName = (slugName as string) || '';
+
+  if (slugName && !slugName.endsWith('/')) {
+    slugName += '/';
+  }
+
+  if (slugName && (language || postId)) {
+    throw createError({
+      statusCode: 400,
+      message: 'Cannot filter by slug name alongside post ID or language',
+    });
+  }
+
   const data: Comment[] = [];
   const encodedCredentials = btoa(`${process.env.TIDB_PUBLIC_KEY}:${process.env.TIDB_PRIVATE_KEY}`);
   try {
@@ -19,7 +33,12 @@ export default defineEventHandler(async function (event): Promise<ResponseBody<C
     const params = new URLSearchParams();
     params.set('start', start as string);
     params.set('emails', event.context.config.adminEmails);
-    if (language) {
+    // The upstream 'lang' parameter acts as a LIKE match on 'post_id'.
+    // We use it here for both prefix matching (slugName) and language filtering.
+    if (slugName) {
+      const escaped = (slugName as string).replace(/[\\%_]/g, '\\$&');
+      params.set('lang', `${escaped}%`);
+    } else if (language) {
       params.set('lang', `%/${language}/%`);
     }
     if (tag) {

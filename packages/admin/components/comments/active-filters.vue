@@ -1,12 +1,14 @@
 <script setup lang="ts">
 defineProps<{
   filterPostId: string;
+  filterSlugName: string;
   filterUser: string;
   filterTag: string;
 }>();
 
 const emit = defineEmits<{
   clearPostId: [];
+  clearSlugName: [];
   clearUser: [];
   clearTag: [];
 }>();
@@ -14,7 +16,7 @@ const emit = defineEmits<{
 
 <template>
   <div
-    v-if="filterPostId || filterUser || filterTag"
+    v-if="filterPostId || filterSlugName || filterUser || filterTag"
     class="flex gap-4 mb-4"
   >
     <button
@@ -25,6 +27,16 @@ const emit = defineEmits<{
     >
       <i class="bi bi-funnel-fill" />
       {{ filterPostId }}
+      <i class="bi bi-x-lg" />
+    </button>
+    <button
+      v-if="filterSlugName"
+      class="btn btn-outline btn-sm normal-case"
+      type="button"
+      @click="$emit('clearSlugName')"
+    >
+      <i class="bi bi-funnel-fill" />
+      {{ filterSlugName }}
       <i class="bi bi-x-lg" />
     </button>
     <button
