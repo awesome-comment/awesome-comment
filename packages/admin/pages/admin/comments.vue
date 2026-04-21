@@ -199,14 +199,6 @@ function doFilterByTag(tag: string): void {
   updateUrl();
 }
 
-function onLanguageChange(): void {
-  doReset();
-  if (filterLanguage.value) {
-    filterSlugname.value = '';
-  }
-  updateUrl();
-}
-
 function doSelectAll(): void {
   if (selected.value.length === commentsList.value.length) {
     selected.value = [];
@@ -226,6 +218,9 @@ function toggleSelect(id: number): void {
 
 function onStatusChange(): void {
   doReset();
+  if (filterLanguage.value) {
+    filterSlugname.value = '';
+  }
   updateUrl();
 }
 
@@ -303,8 +298,6 @@ definePageMeta({
     :comment-status-enum="CommentStatus"
     @refresh="refresh"
     @status-change="onStatusChange"
-    @language-change="onLanguageChange"
-    @tag-change="onStatusChange"
   />
 
   <div
