@@ -13,10 +13,10 @@ export default defineEventHandler(async function (event): Promise<ResponseBody<C
     tag = '',
   } = query;
 
-  if (slugName && language) {
+  if (slugName && (language || postId)) {
     throw createError({
       statusCode: 400,
-      message: 'Cannot filter by both slug name and language simultaneously',
+      message: 'Cannot filter by slug name alongside post ID or language',
     });
   }
 
@@ -30,7 +30,7 @@ export default defineEventHandler(async function (event): Promise<ResponseBody<C
     // The upstream 'lang' parameter acts as a LIKE match on 'post_id'.
     // We use it here for both prefix matching (slugName) and language filtering.
     if (slugName) {
-      const escaped = (slugName as string).replace(/[%_]/g, '\\$&');
+      const escaped = (slugName as string).replace(/[\\%_]/g, '\\$&');
       params.set('lang', `${escaped}%`);
     } else if (language) {
       params.set('lang', `%/${language}/%`);

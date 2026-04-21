@@ -159,6 +159,8 @@ function getSlugNameUrl(postId: string, only = false): string {
     return `${location.pathname}?${params.toString()}`;
   }
   const url = new URL(location.href);
+  url.searchParams.delete('language');
+  url.searchParams.delete('post_id');
   url.searchParams.set('slugname', slugName);
   return url.toString();
 }

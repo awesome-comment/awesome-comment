@@ -34,7 +34,7 @@ watch(
   (val) => {
     if (val) filterSlugName.value = '';
   },
-  { flush: 'sync' },
+  { immediate: true, flush: 'sync' },
 );
 watch(
   filterSlugName,
@@ -44,14 +44,14 @@ watch(
       filterPostId.value = '';
     }
   },
-  { flush: 'sync' },
+  { immediate: true, flush: 'sync' },
 );
 watch(
   filterPostId,
   (val) => {
     if (val) filterSlugName.value = '';
   },
-  { flush: 'sync' },
+  { immediate: true, flush: 'sync' },
 );
 
 const filter = computed<URLSearchParams>(() => {
