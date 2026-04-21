@@ -355,22 +355,27 @@ function parseMarkdown(md: string): string {
                 Filter by post
               </nuxt-link>
             </li>
-            <li v-if="getSlugName(comment.postId)">
-              <button
-                type="button"
-                @click="$emit('filterBySlugName', getSlugName(comment.postId) as string)"
-              >
-                Filter by slug name
-              </button>
-            </li>
-            <li v-if="getSlugName(comment.postId)">
-              <nuxt-link
-                :to="getSlugNameUrl(comment.postId, true)"
-                target="_blank"
-              >
-                Filter by slug name (new tab)
-              </nuxt-link>
-            </li>
+            <template
+              v-for="slugName in [getSlugName(comment.postId)]"
+              :key="slugName ?? 'empty-slug-name'"
+            >
+              <li v-if="slugName">
+                <button
+                  type="button"
+                  @click="$emit('filterBySlugName', slugName)"
+                >
+                  Filter by slug name
+                </button>
+              </li>
+              <li v-if="slugName">
+                <nuxt-link
+                  :to="getSlugNameUrl(comment.postId, true)"
+                  target="_blank"
+                >
+                  Filter by slug name (new tab)
+                </nuxt-link>
+              </li>
+            </template>
           </template>
         </context-menu-dropdown>
         <nuxt-link

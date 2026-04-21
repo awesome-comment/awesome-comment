@@ -7,14 +7,16 @@ export default defineEventHandler(async function (event): Promise<ResponseBody<C
     start = 0,
     status, // 0=to be reviewed, 1=approved
     postId = '',
-    slugname: slugName = '',
     user = '',
     language = '',
     tag = '',
   } = query;
 
-  if (slugName && !(slugName as string).endsWith('/')) {
-    slugName = (slugName as string) + '/';
+  let slugName = Array.isArray(query.slugname) ? query.slugname[0] : query.slugname;
+  slugName = (slugName as string) || '';
+
+  if (slugName && !slugName.endsWith('/')) {
+    slugName += '/';
   }
 
   if (slugName && (language || postId)) {
