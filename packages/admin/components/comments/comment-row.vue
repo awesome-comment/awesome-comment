@@ -338,21 +338,32 @@ function parseMarkdown(md: string): string {
     <td class="align-top">
       {{ comment.postId.replace(postIdPrefix, '') }}
       <div class="flex gap-2 mt-2">
-        <context-menu-dropdown>
-          <button
+        <div class="dropdown">
+          <div
+            tabindex="0"
+            role="button"
             class="btn btn-xs btn-ghost"
-            type="button"
-            @click="$emit('filterByPost', comment.postId)"
           >
             <i class="bi bi-funnel-fill" />
-          </button>
-          <template #menu>
+          </div>
+          <ul
+            tabindex="0"
+            class="dropdown-content z-1 menu p-2 shadow-sm bg-base-100 rounded-box w-56"
+          >
+            <li>
+              <button
+                type="button"
+                @click="$emit('filterByPost', comment.postId)"
+              >
+                Filter by post
+              </button>
+            </li>
             <li>
               <nuxt-link
                 :to="getUrl(comment.postId, true)"
                 target="_blank"
               >
-                Filter by post
+                Filter by post (new tab)
               </nuxt-link>
             </li>
             <template
@@ -376,8 +387,8 @@ function parseMarkdown(md: string): string {
                 </nuxt-link>
               </li>
             </template>
-          </template>
-        </context-menu-dropdown>
+          </ul>
+        </div>
         <nuxt-link
           class="btn btn-xs btn-ghost"
           target="_blank"
