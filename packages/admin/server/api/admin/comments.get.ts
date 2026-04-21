@@ -13,6 +13,13 @@ export default defineEventHandler(async function (event): Promise<ResponseBody<C
     tag = '',
   } = query;
 
+  if (slugName && language) {
+    throw createError({
+      statusCode: 400,
+      message: 'Cannot filter by both slug name and language simultaneously',
+    });
+  }
+
   const data: Comment[] = [];
   const encodedCredentials = btoa(`${process.env.TIDB_PUBLIC_KEY}:${process.env.TIDB_PRIVATE_KEY}`);
   try {

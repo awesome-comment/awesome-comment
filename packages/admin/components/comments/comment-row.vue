@@ -351,7 +351,7 @@ function parseMarkdown(md: string): string {
                 type="button"
                 @click="$emit('filterBySlugName', getSlugName(comment.postId))"
               >
-                Filter by slugname
+                Filter by slug name
               </button>
             </li>
             <li>
@@ -359,7 +359,7 @@ function parseMarkdown(md: string): string {
                 :to="getSlugNameUrl(comment.postId, true)"
                 target="_blank"
               >
-                Filter by slugname (new tab)
+                Filter by slug name (new tab)
               </nuxt-link>
             </li>
           </template>
