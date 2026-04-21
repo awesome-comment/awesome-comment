@@ -20,6 +20,8 @@ export default defineEventHandler(async function (event): Promise<ResponseBody<C
     const params = new URLSearchParams();
     params.set('start', start as string);
     params.set('emails', event.context.config.adminEmails);
+    // The upstream 'lang' parameter acts as a LIKE match on 'post_id'.
+    // We use it here for both prefix matching (slugName) and language filtering.
     if (slugName) {
       const escaped = (slugName as string).replace(/[%_]/g, '\\$&');
       params.set('lang', `${escaped}%`);

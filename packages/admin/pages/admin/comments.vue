@@ -29,18 +29,30 @@ const hasReplyModal = ref<boolean>(false);
 const selected = ref<number[]>([]);
 const tr = ref<HTMLTableRowElement[]>([]);
 
-watch(filterLanguage, (val) => {
-  if (val) filterSlugName.value = '';
-});
-watch(filterSlugName, (val) => {
-  if (val) {
-    filterLanguage.value = '';
-    filterPostId.value = '';
-  }
-});
-watch(filterPostId, (val) => {
-  if (val) filterSlugName.value = '';
-});
+watch(
+  filterLanguage,
+  (val) => {
+    if (val) filterSlugName.value = '';
+  },
+  { flush: 'sync' },
+);
+watch(
+  filterSlugName,
+  (val) => {
+    if (val) {
+      filterLanguage.value = '';
+      filterPostId.value = '';
+    }
+  },
+  { flush: 'sync' },
+);
+watch(
+  filterPostId,
+  (val) => {
+    if (val) filterSlugName.value = '';
+  },
+  { flush: 'sync' },
+);
 
 const filter = computed<URLSearchParams>(() => {
   const params = new URLSearchParams();
