@@ -175,6 +175,9 @@ function doReset(shouldRefresh?: MouseEvent | boolean): void {
 function doFilter(postId: string): void {
   doReset();
   filterPostId.value = postId;
+  if (postId) {
+    filterSlugname.value = '';
+  }
   updateUrl();
 }
 
@@ -183,6 +186,7 @@ function doFilterBySlugname(slugname: string): void {
   filterSlugname.value = slugname;
   if (slugname) {
     filterLanguage.value = '';
+    filterPostId.value = '';
   }
   updateUrl();
 }
