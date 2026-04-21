@@ -19,6 +19,7 @@ const filterStatus = ref<CommentStatus | 'all'>(
   route.query.status ? (route.query.status === 'all' ? 'all' : Number(route.query.status)) : CommentStatus.Pending,
 );
 const filterPostId = ref<string>((route.query.post_id as string) || '');
+const filterSlugname = ref<string>((route.query.slugname as string) || '');
 const filterUser = ref<string>((route.query.user as string) || '');
 const filterLanguage = ref<string>((route.query.language as string) || '');
 const filterTag = ref<string>((route.query.tag as string) || '');
@@ -35,6 +36,9 @@ const filter = computed<URLSearchParams>(() => {
   }
   if (filterPostId.value) {
     params.set('post_id', filterPostId.value);
+  }
+  if (filterSlugname.value) {
+    params.set('slugname', filterSlugname.value);
   }
   if (filterUser.value) {
     params.set('user', filterUser.value);
@@ -70,6 +74,7 @@ const {
       query: {
         status: filterStatus.value === 'all' ? null : filterStatus.value,
         postId: filterPostId.value,
+        slugname: filterSlugname.value,
         start: start.value,
         user: filterUser.value,
         language: filterLanguage.value,
@@ -146,7 +151,7 @@ const {
     default() {
       return Object.values(comments.value).reverse();
     },
-    watch: [filterStatus, filterPostId, filterUser, filterLanguage, filterTag, start],
+    watch: [filterStatus, filterPostId, filterSlugname, filterUser, filterLanguage, filterTag, start],
   },
 );
 
@@ -170,6 +175,12 @@ function doReset(shouldRefresh?: MouseEvent | boolean): void {
 function doFilter(postId: string): void {
   doReset();
   filterPostId.value = postId;
+  updateUrl();
+}
+
+function doFilterBySlugname(slugname: string): void {
+  doReset();
+  filterSlugname.value = slugname;
   updateUrl();
 }
 
@@ -213,6 +224,7 @@ function updateUrl(): void {
     query: {
       status: filterStatus.value,
       post_id: filterPostId.value,
+      slugname: filterSlugname.value,
       user: filterUser.value,
       language: filterLanguage.value,
       tag: filterTag.value,
@@ -292,9 +304,11 @@ definePageMeta({
 
   <comments-active-filters
     :filter-post-id="filterPostId"
+    :filter-slugname="filterSlugname"
     :filter-user="filterUser"
     :filter-tag="filterTag"
     @clear-post-id="doFilter('')"
+    @clear-slugname="doFilterBySlugname('')"
     @clear-user="doFilterByUser('')"
     @clear-tag="doFilterByTag('')"
   />
@@ -351,6 +365,7 @@ definePageMeta({
           @deleted="onDeleted"
           @error="message = $event"
           @filter-by-post="doFilter"
+          @filter-by-slugname="doFilterBySlugname"
           @filter-by-tag="doFilterByTag"
         />
       </tbody>
