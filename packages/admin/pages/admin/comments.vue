@@ -19,7 +19,7 @@ const filterStatus = ref<CommentStatus | 'all'>(
   route.query.status ? (route.query.status === 'all' ? 'all' : Number(route.query.status)) : CommentStatus.Pending,
 );
 const filterPostId = ref<string>((route.query.post_id as string) || '');
-const filterSlugname = ref<string>((route.query.slugname as string) || '');
+const filterSlugName = ref<string>((route.query.slugname as string) || '');
 const filterUser = ref<string>((route.query.user as string) || '');
 const filterLanguage = ref<string>((route.query.language as string) || '');
 const filterTag = ref<string>((route.query.tag as string) || '');
@@ -29,6 +29,19 @@ const hasReplyModal = ref<boolean>(false);
 const selected = ref<number[]>([]);
 const tr = ref<HTMLTableRowElement[]>([]);
 
+watch(filterLanguage, (val) => {
+  if (val) filterSlugName.value = '';
+});
+watch(filterSlugName, (val) => {
+  if (val) {
+    filterLanguage.value = '';
+    filterPostId.value = '';
+  }
+});
+watch(filterPostId, (val) => {
+  if (val) filterSlugName.value = '';
+});
+
 const filter = computed<URLSearchParams>(() => {
   const params = new URLSearchParams();
   if (filterStatus.value !== 'all') {
@@ -37,8 +50,8 @@ const filter = computed<URLSearchParams>(() => {
   if (filterPostId.value) {
     params.set('post_id', filterPostId.value);
   }
-  if (filterSlugname.value) {
-    params.set('slugname', filterSlugname.value);
+  if (filterSlugName.value) {
+    params.set('slugname', filterSlugName.value);
   }
   if (filterUser.value) {
     params.set('user', filterUser.value);
@@ -74,7 +87,7 @@ const {
       query: {
         status: filterStatus.value === 'all' ? null : filterStatus.value,
         postId: filterPostId.value,
-        slugname: filterSlugname.value,
+        slugname: filterSlugName.value,
         start: start.value,
         user: filterUser.value,
         language: filterLanguage.value,
@@ -151,7 +164,7 @@ const {
     default() {
       return Object.values(comments.value).reverse();
     },
-    watch: [filterStatus, filterPostId, filterSlugname, filterUser, filterLanguage, filterTag, start],
+    watch: [filterStatus, filterPostId, filterSlugName, filterUser, filterLanguage, filterTag, start],
   },
 );
 
@@ -175,19 +188,12 @@ function doReset(shouldRefresh?: MouseEvent | boolean): void {
 function doFilter(postId: string): void {
   doReset();
   filterPostId.value = postId;
-  if (postId) {
-    filterSlugname.value = '';
-  }
   updateUrl();
 }
 
-function doFilterBySlugname(slugname: string): void {
+function doFilterBySlugName(slugName: string): void {
   doReset();
-  filterSlugname.value = slugname;
-  if (slugname) {
-    filterLanguage.value = '';
-    filterPostId.value = '';
-  }
+  filterSlugName.value = slugName;
   updateUrl();
 }
 
@@ -222,9 +228,6 @@ function toggleSelect(id: number): void {
 
 function onStatusChange(): void {
   doReset();
-  if (filterLanguage.value) {
-    filterSlugname.value = '';
-  }
   updateUrl();
 }
 
@@ -234,7 +237,7 @@ function updateUrl(): void {
     query: {
       status: filterStatus.value,
       post_id: filterPostId.value,
-      slugname: filterSlugname.value,
+      slugname: filterSlugName.value,
       user: filterUser.value,
       language: filterLanguage.value,
       tag: filterTag.value,
@@ -314,11 +317,11 @@ definePageMeta({
 
   <comments-active-filters
     :filter-post-id="filterPostId"
-    :filter-slugname="filterSlugname"
+    :filter-slug-name="filterSlugName"
     :filter-user="filterUser"
     :filter-tag="filterTag"
     @clear-post-id="doFilter('')"
-    @clear-slugname="doFilterBySlugname('')"
+    @clear-slug-name="doFilterBySlugName('')"
     @clear-user="doFilterByUser('')"
     @clear-tag="doFilterByTag('')"
   />
@@ -375,7 +378,7 @@ definePageMeta({
           @deleted="onDeleted"
           @error="message = $event"
           @filter-by-post="doFilter"
-          @filter-by-slugname="doFilterBySlugname"
+          @filter-by-slug-name="doFilterBySlugName"
           @filter-by-tag="doFilterByTag"
         />
       </tbody>

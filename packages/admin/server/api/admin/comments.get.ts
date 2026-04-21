@@ -7,7 +7,7 @@ export default defineEventHandler(async function (event): Promise<ResponseBody<C
     start = 0,
     status, // 0=to be reviewed, 1=approved
     postId = '',
-    slugname = '',
+    slugname: slugName = '',
     user = '',
     language = '',
     tag = '',
@@ -20,8 +20,8 @@ export default defineEventHandler(async function (event): Promise<ResponseBody<C
     const params = new URLSearchParams();
     params.set('start', start as string);
     params.set('emails', event.context.config.adminEmails);
-    if (slugname) {
-      const escaped = (slugname as string).replace(/[%_]/g, '\\$&');
+    if (slugName) {
+      const escaped = (slugName as string).replace(/[%_]/g, '\\$&');
       params.set('lang', `${escaped}%`);
     } else if (language) {
       params.set('lang', `%/${language}/%`);

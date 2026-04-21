@@ -24,7 +24,7 @@ const emit = defineEmits<{
   reply: [reply: Comment, parent: Comment];
   modal: [isOpen: boolean];
   filterByPost: [postId: string];
-  filterBySlugname: [slugname: string];
+  filterBySlugName: [slugName: string];
   filterByTag: [tag: string];
   deleted: [comment: RowItem];
   error: [message: string];
@@ -146,20 +146,20 @@ function getUrl(postId: string, only = false): string {
   return url.toString();
 }
 
-function getSlugname(postId: string): string {
+function getSlugName(postId: string): string {
   return postId.replace(/\/[a-z]{2}(?:-[a-z]{2})?\/?$/i, '/');
 }
 
-function getSlugnameUrl(postId: string, only = false): string {
-  const slugname = getSlugname(postId);
+function getSlugNameUrl(postId: string, only = false): string {
+  const slugName = getSlugName(postId);
   if (only) {
     const params = new URLSearchParams();
-    params.set('slugname', slugname);
+    params.set('slugname', slugName);
     params.set('status', 'all');
     return `${location.pathname}?${params.toString()}`;
   }
   const url = new URL(location.href);
-  url.searchParams.set('slugname', slugname);
+  url.searchParams.set('slugname', slugName);
   return url.toString();
 }
 
@@ -349,14 +349,14 @@ function parseMarkdown(md: string): string {
             <li>
               <button
                 type="button"
-                @click="$emit('filterBySlugname', getSlugname(comment.postId))"
+                @click="$emit('filterBySlugName', getSlugName(comment.postId))"
               >
                 Filter by slugname
               </button>
             </li>
             <li>
               <nuxt-link
-                :to="getSlugnameUrl(comment.postId, true)"
+                :to="getSlugNameUrl(comment.postId, true)"
                 target="_blank"
               >
                 Filter by slugname (new tab)
