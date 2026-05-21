@@ -340,7 +340,7 @@ onMounted(initAwesomeComment);
                     <u-card class="bg-gray-900 dark:bg-gray-950">
                       <pre class="text-xs text-gray-100 overflow-x-auto"><code>AwesomeComment.init('#comment', {
   postId: 'your-post-id',
-  apiUrl: 'https://your-api',
+  apiUrl: 'https://comments.example.com',
   domain: 'your-domain',
   clientId: 'your-client-id'
 });</code></pre>

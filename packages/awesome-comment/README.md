@@ -42,10 +42,12 @@ Usage
   import AwesomeComment from 'https://unpkg.com/@roudanio/awesome-comment@<版本>/dist/esm-unpkg/awesome-comment.js';
 
   AwesomeComment.init('#comments', {
-    apiUrl: 'https://your-api.example.com',
+    apiUrl: 'https://comments.example.com',
     postId: 'post-1',
     domain: 'your-auth0-domain',
     clientId: 'your-auth0-client-id',
   });
 </script>
 ```
+
+`apiUrl` 应传入评论服务根域，例如 `https://comments.example.com`。组件内部会拼接 `/api/comments` 等接口路径；误传 `/api` 后缀会被兼容处理，但不推荐作为新集成方式。

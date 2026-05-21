@@ -34,7 +34,7 @@ Add the initialization script:
 <script>
   AwesomeComment.init('#comment', {
     postId: 'my-first-post',
-    apiUrl: 'https://api.awesomecomment.com',
+    apiUrl: 'https://comments.example.com',
     domain: 'awesomecomment.auth0.com',
     clientId: 'your-client-id'
   });
@@ -67,7 +67,7 @@ Add the initialization script:
   <script>
     AwesomeComment.init('#comment', {
       postId: 'my-first-post',
-      apiUrl: 'https://api.awesomecomment.com',
+      apiUrl: 'https://comments.example.com',
       domain: 'awesomecomment.auth0.com',
       clientId: 'demo-client-id'
     });
@@ -81,7 +81,7 @@ Add the initialization script:
 | Option | Type | Required | Description |
 |--------|------|----------|-------------|
 | `postId` | string | Yes | Unique identifier for the post/page |
-| `apiUrl` | string | Yes | Your backend API URL |
+| `apiUrl` | string | Yes | Comment service origin. The widget appends `/api/*` internally. |
 | `domain` | string | Yes* | Auth0 domain |
 | `clientId` | string | Yes* | Auth0 client ID |
 | `awesomeAuth` | object | Yes* | Awesome Auth instance (alternative to Auth0) |
@@ -102,15 +102,19 @@ import { getInstance } from '@roudanio/awesome-auth'
 
 const auth = getInstance({
   googleId: 'your-google-client-id.apps.googleusercontent.com',
-  root: 'https://your-api.com'
+  root: 'https://comments.example.com/api/site/auth'
 })
 
 AwesomeComment.init('#comment', {
   postId: 'my-first-post',
-  apiUrl: 'https://your-api.com',
+  apiUrl: 'https://comments.example.com',
   awesomeAuth: auth  // Use Google One Tap instead of Auth0
 })
 ```
+
+::: warning
+Use the service origin for `apiUrl`, for example `https://comments.example.com`, not `https://comments.example.com/api`. The `/api` suffix is normalized for backwards compatibility, but root-origin configuration avoids surprises across environments.
+:::
 
 ## Next Steps
 

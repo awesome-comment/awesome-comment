@@ -72,7 +72,7 @@ AUTH0_CLIENT_SECRET=your-client-secret
 <script>
   AwesomeComment.init('#comment', {
     postId: 'your-post-id',
-    apiUrl: 'https://your-api.com',
+    apiUrl: 'https://comments.example.com',
     domain: 'your-domain.auth0.com',    // Auth0 domain
     clientId: 'your-auth0-client-id'    // Auth0 client ID
   });
@@ -135,13 +135,13 @@ import { getInstance } from '@roudanio/awesome-auth'
 // Initialize Awesome Auth
 const auth = getInstance({
   googleId: 'your-google-client-id.apps.googleusercontent.com',
-  root: 'https://your-backend-api.com'
+  root: 'https://comments.example.com/api/site/auth'
 })
 
 // Initialize Awesome Comment with Awesome Auth
 AwesomeComment.init('#comment', {
   postId: 'your-post-id',
-  apiUrl: 'https://your-backend-api.com',
+  apiUrl: 'https://comments.example.com',
   awesomeAuth: auth  // Pass auth instance instead of domain/clientId
 })
 ```

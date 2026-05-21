@@ -10,6 +10,7 @@ import './styles/animate.css';
 import App from './App.vue';
 import { ResponseBody, ResponseComment } from '@awesome-comment/core/types';
 import type { AwesomeAuth } from '@roudanio/awesome-auth';
+import { buildApiUrl, normalizeApiBaseUrl } from './utils/api-url.ts';
 
 export type InitOptions = {
   postId?: string;
@@ -108,6 +109,7 @@ const AwesomeComment: InitOptions & Manager = {
     awesomeAuth ??= this.awesomeAuth;
     turnstileSiteKey ??= this.turnstileSiteKey;
     siteId ??= this.siteId;
+    apiUrl = normalizeApiBaseUrl(apiUrl);
     const app = init({ domain, clientId, locale });
     app.provide('ApiBaseUrl', apiUrl);
     app.provide('postId', postId);
@@ -130,7 +132,7 @@ const AwesomeComment: InitOptions & Manager = {
     siteId,
   }: InitOptions): Promise<void> {
     this.postId = postId || '';
-    this.apiUrl = apiUrl || '';
+    this.apiUrl = normalizeApiBaseUrl(apiUrl);
     this.domain = domain || '';
     this.clientId = clientId || '';
     this.turnstileSiteKey = turnstileSiteKey || '';
@@ -154,7 +156,7 @@ const AwesomeComment: InitOptions & Manager = {
     if (siteId) {
       params.set('siteId', siteId);
     }
-    const response = await fetch(`${apiUrl}/api/comments?${params.toString()}`);
+    const response = await fetch(buildApiUrl(this.apiUrl, `/api/comments?${params.toString()}`));
     if (!response.ok) {
       console.log('[Awesome comment] Failed to preload comments.');
     }

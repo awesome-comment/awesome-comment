@@ -5,6 +5,7 @@ import { CommentStatus } from '@awesome-comment/core/data';
 import { User } from '@auth0/auth0-vue';
 import useAuthStore from './auth.ts';
 import { createUTCDate } from '../utils/time.ts';
+import { buildApiUrl } from '../utils/api-url.ts';
 
 function formatHelper(item: ResponseComment): Comment {
   const { id, created_at, parent_id, ancestor_id, post_id, user_id: userId, is_shadow_banned, ...rest } = item;
@@ -98,7 +99,7 @@ const useStore = defineStore('store', () => {
   const message = ref<string>('');
   const comments = ref<Record<number, Comment>>([]);
   const total = ref<number>(preloadedTotal || 0);
-  const baseUrl = inject('ApiBaseUrl');
+  const baseUrl = inject<string>('ApiBaseUrl', '');
   const loadingMore = ref<boolean>(false);
   const hasMore = ref<boolean>(false);
   const authStore = useAuthStore();
@@ -118,7 +119,7 @@ const useStore = defineStore('store', () => {
         params.append('siteId', siteId);
       }
       params.append('start', start.value.toString());
-      const res = await fetch(`${baseUrl}/api/comments?${params}`);
+      const res = await fetch(buildApiUrl(baseUrl, `/api/comments?${params}`));
 
       if (!res.ok) {
         message.value = 'Load comments failed. ' + res.statusText;

@@ -46,7 +46,7 @@ A modern, feature-rich comment system built with Vue3 and Nuxt3, designed for st
       dom, // container element, or DOM selector
       {
         postId, // unique identifier for the page
-        apiUrl, // base URL for the API
+        apiUrl, // service origin; the widget appends /api/* internally
         domain, // auth0 domain (optional if using awesomeAuth)
         clientId, // auth0 client id (optional if using awesomeAuth)
         awesomeAuth, // awesome auth instance (optional)
@@ -62,12 +62,12 @@ import { getInstance } from '@roudanio/awesome-auth';
 
 const auth = getInstance({
   googleId: 'YOUR-GOOGLE-CLIENT-ID',
-  root: 'https://your-backend-api.com',
+  root: 'https://comments.example.com/api/site/auth',
 });
 
 AwesomeComment.init(dom, {
   postId: 'your-post-id',
-  apiUrl: 'https://your-api.com',
+  apiUrl: 'https://comments.example.com',
   awesomeAuth: auth,
 });
 ```
@@ -79,7 +79,7 @@ For better performance, you can preload comments:
 ```javascript
 await AwesomeComment.preload({
   postId: 'your-post-id',
-  apiUrl: 'https://your-api.com',
+  apiUrl: 'https://comments.example.com',
   domain: 'your-auth0-domain',
   clientId: 'your-auth0-client-id',
 });

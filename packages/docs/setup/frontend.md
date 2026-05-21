@@ -64,7 +64,7 @@ Initialize Awesome Comment with your configuration:
 <script>
   AwesomeComment.init('#comment', {
     postId: 'unique-post-identifier',
-    apiUrl: 'https://your-backend-api.com',
+    apiUrl: 'https://comments.example.com',
     domain: 'your-domain.auth0.com',
     clientId: 'your-auth0-client-id',
     locale: 'en' // Optional: 'en', 'zh-CN', etc.
@@ -79,7 +79,7 @@ Initialize Awesome Comment with your configuration:
 | Parameter | Type | Description |
 |-----------|------|-------------|
 | `postId` | `string` | Unique identifier for the page/post. Used to group comments. |
-| `apiUrl` | `string` | Your backend API endpoint URL. |
+| `apiUrl` | `string` | Comment service origin. The widget appends `/api/*` internally. |
 | `domain` | `string` | Auth0 domain for authentication (e.g., `your-domain.auth0.com`). |
 | `clientId` | `string` | Auth0 client ID for your application. |
 
@@ -116,7 +116,7 @@ onMounted(() => {
   script.onload = () => {
     window.AwesomeComment.init(commentContainer.value, {
       postId: 'blog-post-123',
-      apiUrl: 'https://api.example.com',
+      apiUrl: 'https://comments.example.com',
       domain: 'example.auth0.com',
       clientId: 'your-client-id'
     })
@@ -216,13 +216,13 @@ import { getInstance } from '@roudanio/awesome-auth'
 // Initialize Awesome Auth
 const auth = getInstance({
   googleId: 'your-google-client-id.apps.googleusercontent.com',
-  root: 'https://your-backend-api.com'
+  root: 'https://comments.example.com/api/site/auth'
 })
 
 // Initialize Awesome Comment with Awesome Auth
 AwesomeComment.init('#comment', {
   postId: 'your-post-id',
-  apiUrl: 'https://your-backend-api.com',
+  apiUrl: 'https://comments.example.com',
   awesomeAuth: auth  // Pass the auth instance
 })
 ```
@@ -239,7 +239,7 @@ To avoid Cumulative Layout Shift (CLS), you can preload the comment data:
 // Preload comment data
 await AwesomeComment.preload({
   postId: 'your-post-id',
-  apiUrl: 'https://your-backend-api.com',
+  apiUrl: 'https://comments.example.com',
   domain: 'your-domain.auth0.com',
   clientId: 'your-client-id'
 })
@@ -281,7 +281,7 @@ Awesome Comment comes with default styles. To customize:
 ### Comments not showing
 
 1. Check browser console for errors
-2. Verify `apiUrl` is accessible
+2. Verify the `apiUrl` origin is accessible and does not include an extra `/api` path
 3. Ensure `postId` is unique and consistent
 4. Check CORS settings on your backend
 

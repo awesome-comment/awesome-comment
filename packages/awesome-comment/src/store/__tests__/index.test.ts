@@ -1,10 +1,22 @@
-import { describe, it, expect, beforeEach } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { setActivePinia, createPinia } from 'pinia';
-import { formatComment } from '../index';
 import { CommentStatus } from '@awesome-comment/core/data';
+
+const localStorageMock = {
+  getItem: vi.fn(() => null),
+  setItem: vi.fn(),
+  removeItem: vi.fn(),
+  clear: vi.fn(),
+  length: 0,
+  key: vi.fn(),
+};
+Object.defineProperty(window, 'localStorage', { value: localStorageMock, writable: true });
+
+const { formatComment } = await import('../index.ts');
 
 describe('Comment Store', () => {
   beforeEach(() => {
+    vi.clearAllMocks();
     setActivePinia(createPinia());
   });
 

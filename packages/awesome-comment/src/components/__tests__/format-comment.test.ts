@@ -16,7 +16,7 @@ Object.defineProperty(window, 'localStorage', { value: localStorageMock, writabl
 // 先 mock localStorage，再导入 store
 const { default: useStore } = await import('../../store/index.ts');
 
-function createTestApp() {
+function createTestApp(apiBaseUrl = 'https://api.test.com') {
   const app = createApp({ template: '<div />' });
   const pinia = createPinia();
   app.use(pinia);
@@ -24,7 +24,7 @@ function createTestApp() {
   app.provide('siteId', 'test-site');
   app.provide('comments', []);
   app.provide('total', 0);
-  app.provide('ApiBaseUrl', 'https://api.test.com');
+  app.provide('ApiBaseUrl', apiBaseUrl);
 
   // 需要在 app context 中运行
   setActivePinia(pinia);
@@ -42,7 +42,7 @@ describe('formatComment 兼容性', () => {
 
   it('snake_case 格式的评论应正确嵌套（原有行为）', () => {
     const { app } = createTestApp();
-    app.runWithContext(() => {
+    return app.runWithContext(() => {
       const store = useStore();
 
       // 模拟 snake_case API 响应
@@ -94,7 +94,7 @@ describe('formatComment 兼容性', () => {
 
   it('camelCase 格式的评论应正确嵌套（新增兼容）', () => {
     const { app } = createTestApp();
-    app.runWithContext(() => {
+    return app.runWithContext(() => {
       const store = useStore();
 
       // 模拟 camelCase API 响应（SaaS 官网格式）
@@ -143,6 +143,38 @@ describe('formatComment 兼容性', () => {
         // 该顶级评论应有1个子评论（Admin 的回复）
         expect(commentValues[0].children).toHaveLength(1);
         expect(commentValues[0].children![0].content).toBe('你好呀，感谢你第一个来留言');
+      });
+    });
+  });
+});
+
+describe('API URL 规范化', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    localStorageMock.getItem.mockReturnValue(null);
+  });
+
+  it('传入 /api 后缀时不应重复拼接 /api/api/comments', () => {
+    const { app } = createTestApp('https://api.test.com/api');
+    return app.runWithContext(() => {
+      const store = useStore();
+
+      globalThis.fetch = vi.fn(() =>
+        Promise.resolve({
+          ok: true,
+          json: () =>
+            Promise.resolve({
+              code: 0,
+              data: [],
+              meta: { total: 0 },
+            }),
+        }),
+      ) as unknown as typeof fetch;
+
+      return store.loadComments().then(() => {
+        expect(globalThis.fetch).toHaveBeenCalledWith(
+          'https://api.test.com/api/comments?postId=test-post&siteId=test-site&start=0',
+        );
       });
     });
   });
