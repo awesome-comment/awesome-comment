@@ -34,6 +34,7 @@ Add the initialization script:
 <script>
   AwesomeComment.init('#comment', {
     postId: 'my-first-post',
+    siteId: 'your-site-id',
     apiUrl: 'https://comments.example.com',
     domain: 'awesomecomment.auth0.com',
     clientId: 'your-client-id'
@@ -67,6 +68,7 @@ Add the initialization script:
   <script>
     AwesomeComment.init('#comment', {
       postId: 'my-first-post',
+      siteId: 'your-site-id',
       apiUrl: 'https://comments.example.com',
       domain: 'awesomecomment.auth0.com',
       clientId: 'demo-client-id'
@@ -81,6 +83,7 @@ Add the initialization script:
 | Option | Type | Required | Description |
 |--------|------|----------|-------------|
 | `postId` | string | Yes | Unique identifier for the post/page |
+| `siteId` | string | Hosted SaaS | Site ID from the Awesome Comment dashboard. Keep this separate from `postId`. |
 | `apiUrl` | string | Yes | Comment service origin. The widget appends `/api/*` internally. |
 | `domain` | string | Yes* | Auth0 domain |
 | `clientId` | string | Yes* | Auth0 client ID |
@@ -107,6 +110,7 @@ const auth = getInstance({
 
 AwesomeComment.init('#comment', {
   postId: 'my-first-post',
+  siteId: 'your-site-id',
   apiUrl: 'https://comments.example.com',
   awesomeAuth: auth  // Use Google One Tap instead of Auth0
 })

@@ -44,6 +44,7 @@ Usage
   AwesomeComment.init('#comments', {
     apiUrl: 'https://comments.example.com',
     postId: 'post-1',
+    siteId: 'your-site-id',
     domain: 'your-auth0-domain',
     clientId: 'your-auth0-client-id',
   });
@@ -51,3 +52,4 @@ Usage
 ```
 
 `apiUrl` 应传入评论服务根域，例如 `https://comments.example.com`。组件内部会拼接 `/api/comments` 等接口路径；误传 `/api` 后缀会被兼容处理，但不推荐作为新集成方式。
+SaaS 接入时请把 `siteId` 作为独立字段传入，不要拼进 `postId`；`postId` 只保留页面或文章标识。

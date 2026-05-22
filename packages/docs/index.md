@@ -57,6 +57,7 @@ Add Awesome Comment to your website in just a few lines:
 <script>
   AwesomeComment.init('#comment', {
     postId: 'your-post-id',
+    siteId: 'your-site-id',
     apiUrl: 'https://comments.example.com',
     domain: 'your-auth0-domain.auth0.com',
     clientId: 'your-auth0-client-id'

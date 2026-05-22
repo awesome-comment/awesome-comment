@@ -1,5 +1,5 @@
 <script setup lang="ts">
-const siteUrl = 'https://awesome-comment.org';
+const siteUrl = 'https://awesomecomment.org';
 
 // SEO Configuration
 useSeoMeta({

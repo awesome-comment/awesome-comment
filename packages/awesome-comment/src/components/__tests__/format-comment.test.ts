@@ -178,4 +178,42 @@ describe('API URL 规范化', () => {
       });
     });
   });
+
+  it('加载评论时应把 postId 和 siteId 作为独立查询参数发送', () => {
+    const app = createApp({ template: '<div />' });
+    const pinia = createPinia();
+    app.use(pinia);
+    app.provide('postId', '/zh/features/ai-image');
+    app.provide('siteId', 'site-123');
+    app.provide('comments', []);
+    app.provide('total', 0);
+    app.provide('ApiBaseUrl', 'https://awesomecomment.org/api');
+    setActivePinia(pinia);
+    app.runWithContext(() => {
+      useStore();
+    });
+
+    return app.runWithContext(() => {
+      const store = useStore();
+
+      globalThis.fetch = vi.fn(() =>
+        Promise.resolve({
+          ok: true,
+          json: () =>
+            Promise.resolve({
+              code: 0,
+              data: [],
+              meta: { total: 0 },
+            }),
+        }),
+      ) as unknown as typeof fetch;
+
+      return store.loadComments().then(() => {
+        expect(globalThis.fetch).toHaveBeenCalledWith(
+          'https://awesomecomment.org/api/comments?postId=%2Fzh%2Ffeatures%2Fai-image&siteId=site-123&start=0',
+        );
+        expect(globalThis.fetch).not.toHaveBeenCalledWith(expect.stringContaining('site-123%3A%2Fzh'));
+      });
+    });
+  });
 });

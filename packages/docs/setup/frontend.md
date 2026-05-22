@@ -64,6 +64,7 @@ Initialize Awesome Comment with your configuration:
 <script>
   AwesomeComment.init('#comment', {
     postId: 'unique-post-identifier',
+    siteId: 'your-site-id',
     apiUrl: 'https://comments.example.com',
     domain: 'your-domain.auth0.com',
     clientId: 'your-auth0-client-id',
@@ -79,6 +80,7 @@ Initialize Awesome Comment with your configuration:
 | Parameter | Type | Description |
 |-----------|------|-------------|
 | `postId` | `string` | Unique identifier for the page/post. Used to group comments. |
+| `siteId` | `string` | Site ID from the hosted SaaS dashboard. Keep it separate from `postId`; optional for single-site self-hosted deployments. |
 | `apiUrl` | `string` | Comment service origin. The widget appends `/api/*` internally. |
 | `domain` | `string` | Auth0 domain for authentication (e.g., `your-domain.auth0.com`). |
 | `clientId` | `string` | Auth0 client ID for your application. |
@@ -116,6 +118,7 @@ onMounted(() => {
   script.onload = () => {
     window.AwesomeComment.init(commentContainer.value, {
       postId: 'blog-post-123',
+      siteId: 'your-site-id',
       apiUrl: 'https://comments.example.com',
       domain: 'example.auth0.com',
       clientId: 'your-client-id'
@@ -144,6 +147,7 @@ function CommentSection({ postId }) {
       if (window.AwesomeComment && commentRef.current) {
         window.AwesomeComment.init(commentRef.current, {
           postId: postId,
+          siteId: process.env.REACT_APP_AWESOME_COMMENT_SITE_ID,
           apiUrl: process.env.REACT_APP_API_URL,
           domain: process.env.REACT_APP_AUTH0_DOMAIN,
           clientId: process.env.REACT_APP_AUTH0_CLIENT_ID
@@ -179,6 +183,7 @@ export default function Comments({ postId }) {
     if (window.AwesomeComment && commentRef.current) {
       window.AwesomeComment.init(commentRef.current, {
         postId: postId,
+        siteId: process.env.NEXT_PUBLIC_AWESOME_COMMENT_SITE_ID,
         apiUrl: process.env.NEXT_PUBLIC_API_URL,
         domain: process.env.NEXT_PUBLIC_AUTH0_DOMAIN,
         clientId: process.env.NEXT_PUBLIC_AUTH0_CLIENT_ID
@@ -222,6 +227,7 @@ const auth = getInstance({
 // Initialize Awesome Comment with Awesome Auth
 AwesomeComment.init('#comment', {
   postId: 'your-post-id',
+  siteId: 'your-site-id',
   apiUrl: 'https://comments.example.com',
   awesomeAuth: auth  // Pass the auth instance
 })
@@ -239,6 +245,7 @@ To avoid Cumulative Layout Shift (CLS), you can preload the comment data:
 // Preload comment data
 await AwesomeComment.preload({
   postId: 'your-post-id',
+  siteId: 'your-site-id',
   apiUrl: 'https://comments.example.com',
   domain: 'your-domain.auth0.com',
   clientId: 'your-client-id'
@@ -247,6 +254,7 @@ await AwesomeComment.preload({
 // Later, initialize the UI
 AwesomeComment.init('#comment', {
   postId: 'your-post-id',
+  siteId: 'your-site-id',
   // ... same config
 })
 ```

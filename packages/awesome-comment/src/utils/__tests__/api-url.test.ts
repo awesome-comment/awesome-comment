@@ -13,4 +13,11 @@ describe('api-url', () => {
       'https://awesomecomment.org/api/comments',
     );
   });
+
+  it('规范化带空白和多余斜杠的 SaaS 根地址', () => {
+    expect(normalizeApiBaseUrl('  https://awesomecomment.org/api///  ')).toBe('https://awesomecomment.org');
+    expect(buildApiUrl('  https://awesomecomment.org/api///  ', 'api/comments')).toBe(
+      'https://awesomecomment.org/api/comments',
+    );
+  });
 });

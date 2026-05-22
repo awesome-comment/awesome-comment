@@ -72,6 +72,7 @@ AUTH0_CLIENT_SECRET=your-client-secret
 <script>
   AwesomeComment.init('#comment', {
     postId: 'your-post-id',
+    siteId: 'your-site-id',
     apiUrl: 'https://comments.example.com',
     domain: 'your-domain.auth0.com',    // Auth0 domain
     clientId: 'your-auth0-client-id'    // Auth0 client ID
@@ -141,6 +142,7 @@ const auth = getInstance({
 // Initialize Awesome Comment with Awesome Auth
 AwesomeComment.init('#comment', {
   postId: 'your-post-id',
+  siteId: 'your-site-id',
   apiUrl: 'https://comments.example.com',
   awesomeAuth: auth  // Pass auth instance instead of domain/clientId
 })
