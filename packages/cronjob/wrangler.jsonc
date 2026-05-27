@@ -18,12 +18,11 @@
   },
   "vars": {
     "AFTER_ID": "309600037",
-    "DEFAULT_AI_MODEL": "gemini-3-flash-preview",
+    "DEFAULT_AI_MODEL": "gemini-3.5-flash",
     "ENVIRONMENT": "production",
     "TIDB_CLOUD_ENDPOINT": "https://ap-northeast-1.data.tidbcloud.com/api/v1beta/app/dataapp-NFYbhmOK/endpoint",
     "TRANSLATE_PROVIDER": "google"
   },
-  "secrets": ["GOOGLE_GEMINI_API_KEY", "OPENAI_API_KEY", "TIDB_CLOUD_API_KEY"],
   "triggers": {
     "crons": ["*/10 * * * *", "5,15,25,35,45,55 * * * *"]
   }
