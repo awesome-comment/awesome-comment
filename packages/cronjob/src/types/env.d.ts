@@ -9,5 +9,9 @@ declare namespace Cloudflare {
     TRANSLATE_MODEL?: string;
     // OpenAI API Key，使用 OpenAI provider 时必填
     OPENAI_API_KEY?: string;
+    // Google Gemini API Key，使用 Google provider 时必填
+    GOOGLE_GEMINI_API_KEY?: string;
+    // TiDB Cloud Data App API Key（secret，不在 wrangler.jsonc vars 中）
+    TIDB_CLOUD_API_KEY?: string;
   }
 }

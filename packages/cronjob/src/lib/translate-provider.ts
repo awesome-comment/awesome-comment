@@ -3,8 +3,8 @@ import OpenAI from 'openai';
 import z from 'zod';
 
 // 默认模型配置
-export const DEFAULT_OPENAI_MODEL = 'gpt-5-mini';
-export const DEFAULT_GOOGLE_MODEL = 'gemini-3-flash-preview';
+export const DEFAULT_OPENAI_MODEL = 'gpt-5.4-mini';
+export const DEFAULT_GOOGLE_MODEL = 'gemini-3.5-flash';
 
 export type AIProviderType = 'google' | 'openai';
 

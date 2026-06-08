@@ -1,6 +1,5 @@
 import { H3Event } from 'h3';
 import OpenAI from 'openai';
-import { Model } from '~/server/utils/enum';
 
 export default defineEventHandler(async function (event: H3Event) {
   const { messages, postId } = (await readBody(event)) as {
@@ -18,8 +17,11 @@ export default defineEventHandler(async function (event: H3Event) {
         }
       : undefined,
   });
+  const model = isEnCn
+    ? process.env.OPENAI_REPLY_MODEL_MINI || 'gpt-5.4-mini'
+    : process.env.OPENAI_REPLY_MODEL || 'gpt-5.4';
   const res = await openai.chat.completions.create({
-    model: isEnCn ? Model.CHAT_GPT4o_MINI : Model.CHAT_GPT4o,
+    model,
     messages,
     stream: false,
   });
