@@ -90,6 +90,7 @@ export function parseUserAgent(userAgent: string): UserAgentInfo {
     { name: 'Mac OS', regex: /Mac OS X ([0-9_]+)/ },
     { name: 'iOS', regex: /iP(hone|od|ad).*OS ([0-9_]+)/ },
     { name: 'Android', regex: /Android ([0-9.]+)/ },
+    { name: 'Chrome OS', regex: /CrOS \S+ ([0-9.]+)/ },
     { name: 'Linux', regex: /Linux/ },
   ];
 

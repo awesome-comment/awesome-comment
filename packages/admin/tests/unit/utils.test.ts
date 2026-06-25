@@ -100,6 +100,17 @@ describe('Utils', () => {
       expect(result.deviceType).toBe('Desktop');
     });
 
+    it('should parse Chrome 149 on Chrome OS', () => {
+      const ua =
+        'Mozilla/5.0 (X11; CrOS x86_64 14541.0.0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36';
+      const result = parseUserAgent(ua);
+      expect(result.os).toBe('Chrome OS');
+      expect(result.osVersion).toBe('14541.0.0');
+      expect(result.browser).toBe('Chrome');
+      expect(result.browserVersion).toBe('149.0.0.0');
+      expect(result.deviceType).toBe('Desktop');
+    });
+
     it('should parse Firefox on Mac', () => {
       const ua = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Gecko/20100101 Firefox/121.0';
       const result = parseUserAgent(ua);
