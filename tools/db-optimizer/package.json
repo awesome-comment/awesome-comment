@@ -1,6 +1,6 @@
 {
   "name": "db-optimizer",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Database optimization analyzer",
   "type": "module",
   "main": "analyze.js",
@@ -12,7 +12,7 @@
   "license": "ISC",
   "packageManager": "pnpm@10.6.5",
   "dependencies": {
-    "dotenv": "^17.2.3",
-    "mysql2": "^3.15.3"
+    "dotenv": "^17.4.2",
+    "mysql2": "^3.22.5"
   }
 }

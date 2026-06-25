@@ -1,6 +1,6 @@
 {
   "name": "@awesome-comment/core",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -13,10 +13,10 @@
   "license": "ISC",
   "type": "module",
   "devDependencies": {
-    "@cloudflare/workers-types": "^4.20251225.0",
-    "@upstash/redis": "^1.36.0",
-    "dotenv": "^17.2.3",
-    "h3": "^1.15.4",
-    "vitest": "^4.0.16"
+    "@cloudflare/workers-types": "^4.20260625.1",
+    "@upstash/redis": "^1.38.0",
+    "dotenv": "^17.4.2",
+    "h3": "^1.15.11",
+    "vitest": "^4.1.9"
   }
 }

@@ -17,6 +17,7 @@ export default defineConfig(function ({ command }) {
       vue(),
       dts({
         tsconfigPath: './tsconfig.app.json',
+        entryRoot: 'src',
       }),
     ],
     build: {

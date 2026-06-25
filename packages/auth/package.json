@@ -1,6 +1,6 @@
 {
   "name": "@roudanio/awesome-auth",
-  "version": "0.1.5",
+  "version": "0.2.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -11,15 +11,15 @@
   "main": "dist/awesome-auth.umd.js",
   "module": "dist/awesome-auth.js",
   "browser": "dist/awesome-auth.iife.ts",
-  "types": "dist/auth.d.ts",
+  "types": "dist/src/auth.d.ts",
   "dependencies": {
     "@awesome-comment/core": "workspace:*",
-    "eventemitter3": "^5.0.1",
-    "google-auth-library": "^10.5.0",
+    "eventemitter3": "^5.0.4",
+    "google-auth-library": "^10.7.0",
     "jsonwebtoken": "^9.0.3",
     "jwt-decode": "^4.0.0",
-    "lodash-es": "^4.17.22",
-    "vue": "^3.5.26"
+    "lodash-es": "^4.18.1",
+    "vue": "^3.5.38"
   },
   "devDependencies": {
     "@types/gapi": "^0.0.47",
@@ -27,14 +27,14 @@
     "@types/google.accounts": "^0.0.18",
     "@types/jsonwebtoken": "^9.0.10",
     "@types/lodash-es": "^4.17.12",
-    "@vitejs/plugin-vue": "^6.0.3",
-    "autoprefixer": "^10.4.23",
-    "postcss": "^8.5.6",
-    "tailwindcss": "^3.4.19",
-    "typescript": "^5.9.3",
-    "vite": "^7.3.1",
-    "vite-plugin-dts": "^4.5.4",
-    "vitest": "^4.0.17",
-    "vue-tsc": "^3.2.2"
+    "@vitejs/plugin-vue": "^6.0.7",
+    "autoprefixer": "^10.5.1",
+    "postcss": "^8.5.15",
+    "tailwindcss": "^4.3.1",
+    "typescript": "^6.0.3",
+    "vite": "^8.1.0",
+    "vite-plugin-dts": "^5.0.2",
+    "vitest": "^4.1.9",
+    "vue-tsc": "^3.3.5"
   }
 }

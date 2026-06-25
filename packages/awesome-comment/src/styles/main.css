@@ -1,5 +1,14 @@
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+
+@plugin "daisyui" {
+  prefix: ac-;
+  themes: light, dark;
+}
+
+@theme {
+  --shadow-outline-md: 0 0 0 4px oklch(var(--b1));
+  --color-green-middle: #090;
+}
 
 .comments-wrapper {
   p img {

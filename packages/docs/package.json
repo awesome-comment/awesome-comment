@@ -1,6 +1,6 @@
 {
   "name": "@awesome-comment/docs",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Awesome Comment Documentation",
   "type": "module",
   "scripts": {
@@ -16,6 +16,6 @@
   "license": "MIT",
   "devDependencies": {
     "vitepress": "^1.6.4",
-    "vue": "^3.5.26"
+    "vue": "^3.5.38"
   }
 }

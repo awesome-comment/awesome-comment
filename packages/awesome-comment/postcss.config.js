@@ -1,5 +1,4 @@
-import tailwindcssNesting from 'tailwindcss/nesting/index.js';
-import tailwindcss from 'tailwindcss';
+import tailwindcss from '@tailwindcss/postcss';
 import autoprefixer from 'autoprefixer';
 
 const SCOPE_SELECTOR = '.awesome-comment';
@@ -34,5 +33,5 @@ function prefixSelector(selector) {
 }
 
 export default {
-  plugins: [tailwindcssNesting(), tailwindcss(), scopeAwesomeCommentStyles(), autoprefixer()],
+  plugins: [tailwindcss(), scopeAwesomeCommentStyles(), autoprefixer()],
 };

@@ -2,6 +2,17 @@ packages:
   - packages/*
   - tools/*
 
+allowBuilds:
+  '@google/genai': true
+  '@parcel/watcher': true
+  better-sqlite3: true
+  browser-tabs-lock: true
+  esbuild: true
+  protobufjs: true
+  sharp: true
+  vue-demi: true
+  workerd: true
+
 ignoredBuiltDependencies:
   - '@parcel/watcher'
   - '@tailwindcss/oxide'
