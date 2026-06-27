@@ -42,6 +42,12 @@ cd packages/auth-admin
 pnpm test:run
 ```
 
+**Cronjob 包：**
+```bash
+cd packages/cronjob
+pnpm test:run
+```
+
 ## Test Structure
 
 ```

@@ -39,6 +39,16 @@ export async function translateComments(env: Cloudflare.Env): Promise<void> {
 
   let success = 0;
   for (const comment of comments) {
+    if (comment.content.length > 2000) {
+      console.log('Skipping long comment (potential spam):', comment.id);
+      await fetchTidb(env, '/v1/update_translation', 'PUT', {
+        id: comment.id,
+        translation: '',
+      });
+      success++;
+      continue;
+    }
+
     if (/\/(en|cn|zh)\/?/i.test(comment.post_id) || !checkShouldTranslate(comment.content)) {
       // skip if contains link with /en/ or /cn/ or /zh/
       console.log('Skipping comment with link:', comment.id);

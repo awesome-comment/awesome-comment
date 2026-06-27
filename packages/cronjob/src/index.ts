@@ -1,6 +1,5 @@
 import pkg from '../package.json' with { type: 'json' };
 import { translateComments } from './lib/translate-comments';
-import { tagComments } from './lib/tag-comments';
 
 export default {
   async fetch() {
@@ -19,10 +18,6 @@ export default {
     switch (event.cron) {
       case '*/10 * * * *':
         ctx.waitUntil(translateComments(env));
-        break;
-
-      case '5,15,25,35,45,55 * * * *':
-        ctx.waitUntil(tagComments(env));
         break;
 
       default:
