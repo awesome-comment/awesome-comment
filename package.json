@@ -17,10 +17,5 @@
   "type": "module",
   "devDependencies": {
     "@biomejs/biome": "^2.5.1"
-  },
-  "pnpm": {
-    "overrides": {
-      "h3": "1.15.11"
-    }
   }
 }
