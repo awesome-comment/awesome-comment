@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { marked } from 'marked';
+import { parseMarkdown } from '@awesome-comment/core/utils/markdown';
 import { useAuth0 } from '@auth0/auth0-vue';
 import type { FetchError } from 'ofetch';
 import type { Comment } from '@awesome-comment/core/types';
@@ -174,35 +174,6 @@ function getSlugNameUrl(postId: string, only = false): string {
 
 function notEnglish(postId: string): boolean {
   return !/\/en\/$/i.test(postId);
-}
-
-const renderer = new marked.Renderer();
-renderer.html = () => '';
-renderer.link = function ({ href, title, text }) {
-  const safe = /^(https?:|mailto:|tel:)/i;
-  console.log('xxx', href, title, text);
-  if (!href || !safe.test(href)) {
-    return text as string;
-  }
-  const t = title ? ` title="${title}"` : '';
-  return `<a href="${href}"${t} target="_blank" rel="noopener">${text}</a>`;
-};
-renderer.image = function ({ href, title, text }) {
-  const safe = /^(https?:)/i;
-  if (!href || !safe.test(href)) return text as string;
-  const t = title ? ` title="${title}"` : '';
-  return `<img src="${href}" alt="${text || ''}"${t} loading="lazy" />`;
-};
-
-marked.setOptions({
-  gfm: true,
-  breaks: true,
-  renderer,
-  async: false,
-});
-
-function parseMarkdown(md: string): string {
-  return marked.parse(md || '') as string;
 }
 </script>
 

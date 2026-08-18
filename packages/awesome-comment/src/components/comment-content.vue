@@ -2,7 +2,7 @@
 import type { Comment } from '@awesome-comment/core/types';
 import { useI18n } from 'vue-i18n';
 import useStore from '../store';
-import { marked } from 'marked';
+import { parseMarkdown } from '@awesome-comment/core/utils/markdown';
 
 type Props = {
   ancestorId: number;
@@ -13,9 +13,6 @@ const props = defineProps<Props>();
 const { t } = useI18n();
 const store = useStore();
 
-function getHtml(content: string): string {
-  return (marked(content) as string).replace(/<a/g, '<a target="_blank"');
-}
 function getParentUserName(id: number): string {
   if (props.ancestorId) {
     const ancestor = store.comments[props.ancestorId];
@@ -36,7 +33,7 @@ function getParentUserName(id: number): string {
     >@{{ getParentUserName(comment.parentId) }}</a>
     <article
       class="text-gray-500 break-words overflow-x-auto dark:text-gray-400"
-      v-html="getHtml(comment.content)"
+      v-html="parseMarkdown(comment.content)"
     />
   </template>
   <p

@@ -12,6 +12,9 @@
   "author": "",
   "license": "ISC",
   "type": "module",
+  "dependencies": {
+    "marked": "^18.0.5"
+  },
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20260625.1",
     "@upstash/redis": "^1.38.0",
