@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import { computed, inject, nextTick, onMounted, ref, watch } from 'vue';
-import { useI18n } from 'vue-i18n';
+import type { User } from '@auth0/auth0-vue';
 import type { CommentStatus } from '@awesome-comment/core/data';
 import type { ResponseBody } from '@awesome-comment/core/types';
-import type { User } from '@auth0/auth0-vue';
 import { withCommandModifier } from '@awesome-comment/core/utils';
 import { validateCommentContent } from '@awesome-comment/core/utils/validation';
+import { computed, inject, nextTick, onMounted, ref, watch } from 'vue';
+import { useI18n } from 'vue-i18n';
 import useStore from '../store';
 import useAuthStore from '../store/auth.ts';
 
@@ -15,14 +15,19 @@ type PostResponse = {
 };
 
 type Props = {
-  noVersion?: boolean;
+  showBrand?: boolean;
+  showVersion?: boolean;
   currentId?: number;
   parentId?: number;
   ancestorId?: number;
   content?: string;
   status?: CommentStatus;
 };
-const props = defineProps<Props>();
+const props = withDefaults(defineProps<Props>(), {
+  showBrand: true,
+  showVersion: true,
+  content: '',
+});
 type Emits = {
   (event: 'close'): void;
   (event: 'update', value: string): void;
@@ -32,14 +37,26 @@ const emit = defineEmits<Emits>();
 const authStore = useAuthStore();
 const store = useStore();
 const { t } = useI18n();
-const baseUrl = inject('ApiBaseUrl');
-const auth0domain = inject('Auth0Domain');
-const siteId = inject('siteId') as string;
-const turnstileSiteKey = inject<string | undefined>('TurnstileSiteKey');
-const autoFocus = inject<boolean>('AutoFocus');
+const baseUrl = inject<string>('ApiBaseUrl', '');
+const auth0domain = inject<string>('Auth0Domain', '');
+const siteId = inject<string>('siteId', '');
+const turnstileSiteKey = inject<string | undefined>('TurnstileSiteKey', undefined);
+const autoFocus = inject<boolean>('AutoFocus', false);
+const showBrandInject = inject<boolean | undefined>('ShowBrand', undefined);
+const showVersionInject = inject<boolean | undefined>('ShowVersion', undefined);
 const version = __VERSION__;
 const textarea = ref<HTMLTextAreaElement>();
 const turnstileContainer = ref<HTMLDivElement>();
+
+const shouldShowBrand = computed(() => {
+  if (props.showBrand === false || showBrandInject === false) return false;
+  return true;
+});
+
+const shouldShowVersion = computed(() => {
+  if (props.showVersion === false || showVersionInject === false) return false;
+  return true;
+});
 
 const isSending = ref<boolean>(false);
 const comment = ref<string>(props.content || '');
@@ -299,11 +316,18 @@ watch(
       />
       <div class="p-2 rounded-b-lg bg-base-300 flex items-center relative">
         <div
-          v-if="!noVersion"
+          v-if="shouldShowBrand || shouldShowVersion"
           class="text-xs text-neutral-400/40"
           :class="{'me-auto': !message}"
         >
-          v{{ version }}
+          <a
+            v-if="shouldShowBrand"
+            href="https://awesomecomment.org"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="hover:underline text-inherit"
+          >Awesome Comment<template v-if="shouldShowVersion"> v{{ version }}</template></a>
+          <span v-else-if="shouldShowVersion">v{{ version }}</span>
         </div>
         <div
           v-if="message"

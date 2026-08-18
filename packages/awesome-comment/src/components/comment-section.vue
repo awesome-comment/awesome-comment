@@ -1,11 +1,27 @@
 <script setup lang="ts">
-import { onMounted } from 'vue';
+import { computed, inject, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
-import CommentItem from './comment-item.vue';
 import useStore from '../store';
+import CommentItem from './comment-item.vue';
+
+type Props = {
+  maxHeight?: number | string;
+};
+const props = defineProps<Props>();
 
 const { t } = useI18n();
 const store = useStore();
+const maxHeightInject = inject<number | string | undefined>('MaxHeight', undefined);
+
+const sectionStyle = computed(() => {
+  const maxH = props.maxHeight ?? maxHeightInject;
+  if (!maxH) return undefined;
+  const height = typeof maxH === 'number' ? `${maxH}px` : maxH;
+  return {
+    maxHeight: height,
+    overflowY: 'auto' as const,
+  };
+});
 
 function loadMore() {
   store.start += 20;
@@ -23,6 +39,7 @@ onMounted(() => {
   <div
     v-if="store.isLoaded"
     class="comments-wrapper"
+    :style="sectionStyle"
   >
     <comment-item
       v-for="comment in Object.values(store.comments).reverse()"

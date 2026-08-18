@@ -1,15 +1,15 @@
-import { createApp } from 'vue';
-import { createPinia } from 'pinia';
 import { Auth0Plugin, createAuth0 } from '@auth0/auth0-vue';
-import { createI18n } from 'vue-i18n';
-import omit from 'lodash-es/omit';
 import messages from '@awesome-comment/core/i18n.json' with { type: 'json' };
+import omit from 'lodash-es/omit';
+import { createPinia } from 'pinia';
+import { createApp } from 'vue';
+import { createI18n } from 'vue-i18n';
 import './styles/tw-daisy.css';
 import './styles/main.css';
 import './styles/animate.css';
-import App from './App.vue';
 import { ResponseBody, ResponseComment } from '@awesome-comment/core/types';
 import type { AwesomeAuth } from '@roudanio/awesome-auth';
+import App from './App.vue';
 import { buildApiUrl, normalizeApiBaseUrl } from './utils/api-url.ts';
 
 export type InitOptions = {
@@ -22,6 +22,9 @@ export type InitOptions = {
   siteId?: string;
   turnstileSiteKey?: string;
   autoFocus?: boolean;
+  maxHeight?: number | string;
+  showBrand?: boolean;
+  showVersion?: boolean;
 };
 type Manager = {
   init: (dom: string | HTMLElement, options: InitOptions) => void;
@@ -88,6 +91,9 @@ const AwesomeComment: InitOptions & Manager = {
   locale: '',
   awesomeAuth: undefined,
   turnstileSiteKey: '',
+  maxHeight: undefined,
+  showBrand: undefined,
+  showVersion: undefined,
   init(
     dom: string | HTMLElement,
     {
@@ -100,6 +106,9 @@ const AwesomeComment: InitOptions & Manager = {
       locale = navigator.language,
       siteId,
       autoFocus,
+      maxHeight,
+      showBrand,
+      showVersion,
     }: InitOptions = {},
   ) {
     postId ??= this.postId;
@@ -109,6 +118,9 @@ const AwesomeComment: InitOptions & Manager = {
     awesomeAuth ??= this.awesomeAuth;
     turnstileSiteKey ??= this.turnstileSiteKey;
     siteId ??= this.siteId;
+    maxHeight ??= this.maxHeight;
+    showBrand ??= this.showBrand;
+    showVersion ??= this.showVersion;
     apiUrl = normalizeApiBaseUrl(apiUrl);
     const app = init({ domain, clientId, locale });
     app.provide('ApiBaseUrl', apiUrl);
@@ -120,6 +132,9 @@ const AwesomeComment: InitOptions & Manager = {
     app.provide('TurnstileSiteKey', turnstileSiteKey);
     app.provide('siteId', siteId);
     app.provide('AutoFocus', autoFocus || false);
+    app.provide('MaxHeight', maxHeight);
+    app.provide('ShowBrand', showBrand);
+    app.provide('ShowVersion', showVersion);
     app.mount(dom);
   },
   async preload({
