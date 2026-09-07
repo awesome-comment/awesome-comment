@@ -2,7 +2,9 @@
 
 @plugin "daisyui" {
   prefix: ac-;
-  themes: light, dark;
+  themes:
+    light --default,
+    dark --prefersdark;
 }
 
 @theme {
