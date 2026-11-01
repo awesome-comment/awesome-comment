@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import { computed, nextTick, onMounted, ref, watch } from 'vue';
+import { computed, inject, nextTick, onMounted, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import CommentForm from './components/comment-form.vue';
 import CommentSection from './components/comment-section.vue';
+import type { Theme } from './types/theme.ts';
 import useStore from './store';
 import useAuthStore from './store/auth.ts';
 
@@ -10,6 +11,8 @@ const store = useStore();
 const { t } = useI18n();
 const authStore = useAuthStore();
 const googleButton = ref<HTMLDivElement>();
+const theme = inject<Theme | undefined>('Theme', undefined);
+const rootTheme = computed<Theme | undefined>(() => (theme === 'auto' ? undefined : theme));
 const total = computed<number | string>(() => {
   const total = store.hasMore ? store.total + '+' : store.total;
   if (store.total === 0) return '0';
@@ -39,7 +42,8 @@ async function renderGoogleButton(): Promise<void> {
   if (!target) return;
 
   target.innerHTML = '';
-  const isDarkMode = window.matchMedia?.('(prefers-color-scheme: dark)').matches;
+  const isDarkMode =
+    theme === 'dark' || (theme !== 'light' && !!window.matchMedia?.('(prefers-color-scheme: dark)').matches);
   await authStore.renderGoogleButton(target, {
     theme: isDarkMode ? 'filled_black' : 'outline',
     size: 'medium',
@@ -63,7 +67,10 @@ watch(
 </script>
 
 <template>
-  <div class="awesome-comment">
+  <div
+    class="awesome-comment"
+    :data-theme="rootTheme"
+  >
     <div
       v-if="store.message"
       class="ac-alert ac-alert-error mb-4"

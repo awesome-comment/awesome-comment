@@ -7,9 +7,29 @@
     dark --prefersdark;
 }
 
+/* dark: 变体支持组件级固定主题：
+   显式 [data-theme=dark] 时生效；显式 [data-theme=light] 时豁免；
+   其余情况跟随系统深色模式 */
+@custom-variant dark {
+  &:where([data-theme="dark"], [data-theme="dark"] *) {
+    @slot;
+  }
+  @media (prefers-color-scheme: dark) {
+    &:where(:not([data-theme="light"], [data-theme="light"] *)) {
+      @slot;
+    }
+  }
+}
+
 @theme {
   --shadow-outline-md: 0 0 0 4px oklch(var(--b1));
   --color-green-middle: #090;
+}
+
+/* daisyUI textarea 默认宽度是 clamp(3rem, 20rem, 100%)，在宽容器下显得过窄 */
+.ac-textarea {
+  width: 100%;
+  resize: vertical;
 }
 
 .comments-wrapper {

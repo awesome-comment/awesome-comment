@@ -51,6 +51,7 @@ A modern, feature-rich comment system built with Vue3 and Nuxt3, designed for st
         clientId, // auth0 client id (optional if using awesomeAuth)
         awesomeAuth, // awesome auth instance (optional)
         locale, // language code, defaults to navigator.language
+        theme, // 'light' | 'dark' | 'auto', defaults to 'auto' (follows system)
       }
     );
     ```

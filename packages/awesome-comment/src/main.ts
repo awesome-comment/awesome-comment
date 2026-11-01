@@ -11,6 +11,9 @@ import { ResponseBody, ResponseComment } from '@awesome-comment/core/types';
 import type { AwesomeAuth } from '@roudanio/awesome-auth';
 import App from './App.vue';
 import { buildApiUrl, normalizeApiBaseUrl } from './utils/api-url.ts';
+import type { Theme } from './types/theme.ts';
+
+export type { Theme } from './types/theme.ts';
 
 export type InitOptions = {
   postId?: string;
@@ -25,6 +28,7 @@ export type InitOptions = {
   maxHeight?: number | string;
   showBrand?: boolean;
   showVersion?: boolean;
+  theme?: Theme;
 };
 type Manager = {
   init: (dom: string | HTMLElement, options: InitOptions) => void;
@@ -39,10 +43,12 @@ function init({
   domain,
   clientId,
   locale = navigator.language,
+  theme,
 }: {
   domain?: string;
   clientId?: string;
   locale?: string;
+  theme?: Theme;
 }) {
   const app = createApp(App);
   const pinia = createPinia();
@@ -69,6 +75,7 @@ function init({
   auth0 && app.use(auth0);
   app.use(pinia);
   app.use(i18n);
+  app.provide('Theme', theme);
   return app;
 }
 
@@ -94,6 +101,7 @@ const AwesomeComment: InitOptions & Manager = {
   maxHeight: undefined,
   showBrand: undefined,
   showVersion: undefined,
+  theme: undefined,
   init(
     dom: string | HTMLElement,
     {
@@ -109,6 +117,7 @@ const AwesomeComment: InitOptions & Manager = {
       maxHeight,
       showBrand,
       showVersion,
+      theme,
     }: InitOptions = {},
   ) {
     postId ??= this.postId;
@@ -121,8 +130,9 @@ const AwesomeComment: InitOptions & Manager = {
     maxHeight ??= this.maxHeight;
     showBrand ??= this.showBrand;
     showVersion ??= this.showVersion;
+    theme ??= this.theme;
     apiUrl = normalizeApiBaseUrl(apiUrl);
-    const app = init({ domain, clientId, locale });
+    const app = init({ domain, clientId, locale, theme });
     app.provide('ApiBaseUrl', apiUrl);
     app.provide('postId', postId);
     app.provide('Auth0Domain', domain);

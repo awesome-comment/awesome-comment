@@ -64,6 +64,12 @@ describe('scopeSelector', () => {
     expect(scopeSelector(':root:not([data-theme])')).toEqual(['.awesome-comment:not([data-theme])']);
   });
 
+  it(':root:not(:where([data-theme], ...)) 保持后缀映射，自动模式排除所有显式主题', () => {
+    expect(scopeSelector(':root:not(:where([data-theme], [data-theme] *))')).toEqual([
+      '.awesome-comment:not(:where([data-theme], [data-theme] *))',
+    ]);
+  });
+
   it(':root:not(span) 保持后缀映射', () => {
     expect(scopeSelector(':root:not(span)')).toEqual(['.awesome-comment:not(span)']);
   });

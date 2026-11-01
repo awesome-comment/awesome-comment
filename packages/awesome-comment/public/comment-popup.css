@@ -69,8 +69,12 @@
 #acInner::-webkit-scrollbar-thumb:hover {
   background: #0f0;
 }
+/* 深色：组件显式 data-theme=dark，或自动模式下跟随系统 */
+#acInner .awesome-comment[data-theme="dark"] .shadow-outline-md {
+  --b1: 0% 0 0;
+}
 @media (prefers-color-scheme: dark) {
-  #acInner .shadow-outline-md {
+  #acInner .awesome-comment:not([data-theme]) .shadow-outline-md {
     --b1: 0% 0 0;
   }
 }
