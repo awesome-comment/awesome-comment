@@ -50,5 +50,8 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      - name: Build awesome-auth
+        run: pnpm -C packages/auth build
+
       - name: Run tests
         run: pnpm test
